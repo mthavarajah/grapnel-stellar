@@ -60,3 +60,8 @@
 
 ## Change management for agents
 Record doc/API corrections with: date, official URL, observed API path/request, reason, proposed change, test evidence. Lead updates files. If provider docs evolve, prefer a live tested endpoint over stale prose but do not silently present new behavior as already supported; keep debug logs sanitized.
+
+## Implementation review — 2026-11-10
+- Orchestrator re-opened https://blockchain-stellar-ic.devpost.com/ and https://blockchain-stellar-ic.devpost.com/details/dates. Deadline remains November 13, 2026, 08:30 EST. Public repo, functional Testnet prototype URL/contract IDs, one-minute functioning demo, pitch and trifold remain required.
+- Gate 0 migration executed successfully against local PostgreSQL 16 in a dedicated development database. This is schema verification, not deployed API or chain evidence.
+- Privy server dependency pinned to `@privy-io/node@0.38.0`; Stellar SDK pinned to `@stellar/stellar-sdk@14.3.0`. Browser signing and provider probes require separate agent handoff and live evidence before any gate passes.
