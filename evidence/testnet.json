@@ -22,7 +22,7 @@
     "api": null,
     "dashboard": null,
     "fintech": null,
-    "github": null,
+    "github": "https://github.com/mthavarajah/grapnel-stellar",
     "video": null
   },
   "treasury_activation": {
@@ -99,5 +99,38 @@
     "error": null,
     "tx_hash": null,
     "broadcast": false
+  },
+  "own_contract_ids": [],
+  "referenced_protocol_contracts": {
+    "provider": "blend",
+    "network": "stellar-testnet",
+    "observed_at": "2026-11-10T14:47:19.492Z",
+    "pool_contract_id": "CCEBVDYM32YNYCVNRXQKDFFPISJJCV557CDZEIRBEE4NCV4KHPQ44HGF",
+    "reserve_contract_ids": [
+      "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC",
+      "CAZAQB3D7KSLSNOSQKYD2V4JP5V2Y3B4RDJZRLBFCCIXDCTE3WHSY3UE",
+      "CAP5AMC2OHNVREO66DFIN6DHJMPOBAJ2KCDDIMFBR7WWJH5RZBFM3UEI",
+      "CAQCFVLOBK5GIULPNZRGATJJMIZL5BSP7X5YJVMGCPTUEPFM4AVSRCJU"
+    ],
+    "source_url": "https://raw.githubusercontent.com/blend-capital/blend-utils/main/testnet.contracts.json",
+    "ownership": "Preexisting Blend deployments; not deployed by Grapnel"
+  },
+  "local_verification_file": "evidence/local-verification.json",
+  "blend_inspected_read_only_simulation": {
+    "observed_at": "2026-11-10T21:05:47.270Z",
+    "network": "stellar-testnet",
+    "source_account": "GCY4DPMIBYCQ352UDKVWDJFKRXOIB2YCOLF2PQFUZHZPYU4WD4PW3LBE",
+    "mode": "read_only_simulation",
+    "broadcast": false,
+    "signable": false,
+    "ledger": 5664220,
+    "resource_fee_stroops": "525497",
+    "total_fee_stroops": "525597",
+    "source_account_auth_entries": 1,
+    "read_only_entries": 6,
+    "read_write_entries": 4,
+    "pool_contract_id": "CCEBVDYM32YNYCVNRXQKDFFPISJJCV557CDZEIRBEE4NCV4KHPQ44HGF",
+    "reserve_contract_id": "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC",
+    "tx_hash": null
   }
 }

@@ -1,0 +1,43 @@
+{
+  "observed_at": "2026-11-10T21:05:06.893501+00:00",
+  "scope": "local_credential_free_implementation",
+  "offline_suite": {
+    "passed": 144,
+    "failed": 0,
+    "skipped": 32,
+    "skip_reason": "Database-backed checks run separately in explicit disposable Postgres integration suite"
+  },
+  "integration_suite": {
+    "passed": 54,
+    "failed": 0,
+    "skipped": 0,
+    "note": "Includes some offline regression checks; counts are suite totals, not disjoint unique tests"
+  },
+  "browser_e2e": {
+    "passed": 2,
+    "failed": 0,
+    "browser": "Chrome",
+    "scope": "Local production frontend loading, Testnet labeling and configured-secret exposure checks"
+  },
+  "workspace_build": "passed",
+  "typecheck": "passed",
+  "environment_validation": "passed",
+  "tracked_and_historical_secret_scan": "passed",
+  "financial_provider_broadcasts": false,
+  "full_mvp_acceptance": false,
+  "github_ci": {
+    "conclusion": "success",
+    "source_commit": "06366e5a29d5a98e1bcd8ad93af74d9b72d6e503",
+    "url": "https://github.com/mthavarajah/grapnel-stellar/actions/runs/42901032088",
+    "checks": [
+      "Frozen install",
+      "Secret scan",
+      "Typecheck",
+      "Offline checks",
+      "Disposable Postgres integration",
+      "Linux production builds",
+      "API/worker Docker image build",
+      "Container health smoke without provider credentials"
+    ]
+  }
+}

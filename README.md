@@ -4,6 +4,8 @@ Grapnel is a **Stellar Testnet B2B infrastructure API** with a business dashboar
 
 **Implementation exists; the full onchain MVP is incomplete.** Gate 0 is committed. Local API auth, entitlement changes, key lifecycle, durable operations, three application implementations, and live provider reads are implemented. Privy-signed customer payment, treasury grant/return, Soroswap swap, Blend supply/withdraw, public app deployment and qualifying video are not yet verified. See [gate status](docs/15_GATE_STATUS.md) and [evidence](evidence/testnet.json). No production financial service, fiat rails, mainnet writes or custom Grapnel contracts.
 
+Public source: [mthavarajah/grapnel-stellar](https://github.com/mthavarajah/grapnel-stellar). Local verification: [test/build results](evidence/local-verification.json).
+
 ## Run locally
 
 Prerequisites: Node **22.12+**, pnpm **10.11**, PostgreSQL **16+**. The API refuses implicit or non-Testnet network settings.

@@ -7,7 +7,8 @@
   },
   "servers": [
     {
-      "url": "http://localhost:3001"
+      "url": "/",
+      "description": "Current Grapnel API origin"
     }
   ],
   "paths": {
@@ -21,7 +22,29 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Envelope"
+                  "type": "object",
+                  "required": [
+                    "status",
+                    "network",
+                    "db"
+                  ],
+                  "properties": {
+                    "status": {
+                      "enum": [
+                        "ok",
+                        "degraded"
+                      ]
+                    },
+                    "network": {
+                      "const": "stellar-testnet"
+                    },
+                    "db": {
+                      "enum": [
+                        "ok",
+                        "unavailable"
+                      ]
+                    }
+                  }
                 }
               }
             }
@@ -62,6 +85,38 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Database unavailable",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "status",
+                    "network",
+                    "db"
+                  ],
+                  "properties": {
+                    "status": {
+                      "enum": [
+                        "ok",
+                        "degraded"
+                      ]
+                    },
+                    "network": {
+                      "const": "stellar-testnet"
+                    },
+                    "db": {
+                      "enum": [
+                        "ok",
+                        "unavailable"
+                      ]
+                    }
+                  }
                 }
               }
             }
@@ -196,7 +251,18 @@
               }
             }
           }
-        }
+        },
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Origin",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Exact configured dashboard origin"
+          }
+        ]
       }
     },
     "/v1/dashboard/logout": {
