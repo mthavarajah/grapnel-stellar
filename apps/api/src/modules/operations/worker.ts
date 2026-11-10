@@ -2,10 +2,11 @@ import type { Pool } from 'pg';
 import { randomUUID } from 'node:crypto';
 import { transaction } from '../../db/index.js';
 import { OperationService, type ReconciliationResult } from './service.js';
+export interface DeltaVerification {verified:boolean;result:Record<string,unknown>;}
 export interface WorkerChain {
  lookup(txHash:string):Promise<ReconciliationResult&{found:boolean}>;
  broadcast(signedXdr:string):Promise<{txHash:string}>;
- verifyDeltas(operationId:string,txHash:string):Promise<boolean>;
+ verifyDeltas(operationId:string,txHash:string):Promise<boolean|DeltaVerification>;
 }
 export class OperationWorker {
  readonly owner=randomUUID();readonly operations:OperationService;
@@ -24,7 +25,11 @@ export class OperationWorker {
    if(!op.tx_hash){await this.recovery(job.id,op.id);return true;}
    const observed=await this.chain.lookup(op.tx_hash);
    if(observed.found){
-    if(observed.state==='completed')observed.deltaVerified=await this.chain.verifyDeltas(op.id,op.tx_hash);
+    if(observed.state==='completed'){
+     const verification=await this.chain.verifyDeltas(op.id,op.tx_hash);
+     observed.deltaVerified=typeof verification==='boolean'?verification:verification.verified;
+     if(typeof verification!=='boolean')observed.result={...observed.result,...verification.result};
+    }
     await this.operations.recordReconciliation(op.business_id,op.id,observed);
     if(observed.state==='failed' || observed.state==='completed'&&observed.deltaVerified)await this.finish(job.id);else await this.requeue(job.id,job.attempts);
     return true;

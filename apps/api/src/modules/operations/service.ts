@@ -106,7 +106,7 @@ export class OperationService {
    if(!row?.tx_hash)throw new GrapnelError(409,'CHAIN_PROOF_REQUIRED','A submitted transaction hash is required');
    if(['completed','failed','rejected','expired'].includes(row.state))return;
    const state:OperationStatus=result.state==='completed'?(result.deltaVerified?'completed':'confirming'):result.state==='failed'?'failed':'confirming';
-   await client.query('UPDATE operations SET state=$3,result_json=$4,last_checked_at=now(),updated_at=now() WHERE business_id=$1 AND id=$2',[businessId,operationId,state,JSON.stringify(result.result??{})]);
+   await client.query("UPDATE operations SET state=$3,result_json=COALESCE(result_json,'{}'::jsonb)||$4::jsonb,last_checked_at=now(),updated_at=now() WHERE business_id=$1 AND id=$2",[businessId,operationId,state,JSON.stringify(result.result??{})]);
    await client.query('UPDATE testnet_funding_transfers SET status=$3,tx_hash=$4 WHERE business_id=$1 AND operation_id=$2',[businessId,operationId,state,row.tx_hash]);
    if(state==='completed'||state==='failed')await client.query("UPDATE balance_reservations SET state='released' WHERE business_id=$1 AND operation_id=$2",[businessId,operationId]);
   });

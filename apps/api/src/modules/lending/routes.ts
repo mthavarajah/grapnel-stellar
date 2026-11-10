@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import type { FastifyInstance } from 'fastify';
-import { GrapnelError, LendingInputSchema, XLM, toAtomic, type WalletBalance } from '@grapnel/contracts';
+import { GrapnelError, LendingInputSchema, AmountSchema, XLM, toAtomic, type WalletBalance } from '@grapnel/contracts';
 import { BlendAdapter } from '../../adapters/blend/index.js';
 import { requireBusiness, requireCustomer, success } from '../../lib/context.js';
 import { lock } from '../../db/index.js';
@@ -38,6 +38,10 @@ export async function registerLendingRoutes(app:FastifyInstance,deps:LendingRout
      if(body.asset_id!==XLM.id)throw new GrapnelError(422,'ASSET_MISMATCH','Only the verified native XLM reserve is supported for preparation');
      const fee=prepared.summary.maxFeeStroops;
      if(!fee || !/^\d+$/.test(fee) || BigInt(fee)<=0n)throw new GrapnelError(409,'EXECUTION_UNAVAILABLE','A reviewed Soroban fee ceiling is required');
+     const positions=await deps.adapter.positions(customer);
+     const position=positions.find(position=>position.market_id===body.market_id && position.asset_id===XLM.id && position.pool_contract_id===prepared.summary.contractId);
+     if(!position || !Number.isSafeInteger(position.as_of_ledger) || position.as_of_ledger<=0 || !Number.isFinite(Date.parse(position.as_of)) || Date.now()-Date.parse(position.as_of)>30000 || Date.parse(position.as_of)>Date.now()+1000)throw new GrapnelError(409,'POSITION_BASELINE_UNAVAILABLE','A fresh verified Blend collateral baseline is required');
+     AmountSchema.parse(position.collateral);
      const balance=(await deps.balanceReader(customer.walletAddress)).find(balance=>balance.asset_id===XLM.id);
      if(!balance)throw new GrapnelError(409,'BALANCE_UNAVAILABLE','Confirmed native XLM balance is required');
      const available=/^0(?:\.0+)?$/.test(balance.spendable)?0n:toAtomic(balance.spendable,7);
@@ -45,6 +49,7 @@ export async function registerLendingRoutes(app:FastifyInstance,deps:LendingRout
      // The classic balance reader already excludes minimum balance and a conservative base fee.
      const required=(action==='supply'?toAtomic(body.amount,7):0n)+BigInt(fee);
      await deps.operations.reserve(client,{businessId:customer.businessId,customerId:customer.customerId,walletId:customer.walletId,operationId,assetId:XLM.id,amountAtomic:required,spendableAtomic:available,observedAt:new Date(balance.as_of),expiresAt:new Date(prepared.authorization.expiresAt)});
+     await client.query("UPDATE operations SET result_json=COALESCE(result_json,'{}'::jsonb)||$3::jsonb WHERE business_id=$1 AND id=$2",[customer.businessId,operationId,JSON.stringify({blend_supply_baseline:{asset_id:XLM.id,market_id:body.market_id,pool_contract_id:position.pool_contract_id,reserve_contract_id:position.reserve_contract_id,wallet_address:customer.walletAddress,wallet_amount:balance.wallet_amount,collateral:position.collateral,as_of:balance.as_of,position_as_of:position.as_of,position_ledger:position.as_of_ledger}})]);
     }
     await deps.operations.setPrepared(client,customer.businessId,operationId,prepared);
    });
