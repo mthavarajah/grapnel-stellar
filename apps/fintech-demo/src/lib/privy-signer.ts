@@ -1,6 +1,6 @@
 "use client";
 import { Buffer } from "buffer";
-import { Keypair, Transaction, TransactionBuilder } from "@stellar/stellar-sdk";
+import { Address, Asset, Keypair, Transaction, TransactionBuilder, scValToNative } from "@stellar/stellar-sdk";
 import {
   NETWORK,
   NETWORK_PASSPHRASE,
@@ -8,6 +8,39 @@ import {
   PreparedActionSchema,
   type PreparedAction,
 } from "@grapnel/contracts";
+/** Inspect only the reviewed native-XLM Blend collateral supply in the browser.
+ * Other contracts/routes require their own explicit approval inspector. */
+function inspectSupplyApproval(action: PreparedAction, operation: Transaction['operations'][number]): void {
+  try {
+    if(operation.type!=='invokeHostFunction' || action.summary.action!=='blend.supply'
+      || action.summary.fromAssetId!==`${NETWORK}:native:XLM` || action.summary.toAssetId!==undefined
+      || action.summary.minReceive!==undefined || action.summary.recipient!==action.walletAddress
+      || !action.summary.contractId || !action.summary.amount
+      || operation.func.switch().name!=='hostFunctionTypeInvokeContract')throw Error();
+    const invocation=operation.func.invokeContract();
+    const pool=action.summary.contractId;
+    const native=Asset.native().contractId(NETWORK_PASSPHRASE);
+    const amount=toAtomic(action.summary.amount,7);
+    const args=invocation.args().map(scValToNative);
+    if(Address.fromScAddress(invocation.contractAddress()).toString()!==pool || invocation.functionName().toString()!=='submit'
+      || args.length!==4 || args.slice(0,3).some(value=>value!==action.walletAddress)
+      || !Array.isArray(args[3]) || args[3].length!==1)throw Error();
+    const request=args[3][0];
+    if(!request || typeof request!=='object' || Object.keys(request).sort().join(',')!=='address,amount,request_type'
+      || request.address!==native || request.amount!==amount || request.request_type!==2)throw Error();
+    const auth=operation.auth;
+    if(auth?.length!==1 || auth[0]!.credentials().switch().name!=='sorobanCredentialsSourceAccount')throw Error();
+    const root=auth[0]!.rootInvocation();
+    if(root.function().switch().name!=='sorobanAuthorizedFunctionTypeContractFn'
+      || root.function().contractFn().toXDR('base64')!==invocation.toXDR('base64')
+      || root.subInvocations().length!==1)throw Error();
+    const child=root.subInvocations()[0]!;
+    if(child.function().switch().name!=='sorobanAuthorizedFunctionTypeContractFn' || child.subInvocations().length)throw Error();
+    const transfer=child.function().contractFn();const values=transfer.args().map(scValToNative);
+    if(Address.fromScAddress(transfer.contractAddress()).toString()!==native || transfer.functionName().toString()!=='transfer'
+      || values.length!==3 || values[0]!==action.walletAddress || values[1]!==pool || values[2]!==amount)throw Error();
+  }catch{throw Error('Contract invocation differs from the reviewed native XLM supply intent');}
+}
 /** Sign only the exact server-prepared action after the customer reviews the summary. */
 export async function signPreparedAction(
   action: PreparedAction,
@@ -70,7 +103,9 @@ export async function signPreparedAction(
         "Prepared payment differs from the approved recipient, asset, or amount intent",
       );
     }
-  } else if (operation.type !== "invokeHostFunction") {
+  } else if (operation.type === "invokeHostFunction") {
+    inspectSupplyApproval(action,operation);
+  } else {
     throw Error(
       "This transaction operation has no supported approval inspector",
     );

@@ -1,6 +1,8 @@
 import { describe, expect, it } from "vitest";
 import {
   Account,
+  Contract,
+  StrKey,
   Asset,
   Keypair,
   Networks,
@@ -131,4 +133,13 @@ describe("browser customer signer (offline fixtures only)", () => {
       ),
     ).rejects.toThrow("does not match");
   });
+});
+
+it('never prompts Privy to sign an opaque contract invocation with a payment summary',async()=>{
+ const {wallet,action}=fixture();
+ const contract=StrKey.encodeContract(Buffer.alloc(32,5));
+ const tx=new TransactionBuilder(new Account(wallet.publicKey(),'1'),{fee:'100',networkPassphrase:Networks.TESTNET}).addOperation(new Contract(contract).call('unreviewed')).setTimeout(30).build();
+ let calls=0;
+ await expect(signPreparedAction({...action,unsignedXdr:tx.toXDR(),signingHashHex:tx.hash().toString('hex')},async()=>{calls++;return {signature:'0x00'};},wallet.publicKey())).rejects.toThrow('reviewed');
+ expect(calls).toBe(0);
 });
