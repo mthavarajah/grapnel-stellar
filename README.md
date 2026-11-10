@@ -57,7 +57,7 @@ Live Blend pool/reserve reads and a **read-only** 1 XLM collateral supply simula
 
 Soroswap's unauthenticated Testnet protocol request returned `401 MISSING_CREDENTIAL`. No valid quote, swap or fill exists. Default markets stay empty and writes return structured unavailable errors. Stocks, commodities and perps remain discovery-only, with no invented shares, balances or positions and no geographic restriction bypass.
 
-The restricted `/v1/capital/wallets/:id/test-payment` endpoint prepares a customer-authorized payment of at most 1 XLM to the fixed treasury for Gate 1. This signing spike may run before provider execution gates. Funding/return/provider writes stay gated until independently verified Gate 1 evidence is recorded. Soroban invocation/auth/footprint inspection and actual signed execution remain incomplete. No Freighter fallback has been used.
+The restricted `/v1/capital/wallets/:id/test-payment` endpoint prepares a customer-authorized payment of at most 1 XLM to the fixed treasury for Gate 1. This signing spike may run before provider execution gates. Funding/return/provider writes stay gated until independently verified Gate 1 evidence is recorded. A narrow native-XLM Blend supply inspector and enforce-mode simulation are implemented, with gated submission and observed position/wallet reconciliation. Actual signed execution remains unproven; withdrawal inspection and Soroswap route inspection still require provider/customer acceptance. No Freighter fallback has been used.
 
 ## Validation and deployment
 

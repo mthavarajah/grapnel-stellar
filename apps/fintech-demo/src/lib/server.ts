@@ -263,7 +263,7 @@ export async function grapnel(
         options.body === undefined ? undefined : JSON.stringify(options.body),
       cache: "no-store",
       redirect: "error",
-      signal: AbortSignal.timeout(20000),
+      signal: AbortSignal.timeout(45000),
     });
   } catch {
     throw new BffError(

@@ -9,7 +9,7 @@ import {
 } from "@privy-io/react-auth";
 import { useSignRawHash } from "@privy-io/react-auth/extended-chains";
 import type { PreparedAction } from "@grapnel/contracts";
-import { api, ClientError } from "@/lib/client";
+import { api, ClientError, operationRequestKey, clearOperationRequest } from "@/lib/client";
 import { signPreparedAction } from "@/lib/privy-signer";
 type Capability = {
   module: string;
@@ -307,12 +307,19 @@ function FinanceShell({ page, auth }: { page: string; auth?: Auth }) {
     }
   }
   async function start(path: string, body: unknown) {
-    const op = await api("grapnel/" + path, body);
-    setActive(
-      op.status === "awaiting_customer_authorization"
-        ? await api("grapnel/operations/" + op.operation_id)
-        : op,
-    );
+    if(!session)throw Error('A current customer session is required');
+    const key=operationRequestKey(session.customer_id,path,body);
+    let op;
+    try{
+      op=await api('grapnel/'+path,body,'POST',key);
+    }catch(error){
+      if(error instanceof ClientError && error.status<500 && error.status!==408)clearOperationRequest(session.customer_id,path,body);
+      throw error;
+    }
+    if(!op?.operation_id)throw Error('Operation status is uncertain; retry this same action to recover it');
+    clearOperationRequest(session.customer_id,path,body);
+    setActive(op);
+    if(op.status==='awaiting_customer_authorization')setActive(await api('grapnel/operations/'+op.operation_id));
   }
   async function approve() {
     if (
