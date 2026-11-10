@@ -2,7 +2,7 @@
   "openapi": "3.1.0",
   "info": {
     "title": "Grapnel Testnet API",
-    "version": "0.1.0",
+    "version": "0.1.1",
     "description": "Stellar Testnet only. See docs/03_API.md and packages/contracts for frozen payload schemas."
   },
   "servers": [
@@ -2675,6 +2675,119 @@
             }
           }
         ]
+      }
+    },
+    "/v1/operations": {
+      "get": {
+        "operationId": "listOperations",
+        "security": [
+          {
+            "businessKey": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "customer_id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "in": "header",
+            "name": "X-Customer-Identity",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Tenant and customer-scoped operation activity",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/capital/wallets/{id}/test-payment": {
+      "post": {
+        "operationId": "prepareSigningGatePayment",
+        "security": [
+          {
+            "businessKey": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "X-Customer-Identity",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "customer_id",
+                  "amount"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "customer_id": {
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  "amount": {
+                    "$ref": "#/components/schemas/Amount"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "202": {
+            "description": "Restricted <=1 XLM customer-signed Testnet payment to configured treasury, signing proof only"
+          },
+          "403": {
+            "description": "Missing customer authority"
+          },
+          "409": {
+            "description": "Execution unavailable"
+          }
+        }
       }
     }
   },

@@ -40,5 +40,6 @@
     },
     "explorer_url": "https://stellar.expert/explorer/testnet/tx/f89109f4379358f0e11771eef6e3aa7e9797dd9b99bf5c576ad3a61d37f76a36",
     "source": "Friendbot XLM activation; not a Privy-signed customer payment or treasury grant"
-  }
+  },
+  "gate1": null
 }

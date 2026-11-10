@@ -12,6 +12,7 @@
     "db:migrate": "tsx src/db/migrate.ts"
   },
   "dependencies": {
+    "@blend-capital/blend-sdk": "4.0.0",
     "@fastify/cookie": "11.0.2",
     "@fastify/cors": "11.1.0",
     "@fastify/rate-limit": "10.3.0",

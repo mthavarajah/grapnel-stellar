@@ -100,6 +100,12 @@ export async function buildApp(options:AppOptions={}):Promise<FastifyInstance>{
  app.get('/v1/capabilities',async request=>{const business=await requireBusiness(request);return success(request,{capabilities:await capabilities(business.businessId),revision:(await pool.query('SELECT revision FROM businesses WHERE id=$1',[business.businessId])).rows[0].revision});});
  app.post('/v1/customers',async request=>{const business=await requireBusiness(request);const body=CustomerInputSchema.parse(request.body);const row=(await pool.query('INSERT INTO customers(business_id,external_customer_id) VALUES($1,$2) ON CONFLICT (business_id,external_customer_id) DO UPDATE SET external_customer_id=EXCLUDED.external_customer_id RETURNING id,external_customer_id,created_at',[business.businessId,body.external_customer_id])).rows[0];return success(request,{customer_id:row.id,...row});});
  app.get('/v1/customers/:id',async request=>{const business=await requireBusiness(request);const {id}=request.params as {id:string};const row=(await pool.query('SELECT id,external_customer_id,created_at FROM customers WHERE business_id=$1 AND id=$2',[business.businessId,id])).rows[0];if(!row)throw new GrapnelError(404,'NOT_FOUND','Customer not found');return success(request,{customer_id:row.id,...row});});
+ app.get('/v1/operations',async request=>{
+  const business=await requireBusiness(request);const {customer_id}=z.object({customer_id:z.string().uuid()}).strict().parse(request.query);
+  await requireCustomer(request,customer_id);
+  const rows=(await pool.query('SELECT id FROM operations WHERE business_id=$1 AND customer_id=$2 ORDER BY created_at DESC LIMIT 100',[business.businessId,customer_id])).rows;
+  return success(request,{operations:await Promise.all(rows.map(row=>operations.get(business.businessId,row.id)))});
+ });
  app.get('/v1/operations/:id',async request=>{
   const business=await requireBusiness(request);const {id}=request.params as {id:string};const operation=await operations.get(business.businessId,id);
   if(request.headers['x-customer-identity']){

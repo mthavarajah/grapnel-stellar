@@ -30,7 +30,12 @@ export class OperationWorker {
    }
    const attempts=await this.pool.query('SELECT 1 FROM operation_attempts WHERE business_id=$1 AND operation_id=$2',[op.business_id,op.id]);
    // Unknown ledger status after a previous network attempt requires review; do not generate or broadcast a replacement.
-   if(attempts.rowCount || job.job_type!=='broadcast' || !op.signed_xdr){await this.recovery(job.id,op.id);return true;}
+   if(attempts.rowCount){
+    // Ledger ingestion can lag a successful send. Poll the same hash without a second broadcast.
+    if(Date.now()-new Date(op.updated_at).getTime()<180000){await this.requeue(job.id,job.attempts);return true;}
+    await this.recovery(job.id,op.id);return true;
+   }
+   if(job.job_type!=='broadcast' || !op.signed_xdr){await this.recovery(job.id,op.id);return true;}
    await transaction(this.pool,async client=>{
     await client.query("UPDATE operations SET state='submitted',updated_at=now() WHERE id=$1",[op.id]);
     await client.query('INSERT INTO operation_attempts(operation_id,business_id,attempt_no,provider,tx_hash) VALUES($1,$2,1,$3,$4)',[op.id,op.business_id,op.provider,op.tx_hash]);
