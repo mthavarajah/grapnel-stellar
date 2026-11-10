@@ -1,7 +1,7 @@
 import { readFile } from 'node:fs/promises';
 import type { Pool } from 'pg';
 import { z } from 'zod';
-import { GrapnelError, NETWORK_PASSPHRASE, WalletInputSchema, XLM, toAtomic } from '@grapnel/contracts';
+import { GrapnelError, NETWORK_PASSPHRASE, WalletInputSchema, AmountSchema, XLM, toAtomic } from '@grapnel/contracts';
 import { buildApp } from './app.js';
 import { createPool } from './db/index.js';
 import { loadConfig } from './lib/config.js';
@@ -9,6 +9,9 @@ import { requireBusiness, requireCustomer, success } from './lib/context.js';
 import { createPrivyClient, PrivyIdentityVerifier, PrivyWalletSigner } from './adapters/privy/index.js';
 import { parseTestnetTransaction, StellarTestnetExecutor, verifySignedAction } from './adapters/stellar/index.js';
 import { TestnetFundingAdapter } from './adapters/testnet-funding/index.js';
+import { SoroswapSpotAdapter } from './adapters/soroswap/index.js';
+import { SpotService } from './modules/spot/service.js';
+import { registerSpotRoutes } from './modules/spot/routes.js';
 import { WalletService } from './modules/wallets/service.js';
 import { FundingService } from './modules/funding/service.js';
 import { registerFundingRoutes } from './modules/funding/routes.js';
@@ -36,11 +39,13 @@ export async function createRuntime(pool?:Pool) {
  const operations=new OperationService(db);
  const gate1Passed=await hasGate1Proof(chain);
  const funding=new TestnetFundingAdapter({network:config.network,networkPassphrase:NETWORK_PASSPHRASE,treasurySecret:process.env.DEMO_TREASURY_SECRET,enabled:process.env.TESTNET_FUNDING_ENABLED==='true',gate1Passed,maxPerCustomerAtomic:BigInt(process.env.TESTNET_FUNDING_MAX_PER_CUSTOMER_ATOMIC??'250000000'),maxPerTenantAtomic:BigInt(process.env.TESTNET_FUNDING_MAX_PER_TENANT_ATOMIC??'1000000000'),maxGlobalAtomic:BigInt(process.env.TESTNET_FUNDING_MAX_GLOBAL_ATOMIC??'2000000000')});
+ const spot=new SoroswapSpotAdapter({network:config.network,networkPassphrase:NETWORK_PASSPHRASE,apiKey:process.env.SOROSWAP_API_KEY,gate1Passed});
  const app=await buildApp({pool:db,config,identityVerifier:identity,
   verifySignedAction:async(action,signed)=>{verifySignedAction(action,signed);return {txHash:parseTestnetTransaction(signed).hash().toString('hex')};},
   balanceReader:address=>chain.getClassicBalances(address),
   capabilities:{
-   'capital.wallets':async()=>({execution_status:'blocked',reason:privy?'Privy-signed Testnet payment proof is pending':'PRIVY_APP_ID and PRIVY_APP_SECRET are required',actions:[]}),
+   'trade.spot':async()=>spot.capability(),
+   'capital.wallets':async()=>({execution_status:gate1Passed?'testnet_verified':'blocked',reason:gate1Passed?null:privy?'Privy-signed Testnet payment proof is pending':'PRIVY_APP_ID and PRIVY_APP_SECRET are required',actions:gate1Passed?['provision','balances','test_payment']:[]}),
    'capital.testnet_funding':async()=>({execution_status:'blocked',reason:funding.blockedReason()??'Confirmed funding and return proof required',actions:[]})
   },
   registerAdapters:async app=>{
@@ -50,11 +55,11 @@ export async function createRuntime(pool?:Pool) {
    // Restricted signing-gate payment: customer authorizes a maximum 1 XLM to the fixed Testnet treasury.
    app.post('/v1/capital/wallets/:id/test-payment',async(request,reply)=>{
     const b=await requireBusiness(request,'capital.wallets');
-    const body=z.object({customer_id:z.string().uuid(),amount:z.string()}).strict().parse(request.body);
+    const body=z.object({customer_id:z.string().uuid(),amount:AmountSchema}).strict().parse(request.body);
     const id=(request.params as {id:string}).id;
     const customer=await requireCustomer(request,body.customer_id,id);
     if(!funding.treasuryAddress)throw new GrapnelError(409,'EXECUTION_UNAVAILABLE','Testnet treasury recipient is not configured');
-    const amount=toAtomic(body.amount,7);
+    let amount:bigint;try{amount=toAtomic(body.amount,7);}catch{throw new GrapnelError(422,'INVALID_AMOUNT','A positive amount with at most seven decimals is required');}
     if(amount>10000000n)throw new GrapnelError(422,'INVALID_AMOUNT','Signing-gate payment is limited to 1 Testnet XLM');
     const result=await operations.createIdempotent({businessId:b.businessId,customerId:customer.customerId,walletId:id,module:'capital.wallets',type:'wallet.test_payment',provider:'stellar_privy',route:'/v1/capital/wallets/:id/test-payment',idempotencyKey:String(request.headers['idempotency-key']??''),request:{wallet_id:id,...body}},async(client,operationId)=>{
      const balances=await chain.getClassicBalances(customer.walletAddress);const balance=balances.find(x=>x.asset_id===XLM.id);
@@ -64,6 +69,7 @@ export async function createRuntime(pool?:Pool) {
     });
     return reply.code(202).send(success(request,result.operation));
    });
+   await registerSpotRoutes(app,{service:new SpotService(spot,db,operations),requireBusiness,requireCustomer,success,readPositions:async customer=>({wallet_holdings:await wallets.balances(customer.businessId,customer.walletId),venue_positions:[]})});
    await registerFundingRoutes(app,{service:new FundingService(funding,operations),requireBusiness,requireCustomer,success});
   }
  });

@@ -41,5 +41,45 @@
     "explorer_url": "https://stellar.expert/explorer/testnet/tx/f89109f4379358f0e11771eef6e3aa7e9797dd9b99bf5c576ad3a61d37f76a36",
     "source": "Friendbot XLM activation; not a Privy-signed customer payment or treasury grant"
   },
-  "gate1": null
+  "gate1": null,
+  "local_api_checks": {
+    "observed_at": "2026-11-10T14:46:38.889Z",
+    "api": "http://localhost:3001",
+    "health": {
+      "status": "ok",
+      "network": "stellar-testnet",
+      "db": "ok"
+    },
+    "owner_login": 200,
+    "api_key_issued": 200,
+    "key_list_hides_secret": true,
+    "same_key_funding_disabled": 403,
+    "same_key_funding_enabled": 200,
+    "revoked_key": 401,
+    "funding_assets": [
+      {
+        "asset_id": "stellar-testnet:native:XLM",
+        "asset": {
+          "id": "stellar-testnet:native:XLM",
+          "network": "stellar-testnet",
+          "kind": "native",
+          "code": "XLM",
+          "decimals": 7,
+          "verified": true,
+          "sourceUrl": "https://developers.stellar.org/docs/tokens/stellar-asset-contract"
+        },
+        "network": "stellar-testnet",
+        "treasury_address": "GCY4DPMIBYCQ352UDKVWDJFKRXOIB2YCOLF2PQFUZHZPYU4WD4PW3LBE",
+        "treasury_available": "9998.9990000",
+        "available": false,
+        "execution_status": "blocked",
+        "reason": "GATE_1_SIGNING_PROOF_REQUIRED",
+        "max_per_customer": "25.0000000",
+        "max_per_tenant": "100.0000000",
+        "max_global": "200.0000000",
+        "provider_compatibility": [],
+        "as_of": "2026-11-10T14:46:38.881Z"
+      }
+    ]
+  }
 }

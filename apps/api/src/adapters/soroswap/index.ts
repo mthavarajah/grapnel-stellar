@@ -84,6 +84,8 @@ export class SoroswapSpotAdapter {
     return {network:'testnet',assets:result.assets};
   }
   async quote(input:{quoteId:string;marketId:string;assetId:string;amount:string;slippageBps:number}):Promise<SpotQuote> {
+    if(!this.config.apiKey)return unavailable('PROVIDER_ACCESS_REQUIRED');
+    if(!this.registry.size)return unavailable('SOROSWAP_MARKET_REGISTRY_REQUIRED');
     const market=this.market(input.marketId);
     if(input.assetId!==market.asset_in.id)throw new GrapnelError(422,'ASSET_MISMATCH','Exact input asset does not match market');
     let amount:bigint;try{amount=toAtomic(input.amount,market.asset_in.decimals);}catch{throw new GrapnelError(422,'INVALID_AMOUNT','Invalid positive amount or precision');}
