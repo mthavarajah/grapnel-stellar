@@ -11,6 +11,7 @@ export class OperationWorker {
  readonly owner=randomUUID();readonly operations:OperationService;
  constructor(readonly pool:Pool,readonly chain:WorkerChain){this.operations=new OperationService(pool);}
  async tick():Promise<boolean>{
+  await this.operations.expireUnsignedActions();
   const job=await transaction(this.pool,async client=>{
    const row=(await client.query("SELECT j.* FROM worker_jobs j WHERE (j.state='pending' OR (j.state='in_progress' AND j.lease_until<now())) AND j.next_attempt_at<=now() ORDER BY j.next_attempt_at FOR UPDATE SKIP LOCKED LIMIT 1")).rows[0];
    if(!row)return undefined;

@@ -14,8 +14,26 @@ export function serializeOperation(row:QueryResultRow,withPrepared=false):Operat
 export class OperationService {
  constructor(public readonly pool:Pool){}
  async get(businessId:string,id:string,withPrepared=false):Promise<Operation>{
+  await this.expireUnsignedActions(businessId,id);
   const row=(await this.pool.query('SELECT * FROM operations WHERE business_id=$1 AND id=$2',[businessId,id])).rows[0];
   if(!row)throw new GrapnelError(404,'NOT_FOUND','Operation not found');return serializeOperation(row,withPrepared);
+ }
+ /** Release only expired, never-submitted approvals. An uncertain signed send always retains its hold. */
+ async expireUnsignedActions(businessId?:string,operationId?:string):Promise<number>{
+  return transaction(this.pool,async client=>{
+   const rows=(await client.query(`SELECT id,business_id FROM operations
+    WHERE state='awaiting_customer_authorization' AND tx_hash IS NULL AND signed_xdr IS NULL
+     AND (prepared_action->'authorization'->>'expiresAt')::timestamptz<=now()
+     AND ($1::uuid IS NULL OR business_id=$1) AND ($2::uuid IS NULL OR id=$2)
+    ORDER BY updated_at FOR UPDATE SKIP LOCKED LIMIT 100`,[businessId??null,operationId??null])).rows;
+   for(const row of rows){
+    await client.query("UPDATE operations SET state='expired',error_code='ACTION_EXPIRED',error_message='Unsigned customer approval expired; request a new action',updated_at=now() WHERE business_id=$1 AND id=$2",[row.business_id,row.id]);
+    await client.query("UPDATE balance_reservations SET state='released' WHERE business_id=$1 AND operation_id=$2 AND state='active'",[row.business_id,row.id]);
+    await client.query("UPDATE wallet_authorizations SET status='expired' WHERE business_id=$1 AND operation_id=$2 AND consumed_at IS NULL AND status='pending'",[row.business_id,row.id]);
+    await client.query("UPDATE testnet_funding_transfers SET status='expired' WHERE business_id=$1 AND operation_id=$2",[row.business_id,row.id]);
+   }
+   return rows.length;
+  });
  }
  async createIdempotent(input:CreateOperationInput,prepare?:(client:PoolClient,operationId:string)=>Promise<void>):Promise<{operation:Operation;created:boolean}>{
   if(!input.idempotencyKey || input.idempotencyKey.length>200)throw new GrapnelError(400,'IDEMPOTENCY_KEY_REQUIRED','Idempotency-Key must contain 1–200 characters');
@@ -65,6 +83,7 @@ export class OperationService {
   });
  }
  async authorize(input:{businessId:string;operationId:string;customerId:string;token:string;signedXdr:string;verify:(action:PreparedAction,signedXdr:string)=>Promise<{txHash:string}>}):Promise<Operation>{
+  await this.expireUnsignedActions(input.businessId,input.operationId);
   return transaction(this.pool,async client=>{
    const row=(await client.query('SELECT * FROM operations WHERE business_id=$1 AND id=$2 FOR UPDATE',[input.businessId,input.operationId])).rows[0];
    if(!row || row.customer_id!==input.customerId)throw new GrapnelError(404,'NOT_FOUND','Operation not found');

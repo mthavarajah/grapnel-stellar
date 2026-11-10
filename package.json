@@ -11,14 +11,16 @@
     "dev:dashboard": "pnpm --filter @grapnel/dashboard dev",
     "dev:fintech": "pnpm --filter @grapnel/fintech-demo dev",
     "build": "pnpm -r build",
-    "typecheck": "pnpm -r typecheck",
+    "typecheck": "pnpm -r typecheck && tsc --noEmit -p tests/tsconfig.json",
     "lint": "pnpm typecheck",
     "test": "vitest run",
     "test:integration": "vitest run --config tests/vitest.integration.config.ts",
     "test:e2e": "playwright test --config tests/playwright.config.ts",
     "smoke:testnet": "tsx scripts/smoke-testnet.ts",
     "db:migrate": "pnpm --filter @grapnel/api db:migrate",
-    "db:seed": "tsx scripts/seed-demo.ts"
+    "db:seed": "tsx scripts/seed-demo.ts",
+    "check:env": "tsx scripts/check-env.ts",
+    "check:secrets": "tsx scripts/scan-secrets.ts"
   },
   "devDependencies": {
     "typescript": "5.9.3",

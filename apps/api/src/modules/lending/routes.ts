@@ -34,13 +34,17 @@ export async function registerLendingRoutes(app:FastifyInstance,deps:LendingRout
     const pending=await client.query("SELECT id FROM operations WHERE business_id=$1 AND wallet_id=$2 AND module_code='capital.lending' AND id<>$3 AND request_json->>'market_id'=$4 AND state NOT IN ('completed','failed','rejected','expired') LIMIT 1",[customer.businessId,customer.walletId,operationId,body.market_id]);
     if(pending.rowCount)throw new GrapnelError(409,'POSITION_BUSY','An earlier position operation awaits reconciliation');
     const prepared=await deps.adapter.prepare(action,{operationId,marketId:body.market_id,assetId:body.asset_id,amount:body.amount},customer);
-    if(action==='supply'){
+    if(action==='supply'||action==='withdraw'){
      if(body.asset_id!==XLM.id)throw new GrapnelError(422,'ASSET_MISMATCH','Only the verified native XLM reserve is supported for preparation');
+     const fee=prepared.summary.maxFeeStroops;
+     if(!fee || !/^\d+$/.test(fee) || BigInt(fee)<=0n)throw new GrapnelError(409,'EXECUTION_UNAVAILABLE','A reviewed Soroban fee ceiling is required');
      const balance=(await deps.balanceReader(customer.walletAddress)).find(balance=>balance.asset_id===XLM.id);
      if(!balance)throw new GrapnelError(409,'BALANCE_UNAVAILABLE','Confirmed native XLM balance is required');
      const available=/^0(?:\.0+)?$/.test(balance.spendable)?0n:toAtomic(balance.spendable,7);
-     // Balance reader excludes native reserve and conservative fee; core subtracts active reservations.
-     await deps.operations.reserve(client,{businessId:customer.businessId,customerId:customer.customerId,walletId:customer.walletId,operationId,assetId:XLM.id,amountAtomic:toAtomic(body.amount,7),spendableAtomic:available,observedAt:new Date(balance.as_of),expiresAt:new Date(prepared.authorization.expiresAt)});
+     // Reserve the actual approved Soroban resource fee, including on a withdrawal.
+     // The classic balance reader already excludes minimum balance and a conservative base fee.
+     const required=(action==='supply'?toAtomic(body.amount,7):0n)+BigInt(fee);
+     await deps.operations.reserve(client,{businessId:customer.businessId,customerId:customer.customerId,walletId:customer.walletId,operationId,assetId:XLM.id,amountAtomic:required,spendableAtomic:available,observedAt:new Date(balance.as_of),expiresAt:new Date(prepared.authorization.expiresAt)});
     }
     await deps.operations.setPrepared(client,customer.businessId,operationId,prepared);
    });

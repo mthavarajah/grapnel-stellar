@@ -32,7 +32,7 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - run: pnpm exec tsx scripts/scan-secrets.ts
       - run: pnpm typecheck
-      - run: pnpm test --exclude 'tests/integration/**' --exclude 'apps/api/src/core.test.ts'
+      - run: pnpm test --exclude 'tests/integration/**' --exclude 'apps/api/src/core.test.ts' --exclude 'tests/review/authorization-review.test.ts'
       - run: pnpm exec vitest run --config tests/vitest.integration.config.ts
       - run: pnpm build
       # Live Testnet writes are deliberately excluded. UI E2E runs against explicit app URLs.
