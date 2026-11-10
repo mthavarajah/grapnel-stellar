@@ -24,5 +24,21 @@
     "fintech": null,
     "github": null,
     "video": null
+  },
+  "treasury_activation": {
+    "observed_at": "2026-11-10T14:39:56.133Z",
+    "network": "stellar-testnet",
+    "purpose": "treasury_activation_only",
+    "treasury_address": "GCY4DPMIBYCQ352UDKVWDJFKRXOIB2YCOLF2PQFUZHZPYU4WD4PW3LBE",
+    "asset_id": "stellar-testnet:native:XLM",
+    "balance": "10000.0000000",
+    "tx_hash": "f89109f4379358f0e11771eef6e3aa7e9797dd9b99bf5c576ad3a61d37f76a36",
+    "chain_result": {
+      "hash": "f89109f4379358f0e11771eef6e3aa7e9797dd9b99bf5c576ad3a61d37f76a36",
+      "ledger": 5659589,
+      "successful": true
+    },
+    "explorer_url": "https://stellar.expert/explorer/testnet/tx/f89109f4379358f0e11771eef6e3aa7e9797dd9b99bf5c576ad3a61d37f76a36",
+    "source": "Friendbot XLM activation; not a Privy-signed customer payment or treasury grant"
   }
 }

@@ -13,3 +13,6 @@ No confirmed treasury grant/return, Soroswap swap, or Blend supply/withdraw reco
 
 ## Gate 3 — pending
 Public application URLs, public project repository and functional video absent. Railway/Vercel connections offered; neither confirmed connected. Existing unrelated private grapnel-api repository will not be overwritten.
+
+## Independently confirmed infrastructure evidence
+Treasury `GCY4DPMIBYCQ352UDKVWDJFKRXOIB2YCOLF2PQFUZHZPYU4WD4PW3LBE` activated via Friendbot; Horizon confirmed successful transaction `f89109f4379358f0e11771eef6e3aa7e9797dd9b99bf5c576ad3a61d37f76a36`, ledger 5659589. Balance read: 10000.0000000 native Testnet XLM. This is treasury activation ONLY, does not pass Gate 1 or treasury grant/return acceptance. Server-only key is ignored and not committed.
