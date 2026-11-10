@@ -53,6 +53,8 @@ export class BlendAdapter {
  private readonly fetcher:typeof fetch;
  private readonly server:rpc.Server;
  private readonly network:{rpc:string;passphrase:string};
+ private cachedSnapshot?:Snapshot;
+ private loadingSnapshot?:Promise<Snapshot>;
  constructor(readonly config:BlendConfig,private readonly deps:BlendReadDependencies={}) {
   if(config.network!=='testnet'||config.passphrase!==NETWORK_PASSPHRASE||(config.rpcUrl&&config.rpcUrl!=='https://soroban-testnet.stellar.org'))throw new GrapnelError(400,'NETWORK_MISMATCH','Blend is restricted to official Stellar Testnet');
   this.network={rpc:config.rpcUrl??'https://soroban-testnet.stellar.org',passphrase:NETWORK_PASSPHRASE};
@@ -81,6 +83,11 @@ export class BlendAdapter {
   return {amount,ledger:simulation.latestLedger};
  }
  private async snapshot():Promise<Snapshot> {
+  if(this.cachedSnapshot && Date.now()-this.cachedSnapshot.observedAt<10000)return this.cachedSnapshot;
+  this.loadingSnapshot??=this.loadSnapshot().then(snapshot=>{this.cachedSnapshot=snapshot;return snapshot;}).finally(()=>{this.loadingSnapshot=undefined;});
+  return this.loadingSnapshot;
+ }
+ private async loadSnapshot():Promise<Snapshot> {
   await this.verifyNetwork();const registry=await this.registry();
   let pool:Pool;try{pool=await bounded(this.deps.loadPool?this.deps.loadPool(registry.poolId):PoolV2.load(this.network,registry.poolId));}catch(error){if(error instanceof GrapnelError)throw error;return providerFailure('Current Blend Testnet pool could not be loaded; contracts may have expired or reset');}
   if(pool.id!==registry.poolId)return providerFailure('Blend returned a different pool');

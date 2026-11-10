@@ -81,5 +81,23 @@
         "as_of": "2026-11-10T14:46:38.881Z"
       }
     ]
+  },
+  "blend_read_only_simulation": {
+    "observed_at": "2026-11-10T14:51:37.690Z",
+    "network": "stellar-testnet",
+    "mode": "read_only_simulation",
+    "source": "GCY4DPMIBYCQ352UDKVWDJFKRXOIB2YCOLF2PQFUZHZPYU4WD4PW3LBE",
+    "pool_contract_id": "CCEBVDYM32YNYCVNRXQKDFFPISJJCV557CDZEIRBEE4NCV4KHPQ44HGF",
+    "reserve_contract_id": "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC",
+    "amount_atomic": "10000000",
+    "latest_ledger": 5659730,
+    "simulation_success": true,
+    "min_resource_fee": "525369",
+    "authorization_types": [
+      "sorobanCredentialsSourceAccount"
+    ],
+    "error": null,
+    "tx_hash": null,
+    "broadcast": false
   }
 }

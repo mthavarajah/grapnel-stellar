@@ -9,6 +9,8 @@ import { requireBusiness, requireCustomer, success } from './lib/context.js';
 import { createPrivyClient, PrivyIdentityVerifier, PrivyWalletSigner } from './adapters/privy/index.js';
 import { parseTestnetTransaction, StellarTestnetExecutor, verifySignedAction } from './adapters/stellar/index.js';
 import { TestnetFundingAdapter } from './adapters/testnet-funding/index.js';
+import { BlendAdapter } from './adapters/blend/index.js';
+import { registerLendingRoutes } from './modules/lending/routes.js';
 import { SoroswapSpotAdapter } from './adapters/soroswap/index.js';
 import { SpotService } from './modules/spot/service.js';
 import { registerSpotRoutes } from './modules/spot/routes.js';
@@ -40,10 +42,21 @@ export async function createRuntime(pool?:Pool) {
  const gate1Passed=await hasGate1Proof(chain);
  const funding=new TestnetFundingAdapter({network:config.network,networkPassphrase:NETWORK_PASSPHRASE,treasurySecret:process.env.DEMO_TREASURY_SECRET,enabled:process.env.TESTNET_FUNDING_ENABLED==='true',gate1Passed,maxPerCustomerAtomic:BigInt(process.env.TESTNET_FUNDING_MAX_PER_CUSTOMER_ATOMIC??'250000000'),maxPerTenantAtomic:BigInt(process.env.TESTNET_FUNDING_MAX_PER_TENANT_ATOMIC??'1000000000'),maxGlobalAtomic:BigInt(process.env.TESTNET_FUNDING_MAX_GLOBAL_ATOMIC??'2000000000')});
  const spot=new SoroswapSpotAdapter({network:config.network,networkPassphrase:NETWORK_PASSPHRASE,apiKey:process.env.SOROSWAP_API_KEY,gate1Passed});
+ const blend=new BlendAdapter({network:config.network,passphrase:NETWORK_PASSPHRASE,rpcUrl:process.env.STELLAR_RPC_URL,gate1Passed},{prepareAndSimulate:input=>chain.prepareAndSimulate(input)});
+ let blendReadiness:{execution_status:'blocked'|'discovery_only';reason:string;actions:string[]}={execution_status:'blocked',reason:'Current Blend readiness probe is pending; financial execution remains gated',actions:[]};
+ let blendProbeAt=0;let blendProbeRunning=false;
+ const readBlendReadiness=async()=>{
+  if(!blendProbeRunning && Date.now()-blendProbeAt>30000){
+   blendProbeRunning=true;
+   void blend.capabilities().then(value=>{blendReadiness=value;}).catch(()=>{blendReadiness={execution_status:'blocked',reason:'Current Blend Testnet reads are unavailable',actions:[]};}).finally(()=>{blendProbeAt=Date.now();blendProbeRunning=false;});
+  }
+  return blendReadiness;
+ };
  const app=await buildApp({pool:db,config,identityVerifier:identity,
   verifySignedAction:async(action,signed)=>{verifySignedAction(action,signed);return {txHash:parseTestnetTransaction(signed).hash().toString('hex')};},
   balanceReader:address=>chain.getClassicBalances(address),
   capabilities:{
+   'capital.lending':readBlendReadiness,
    'trade.spot':async()=>spot.capability(),
    'capital.wallets':async()=>({execution_status:gate1Passed?'testnet_verified':'blocked',reason:gate1Passed?null:privy?'Privy-signed Testnet payment proof is pending':'PRIVY_APP_ID and PRIVY_APP_SECRET are required',actions:gate1Passed?['provision','balances','test_payment']:[]}),
    'capital.testnet_funding':async()=>({execution_status:'blocked',reason:funding.blockedReason()??'Confirmed funding and return proof required',actions:[]})
@@ -69,6 +82,7 @@ export async function createRuntime(pool?:Pool) {
     });
     return reply.code(202).send(success(request,result.operation));
    });
+   await registerLendingRoutes(app,{adapter:blend,operations,balanceReader:address=>chain.getClassicBalances(address)});
    await registerSpotRoutes(app,{service:new SpotService(spot,db,operations),requireBusiness,requireCustomer,success,readPositions:async customer=>({wallet_holdings:await wallets.balances(customer.businessId,customer.walletId),venue_positions:[]})});
    await registerFundingRoutes(app,{service:new FundingService(funding,operations),requireBusiness,requireCustomer,success});
   }

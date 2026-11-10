@@ -14,8 +14,8 @@
     "typecheck": "pnpm -r typecheck",
     "lint": "pnpm typecheck",
     "test": "vitest run",
-    "test:integration": "vitest run --config vitest.integration.config.ts",
-    "test:e2e": "playwright test",
+    "test:integration": "vitest run --config tests/vitest.integration.config.ts",
+    "test:e2e": "playwright test --config tests/playwright.config.ts",
     "smoke:testnet": "tsx scripts/smoke-testnet.ts",
     "db:migrate": "pnpm --filter @grapnel/api db:migrate",
     "db:seed": "tsx scripts/seed-demo.ts"
