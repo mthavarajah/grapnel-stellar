@@ -36,3 +36,28 @@ jobs:
       - run: pnpm exec vitest run --config tests/vitest.integration.config.ts
       - run: pnpm build
       # Live Testnet writes are deliberately excluded. UI E2E runs against explicit app URLs.
+      - name: Build API and worker container
+        run: docker build -f deploy/Dockerfile.api -t grapnel-testnet-api .
+      - name: Smoke container health without provider credentials
+        env:
+          DATABASE_URL: postgres://grapnel:ci-only-password@localhost:5432/grapnel_ci_test
+          STELLAR_NETWORK: testnet
+          STELLAR_NETWORK_PASSPHRASE: Test SDF Network ; September 2015
+          ADMIN_LOGIN_SECRET: ci-only-owner-secret-1234
+          SESSION_SECRET: ci-only-session-secret-at-least-32-characters
+          DASHBOARD_ORIGIN: https://dashboard.invalid
+          FINTECH_ORIGIN: https://fintech.invalid
+        run: |
+          docker run -d --name grapnel-api-smoke --network host \
+            -e DATABASE_URL -e STELLAR_NETWORK -e STELLAR_NETWORK_PASSPHRASE \
+            -e ADMIN_LOGIN_SECRET -e SESSION_SECRET -e DASHBOARD_ORIGIN -e FINTECH_ORIGIN \
+            grapnel-testnet-api
+          for attempt in $(seq 1 30); do
+            if curl --fail --silent http://localhost:3001/health > /tmp/grapnel-health.json; then
+              node -e 'const h=require("/tmp/grapnel-health.json"); if(h.status!=="ok"||h.network!=="stellar-testnet"||h.db!=="ok")process.exit(1)'
+              exit 0
+            fi
+            sleep 1
+          done
+          docker logs grapnel-api-smoke
+          exit 1
