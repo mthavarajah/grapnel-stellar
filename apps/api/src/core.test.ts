@@ -49,3 +49,8 @@ describe.skipIf(!databaseUrl)('Postgres core API integration',()=>{
  it('revokes key immediately',async()=>{const row=(await pool.query('SELECT id FROM api_keys WHERE key_hash=$1',[digest(key)])).rows[0];expect((await app.inject({method:'DELETE',url:`/v1/dashboard/api-keys/${row.id}`,headers:owner()})).statusCode).toBe(200);expect((await app.inject({url:'/v1/capabilities',headers:auth()})).statusCode).toBe(401);});
 });
 describe('Testnet configuration',()=>{it('fails closed for mainnet or implicit network',()=>{expect(()=>loadConfig({STELLAR_NETWORK:'public'})).toThrow('Explicit Stellar Testnet');expect(()=>loadConfig({})).toThrow('Explicit Stellar Testnet');});});
+
+describe('Production origin enforcement',()=>{
+ const base={STELLAR_NETWORK:'testnet',STELLAR_NETWORK_PASSPHRASE:NETWORK_PASSPHRASE,DATABASE_URL:'postgres://localhost/unused',SESSION_SECRET:'s'.repeat(32),ADMIN_LOGIN_SECRET:'a'.repeat(16),NODE_ENV:'production'};
+ it('rejects absent or HTTP production origins at actual server startup',()=>{expect(()=>loadConfig(base)).toThrow('Explicit HTTPS');expect(()=>loadConfig({...base,DASHBOARD_ORIGIN:'http://example.com',FINTECH_ORIGIN:'https://example.net'})).toThrow('must use HTTPS');expect(loadConfig({...base,DASHBOARD_ORIGIN:'https://example.com',FINTECH_ORIGIN:'https://example.net'}).production).toBe(true);});
+});

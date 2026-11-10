@@ -22,7 +22,7 @@ function checkCommon(tx:Transaction,address:string,expiresAt:string,maxFee:strin
   if(BigInt(tx.sequence)<=0n || tx.operations.length!==1 || tx.memo.type!=='none' || tx.extraSigners?.length) fail('INVALID_TRANSACTION','Only one approved operation without additional signers or memo is supported');
   if(tx.operations[0]?.source && tx.operations[0].source!==address) fail('WALLET_MISMATCH','Operation source differs from approved wallet',403);
 }
-export function verifySignedAction(action:PreparedAction,signedXdr:string):void {
+export function verifySignedAction(action:PreparedAction,signedXdr:string,inspectSoroban?:(action:PreparedAction,transaction:Transaction)=>void):void {
   PreparedActionSchema.parse(action);
   if(action.network!==NETWORK || action.authorization.method!=='privy_stellar') fail('NETWORK_MISMATCH','Invalid signing network',400);
   if(Date.parse(action.authorization.expiresAt)<=Date.now()) fail('ACTION_EXPIRED','Customer authorization has expired',403);
@@ -30,6 +30,17 @@ export function verifySignedAction(action:PreparedAction,signedXdr:string):void 
   checkCommon(signed,action.walletAddress,action.summary.expiresAt,action.summary.maxFeeStroops??'1000000');
   const expected=unsigned.hash().toString('hex');
   if(unsigned.signatures.length || expected!==action.signingHashHex || signed.hash().toString('hex')!==expected) fail('INTENT_MISMATCH','Signed transaction differs from the exact prepared intent',403);
+  const operation=signed.operations[0];
+  if(operation?.type==='payment'){
+    const assetId=operation.asset.isNative()?XLM.id:`stellar-testnet:classic:${operation.asset.getCode()}:${operation.asset.getIssuer()}`;
+    let amountMatches=false;
+    try{amountMatches=typeof action.summary.amount==='string' && toAtomic(action.summary.amount,7)===toAtomic(operation.amount,7);}catch{/* Invalid displayed intent is never signable. */}
+    if(!['payment','testnet.return','wallet.test_payment'].includes(action.summary.action) || action.summary.recipient!==operation.destination || action.summary.fromAssetId!==assetId || !amountMatches || (action.summary.toAssetId!==undefined && action.summary.toAssetId!==assetId) || action.summary.contractId!==undefined || action.summary.minReceive!==undefined)fail('INTENT_MISMATCH','Payment amount, recipient, asset or action differs from the displayed approved intent',403);
+  }else if(operation?.type==='invokeHostFunction' && inspectSoroban){
+    inspectSoroban(action,signed);
+  }else{
+    fail('EXECUTION_UNAVAILABLE','This operation type has no reviewed intent inspector',409);
+  }
   if(signed.signatures.length!==1 || !Keypair.fromPublicKey(action.walletAddress).verify(signed.hash(),signed.signatures[0]!.signature())) fail('INVALID_CUSTOMER_SIGNATURE','A signature from the approved customer wallet is required',403);
 }
 /** The browser may use the same SDK calls after Privy useSignRawHash returns 0x + 64-byte Ed25519 signature. */
