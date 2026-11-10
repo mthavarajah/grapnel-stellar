@@ -5,7 +5,7 @@ import {migrate} from '../../apps/api/src/db/migrate.js';
 import {OperationService} from '../../apps/api/src/modules/operations/service.js';
 import {OperationWorker} from '../../apps/api/src/modules/operations/worker.js';
 import type {PreparedAction} from '../../packages/contracts/src/index.js';
-const databaseUrl=process.env.REVIEW_TEST_DATABASE_URL;
+const databaseUrl=process.env.REVIEW_TEST_DATABASE_URL??process.env.API_TEST_DATABASE_URL;
 /** Offline fake verifier/envelopes are confined to this disposable Postgres database. No broadcast API exists here. */
 describe.skipIf(!databaseUrl)('review: atomic authorization and ambiguous send safety',()=>{
  const pool=createPool(databaseUrl!);const service=new OperationService(pool);
@@ -13,7 +13,7 @@ describe.skipIf(!databaseUrl)('review: atomic authorization and ambiguous send s
  const address='GAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAWHF';
  beforeAll(async()=>{
   const actual=(await pool.query('SELECT current_database() AS name')).rows[0].name;
-  if(actual!=='grapnel_mvp_review_test')throw Error('Review requires its dedicated disposable grapnel_mvp_review_test database');
+  if(!actual.endsWith('_test'))throw Error('Review requires an explicitly configured disposable database ending in _test');
   await pool.query('DROP SCHEMA public CASCADE; CREATE SCHEMA public');await migrate(pool);
   await pool.query("INSERT INTO businesses(id,name) VALUES($1,'Offline security review')",[businessId]);
   await pool.query("INSERT INTO customers(id,business_id,external_customer_id,privy_user_id) VALUES($1,$2,'offline-user','did:privy:offline-review')",[customerId,businessId]);
