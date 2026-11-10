@@ -1,43 +1,77 @@
-# Grapnel for Stellar — Agent Execution Pack
+<img src="logos/logo-name-white.png" alt="Grapnel" width="330" />
 
-**Purpose:** hand these Markdown instructions to a coding-agent team starting from an empty monorepo. They are build instructions and a researched provider integration plan, **not** a claim the apps or contracts are already deployed.
+Grapnel is a **Stellar Testnet B2B infrastructure API** with a business dashboard and a separate sample fintech frontend/backend. Businesses enable modules and keep their API key on their server; customers separately authorize wallet spending through Privy.
 
-**Coordination:** **parallel agents with gated integration**. See root [`AGENTS.md`](AGENTS.md), [`docs/01_WORK_PLAN.md`](docs/01_WORK_PLAN.md), then one role file in [`agents/`](agents/). If you have only one agent, run gates serially while treating workstreams as separate components.
+**Implementation exists; the full onchain MVP is incomplete.** Gate 0 is committed. Local API auth, entitlement changes, key lifecycle, durable operations, three application implementations, and live provider reads are implemented. Privy-signed customer payment, treasury grant/return, Soroswap swap, Blend supply/withdraw, public app deployment and qualifying video are not yet verified. See [gate status](docs/15_GATE_STATUS.md) and [evidence](evidence/testnet.json). No production financial service, fiat rails, mainnet writes or custom Grapnel contracts.
 
-**The business model:** companies use Grapnel's documented REST API rather than writing Soroban, Stellar, token, DEX or Blend code. A mock B2B customer uses Grapnel via a separate fintech app. Grapnel dashboard admin selects enabled modules; a server-side business key immediately inherits current entitlements. End users own/sign their wallet actions separately.
+## Run locally
 
-**Scope change (2026-11-10):** No fiat deposits/withdrawals, MoneyGram or Privy Funding APIs in the competition MVP. One `capital.testnet_funding` module replaces the two fiat modules. Friendbot supplies XLM only for account activation; a controlled Testnet treasury handles real supported token grants/returns.
+Prerequisites: Node **22.12+**, pnpm **10.11**, PostgreSQL **16+**. The API refuses implicit or non-Testnet network settings.
 
-**Deliverables to implement:**
-1. Public Grapnel B2B dashboard: tenant signup/demo login, module toggles, one-time API-key display, documentation, recent request log.
-2. Public Grapnel API: business keys, entitlements, customers, wallet/transaction operations, real Testnet funding and return, spot/Blend adapters, capabilities/readiness, OpenAPI.
-3. Public sample fintech frontend plus server-side proxy: login, wallet, Testnet funding/return, available/locked balances, spot trade, Blend Earn and activities; only calls Grapnel for financial operations (the client may call Privy to sign).
-4. Verified Stellar Testnet transfers. Full MVP target includes verified Soroswap swap and Blend supply/withdraw, with actual transaction hashes and position changes. If not executable, record the incomplete acceptance gate and explain honestly.
-5. README that allows judge to reproduce, `.env.example`, public source, evidence transaction hashes/contract IDs where used, working live URL(s), one-minute demo recording, 3-minute pitch and board.
+```sh
+pnpm install --frozen-lockfile
+cp .env.example .env
+# Set DATABASE_URL, ADMIN_LOGIN_SECRET (16+ random characters), SESSION_SECRET (32+).
+# Keep .env ignored; use dedicated Testnet provider credentials only.
+pnpm db:migrate
+pnpm db:seed
+cp apps/dashboard/.env.example apps/dashboard/.env.local
+cp apps/fintech-demo/.env.example apps/fintech-demo/.env.local
+```
 
-**Documentation index**
+Run each service in its own terminal:
 
-| File | Meaning |
-|---|---|
-| `AGENTS.md` | Global instructions, safety, multi-agent gates |
-| `docs/00_PRODUCT.md` | Scope, flows, modules and priorities |
-| `docs/01_WORK_PLAN.md` | Parallel agents, dependencies, tasks, branches |
-| `docs/02_ARCHITECTURE.md` | Monorepo architecture, identity and service boundaries |
-| `docs/03_API.md` | Versioned REST contract, payloads, errors, auth |
-| `docs/04_DATABASE.md` | Postgres schema, constraints, queries, races |
-| `docs/05_SIGNING.md` | Stellar + Privy Tier 2 wallet, XDR and transaction lifecycle |
-| `docs/06_FUNDING.md` | Real Testnet treasury funding, customer-authorized return, asset identities |
-| `docs/07_SPOT.md` | Soroswap/Aquarius/native DEX integration |
-| `docs/08_BLEND.md` | Blend v2 supply, borrow, withdraw and positions |
-| `docs/09_OTHER_ASSETS.md` | Stocks, commodities, Noether with reality gates |
-| `docs/10_FRONTENDS.md` | B2B dashboard and fintech UI flows |
-| `docs/11_TESTS_SECURITY.md` | Unit, integration, threat model, acceptance |
-| `docs/12_DEPLOY_SUBMISSION.md` | Hosting, runbook, demo and evidence |
-| `docs/13_SOURCES.md` | Official docs, verified claims, blockers |
-| `agents/00-orchestrator.md` | Copyable multi-agent coordination and launch instructions |
-| `agents/*.md` | Workstream-specific tasks and owned paths |
-| `templates/HANDOFF.md` | Required agent handoff format |
+```sh
+pnpm dev:api        # http://localhost:3001 — /health, /docs, /openapi.json
+pnpm dev:dashboard  # http://localhost:3000
+pnpm dev:fintech    # http://localhost:3002
+pnpm --filter @grapnel/api worker
+```
 
-**Suggested code stack**: pnpm workspace, TypeScript, Fastify, Zod, PostgreSQL + Drizzle, one polling worker, Next.js + Tailwind for both independent frontends, Stellar SDK, Privy, Soroswap SDK, Blend SDK. Deploy web apps to Vercel and API/worker/DB to Railway or Render; choose one service for each to minimize setup.
+Sign into the dashboard with the configured owner secret. Enable Wallets before other modules, issue a business key once, and put it **only** in the sample fintech's server `GRAPNEL_API_KEY` environment. Set `GRAPNEL_API_URL`, `PRIVY_APP_ID`, `PRIVY_APP_SECRET`, `NEXT_PUBLIC_PRIVY_APP_ID` and a random 32+ character `FINTECH_SESSION_SECRET` in its ignored server environment. Configure the same Privy app and allowed origins. No customer login bypass is provided when Privy is unavailable.
 
-**Warning:** Public hackathon requirements are verified on [Devpost](https://blockchain-stellar-ic.devpost.com/). The separately linked Velocity Notion page returned 404 in browser research, so this pack cannot assert Notion-only requirements. If a copy is supplied, the lead must check it for conflicts. The solution should explicitly target savings, credit and financial asset access rather than claim leveraged perps are safe savings.
+API server variables and names are in [.env.example](.env.example). Dashboard and fintech have independent templates. Never place the business key, Privy secret or treasury secret in a `NEXT_PUBLIC_` variable. App-specific environment files are server configuration; the sample browser only uses the public Privy app ID.
+
+## Modules and authorization
+
+Capital: `capital.wallets`, `capital.testnet_funding`, `capital.lending`. Trade: `trade.spot`, `trade.stocks`, `trade.perps`, `trade.commodities`.
+
+Owner cookies and CSRF protect dashboard administration. A hashed/revocable API key identifies the business; its scopes follow current entitlement records on every request. Customer wallet actions additionally require verified Privy identity, current wallet ownership, exact signed transaction and a one-use authorization token. Tenant-scoped Postgres constraints, idempotency, reservations and durable worker records protect state.
+
+```sh
+curl http://localhost:3001/health
+# Set GRAPNEL_API_KEY in your shell without placing it in source/history.
+curl -H "Authorization: Bearer $GRAPNEL_API_KEY" \
+  http://localhost:3001/v1/capabilities
+```
+
+Module administration uses an owner session: `POST /v1/dashboard/login`, then the cookie and returned CSRF token for `PATCH /v1/dashboard/modules`. See the dashboard, [REST contract](docs/03_API.md), [OpenAPI](openapi/grapnel.yaml), and [frozen integration rules](docs/14_GATE0_FREEZE.md). Existing keys gain/lose entitlements without rotation.
+
+Financial operations return `202` and require polling. The worker stores hash/envelope before sending and reconciles chain result plus relevant effects before completion. It polls the same hash through indexing delays and never blindly creates a replacement transfer.
+
+## Real evidence and limits
+
+A dedicated Testnet treasury was activated with Friendbot, with **10,000 native XLM** independently read at activation. [Confirmed activation transaction](https://stellar.expert/explorer/testnet/tx/f89109f4379358f0e11771eef6e3aa7e9797dd9b99bf5c576ad3a61d37f76a36). This is **treasury activation only**, not a Privy-signed customer payment or grant/return proof.
+
+Live Blend pool/reserve reads and a **read-only** 1 XLM collateral supply simulation succeeded. No supply transaction was signed or broadcast. The existing Blend pool and token contracts belong to Blend. Current exact asset identities and timestamped reads are preserved in [Blend research](apps/api/src/adapters/blend/research/testnet-read.json). Its current USDC reserve is a classic issuer asset exposed through a SAC; it is distinct from native XLM and is not held by this treasury merely because the symbol is USDC.
+
+Soroswap's unauthenticated Testnet protocol request returned `401 MISSING_CREDENTIAL`. No valid quote, swap or fill exists. Default markets stay empty and writes return structured unavailable errors. Stocks, commodities and perps remain discovery-only, with no invented shares, balances or positions and no geographic restriction bypass.
+
+The restricted `/v1/capital/wallets/:id/test-payment` endpoint prepares a customer-authorized payment of at most 1 XLM to the fixed treasury for Gate 1. This signing spike may run before provider execution gates. Funding/return/provider writes stay gated until independently verified Gate 1 evidence is recorded. Soroban invocation/auth/footprint inspection and actual signed execution remain incomplete. No Freighter fallback has been used.
+
+## Validation and deployment
+
+```sh
+pnpm lint
+pnpm typecheck
+pnpm test                         # offline tests; no chain broadcasts
+API_TEST_DATABASE_URL=postgres://localhost/grapnel_api_test pnpm test:integration
+pnpm build
+pnpm test:e2e                     # local apps running; installed Chrome or Playwright Chromium
+pnpm smoke:testnet               # read-only verification, never signs or sends
+pnpm exec tsx scripts/scan-secrets.ts
+```
+
+Integration tests require a disposable database whose name ends in `_test`; they must never target development/production data. See [deployment guide](deploy/README.md), [submission script](deploy/SUBMISSION_SCRIPT.md), [source review](docs/13_SOURCES.md) and [agent handoffs](docs/handoffs/). Public URLs and demo/video links remain null until actually deployed and checked. Local screenshots are labeled local.
+
+The [official deadline](https://blockchain-stellar-ic.devpost.com/details/dates) was rechecked November 10: **November 13, 2026 at 08:30 EST**. Submission requires public source, a functional Testnet prototype URL and/or owned contract IDs, a public one-minute functioning demo video, pitch and trifold. Missing Gate 2 transactions must be disclosed as an incomplete full MVP.
