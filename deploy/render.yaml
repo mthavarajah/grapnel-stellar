@@ -1,0 +1,66 @@
+# Select this Blueprint path during Render setup. No service is deployed by committing this file.
+services:
+  - type: web
+    name: grapnel-testnet-api
+    runtime: docker
+    dockerfilePath: ./deploy/Dockerfile.api
+    dockerContext: .
+    healthCheckPath: /health
+    preDeployCommand: pnpm --filter @grapnel/api db:migrate
+    envVars:
+      - fromGroup: grapnel-testnet-server
+      - key: DATABASE_URL
+        fromDatabase:
+          name: grapnel-testnet-db
+          property: connectionString
+  - type: worker
+    name: grapnel-testnet-worker
+    runtime: docker
+    dockerfilePath: ./deploy/Dockerfile.api
+    dockerContext: .
+    dockerCommand: pnpm --filter @grapnel/api worker
+    envVars:
+      - fromGroup: grapnel-testnet-server
+      - key: DATABASE_URL
+        fromDatabase:
+          name: grapnel-testnet-db
+          property: connectionString
+databases:
+  - name: grapnel-testnet-db
+    databaseName: grapnel
+    postgresMajorVersion: "16"
+envVarGroups:
+  - name: grapnel-testnet-server
+    envVars:
+      - key: STELLAR_NETWORK
+        value: testnet
+      - key: STELLAR_NETWORK_PASSPHRASE
+        value: Test SDF Network ; September 2015
+      - key: STELLAR_RPC_URL
+        value: https://soroban-testnet.stellar.org
+      - key: STELLAR_HORIZON_URL
+        value: https://horizon-testnet.stellar.org
+      - key: TESTNET_FUNDING_ENABLED
+        value: "false"
+      - key: TESTNET_FUNDING_MAX_PER_CUSTOMER_ATOMIC
+        value: "250000000"
+      - key: TESTNET_FUNDING_MAX_PER_TENANT_ATOMIC
+        value: "1000000000"
+      - key: TESTNET_FUNDING_MAX_GLOBAL_ATOMIC
+        value: "2000000000"
+      - key: ADMIN_LOGIN_SECRET
+        sync: false
+      - key: SESSION_SECRET
+        generateValue: true
+      - key: DASHBOARD_ORIGIN
+        sync: false
+      - key: FINTECH_ORIGIN
+        sync: false
+      - key: PRIVY_APP_ID
+        sync: false
+      - key: PRIVY_APP_SECRET
+        sync: false
+      - key: SOROSWAP_API_KEY
+        sync: false
+      - key: DEMO_TREASURY_SECRET
+        sync: false

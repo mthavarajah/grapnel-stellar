@@ -1,0 +1,38 @@
+name: Testnet prototype checks
+on:
+  push:
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: grapnel
+          POSTGRES_PASSWORD: ci-only-password
+          POSTGRES_DB: grapnel_ci_test
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U grapnel -d grapnel_ci_test"
+          --health-interval 10s --health-timeout 5s --health-retries 5
+    env:
+      API_TEST_DATABASE_URL: postgres://grapnel:ci-only-password@localhost:5432/grapnel_ci_test
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10.11.0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm exec tsx scripts/scan-secrets.ts
+      - run: pnpm typecheck
+      - run: pnpm test --exclude 'tests/integration/**' --exclude 'apps/api/src/core.test.ts'
+      - run: pnpm exec vitest run --config tests/vitest.integration.config.ts
+      - run: pnpm build
+      # Live Testnet writes are deliberately excluded. UI E2E runs against explicit app URLs.
