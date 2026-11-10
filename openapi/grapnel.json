@@ -1,0 +1,1068 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Grapnel Testnet API",
+    "version": "0.1.0",
+    "description": "Stellar Testnet only. See docs/03_API.md and packages/contracts for frozen payload schemas."
+  },
+  "servers": [
+    {
+      "url": "http://localhost:3001"
+    }
+  ],
+  "paths": {
+    "/health": {
+      "get": {
+        "operationId": "get_health",
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "JSON data envelope; accepted operations require polling"
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "403": {
+            "description": "Permission denied"
+          },
+          "409": {
+            "description": "Conflict or execution unavailable"
+          }
+        }
+      }
+    },
+    "/v1/capabilities": {
+      "get": {
+        "operationId": "get_v1_capabilities",
+        "security": [
+          {
+            "businessKey": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "JSON data envelope; accepted operations require polling"
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "403": {
+            "description": "Permission denied"
+          },
+          "409": {
+            "description": "Conflict or execution unavailable"
+          }
+        }
+      }
+    },
+    "/v1/dashboard/login": {
+      "post": {
+        "operationId": "post_v1_dashboard_login",
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "JSON data envelope; accepted operations require polling"
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "403": {
+            "description": "Permission denied"
+          },
+          "409": {
+            "description": "Conflict or execution unavailable"
+          }
+        }
+      }
+    },
+    "/v1/dashboard/logout": {
+      "post": {
+        "operationId": "post_v1_dashboard_logout",
+        "security": [
+          {
+            "ownerSession": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "JSON data envelope; accepted operations require polling"
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "403": {
+            "description": "Permission denied"
+          },
+          "409": {
+            "description": "Conflict or execution unavailable"
+          }
+        }
+      }
+    },
+    "/v1/dashboard/session": {
+      "get": {
+        "operationId": "get_v1_dashboard_session",
+        "security": [
+          {
+            "ownerSession": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "JSON data envelope; accepted operations require polling"
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "403": {
+            "description": "Permission denied"
+          },
+          "409": {
+            "description": "Conflict or execution unavailable"
+          }
+        }
+      }
+    },
+    "/v1/dashboard/businesses": {
+      "post": {
+        "operationId": "post_v1_dashboard_businesses",
+        "security": [
+          {
+            "ownerSession": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "JSON data envelope; accepted operations require polling"
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "403": {
+            "description": "Permission denied"
+          },
+          "409": {
+            "description": "Conflict or execution unavailable"
+          }
+        }
+      }
+    },
+    "/v1/dashboard/business": {
+      "get": {
+        "operationId": "get_v1_dashboard_business",
+        "security": [
+          {
+            "ownerSession": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "JSON data envelope; accepted operations require polling"
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "403": {
+            "description": "Permission denied"
+          },
+          "409": {
+            "description": "Conflict or execution unavailable"
+          }
+        }
+      }
+    },
+    "/v1/dashboard/modules": {
+      "get": {
+        "operationId": "get_v1_dashboard_modules",
+        "security": [
+          {
+            "ownerSession": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "JSON data envelope; accepted operations require polling"
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "403": {
+            "description": "Permission denied"
+          },
+          "409": {
+            "description": "Conflict or execution unavailable"
+          }
+        }
+      },
+      "patch": {
+        "operationId": "patch_v1_dashboard_modules",
+        "security": [
+          {
+            "ownerSession": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "JSON data envelope; accepted operations require polling"
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "403": {
+            "description": "Permission denied"
+          },
+          "409": {
+            "description": "Conflict or execution unavailable"
+          }
+        }
+      }
+    },
+    "/v1/dashboard/api-keys": {
+      "get": {
+        "operationId": "get_v1_dashboard_api-keys",
+        "security": [
+          {
+            "ownerSession": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "JSON data envelope; accepted operations require polling"
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "403": {
+            "description": "Permission denied"
+          },
+          "409": {
+            "description": "Conflict or execution unavailable"
+          }
+        }
+      },
+      "post": {
+        "operationId": "post_v1_dashboard_api-keys",
+        "security": [
+          {
+            "ownerSession": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "JSON data envelope; accepted operations require polling"
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "403": {
+            "description": "Permission denied"
+          },
+          "409": {
+            "description": "Conflict or execution unavailable"
+          }
+        }
+      }
+    },
+    "/v1/dashboard/api-keys/{id}": {
+      "delete": {
+        "operationId": "delete_v1_dashboard_api-keys_id",
+        "security": [
+          {
+            "ownerSession": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "JSON data envelope; accepted operations require polling"
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "403": {
+            "description": "Permission denied"
+          },
+          "409": {
+            "description": "Conflict or execution unavailable"
+          }
+        },
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    },
+    "/v1/dashboard/requests": {
+      "get": {
+        "operationId": "get_v1_dashboard_requests",
+        "security": [
+          {
+            "ownerSession": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "JSON data envelope; accepted operations require polling"
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "403": {
+            "description": "Permission denied"
+          },
+          "409": {
+            "description": "Conflict or execution unavailable"
+          }
+        }
+      }
+    },
+    "/v1/customers": {
+      "post": {
+        "operationId": "post_v1_customers",
+        "security": [
+          {
+            "businessKey": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "JSON data envelope; accepted operations require polling"
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "403": {
+            "description": "Permission denied"
+          },
+          "409": {
+            "description": "Conflict or execution unavailable"
+          }
+        }
+      }
+    },
+    "/v1/customers/{id}": {
+      "get": {
+        "operationId": "get_v1_customers_id",
+        "security": [
+          {
+            "businessKey": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "JSON data envelope; accepted operations require polling"
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "403": {
+            "description": "Permission denied"
+          },
+          "409": {
+            "description": "Conflict or execution unavailable"
+          }
+        },
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    },
+    "/v1/capital/wallets": {
+      "post": {
+        "operationId": "post_v1_capital_wallets",
+        "security": [
+          {
+            "businessKey": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "JSON data envelope; accepted operations require polling"
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "403": {
+            "description": "Permission denied"
+          },
+          "409": {
+            "description": "Conflict or execution unavailable"
+          }
+        }
+      }
+    },
+    "/v1/capital/wallets/{id}": {
+      "get": {
+        "operationId": "get_v1_capital_wallets_id",
+        "security": [
+          {
+            "businessKey": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "JSON data envelope; accepted operations require polling"
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "403": {
+            "description": "Permission denied"
+          },
+          "409": {
+            "description": "Conflict or execution unavailable"
+          }
+        },
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    },
+    "/v1/capital/wallets/{id}/balances": {
+      "get": {
+        "operationId": "get_v1_capital_wallets_id_balances",
+        "security": [
+          {
+            "businessKey": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "JSON data envelope; accepted operations require polling"
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "403": {
+            "description": "Permission denied"
+          },
+          "409": {
+            "description": "Conflict or execution unavailable"
+          }
+        },
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    },
+    "/v1/portfolio": {
+      "get": {
+        "operationId": "get_v1_portfolio",
+        "security": [
+          {
+            "businessKey": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "JSON data envelope; accepted operations require polling"
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "403": {
+            "description": "Permission denied"
+          },
+          "409": {
+            "description": "Conflict or execution unavailable"
+          }
+        }
+      }
+    },
+    "/v1/operations/{id}": {
+      "get": {
+        "operationId": "get_v1_operations_id",
+        "security": [
+          {
+            "businessKey": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "JSON data envelope; accepted operations require polling"
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "403": {
+            "description": "Permission denied"
+          },
+          "409": {
+            "description": "Conflict or execution unavailable"
+          }
+        },
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    },
+    "/v1/operations/{id}/authorize": {
+      "post": {
+        "operationId": "post_v1_operations_id_authorize",
+        "security": [
+          {
+            "businessKey": []
+          }
+        ],
+        "responses": {
+          "202": {
+            "description": "JSON data envelope; accepted operations require polling"
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "403": {
+            "description": "Permission denied"
+          },
+          "409": {
+            "description": "Conflict or execution unavailable"
+          }
+        },
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    },
+    "/v1/capital/testnet/funding-assets": {
+      "get": {
+        "operationId": "get_v1_capital_testnet_funding-assets",
+        "security": [
+          {
+            "businessKey": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "JSON data envelope; accepted operations require polling"
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "403": {
+            "description": "Permission denied"
+          },
+          "409": {
+            "description": "Conflict or execution unavailable"
+          }
+        }
+      }
+    },
+    "/v1/capital/testnet/fund": {
+      "post": {
+        "operationId": "post_v1_capital_testnet_fund",
+        "security": [
+          {
+            "businessKey": []
+          }
+        ],
+        "responses": {
+          "202": {
+            "description": "JSON data envelope; accepted operations require polling"
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "403": {
+            "description": "Permission denied"
+          },
+          "409": {
+            "description": "Conflict or execution unavailable"
+          }
+        }
+      }
+    },
+    "/v1/capital/testnet/return": {
+      "post": {
+        "operationId": "post_v1_capital_testnet_return",
+        "security": [
+          {
+            "businessKey": []
+          }
+        ],
+        "responses": {
+          "202": {
+            "description": "JSON data envelope; accepted operations require polling"
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "403": {
+            "description": "Permission denied"
+          },
+          "409": {
+            "description": "Conflict or execution unavailable"
+          }
+        }
+      }
+    },
+    "/v1/trade/markets": {
+      "get": {
+        "operationId": "get_v1_trade_markets",
+        "security": [
+          {
+            "businessKey": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "JSON data envelope; accepted operations require polling"
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "403": {
+            "description": "Permission denied"
+          },
+          "409": {
+            "description": "Conflict or execution unavailable"
+          }
+        }
+      }
+    },
+    "/v1/trade/markets/{id}": {
+      "get": {
+        "operationId": "get_v1_trade_markets_id",
+        "security": [
+          {
+            "businessKey": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "JSON data envelope; accepted operations require polling"
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "403": {
+            "description": "Permission denied"
+          },
+          "409": {
+            "description": "Conflict or execution unavailable"
+          }
+        },
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    },
+    "/v1/trade/quotes": {
+      "post": {
+        "operationId": "post_v1_trade_quotes",
+        "security": [
+          {
+            "businessKey": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "JSON data envelope; accepted operations require polling"
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "403": {
+            "description": "Permission denied"
+          },
+          "409": {
+            "description": "Conflict or execution unavailable"
+          }
+        }
+      }
+    },
+    "/v1/trade/orders": {
+      "post": {
+        "operationId": "post_v1_trade_orders",
+        "security": [
+          {
+            "businessKey": []
+          }
+        ],
+        "responses": {
+          "202": {
+            "description": "JSON data envelope; accepted operations require polling"
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "403": {
+            "description": "Permission denied"
+          },
+          "409": {
+            "description": "Conflict or execution unavailable"
+          }
+        }
+      }
+    },
+    "/v1/trade/orders/{id}": {
+      "get": {
+        "operationId": "get_v1_trade_orders_id",
+        "security": [
+          {
+            "businessKey": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "JSON data envelope; accepted operations require polling"
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "403": {
+            "description": "Permission denied"
+          },
+          "409": {
+            "description": "Conflict or execution unavailable"
+          }
+        },
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    },
+    "/v1/trade/positions": {
+      "get": {
+        "operationId": "get_v1_trade_positions",
+        "security": [
+          {
+            "businessKey": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "JSON data envelope; accepted operations require polling"
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "403": {
+            "description": "Permission denied"
+          },
+          "409": {
+            "description": "Conflict or execution unavailable"
+          }
+        }
+      }
+    },
+    "/v1/capital/lending/markets": {
+      "get": {
+        "operationId": "get_v1_capital_lending_markets",
+        "security": [
+          {
+            "businessKey": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "JSON data envelope; accepted operations require polling"
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "403": {
+            "description": "Permission denied"
+          },
+          "409": {
+            "description": "Conflict or execution unavailable"
+          }
+        }
+      }
+    },
+    "/v1/capital/lending/positions": {
+      "get": {
+        "operationId": "get_v1_capital_lending_positions",
+        "security": [
+          {
+            "businessKey": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "JSON data envelope; accepted operations require polling"
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "403": {
+            "description": "Permission denied"
+          },
+          "409": {
+            "description": "Conflict or execution unavailable"
+          }
+        }
+      }
+    },
+    "/v1/capital/lending/supply": {
+      "post": {
+        "operationId": "post_v1_capital_lending_supply",
+        "security": [
+          {
+            "businessKey": []
+          }
+        ],
+        "responses": {
+          "202": {
+            "description": "JSON data envelope; accepted operations require polling"
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "403": {
+            "description": "Permission denied"
+          },
+          "409": {
+            "description": "Conflict or execution unavailable"
+          }
+        }
+      }
+    },
+    "/v1/capital/lending/withdraw": {
+      "post": {
+        "operationId": "post_v1_capital_lending_withdraw",
+        "security": [
+          {
+            "businessKey": []
+          }
+        ],
+        "responses": {
+          "202": {
+            "description": "JSON data envelope; accepted operations require polling"
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "403": {
+            "description": "Permission denied"
+          },
+          "409": {
+            "description": "Conflict or execution unavailable"
+          }
+        }
+      }
+    },
+    "/v1/capital/lending/borrow": {
+      "post": {
+        "operationId": "post_v1_capital_lending_borrow",
+        "security": [
+          {
+            "businessKey": []
+          }
+        ],
+        "responses": {
+          "202": {
+            "description": "JSON data envelope; accepted operations require polling"
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "403": {
+            "description": "Permission denied"
+          },
+          "409": {
+            "description": "Conflict or execution unavailable"
+          }
+        }
+      }
+    },
+    "/v1/capital/lending/repay": {
+      "post": {
+        "operationId": "post_v1_capital_lending_repay",
+        "security": [
+          {
+            "businessKey": []
+          }
+        ],
+        "responses": {
+          "202": {
+            "description": "JSON data envelope; accepted operations require polling"
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "403": {
+            "description": "Permission denied"
+          },
+          "409": {
+            "description": "Conflict or execution unavailable"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "businessKey": {
+        "type": "http",
+        "scheme": "bearer"
+      },
+      "ownerSession": {
+        "type": "apiKey",
+        "in": "cookie",
+        "name": "grapnel_owner"
+      }
+    }
+  }
+}

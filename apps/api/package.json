@@ -1,0 +1,28 @@
+{
+  "name": "@grapnel/api",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "tsx watch src/server.ts",
+    "build": "tsc --noEmit",
+    "typecheck": "tsc --noEmit",
+    "start": "tsx src/server.ts",
+    "worker": "tsx src/worker.ts",
+    "db:migrate": "tsx src/db/migrate.ts"
+  },
+  "dependencies": {
+    "@grapnel/contracts": "workspace:*",
+    "fastify": "5.6.2",
+    "@fastify/cookie": "11.0.2",
+    "@fastify/cors": "11.1.0",
+    "@fastify/rate-limit": "10.3.0",
+    "pg": "8.16.3",
+    "drizzle-orm": "0.44.7",
+    "zod": "3.25.76",
+    "@stellar/stellar-sdk": "14.3.0"
+  },
+  "devDependencies": {
+    "@types/pg": "8.15.6"
+  }
+}

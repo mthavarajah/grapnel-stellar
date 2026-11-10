@@ -1,0 +1,30 @@
+{
+  "name": "grapnel-stellar",
+  "private": true,
+  "version": "0.1.0",
+  "packageManager": "pnpm@10.11.0",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "dev:api": "pnpm --filter @grapnel/api dev",
+    "dev:dashboard": "pnpm --filter @grapnel/dashboard dev",
+    "dev:fintech": "pnpm --filter @grapnel/fintech-demo dev",
+    "build": "pnpm -r build",
+    "typecheck": "pnpm -r typecheck",
+    "lint": "pnpm typecheck",
+    "test": "vitest run",
+    "test:integration": "vitest run --config vitest.integration.config.ts",
+    "test:e2e": "playwright test",
+    "smoke:testnet": "tsx scripts/smoke-testnet.ts",
+    "db:migrate": "pnpm --filter @grapnel/api db:migrate",
+    "db:seed": "tsx scripts/seed-demo.ts"
+  },
+  "devDependencies": {
+    "typescript": "5.9.3",
+    "tsx": "4.20.6",
+    "vitest": "3.2.4",
+    "@types/node": "22.19.0",
+    "@playwright/test": "1.56.1"
+  }
+}
