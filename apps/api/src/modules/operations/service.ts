@@ -8,6 +8,13 @@ export interface ReservationInput {businessId:string;customerId:string;walletId:
 export interface ReconciliationResult {state:'completed'|'failed'|'pending';deltaVerified?:boolean;result?:Record<string,unknown>;}
 export function serializeOperation(row:QueryResultRow,withPrepared=false):Operation {
  const result:Operation={operation_id:row.id,customer_id:row.customer_id,wallet_id:row.wallet_id,module:row.module_code,type:row.type,status:row.state,network:NETWORK,tx_hash:row.tx_hash??null,provider:row.provider,created_at:new Date(row.created_at).toISOString(),updated_at:new Date(row.updated_at).toISOString(),error:row.error_code?{code:row.error_code,message:row.error_message??'Operation failed'}:null};
+ const financialTypes=['wallet.test_payment','testnet.fund','testnet.return','blend.supply','blend.withdraw','spot.swap'];
+ if(financialTypes.includes(row.type)){
+  const amount=row.request_json?.amount??row.prepared_action?.summary?.amount;
+  const asset=row.request_json?.asset_id??row.prepared_action?.summary?.fromAssetId;
+  if(typeof amount==='string'&&/^(0|[1-9]\d*)(\.\d+)?$/.test(amount)&&amount.length<=100)result.display_amount=amount;
+  if(typeof asset==='string')result.display_asset_id=asset;
+ }
  if(withPrepared && row.prepared_action)result.prepared_action=PreparedActionSchema.parse(row.prepared_action);
  return result;
 }
