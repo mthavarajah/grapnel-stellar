@@ -1,0 +1,72 @@
+{
+  "network": "stellar-testnet",
+  "read_only": true,
+  "signed": false,
+  "broadcast": false,
+  "asset": {
+    "code": "USDC",
+    "issuer": "GATALTGTWIOT6BUDBCZM3Q4OQ4BO2COLOAZ7IYSKPLC2PMSOPPGF5V56",
+    "decimals": 7,
+    "reserve_contract": "CAQCFVLOBK5GIULPNZRGATJJMIZL5BSP7X5YJVMGCPTUEPFM4AVSRCJU",
+    "reserve_index": 3,
+    "emission_data_key": 7
+  },
+  "pool_contract": "CCEBVDYM32YNYCVNRXQKDFFPISJJCV557CDZEIRBEE4NCV4KHPQ44HGF",
+  "pool_code_hash": "a41fc53d6753b6c04eb15b021c55052366a4c8e0e21bc72700f461264ec1350e",
+  "supply": {
+    "observed_ledger": 5677654,
+    "source_account": "GDZQK2N4SKPXFG4SJOE2G2H2IIOI7UOTZIJJ7TFH7GXJFL34JBNQHP5O",
+    "source_equals_operation_source_and_submit_from_spender_to": true,
+    "amount_atomic": "1000000",
+    "amount_display": "0.1",
+    "simulation_succeeded": true,
+    "authorization": "sorobanCredentialsSourceAccount",
+    "root": "pool.submit",
+    "child": "USDC_SAC.transfer(customer_G, pool, 1000000)",
+    "read_only_footprint_entries": 6,
+    "read_write_footprint_entries": 4,
+    "included_customer_classic_trustline": true,
+    "minimum_resource_fee_stroops": "525606",
+    "instructions": 1887239,
+    "disk_read_bytes": 116,
+    "write_bytes": 996
+  },
+  "withdraw": {
+    "observed_ledger": 5677666,
+    "source_account": "GDYBJQGVPHDXLFUBBXG7JLCJ7SFYTKJSZGAIPCV7RNKKOCNP7TMSQHJC",
+    "observed_collateral_atomic_before_simulation": "20150743",
+    "source_equals_operation_source_and_submit_from_spender_to": true,
+    "amount_atomic": "1000000",
+    "amount_display": "0.1",
+    "simulation_succeeded": true,
+    "authorization": "sorobanCredentialsSourceAccount",
+    "root": "pool.submit",
+    "nested_authorizations": 0,
+    "read_only_footprint_entries": 6,
+    "read_write_footprint_entries": 4,
+    "included_customer_classic_trustline": true,
+    "minimum_resource_fee_stroops": "524785",
+    "instructions": 1968000
+  },
+  "footprint_policy": {
+    "read_only": [
+      "USDC SAC instance",
+      "pool Auction temporary entry for exact G address",
+      "pool EmisData key 7",
+      "pool ResConfig keyed by exact USDC SAC",
+      "pool instance",
+      "exact pool Wasm code hash"
+    ],
+    "read_write": [
+      "exact customer's USDC classic trustline (withdrawal receiver/supply source)",
+      "USDC SAC Balance(pool)",
+      "pool Positions(customer)",
+      "pool ResData(USDC SAC)"
+    ]
+  },
+  "limitations": [
+    "Public diagnostic accounts were used only for simulations; neither account is the Grapnel customer.",
+    "These observations are not signed or broadcast transactions and do not prove customer execution.",
+    "The classic USDC input amount is separate from the required XLM Soroban resource fee."
+  ]
+}
