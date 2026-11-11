@@ -1,5 +1,6 @@
 "use client";
 import Link from "next/link";
+import { AssetLogo } from "./asset-logo";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
@@ -152,7 +153,7 @@ type MarketHistory = {
   price_basis?:string; source_url?:string; interval?:string;
   metrics?:{day_high?:string|null;day_low?:string|null;day_volume?:string|null;fifty_two_week_high?:string|null;fifty_two_week_low?:string|null;previous_close?:string|null;market_time?:string|null};
 };
-type OverviewSection = {id:"spot"|"perps"|"stocks"|"commodities"|"lending";label:string;items:{symbol:string;name:string;value:string;unit:"USD"|"percent";as_of:string}[];available:boolean};
+type OverviewSection = {id:"spot"|"perps"|"stocks"|"commodities"|"lending";label:string;items:{symbol:string;name:string;value:string;unit:"USD"|"percent";unit_detail?:string;as_of:string}[];available:boolean};
 const overviewGroups = [
   {id:"spot",label:"Spot prices",module:"trade.spot",href:"/markets?category=crypto_spot"},
   {id:"perps",label:"Futures prices",module:"trade.perps",href:"/markets?category=perps"},
@@ -491,7 +492,6 @@ function FinanceShell({ page, auth, initialCategory }: { page: string; auth?: Au
   const swapCode = (id?: string) => swapAssetMap.get(id ?? "")?.code ?? assetCode(id);
   const swapAssetLabel = (item: SwapAsset) => displayAssetIdentity(item,swapAssets);
   const swapIdentity = (id?: string) => { const item=swapAssetMap.get(id ?? ""); return item ? swapAssetLabel(item) : assetCode(id); };
-  const swapLogo = (id?: string) => id === XLM_ASSET ? "/assets/xlm.svg" : id === USDC_ASSET ? "/assets/usdc.svg" : null;
   const swapBalance = (id: string | undefined, available = true) => {
     const observed = balances.find(entry => entry.asset_id === id);
     if (observed) return available ? observed.spendable : observed.wallet_amount;
@@ -966,7 +966,7 @@ function FinanceShell({ page, auth, initialCategory }: { page: string; auth?: Au
                   const items=(section?.available?section.items:[]).filter(item=>typeof item.value==="string"&&/^\d+(?:\.\d+)?$/.test(item.value)&&(item.unit==="USD"||item.unit==="percent")&&Number.isFinite(Date.parse(item.as_of))).slice(0,3);
                   return <section className="overview-market-group" key={group.id} aria-label={group.label} data-testid={`overview-${group.id}`}>
                     <Link className="overview-market-heading" href={group.href}><h3>{group.label}</h3><Icon name="arrow" size={15} /></Link>
-                    {items.length?<ul>{items.map(item=><li key={`${item.symbol}:${item.name}`}><div><strong title={item.name}>{item.symbol}</strong><time dateTime={item.as_of} title={marketDate(item.as_of,true)}>{marketDate(item.as_of)}</time></div><span>{formatTokenAmount(item.value)}{item.unit==="percent"?"%":" USD"}</span></li>)}</ul>:<p className="small muted" role="status">{overviewLoading?"Loading prices":"Prices updating"}</p>}
+                    {items.length?<ul>{items.map(item=><li key={`${item.symbol}:${item.name}`}><div className="overview-asset-identity"><AssetLogo symbol={item.symbol} name={item.name} size={26} /><div><strong title={item.name}>{item.symbol}</strong><time dateTime={item.as_of} title={marketDate(item.as_of,true)}>{marketDate(item.as_of)}</time></div></div><span className="overview-market-value">{formatTokenAmount(item.value)}{item.unit==="percent"?"%":" USD"}{item.unit_detail&&<small>{item.unit_detail}</small>}</span></li>)}</ul>:<p className="small muted" role="status">{overviewLoading?"Loading prices":"Prices updating"}</p>}
                   </section>;
                 })}
               </section>
@@ -1016,6 +1016,7 @@ function FinanceShell({ page, auth, initialCategory }: { page: string; auth?: Au
                 </h2>
 
                 <label htmlFor="asset">Asset</label>
+                <div className="funding-asset-field"><AssetLogo symbol={assets.find(entry=>entry.asset_id===asset)?.asset?.code??assetCode(asset)} name={assets.find(entry=>entry.asset_id===asset)?.asset?.name} assetId={asset} size={28} />
                 <select
                   id="asset"
                   value={asset}
@@ -1032,7 +1033,7 @@ function FinanceShell({ page, auth, initialCategory }: { page: string; auth?: Au
                       XLM
                     </option>
                   )}
-                </select>
+                </select></div>
                 <label htmlFor="amount">Amount</label>
                 <div className="amount-input">
                   <input
@@ -1112,7 +1113,7 @@ function FinanceShell({ page, auth, initialCategory }: { page: string; auth?: Au
                   <div className="public-market-search-row"><label className="market-search-label">Search markets<input type="search" aria-label="Search markets" data-testid="market-search" value={marketSearch} onFocus={()=>setMarketResultsOpen(true)} onChange={event=>{setMarketSearch(event.target.value);setMarketResultsOpen(true);}} placeholder="Search by name or symbol" /></label><button type="button" className="button outline" data-testid="market-browse-toggle" aria-expanded={marketResultsOpen} aria-controls="public-market-options" onClick={()=>setMarketResultsOpen(current=>!current)}>Browse markets</button></div>
                   {marketsLoading ? <p className="small muted" role="status">Loading markets…</p> : marketResultsOpen && visiblePublicMarkets.length ? <div className="public-market-options" id="public-market-options">
                     {visiblePublicMarkets.map(entry=><button type="button" key={entry.market_id??entry.id} data-testid={`market-option-${entry.underlying?.symbol??entry.market_id}`} aria-label={`${entry.underlying?.symbol??entry.label} ${category==="perps"?"perpetual":"stock"}`} aria-pressed={(entry.market_id??entry.id)===market}
-                      onClick={()=>{setMarket(entry.market_id??entry.id);setMarketResultsOpen(false);}}><span className="public-market-symbol">{entry.underlying?.symbol??entry.label}</span><span className="public-market-name">{entry.underlying?.name??entry.label}</span><strong>{entry.reference_price==null?"—":formatTokenAmount(entry.reference_price)}{entry.reference_price!=null&&<small> USD</small>}</strong>{entry.price_status==="stale"&&<span className="public-market-delay">Delayed</span>}</button>)}
+                      onClick={()=>{setMarket(entry.market_id??entry.id);setMarketResultsOpen(false);}}><span className="public-market-symbol"><AssetLogo symbol={entry.underlying?.symbol??entry.label} name={entry.underlying?.name} assetId={entry.market_id??entry.id} size={24} />{entry.underlying?.symbol??entry.label}</span><span className="public-market-name">{entry.underlying?.name??entry.label}</span><strong>{entry.reference_price==null?"—":formatTokenAmount(entry.reference_price)}{entry.reference_price!=null&&<small> USD</small>}</strong>{entry.price_status==="stale"&&<span className="public-market-delay">Delayed</span>}</button>)}
                   </div> : (!markets.length||marketResultsOpen) ? <p className="small muted" role="status">{markets.length?"No matching markets.":"No markets available."}</p> : null}
                 </section>
               )}
@@ -1121,7 +1122,7 @@ function FinanceShell({ page, auth, initialCategory }: { page: string; auth?: Au
                   <nav className="market-breadcrumb" aria-label="Breadcrumb"><Link href="/home">Home</Link><span>/</span><Link href="/markets">Markets</Link><span>/</span><strong>{selectedSpotMarket.underlying?.symbol??selectedSpotMarket.label}</strong></nav>
                   <div className="market-detail-layout">
                     <section className="market-price-card" aria-label="Asset price" data-testid={category==="perps"?"perps-market-detail":"stocks-market-detail"}>
-                      <div className="market-asset-heading"><span className="market-asset-fallback" aria-hidden="true">{(selectedSpotMarket.underlying?.symbol??"·").slice(0,1)}</span><div><h2>{selectedSpotMarket.underlying?.name??selectedSpotMarket.label}</h2><span>{selectedSpotMarket.underlying?.symbol} {category==="perps"?"perpetual":"stock"}</span></div></div>
+                      <div className="market-asset-heading"><AssetLogo symbol={selectedSpotMarket.underlying?.symbol??selectedSpotMarket.label} name={selectedSpotMarket.underlying?.name} assetId={selectedSpotMarket.market_id??selectedSpotMarket.id} size={48} /><div><h2>{selectedSpotMarket.underlying?.name??selectedSpotMarket.label}</h2><span>{selectedSpotMarket.underlying?.symbol} {category==="perps"?"perpetual":"stock"}</span></div></div>
                       <div className="market-price-heading"><strong>{category==="stocks" ? (activePublicHistory?.latest_price==null?"—":formatTokenAmount(activePublicHistory.latest_price)) : selectedSpotMarket.reference_price==null?"—":formatTokenAmount(selectedSpotMarket.reference_price)}</strong><span>{activePublicHistory?.quote_symbol??"USD"} per {selectedSpotMarket.underlying?.symbol}</span></div>
                       <div className={`public-market-freshness ${selectedSpotMarket.price_status==="stale"?"delayed":""}`} data-testid="market-price-freshness">{category==="stocks" ? (activePublicHistory?.latest_price?"Stock reference price":"Price unavailable") : selectedSpotMarket.price_status==="current"?"Current price":selectedSpotMarket.price_status==="stale"?"Price delayed":"Price unavailable"}{(category==="stocks"?activePublicHistory?.metrics?.market_time:selectedSpotMarket.oracle_timestamp)&&<time dateTime={category==="stocks"?activePublicHistory?.metrics?.market_time??undefined:selectedSpotMarket.oracle_timestamp}>{marketDate(category==="stocks"?activePublicHistory!.metrics!.market_time!:selectedSpotMarket.oracle_timestamp,true)}</time>}</div>
                       <div className="market-price-change" aria-label="Price change"><strong>{activePublicHistory&&activePublicHistory.points.length>1?displayChange(activePublicHistory.change_absolute):"—"}</strong><span>{activePublicHistory&&activePublicHistory.points.length>1?`USD (${displayChange(activePublicHistory.change_percent)}%)`: "(—)"}</span></div>
@@ -1160,7 +1161,7 @@ function FinanceShell({ page, auth, initialCategory }: { page: string; auth?: Au
                 <div className="market-detail-layout">
                   <section className="market-price-card" aria-label="Asset price">
                     <div className="market-asset-heading">
-                      {marketHistory&&swapLogo(marketHistory.base_asset_id) ? <img src={swapLogo(marketHistory.base_asset_id)!} alt="" width={48} height={48} /> : <span className="market-asset-fallback" aria-hidden="true">{marketHistory?.base_symbol.slice(0,1)??"·"}</span>}
+                      {marketHistory&&<AssetLogo symbol={marketHistory.base_symbol} name={swapAssetMap.get(marketHistory.base_asset_id)?.name} assetId={marketHistory.base_asset_id} size={48} />}
                       <div><h2>{marketHistory ? (swapAssetMap.get(marketHistory.base_asset_id)?.name ?? marketHistory.base_symbol) : "Asset price"}</h2><span>{marketHistory?.base_symbol??""}</span></div>
                     </div>
                     <div className="market-price-heading"><strong>{marketHistory?.latest_price ? formatTokenAmount(marketHistory.latest_price) : "—"}</strong><span>{marketHistory?.latest_price ? `${marketHistory.quote_symbol} per ${marketHistory.base_symbol}` : "Price unavailable"}</span></div>
@@ -1177,7 +1178,7 @@ function FinanceShell({ page, auth, initialCategory }: { page: string; auth?: Au
                       <input className="swap-amount" aria-label="Sell amount" inputMode="decimal" placeholder="0.00" value={swapAmount} disabled={busy}
                         onChange={event => { setSwapAmount(event.target.value); setQuote(null); setSwapError(""); }} />
                       <div className="swap-token-pill">
-                        {swapLogo(selectedSpotMarket.asset_in_id) ? <img src={swapLogo(selectedSpotMarket.asset_in_id)!} alt="" width={28} height={28} /> : <span className="swap-token-fallback" aria-hidden="true">{spotInputCode.slice(0,1)}</span>}
+                        <AssetLogo symbol={spotInputCode} name={swapAssetMap.get(selectedSpotMarket.asset_in_id)?.name} assetId={selectedSpotMarket.asset_in_id} size={28} />
                         <select aria-label="Sell asset" title={swapIdentity(selectedSpotMarket.asset_in_id)} value={selectedSpotMarket.asset_in_id} disabled={busy} onChange={event => {
                           const options = markets.filter(entry => entry.asset_in_id === event.target.value);
                           chooseSpotMarket(options.find(entry => entry.asset_out_id === selectedSpotMarket.asset_out_id) ?? options.find(entry => entry.preparation_available || entry.executable) ?? options[0]);
@@ -1193,7 +1194,7 @@ function FinanceShell({ page, auth, initialCategory }: { page: string; auth?: Au
                     <div className="swap-panel-main">
                       <output className="swap-output" aria-label="Estimated buy amount">{quoteMatchesMarket && !quoteExpired ? formatTokenAmount(quote.expected_out) : "—"}</output>
                       <div className="swap-token-pill">
-                        {swapLogo(selectedSpotMarket.asset_out_id) ? <img src={swapLogo(selectedSpotMarket.asset_out_id)!} alt="" width={28} height={28} /> : <span className="swap-token-fallback" aria-hidden="true">{spotOutputCode.slice(0,1)}</span>}
+                        <AssetLogo symbol={spotOutputCode} name={swapAssetMap.get(selectedSpotMarket.asset_out_id)?.name} assetId={selectedSpotMarket.asset_out_id} size={28} />
                         <select aria-label="Buy asset" title={swapIdentity(selectedSpotMarket.asset_out_id)} value={selectedSpotMarket.asset_out_id} disabled={busy} onChange={event => {
                           chooseSpotMarket(markets.find(entry => entry.asset_in_id === selectedSpotMarket.asset_in_id && entry.asset_out_id === event.target.value),false);
                         }}>{buyAssets.map(item => <option value={item.id} key={item.id}>{swapAssetLabel(item)}</option>)}</select>
@@ -1261,10 +1262,7 @@ function FinanceShell({ page, auth, initialCategory }: { page: string; auth?: Au
                         (m.asset_id === XLM_ASSET || (isUsdc && balance?.trustline_required === false));
                       const shown = (value: string | null | undefined) => earnBalancesLoading ? "Loading…" : formatTokenAmount(value);
                       return <div className="pool" key={m.market_id ?? m.id}>
-                        <img className="asset-logo"
-                          src={m.asset_id === "stellar-testnet:native:XLM" ? "/assets/xlm.svg" : "/assets/usdc.svg"}
-                          alt={m.asset_id === "stellar-testnet:native:XLM" ? "XLM logo" : "USDC logo"}
-                          width={48} height={48} />
+                        <AssetLogo symbol={m.asset?.code??m.code??m.symbol??assetCode(m.asset_id)} name={m.asset?.name} assetId={m.asset_id} size={48} />
                         <h3>
                           {m.asset?.code ?? m.code ?? m.symbol ?? "Reserve"}
                         </h3>
@@ -1568,11 +1566,10 @@ function BalanceTable({
           {visibleBalances.map((b) => {
             const identity=identities.find(item=>item.id===b.asset_id)!;
             const label=displayAssetIdentity(identity,identities);
-            const logo=b.asset_id===XLM_ASSET?"/assets/xlm.svg":b.asset_id===USDC_ASSET?"/assets/usdc.svg":null;
             return <tr key={b.asset_id}>
               <td>
-                <span className="asset-mark">
-                  {logo?<img src={logo} alt="" width={26} height={26}/>:identity.code.slice(0,1)}
+                <span className="asset-mark" aria-hidden="true">
+                  <AssetLogo symbol={identity.code} name={identity.name} assetId={identity.id} size={26} />
                 </span>
                 <div>
                   <strong>{label}</strong>

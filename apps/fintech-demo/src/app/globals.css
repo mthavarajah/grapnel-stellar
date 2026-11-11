@@ -1654,3 +1654,13 @@ footer strong {
 .overview-market-group > p { margin-bottom: 0; }
 @media(max-width: 1100px) { .market-overview { grid-template-columns: repeat(2,minmax(0,1fr)); } }
 @media(max-width: 600px) { .market-overview { grid-template-columns: minmax(0,1fr); gap: 12px; } .overview-market-group { padding: 18px; } }
+
+.overview-market-group li > .overview-asset-identity { display: flex; align-items: center; gap: 9px; }
+.overview-asset-identity > div { display: grid; gap: 4px; min-width: 0; }
+.public-market-symbol { display: flex; align-items: center; gap: 8px; }
+
+.funding-asset-field { display: flex; align-items: center; gap: 10px; }
+.funding-asset-field select { flex: 1; min-width: 0; }
+
+.overview-market-value { display: grid; gap: 4px; text-align: right; }
+.overview-market-value small { font-size: 9px; font-weight: 400; color: var(--muted); white-space: normal; }
