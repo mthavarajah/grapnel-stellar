@@ -1605,3 +1605,30 @@ footer strong {
 @media(max-width: 600px) { .market-chart-wrap { min-height: 220px; } }
 
 .swap-action-error { margin: 0 0 14px; padding: 12px 14px; border: 1px solid #f3cccc; border-radius: 10px; background: #fff3f1; color: #a4362f; font-size: 12px; line-height: 1.6; overflow-wrap: anywhere; }
+
+.public-market-browser { margin-top: 24px; }
+.market-search-label { display: block; max-width: 420px; font-size: 12px; color: var(--muted); margin-bottom: 20px; }
+.market-search-label input { margin-top: 8px; }
+.public-market-options { display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap: 9px; max-height: 290px; overflow-y: auto; }
+.public-market-options button { min-width: 0; position: relative; display: grid; gap: 5px; text-align: left; border: 1px solid var(--line); border-radius: 12px; padding: 14px; background: var(--paper); font: inherit; cursor: pointer; }
+.public-market-options button[aria-pressed="true"] { border-color: var(--blue); background: #f3f6ff; }
+.public-market-symbol { font-size: 13px; color: var(--ink); font-weight: 650; }
+.public-market-name { font-size: 10px; color: var(--muted); overflow-wrap: anywhere; }
+.public-market-options strong { font-size: 15px; font-weight: 600; color: var(--ink); overflow-wrap: anywhere; }
+.public-market-options small { font-size: 10px; color: var(--muted); font-weight: 400; }
+.public-market-delay { color: #946b28; font-size: 10px; }
+.public-market-freshness { display: flex; flex-wrap: wrap; align-items: center; gap: 9px; color: #47745b; font-size: 11px; margin-top: 12px; }
+.public-market-freshness.delayed { color: #946b28; }
+.public-market-freshness time { color: var(--muted); font-size: 10px; }
+.market-order-card { padding: 24px; border-radius: 24px; border: 1px solid var(--line); background: var(--paper); }
+.market-order-card h2 { margin: 0 0 24px; font-size: 18px; }
+.market-order-card label { display: block; margin: 24px 0; color: var(--muted); font-size: 12px; }
+.market-order-card input { margin-top: 8px; }
+.market-order-card > .button { margin-top: 24px; }
+.public-order-direction { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.public-order-direction button { border: 1px solid var(--line); border-radius: 8px; padding: 11px; background: #f6f8fb; font: inherit; font-size: 12px; color: var(--muted); }
+.public-market-stats { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 16px; padding: 20px 0 0; margin-top: 20px; border-top: 1px solid var(--line); }
+.public-market-stats dt { font-size: 10px; color: var(--muted); margin-bottom: 8px; }
+.public-market-stats dd { margin: 0; font-size: 13px; color: var(--ink); font-weight: 600; overflow-wrap: anywhere; }
+@media(max-width: 1100px) { .public-market-options { grid-template-columns: repeat(3,minmax(0,1fr)); } .market-detail-layout .market-order-card { width: min(100%,560px); justify-self: center; } }
+@media(max-width: 600px) { .public-market-options { grid-template-columns: repeat(2,minmax(0,1fr)); max-height: 270px; } .public-market-options button { padding: 12px; } .market-order-card { padding: 20px; border-radius: 20px; } }

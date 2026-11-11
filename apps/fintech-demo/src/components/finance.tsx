@@ -151,6 +151,10 @@ type MarketHistory = {
   change_absolute:string|null; change_percent:string|null;
 };
 type HistoryRange = "live"|"1d"|"1w"|"1m"|"1y"|"all";
+function displayPublicNotional(value:unknown):string {
+  if(typeof value!=="string"||!/^\d+$/.test(value))return "—";
+  try{return `${formatTokenAmount(fromAtomic(BigInt(value),7))} USDC`;}catch{return "—";}
+}
 function displayChange(value:string|null|undefined):string {
   if(typeof value!=="string"||!/^[-+]?\d+(?:\.\d+)?$/.test(value))return "—";
   const amount=value.replace(/^[-+]/, ""), formatted=formatTokenAmount(amount);
@@ -290,6 +294,9 @@ function FinanceShell({ page, auth }: { page: string; auth?: Auth }) {
   const [assets, setAssets] = useState<any[]>([]);
   const [fundingError, setFundingError] = useState("");
   const [markets, setMarkets] = useState<any[]>([]);
+  const [marketsLoading, setMarketsLoading] = useState(false);
+  const [marketSearch, setMarketSearch] = useState("");
+
   const [lending, setLending] = useState<any[]>([]);
   const [historyRange,setHistoryRange] = useState<HistoryRange>("live");
   const [marketHistory,setMarketHistory] = useState<MarketHistory|null>(null);
@@ -389,9 +396,15 @@ function FinanceShell({ page, auth }: { page: string; auth?: Auth }) {
   // discovery_only until the first grant and customer return are chain-verified.
   const fundingCanStart = capability("capital.testnet_funding")?.enabled && assets.some((entry: any) => entry.available === true);
   const selectedSpotMarket = markets.find(entry => (entry.market_id ?? entry.id) === market);
+  useEffect(() => { setMarketSearch(""); }, [category]);
+  useEffect(() => {
+    if (category === "crypto_spot" || !markets.length || selectedSpotMarket) return;
+    setMarket(markets[0].market_id ?? markets[0].id);
+  }, [markets, category, market]);
+  const visiblePublicMarkets = markets.filter(entry => `${entry.underlying?.symbol ?? ""} ${entry.underlying?.name ?? ""} ${entry.label ?? ""}`.toLowerCase().includes(marketSearch.trim().toLowerCase()));
   useEffect(()=>{
     setMarketHistory(null);
-    if(!session||!selectedSpotMarket||category!=="crypto_spot"||!(page==="markets"||page==="trade")||!capability("trade.spot")?.enabled){setHistoryLoading(false);return;}
+    if(!session||!selectedSpotMarket||!(page==="markets"||page==="trade")||!capability("trade."+(category==="crypto_spot"?"spot":category))?.enabled){setHistoryLoading(false);return;}
     let alive=true,inFlight=false;setHistoryLoading(true);
     const expectedMarket=selectedSpotMarket.market_id??selectedSpotMarket.id;
     const refreshHistory=async()=>{if(inFlight)return;inFlight=true;await api(`grapnel/market-history?market_id=${encodeURIComponent(expectedMarket)}&range=${historyRange}`).then(result=>{
@@ -503,11 +516,17 @@ function FinanceShell({ page, auth }: { page: string; auth?: Auth }) {
         }
         if (page === "markets" || page === "trade") {
           const selected = caps.find(c => c.module === "trade." + (category === "crypto_spot" ? "spot" : category));
-          if (selected?.enabled && category === "crypto_spot") {
-            const m = await api("grapnel/markets?asset_class=" + category);
-            if (alive) setMarkets((Array.isArray(m) ? m : (m.markets ?? [])).filter((entry: {asset_in_id?:unknown;asset_out_id?:unknown}) => typeof entry.asset_in_id === "string" && typeof entry.asset_out_id === "string" && entry.asset_in_id !== entry.asset_out_id));
-            if (alive) void refreshUsdcStatus();
-          } else if (alive) setMarkets([]);
+          if (selected?.enabled) {
+            if (alive) setMarketsLoading(true);
+            try {
+              const m = await api("grapnel/markets?asset_class=" + category);
+              const rows=Array.isArray(m)?m:(m.markets??[]);
+              if (alive) setMarkets(rows.filter((entry:any) => category === "crypto_spot"
+                ? typeof entry.asset_in_id === "string" && typeof entry.asset_out_id === "string" && entry.asset_in_id !== entry.asset_out_id
+                : typeof (entry.market_id??entry.id) === "string" && (!entry.asset_class || entry.asset_class===category)));
+              if (alive && category === "crypto_spot") void refreshUsdcStatus();
+            } finally { if (alive) setMarketsLoading(false); }
+          } else if (alive) { setMarkets([]); setMarketsLoading(false); }
         }
         if (page === "earn") {
           void refreshEarnBalances();
@@ -764,7 +783,7 @@ function FinanceShell({ page, auth }: { page: string; auth?: Auth }) {
           <div className="page-heading">
             <div>
               <p className="eyebrow">YOUR LOCAL FINANCE WORKSPACE</p>
-              <h1>{title[page]}</h1>
+              <h1>{(page==="markets"||page==="trade")&&category!=="crypto_spot"?"Markets":title[page]}</h1>
 
             </div>
             <button
@@ -1030,6 +1049,7 @@ function FinanceShell({ page, auth }: { page: string; auth?: Auth }) {
                 {enabledTradeCategories.map(([id, label]) => (
                   <button
                     className={category === id ? "selected" : ""}
+                    data-testid={`markets-category-${id}`}
                     key={id}
                     disabled={busy}
                     onClick={() => {
@@ -1044,7 +1064,48 @@ function FinanceShell({ page, auth }: { page: string; auth?: Auth }) {
                   </button>
                 ))}
               </div>
-              {category === "crypto_spot" && markets.length && selectedSpotMarket ? (
+              {category !== "crypto_spot" && category !== "unavailable" && (
+                <section className="card public-market-browser" aria-label="Available markets" data-testid="market-list">
+                  <div className="section-heading"><h2>{enabledTradeCategories.find(([id])=>id===category)?.[1]??"Markets"}</h2><span className="small muted">{markets.length} markets</span></div>
+                  <label className="market-search-label">Search markets<input type="search" aria-label="Search markets" data-testid="market-search" value={marketSearch} onChange={event=>setMarketSearch(event.target.value)} placeholder="Search by name or symbol" /></label>
+                  {marketsLoading ? <p className="small muted" role="status">Loading markets…</p> : visiblePublicMarkets.length ? <div className="public-market-options">
+                    {visiblePublicMarkets.map(entry=><button type="button" key={entry.market_id??entry.id} data-testid={`market-option-${entry.underlying?.symbol??entry.market_id}`} aria-label={`${entry.underlying?.symbol??entry.label} perpetual`} aria-pressed={(entry.market_id??entry.id)===market}
+                      onClick={()=>setMarket(entry.market_id??entry.id)}><span className="public-market-symbol">{entry.underlying?.symbol??entry.label}</span><span className="public-market-name">{entry.underlying?.name??entry.label}</span><strong>{entry.reference_price==null?"—":formatTokenAmount(entry.reference_price)}{entry.reference_price!=null&&<small> USD</small>}</strong>{entry.price_status==="stale"&&<span className="public-market-delay">Delayed</span>}</button>)}
+                  </div> : <p className="small muted" role="status">{markets.length?"No matching markets.":"No markets available."}</p>}
+                </section>
+              )}
+              {category === "perps" && selectedSpotMarket ? (
+                <>
+                  <nav className="market-breadcrumb" aria-label="Breadcrumb"><Link href="/home">Home</Link><span>/</span><Link href="/markets">Markets</Link><span>/</span><strong>{selectedSpotMarket.underlying?.symbol??selectedSpotMarket.label}</strong></nav>
+                  <div className="market-detail-layout">
+                    <section className="market-price-card" aria-label="Asset price" data-testid="perps-market-detail">
+                      <div className="market-asset-heading"><span className="market-asset-fallback" aria-hidden="true">{(selectedSpotMarket.underlying?.symbol??"·").slice(0,1)}</span><div><h2>{selectedSpotMarket.underlying?.name??selectedSpotMarket.label}</h2><span>{selectedSpotMarket.underlying?.symbol} perpetual</span></div></div>
+                      <div className="market-price-heading"><strong>{formatTokenAmount(marketHistory?.latest_price??selectedSpotMarket.reference_price)}</strong><span>USD per {selectedSpotMarket.underlying?.symbol}</span></div>
+                      <div className={`public-market-freshness ${selectedSpotMarket.price_status==="stale"?"delayed":""}`} data-testid="market-price-freshness">{selectedSpotMarket.price_status==="current"?"Current price":selectedSpotMarket.price_status==="stale"?"Price delayed":"Price unavailable"}{selectedSpotMarket.oracle_timestamp&&<time dateTime={selectedSpotMarket.oracle_timestamp}>{new Date(selectedSpotMarket.oracle_timestamp).toLocaleString()}</time>}</div>
+                      <div className="market-price-change" aria-label="Price change"><strong>{marketHistory&&marketHistory.points.length>1?displayChange(marketHistory.change_absolute):"—"}</strong><span>{marketHistory&&marketHistory.points.length>1?`USD (${displayChange(marketHistory.change_percent)}%)`: "(—)"}</span></div>
+                      <PriceChart history={marketHistory} loading={historyLoading} />
+                      <div className="market-periods" role="group" aria-label="Price timeframe">{(["live","1d","1w","1m","1y","all"] as const).map(period=><button type="button" key={period} aria-pressed={historyRange===period} onClick={()=>setHistoryRange(period)}>{period.toUpperCase()}</button>)}</div>
+                      {(marketHistory?.as_of??selectedSpotMarket.observed_at)&&<p className="market-price-observed">Updated {new Date(marketHistory?.as_of??selectedSpotMarket.observed_at).toLocaleString()}</p>}
+                      {selectedSpotMarket.stats&&<>
+                        <dl className="public-market-stats" data-testid="market-stats">
+                          <div><dt>24h volume</dt><dd>{displayPublicNotional(selectedSpotMarket.stats.volume_24h_atomic)}</dd></div>
+                          <div><dt>Open positions</dt><dd>{selectedSpotMarket.stats.open_positions??"—"}</dd></div>
+                          <div><dt>Long open interest</dt><dd>{displayPublicNotional(selectedSpotMarket.stats.open_interest_long_atomic)}</dd></div>
+                          <div><dt>Short open interest</dt><dd>{displayPublicNotional(selectedSpotMarket.stats.open_interest_short_atomic)}</dd></div>
+                        </dl>
+                        {(selectedSpotMarket.stats.pool?.stale===true||selectedSpotMarket.stats.custody?.stale===true)&&<p className="small muted">Market activity delayed</p>}
+                      </>}
+                    </section>
+                    <section className="market-order-card" aria-label="Trade market" data-testid="market-order-card">
+                      <h2>Trade {selectedSpotMarket.underlying?.symbol}</h2>
+                      <div className="public-order-direction" role="group" aria-label="Position direction"><button type="button" disabled>Long</button><button type="button" disabled>Short</button></div>
+                      <label>Amount<input aria-label="Order amount" placeholder="0.00" inputMode="decimal" disabled /></label>
+                      <div className="detail-row"><span>Market price</span><strong>{selectedSpotMarket.reference_price==null?"Unavailable":`${formatTokenAmount(selectedSpotMarket.reference_price)} USD`}</strong></div>
+                      <button className="button wide" disabled>Trading unavailable</button>
+                    </section>
+                  </div>
+                </>
+              ) : category === "crypto_spot" && markets.length && selectedSpotMarket ? (
                 <>
                 <nav className="market-breadcrumb" aria-label="Breadcrumb"><Link href="/home">Home</Link><span>/</span><Link href="/markets">Markets</Link><span>/</span><strong>{marketHistory ? (swapAssetMap.has(marketHistory.base_asset_id) ? swapIdentity(marketHistory.base_asset_id) : marketHistory.base_symbol) : "Asset"}</strong></nav>
                 <div className="market-detail-layout">
@@ -1126,7 +1187,7 @@ function FinanceShell({ page, auth }: { page: string; auth?: Auth }) {
                 </section>
                 </div>
                 </>
-              ) : <section className="card"><Empty icon="markets" title="No markets available." text={category === "crypto_spot" ? "Try refreshing to check available assets." : "This category is currently unavailable."} /></section>}
+              ) : category === "crypto_spot" || category === "unavailable" ? <section className="card"><Empty icon="markets" title="No markets available." text={category === "crypto_spot" ? "Try refreshing to check available assets." : "This category is currently unavailable."} /></section> : null}
             </>
           )}
           {page === "earn" && (
