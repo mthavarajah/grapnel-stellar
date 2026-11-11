@@ -171,3 +171,30 @@ it('returns only safe Earn summaries from actual wallet and protocol observation
  const response=await GET(request('earn-balances'),context(['earn-balances']));const body=await response.json();
  expect(response.status).toBe(200);expect(body.data.balances[0].in_earn).toBe('0.0502446');expect(body.data.balances[1]).toMatchObject({wallet_amount:'0.0000000',trustline_required:true});expect(JSON.stringify(body)).not.toContain('pool_contract_id');
 });
+
+// These negative fixtures must stop at the BFF boundary; no provider call occurs.
+it.each(['quote','order'])('blocks %s when the business disables spot',async route=>{
+ vi.mocked(server.requireModule).mockRejectedValueOnce(new server.BffError(403,'MODULE_NOT_ENABLED','This module is disabled'));
+ const upstream=vi.spyOn(server,'grapnel');
+ const body=route==='quote'?{market_id:'exact-market',asset_id:'stellar-testnet:native:XLM',amount:'1',slippage_bps:50}:{quote_id:operationId};
+ const response=await POST(request(route,body),context([route]));
+ expect(response.status).toBe(403);expect(upstream).not.toHaveBeenCalled();
+});
+it.each(['quote','order'])('blocks %s before a verified wallet signing gate',async route=>{
+ vi.mocked(server.requireModule).mockResolvedValueOnce({enabled:true,execution_status:'discovery_only'}).mockRejectedValueOnce(new server.BffError(409,'EXECUTION_UNAVAILABLE','Wallet signing proof is required'));
+ const upstream=vi.spyOn(server,'grapnel');
+ const body=route==='quote'?{market_id:'exact-market',asset_id:'stellar-testnet:native:XLM',amount:'1',slippage_bps:50}:{quote_id:operationId};
+ const response=await POST(request(route,body),context([route]));
+ expect(response.status).toBe(409);expect(upstream).not.toHaveBeenCalled();
+});
+it.each(['stocks','perps','commodities'])('enforces disabled %s read entitlement',async assetClass=>{
+ vi.mocked(server.requireModule).mockRejectedValueOnce(new server.BffError(403,'MODULE_NOT_ENABLED','This module is disabled'));
+ const upstream=vi.spyOn(server,'grapnel');
+ const response=await GET(request('markets?asset_class='+assetClass),context(['markets']));
+ expect(response.status).toBe(403);expect(server.requireModule).toHaveBeenCalledWith('trade.'+assetClass,session);expect(upstream).not.toHaveBeenCalled();
+});
+it.each(['fund','return'])('requires an idempotency key for %s from unified funds controls',async route=>{
+ const upstream=vi.spyOn(server,'grapnel');
+ const response=await POST(new NextRequest('http://localhost:3002/api/grapnel/'+route,{method:'POST',headers:{origin:'http://localhost:3002','content-type':'application/json'},body:JSON.stringify({asset_id:'stellar-testnet:native:XLM',amount:'0.1'})}),context([route]));
+ expect(response.status).toBe(400);expect((await response.json()).error.code).toBe('IDEMPOTENCY_KEY_REQUIRED');expect(upstream).not.toHaveBeenCalled();
+});
