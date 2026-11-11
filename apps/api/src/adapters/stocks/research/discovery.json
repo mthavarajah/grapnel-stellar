@@ -1,0 +1,150 @@
+{
+  "observed_at": "2026-11-11T16:46:30.993Z",
+  "mode": "read_only_stock_route_discovery",
+  "network_required": "stellar-testnet",
+  "writes": false,
+  "requests": [
+    {
+      "method": "GET",
+      "path": "/v1/be/healthz",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/v1/swaps/tokens",
+      "status": 200,
+      "chain_keys": [
+        "sonic",
+        "0xa86a.avax",
+        "0xa4b1.arbitrum",
+        "0x2105.base",
+        "0xa.optimism",
+        "0x89.polygon",
+        "0x38.bsc",
+        "hyper",
+        "lightlink",
+        "solana",
+        "0x1.icon",
+        "stellar",
+        "sui",
+        "injective-1",
+        "near",
+        "bitcoin",
+        "ethereum",
+        "redbelly",
+        "0x2019.kaia",
+        "stacks",
+        "hedera",
+        "robinhood"
+      ],
+      "stellar_count": 66,
+      "stellar_rwa_count": 46,
+      "native": {
+        "symbol": "XLM",
+        "name": "Stellar Lumens",
+        "decimals": 7,
+        "address": "CAS3J7GYLGXMF6TDJBBYYSE3HQ6BBSMLNUQ34T6TZMYMW2EVH34XOWMA",
+        "chainKey": "stellar",
+        "hubAsset": "0x8ac68af223907fb1b893086601a3d99e00f2fa9d",
+        "vault": "0x6BC8C37cba91F76E68C9e6d689A9C21E4d32079B"
+      },
+      "stock_sample": {
+        "symbol": "AAPL",
+        "isRwa": true,
+        "name": "Apple",
+        "decimals": 7,
+        "address": "CAZSFDNSSR2RKJ2LIIB2Y4G4WOSYYKC4646EUJ63PQLDDHOVQYZ4HDTK",
+        "chainKey": "stellar",
+        "hubAsset": "0x9B37F4b9d9E47f5b4fA5eC3566a55D52030AEC4C",
+        "vault": "0x4712D2D49Ba3be41DA334FCB3616FDdc0d745185"
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/v1/be/config/spoke/chains",
+      "status": 200,
+      "body": [
+        "0xa86a.avax",
+        "0xa4b1.arbitrum",
+        "0x2105.base",
+        "0x38.bsc",
+        "injective-1",
+        "sonic",
+        "0x1.icon",
+        "sui",
+        "0xa.optimism",
+        "0x89.polygon",
+        "solana",
+        "stellar",
+        "hyper",
+        "lightlink",
+        "near",
+        "ethereum",
+        "bitcoin",
+        "redbelly",
+        "0x2019.kaia",
+        "stacks",
+        "hedera",
+        "robinhood"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/v1/be/config/spoke/all-chains-configs",
+      "status": 200,
+      "stellar_stock_trustline": {
+        "assetCode": "AAPL",
+        "contractId": "CAZSFDNSSR2RKJ2LIIB2Y4G4WOSYYKC4646EUJ63PQLDDHOVQYZ4HDTK",
+        "assetIssuer": "GDYUTHY75A7WUZJQDPOP66FB32BOYGZRXHWTWO4Q6LQTANT5X3V5HNFA"
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/v1/swaps/tokens/stellar",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/v1/swaps/tokens/stellar-testnet",
+      "status": 200,
+      "body": {
+        "raw": ""
+      }
+    }
+  ],
+  "identity": {
+    "required_native_sac": "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC",
+    "mainnet_native_sac": "CAS3J7GYLGXMF6TDJBBYYSE3HQ6BBSMLNUQ34T6TZMYMW2EVH34XOWMA",
+    "published_native_matches_mainnet": true,
+    "published_AAPL": {
+      "symbol": "AAPL",
+      "isRwa": true,
+      "name": "Apple",
+      "decimals": 7,
+      "address": "CAZSFDNSSR2RKJ2LIIB2Y4G4WOSYYKC4646EUJ63PQLDDHOVQYZ4HDTK",
+      "chainKey": "stellar",
+      "hubAsset": "0x9B37F4b9d9E47f5b4fA5eC3566a55D52030AEC4C",
+      "vault": "0x4712D2D49Ba3be41DA334FCB3616FDdc0d745185"
+    },
+    "listed_classic_AAPL": {
+      "assetCode": "AAPL",
+      "contractId": "CAZSFDNSSR2RKJ2LIIB2Y4G4WOSYYKC4646EUJ63PQLDDHOVQYZ4HDTK",
+      "assetIssuer": "GDYUTHY75A7WUZJQDPOP66FB32BOYGZRXHWTWO4Q6LQTANT5X3V5HNFA"
+    },
+    "mainnet_AAPL_sac": "CAZSFDNSSR2RKJ2LIIB2Y4G4WOSYYKC4646EUJ63PQLDDHOVQYZ4HDTK",
+    "testnet_AAPL_sac": "CBPIIKEK3G3FWVXCXRARECYRIPHBKFPA4W2QDMNFTLZK4QHXXR2L2S7X"
+  },
+  "gate": {
+    "eligible_route": false,
+    "markets": [],
+    "reason": "Published stock identities are mainnet; no independently verified eligible Stellar Testnet stock/solver/liquidity route"
+  },
+  "testnet_listed_AAPL_contract": {
+    "status": "not_found"
+  },
+  "testnet_classic_AAPL_lookup": {
+    "url": "https://horizon-testnet.stellar.org/assets?asset_code=AAPL&asset_issuer=GDYUTHY75A7WUZJQDPOP66FB32BOYGZRXHWTWO4Q6LQTANT5X3V5HNFA",
+    "status": 200,
+    "records": 0
+  }
+}
