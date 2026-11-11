@@ -134,6 +134,27 @@
     "pool_contract_id": "CCEBVDYM32YNYCVNRXQKDFFPISJJCV557CDZEIRBEE4NCV4KHPQ44HGF",
     "reserve_contract_id": "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC"
   },
+  "blend_usdc_supply": {
+    "observed_at": "2026-11-11T16:51:55.326Z",
+    "network": "stellar-testnet",
+    "operation_id": "780d26a1-bec0-4fe6-9af5-d8dce2fe445f",
+    "tx_hash": "1ad63c4281c7fd6a730a914c6f182beb60b6a9872103882b4a9506caa572a09a",
+    "explorer_url": "https://stellar.expert/explorer/testnet/tx/1ad63c4281c7fd6a730a914c6f182beb60b6a9872103882b4a9506caa572a09a",
+    "successful": true,
+    "ledger": 5678454,
+    "asset_id": "stellar-testnet:classic:USDC:GATALTGTWIOT6BUDBCZM3Q4OQ4BO2COLOAZ7IYSKPLC2PMSOPPGF5V56",
+    "requested_amount": "4.0000000",
+    "wallet_before": "14.0312556",
+    "wallet_after": "10.0312556",
+    "position_before": "0.0000000",
+    "position_after": "3.9999999",
+    "fee_stroops": "59910",
+    "fee_asset_id": "stellar-testnet:native:XLM",
+    "pool_contract_id": "CCEBVDYM32YNYCVNRXQKDFFPISJJCV557CDZEIRBEE4NCV4KHPQ44HGF",
+    "reserve_contract_id": "CAQCFVLOBK5GIULPNZRGATJJMIZL5BSP7X5YJVMGCPTUEPFM4AVSRCJU",
+    "reconciled": true,
+    "independent_horizon_effects_verified": true
+  },
   "deployments": {
     "api": null,
     "dashboard": null,
