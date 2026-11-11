@@ -57,8 +57,8 @@ describe("MarketOverviewService", () => {
     ]);
     expect(result.sections.find(section => section.id === "perps")?.items.map(item => item.symbol)).toEqual(["BTC", "ETH", "XLM"]);
     expect(result.sections.find(section => section.id === "lending")?.items).toMatchObject([
-      { symbol: "XLM", value: "5.25", unit: "percent", unit_detail: "APY percentage points" },
-      { symbol: "USDC", value: "3.75", unit: "percent", unit_detail: "APY percentage points" },
+      { symbol: "XLM", value: "5.25", unit: "percent", unit_detail: "Variable APY" },
+      { symbol: "USDC", value: "3.75", unit: "percent", unit_detail: "Variable APY" },
     ]);
     expect(referencePrice).toHaveBeenCalledTimes(9);
   });

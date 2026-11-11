@@ -79,3 +79,5 @@ Gold, Silver and Oil are original, code-native category illustrations (`gold.svg
 | XRP | cryptocurrency-icons | [Artwork](https://raw.githubusercontent.com/spothq/cryptocurrency-icons/master/svg/color/xrp.svg) |
 | XTAR | Official Soroswap Testnet registry icon URL | [Artwork](https://www.dogstarcoin.com/assets/img/dogstarcoin-logo.png) |
 | ZEC | cryptocurrency-icons | [Artwork](https://raw.githubusercontent.com/spothq/cryptocurrency-icons/master/svg/color/zec.svg) |
+
+USDT reference mark: https://raw.githubusercontent.com/spothq/cryptocurrency-icons/master/svg/color/usdt.svg (existing cryptocurrency-icons license). Peridot collateral is explicitly Mock USDT; logos establish no issuer or redemption claim. SHA256 cddba428a029844888b59bae59c6400ee684b0d51dfc490a4374eef6bb63ea16

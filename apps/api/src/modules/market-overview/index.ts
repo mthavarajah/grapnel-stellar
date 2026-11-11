@@ -1,6 +1,6 @@
 import { z } from "zod";
 import type { BlendMarket } from "../../adapters/blend/index.js";
-import type { NoetherPublicMarket } from "../../adapters/perps/noether.js";
+export interface OverviewTradingMarket {underlying:{symbol:string;name:string};price_status:'current'|'stale'|'unavailable';reference_price:string|null;oracle_timestamp:string|null;instrument_type?:string;}
 
 export const MARKET_OVERVIEW_CLASSIC_USDC_ISSUER = "GATALTGTWIOT6BUDBCZM3Q4OQ4BO2COLOAZ7IYSKPLC2PMSOPPGF5V56";
 const CLASSIC_USDC_ID = `stellar-testnet:classic:USDC:${MARKET_OVERVIEW_CLASSIC_USDC_ISSUER}`;
@@ -44,7 +44,7 @@ export interface MarketOverviewSnapshot {
 }
 export interface MarketOverviewDependencies {
   referencePrice: MarketReferencePriceReader;
-  perps: () => Promise<NoetherPublicMarket[]>;
+  perps: () => Promise<OverviewTradingMarket[]>;
   lending: () => Promise<BlendMarket[]>;
   now?: () => number;
 }
@@ -143,20 +143,20 @@ export class MarketOverviewService {
     const sections: Partial<Record<MarketOverviewSection["id"], Promise<MarketOverviewSection>>> = {};
     if (enabled.has("trade.spot")) sections.spot = referenceSection("spot", "Spot prices", referenceItems.spot, this.deps, this.now());
     if (enabled.has("trade.perps")) sections.perps = (async () => {
-      let markets: NoetherPublicMarket[] = [];
+      let markets: OverviewTradingMarket[] = [];
       try { markets = await this.deps.perps(); } catch { /* preserve other enabled sections */ }
       const now = this.now();
       const eligible = markets.filter(market => ["BTC", "ETH", "XLM"].includes(market.underlying.symbol)
         && market.price_status === "current" && market.reference_price !== null && validDecimal(market.reference_price)
-        && market.oracle_timestamp !== null && sourceDate(market.oracle_timestamp, now, 60_000) !== null);
+        && market.oracle_timestamp !== null && sourceDate(market.oracle_timestamp, now, market.instrument_type==='leveraged_margin'?600_000:60_000) !== null);
       const items: MarketOverviewItem[] = eligible.slice(0, 3).map(market => ({
         symbol: market.underlying.symbol,
-        name: `${market.underlying.name} perpetual`,
+        name: `${market.underlying.name} ${market.instrument_type==='leveraged_margin'?'margin':'perpetual'}`,
         value: market.reference_price!,
         unit: "USD",
         as_of: new Date(market.oracle_timestamp!).toISOString(),
       }));
-      return { id: "perps", label: "Futures prices", items, available: items.length > 0 };
+      return { id: "perps", label: "Margin prices", items, available: items.length > 0 };
     })();
     if (enabled.has("trade.stocks")) sections.stocks = referenceSection("stocks", "Stock prices", referenceItems.stocks, this.deps, this.now());
     if (enabled.has("trade.commodities")) sections.commodities = referenceSection("commodities", "Commodity futures", referenceItems.commodities, this.deps, this.now());
@@ -173,7 +173,7 @@ export class MarketOverviewService {
         const value = supplyApyPercentagePoints(market.supply_apy_variable);
         if (!asOf || value === null) continue;
         seen.add(market.asset_id);
-        items.push({ symbol: market.asset.code, name: `${market.asset.code} variable supply APY`, value, unit: "percent", unit_detail: "APY percentage points", as_of: asOf });
+        items.push({ symbol: market.asset.code, name: `${market.asset.code} variable supply APY`, value, unit: "percent", unit_detail: "Variable APY", as_of: asOf });
       }
       return { id: "lending", label: "Lending rates", items, available: items.length > 0 };
     })();

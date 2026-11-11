@@ -16,7 +16,7 @@ export interface MarketHistoryRouteDependencies {
 export async function registerMarketHistoryRoutes(app:FastifyInstance,deps:MarketHistoryRouteDependencies):Promise<void>{
  app.get('/v1/trade/markets/:id/history',async request=>{
   const {id}=z.object({id:z.string().min(1).max(200)}).parse(request.params);
-  const category=/^stellar-testnet:noether:[A-Z0-9]{1,12}-PERP$/.test(id)?'perps'
+  const category=id==='stellar-testnet:peridot:XLM-USDT-MARGIN'?'perps'
    :/^sodax:catalog:(?:mainnet|testnet):C[A-Z2-7]{55}$/.test(id)?'stocks'
    :id.startsWith('stellar-testnet:soroswap:')?'spot':null;
   if(!category)throw new GrapnelError(404,'NOT_FOUND','Market not found');

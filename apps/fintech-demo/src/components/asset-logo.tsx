@@ -68,6 +68,7 @@ export const ASSET_LOGO_PATHS:Readonly<Record<string,string>>={
   "UNI": "/assets/logos/uni.svg",
   "UPS": "/assets/logos/ups.svg",
   "USDC": "/assets/usdc.svg",
+  "USDT": "/assets/logos/usdt.svg",
   "USO": "/assets/logos/uso.png",
   "WTGOLD": "/assets/logos/gold.svg",
   "WTI": "/assets/logos/oil.svg",

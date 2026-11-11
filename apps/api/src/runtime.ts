@@ -35,7 +35,7 @@ import { SpotService } from './modules/spot/service.js';
 import { registerSpotRoutes } from './modules/spot/routes.js';
 import {StocksTestnetDiscovery} from './adapters/stocks/index.js';
 import {CommodityAdapter,COMMODITIES_BLOCK_REASON} from './adapters/commodities/index.js';
-import {NoetherPublicAdapter} from './adapters/perps/index.js';
+import {PeridotMarginAdapter} from './adapters/peridot/index.js';
 import { WalletService } from './modules/wallets/service.js';
 import { hasFundingRoundTripProof, verifyNativeTransfer } from './modules/funding/readiness.js';
 import { FundingService } from './modules/funding/service.js';
@@ -68,7 +68,6 @@ export async function createRuntime(pool?:Pool) {
  const operations=new OperationService(db);
  const stocks=new StocksTestnetDiscovery({network:config.network,networkPassphrase:NETWORK_PASSPHRASE});
  const commodities=new CommodityAdapter({network:config.network,passphrase:NETWORK_PASSPHRASE});
- const perps=new NoetherPublicAdapter({network:config.network,networkPassphrase:NETWORK_PASSPHRASE});
  let stocksReason='STOCKS_ROUTE_USES_MAINNET_ASSETS',stocksProbeAt=0,stocksProbeRunning=false;
  const stocksReadiness=async()=>{
   if(!stocksProbeRunning&&Date.now()-stocksProbeAt>60000){stocksProbeRunning=true;void stocks.probe().then(result=>{stocksReason=result.reason;}).catch(()=>{stocksReason='STOCKS_DISCOVERY_UNAVAILABLE';}).finally(()=>{stocksProbeAt=Date.now();stocksProbeRunning=false;});}
@@ -76,6 +75,15 @@ export async function createRuntime(pool?:Pool) {
  };
  const gate1Passed=await hasGate1Proof(chain);
  const funding=new TestnetFundingAdapter({network:config.network,networkPassphrase:NETWORK_PASSPHRASE,treasurySecret:process.env.DEMO_TREASURY_SECRET,enabled:process.env.TESTNET_FUNDING_ENABLED==='true',gate1Passed,maxPerCustomerAtomic:BigInt(process.env.TESTNET_FUNDING_MAX_PER_CUSTOMER_ATOMIC??'250000000'),maxPerTenantAtomic:BigInt(process.env.TESTNET_FUNDING_MAX_PER_TENANT_ATOMIC??'1000000000'),maxGlobalAtomic:BigInt(process.env.TESTNET_FUNDING_MAX_GLOBAL_ATOMIC??'2000000000')});
+ const peridot=funding.treasuryAddress?new PeridotMarginAdapter({readSourceAddress:funding.treasuryAddress}):null;
+ let marginRows:Awaited<ReturnType<PeridotMarginAdapter['markets']>>|undefined,marginAt=0,marginLoading:Promise<Awaited<ReturnType<PeridotMarginAdapter['markets']>>>|undefined;
+ const readMarginMarkets=async()=>{
+  if(!peridot)throw new GrapnelError(409,'EXECUTION_UNAVAILABLE','An existing Testnet read source is required',false,{reason:'PERIDOT_READ_SOURCE_REQUIRED'});
+  if(marginRows&&Date.now()-marginAt<15000)return marginRows;
+  marginLoading??=peridot.markets().then(rows=>{marginRows=rows;marginAt=Date.now();return rows;}).catch(error=>{marginRows=undefined;throw error;}).finally(()=>{marginLoading=undefined;});
+  return marginLoading;
+ };
+ void readMarginMarkets().catch(()=>{/* Missing provider data never prevents unrelated wallet flows. */});
  const spotInspector=new SoroswapConfiguredInspector({quoteReadSource:funding.treasuryAddress??undefined});
  let spotMarkets:Awaited<ReturnType<SoroswapConfiguredInspector['markets']>>=[];
  if(process.env.SOROSWAP_API_KEY){try{spotMarkets=await spotInspector.markets();}catch{/* Discovery failure leaves an empty market registry; never promote a guessed route. */}}
@@ -87,23 +95,15 @@ export async function createRuntime(pool?:Pool) {
  const borrowPreparer=new BlendBorrowSorobanPreparer({network:config.network,passphrase:NETWORK_PASSPHRASE,rpcUrl:process.env.STELLAR_RPC_URL,gate1Passed});
  const borrowing=new BlendBorrowAdapter({network:config.network,passphrase:NETWORK_PASSPHRASE,rpcUrl:process.env.STELLAR_RPC_URL,gate1Passed},{prepareAndSimulate:input=>borrowPreparer.prepare(input)});
  const earningsReader=new LendingEarningsReader({pool:db,positions:customer=>blend.positions(customer)});
- const marketOverview=new MarketOverviewService({referencePrice:createYahooReferencePriceReader(),perps:()=>perps.markets(),lending:()=>blend.markets()});
+ const referencePrices=createYahooReferencePriceReader();
+ const marketOverview=new MarketOverviewService({referencePrice:referencePrices,perps:readMarginMarkets,lending:()=>blend.markets()});
  const marketProfile=async(id:string)=>{
-  if(id.startsWith('stellar-testnet:noether:')){
-   const market=(await perps.markets()).find(entry=>entry.market_id===id);
-   if(!market)throw new GrapnelError(404,'NOT_FOUND','Market not found');
-   return {base_asset_id:market.market_id,base_symbol:market.underlying.symbol,reference:market};
-  }
   const market=spot.market(id),base=market.asset_in.kind==='native'?market.asset_out:market.asset_in;
   const canonical=spot.markets().find(entry=>entry.asset_in_id===XLM.id&&entry.asset_out_id===base.id);
   return {base_asset_id:base.id,base_symbol:base.code,asset:base,history_market_id:canonical?.market_id??id};
  };
  const marketData=new MarketDataService(db,async id=>{
   const profile=await marketProfile(id);
-  if(profile.reference){
-   if(profile.reference.price_status!=='current'||!profile.reference.reference_price||!profile.reference.oracle_timestamp)throw new GrapnelError(503,'PRICE_UNAVAILABLE','Current price is unavailable');
-   return {market_id:id,price:profile.reference.reference_price,quote_symbol:'USD',observed_at:profile.reference.oracle_timestamp,source:profile.reference.source_url};
-  }
   const reg=await spotInspector.registryForMarket(id);
   const entry=await chain.server.getContractData(reg.pair,xdr.ScVal.scvLedgerKeyContractInstance());
   const storage=entry.val.contractData().val().instance().storage()??[];
@@ -143,8 +143,8 @@ export async function createRuntime(pool?:Pool) {
    'trade.spot':()=>spotReadiness.capability(),
    'trade.stocks':stocksReadiness,
    'trade.perps':async()=>{
-    try{await perps.markets();return {execution_status:'discovery_only' as const,reason:'REGION_RESTRICTED',actions:['read_markets']};}
-    catch{return {execution_status:'blocked' as const,reason:'NOETHER_PUBLIC_MARKET_DATA_UNAVAILABLE',actions:[]};}
+    if(Date.now()-marginAt>15000&&!marginLoading)void readMarginMarkets().catch(()=>{});
+    const current=marginRows?.[0];return {execution_status:current?'discovery_only' as const:'blocked' as const,reason:current?.reason??'PERIDOT_DISCOVERY_PENDING',actions:current?['read_markets']:[]};
    },
    'trade.commodities':async()=>({execution_status:'blocked' as const,reason:COMMODITIES_BLOCK_REASON,actions:[]}),
    'capital.wallets':async()=>{const current=await hasGate1Proof(chain);return {execution_status:current?'testnet_verified':'blocked',reason:current?null:privy?'Privy-signed Testnet payment proof is pending':'PRIVY_APP_ID and PRIVY_APP_SECRET are required',actions:current?['provision','balances','test_payment']:[]};},
@@ -158,7 +158,7 @@ export async function createRuntime(pool?:Pool) {
     return success(request,await marketOverview.read(modules));
    });
    await registerMarketHistoryRoutes(app,{requireBusiness,success,
-    perps:(id,range)=>perps.history(id,range),
+    perps:(id,range)=>{if(!peridot)throw new GrapnelError(409,'EXECUTION_UNAVAILABLE','Margin history is unavailable');return peridot.history(id,range);},
     stocks:(id,range)=>stocks.history(id,range),
     spot:async(id,range)=>{const profile=await marketProfile(id);return {...await marketData.history(profile.history_market_id??id,range),market_id:id,base_asset_id:profile.base_asset_id,base_symbol:profile.base_symbol};}
    });
@@ -201,7 +201,7 @@ export async function createRuntime(pool?:Pool) {
    });
    await registerLendingRoutes(app,{adapter:blend,borrowing,operations,balanceReader:address=>chain.getClassicBalances(address)});
    await registerSpotRoutes(app,{service:new SpotService(spot,db,operations,createSpotReservation(operations,readSpotBalances)),refreshReadiness:()=>spotReadiness.refresh(),requireBusiness,requireCustomer,success,
-    readDiscoveryMarkets:async category=>category==='perps'?perps.marketDetails():category==='commodities'?commodities.markets():(await stocks.catalog()).map(market=>({...market,underlying:{symbol:market.symbol,name:market.name}})),
+    readDiscoveryMarkets:async category=>category==='perps'?readMarginMarkets():category==='commodities'?commodities.markets():(await stocks.catalog()).map(market=>({...market,underlying:{symbol:market.symbol,name:market.name}})),
     readPositions:async customer=>({wallet_holdings:await wallets.balances(customer.businessId,customer.walletId),venue_positions:[]})});
    await registerFundingRoutes(app,{service:new FundingService(funding,operations),requireBusiness,requireCustomer,success});
   }
