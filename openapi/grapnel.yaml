@@ -2,7 +2,7 @@
   "openapi": "3.1.0",
   "info": {
     "title": "Grapnel Testnet API",
-    "version": "0.1.6",
+    "version": "0.1.7",
     "description": "Stellar Testnet only. See docs/03_API.md and packages/contracts for frozen payload schemas."
   },
   "servers": [
@@ -1984,7 +1984,7 @@
       "get": {
         "operationId":"get_market_observed_history",
         "security":[{"businessKey":[]}],
-        "description":"Entitled public market observations only. Prices use the explicit quote_symbol; no invented historical candles or USD peg is implied.",
+        "description":"Entitled public market observations and source historical candles. Noether history requires trade.perps; informational sodax:catalog identifiers require trade.stocks and resolve an exact verified catalog identity. Stock history is the underlying stock reference price, never a token execution quote. Prices use the explicit quote_symbol; no invented historical candles or USD peg is implied. Optional source_url, interval, price_basis, observed_at, metrics and real candles preserve source provenance.",
         "parameters":[
           {"name":"id","in":"path","required":true,"schema":{"type":"string","maxLength":200}},
           {"name":"range","in":"query","schema":{"type":"string","enum":["live","1d","1w","1m","1y","all"],"default":"live"}}
