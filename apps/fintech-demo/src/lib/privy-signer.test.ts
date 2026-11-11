@@ -9,6 +9,7 @@ import {
   Networks,
   Operation,
   TransactionBuilder,
+  nativeToScVal,
 } from "@stellar/stellar-sdk";
 import { buildBlendOperation } from '../../../api/src/adapters/blend/index.js';
 import { signPreparedAction } from "./privy-signer.js";
@@ -50,6 +51,23 @@ function fixture() {
   return { wallet, tx, action };
 }
 describe("browser customer signer (offline fixtures only)", () => {
+  it('signs only exact reviewed XLM/USDC swap recipient, minimum and transfer',async()=>{
+    const {wallet,action}=fixture();
+    const router='CCJUD55AG6W5HAI5LRVNKAE5WDP5XGZBUDS5WNTIVDU7O264UZZE7BRD',pair='CBR76WMT6J733CCVBP23M2EL5QGP5HXLPEFNFZGZ7IB6QHOJAHP7YM3V';
+    const issuer='GATALTGTWIOT6BUDBCZM3Q4OQ4BO2COLOAZ7IYSKPLC2PMSOPPGF5V56';
+    const native=Asset.native().contractId(Networks.TESTNET),usdc=new Asset('USDC',issuer).contractId(Networks.TESTNET);
+    const op=new Contract(router).call('swap_exact_tokens_for_tokens',nativeToScVal(10000000n,{type:'i128'}),nativeToScVal(1000000n,{type:'i128'}),xdr.ScVal.scvVec([nativeToScVal(native,{type:'address'}),nativeToScVal(usdc,{type:'address'})]),nativeToScVal(wallet.publicKey(),{type:'address'}),nativeToScVal(BigInt(Math.floor(Date.now()/1000)+120),{type:'u64'}));
+    // Set the path explicitly as addresses rather than symbol/string inference.
+    op.body().invokeHostFunctionOp().hostFunction().invokeContract().args()[2]=xdr.ScVal.scvVec([nativeToScVal(native,{type:'address'}),nativeToScVal(usdc,{type:'address'})]);
+    const fn=op.body().invokeHostFunctionOp().hostFunction().invokeContract();
+    const transfer=new Contract(native).call('transfer',nativeToScVal(wallet.publicKey(),{type:'address'}),nativeToScVal(pair,{type:'address'}),nativeToScVal(10000000n,{type:'i128'})).body().invokeHostFunctionOp().hostFunction().invokeContract();
+    op.body().invokeHostFunctionOp().auth([new xdr.SorobanAuthorizationEntry({credentials:xdr.SorobanCredentials.sorobanCredentialsSourceAccount(),rootInvocation:new xdr.SorobanAuthorizedInvocation({function:xdr.SorobanAuthorizedFunction.sorobanAuthorizedFunctionTypeContractFn(fn),subInvocations:[new xdr.SorobanAuthorizedInvocation({function:xdr.SorobanAuthorizedFunction.sorobanAuthorizedFunctionTypeContractFn(transfer),subInvocations:[]})]})})]);
+    const tx=new TransactionBuilder(new Account(wallet.publicKey(),'1'),{fee:'1000',networkPassphrase:Networks.TESTNET}).addOperation(op).setTimeout(60).build();
+    action.unsignedXdr=tx.toXDR();action.signingHashHex=tx.hash().toString('hex');action.summary={action:'spot.swap',fromAssetId:'stellar-testnet:native:XLM',toAssetId:`stellar-testnet:classic:USDC:${issuer}`,amount:'1',minReceive:'0.1',recipient:wallet.publicKey(),contractId:router,maxFeeStroops:'1000',expiresAt:action.summary.expiresAt};
+    const sign=async()=>({signature:`0x${wallet.sign(tx.hash()).toString('hex')}` as `0x${string}`});
+    await expect(signPreparedAction(action,sign,wallet.publicKey())).resolves.toBeTruthy();
+    await expect(signPreparedAction({...action,summary:{...action.summary,minReceive:'0.2'}},()=>{throw Error('Must not prompt');},wallet.publicKey())).rejects.toThrow('Swap differs');
+  });
   it("attaches the exact Privy Ed25519 digest signature", async () => {
     const { wallet, tx, action } = fixture();
     const signed = await signPreparedAction(
