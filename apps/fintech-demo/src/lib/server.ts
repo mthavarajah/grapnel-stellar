@@ -214,7 +214,7 @@ export async function verifyIdentity(token: string): Promise<string> {
     const client = new PrivyClient({
       appId: process.env.PRIVY_APP_ID,
       appSecret: process.env.PRIVY_APP_SECRET,
-      fetch: (url, init) => fetch(url, { ...init, redirect: "error" }),
+      fetch: (url, init) => fetch(url, { ...init, redirect: "error", signal: AbortSignal.timeout(15000) }),
     });
     const user = await client.users().get({ id_token: token });
     return user.id;

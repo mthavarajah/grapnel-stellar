@@ -21,6 +21,7 @@ export async function api(
     headers,
     body: body === undefined ? undefined : JSON.stringify(body),
     cache: "no-store",
+    signal: AbortSignal.timeout(path === "session" && method === "GET" ? 15000 : 60000),
   });
   const result = await res.json();
   if (!res.ok)

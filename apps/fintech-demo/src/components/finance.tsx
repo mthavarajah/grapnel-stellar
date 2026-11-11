@@ -157,15 +157,23 @@ export default function Finance({ page }: { page: string }) {
     <FinanceShell page={page} />
   );
 }
+async function loginToken(): Promise<string | null> {
+  let timer: ReturnType<typeof setTimeout>;
+  try {
+    return await Promise.race([getIdentityToken(), new Promise<never>((_, reject) => {
+      timer = setTimeout(() => reject(Error("Sign-in timed out. Please try again.")), 15000);
+    })]);
+  } finally { clearTimeout(timer!); }
+}
 function PrivyFinance({ page }: { page: string }) {
   const { ready, authenticated, login, logout } = usePrivy();
   const { refreshUser } = useUser();
   const { signRawHash } = useSignRawHash();
   const connect = async () => {
-    const token = await getIdentityToken();
+    const token = await loginToken();
     if (!token) throw Error("Sign in with Privy first");
     await api("session", { identity_token: token });
-    await refreshUser();
+    void refreshUser().catch(() => {});
   };
   const auth: Auth = {
     ready,
@@ -184,6 +192,12 @@ function FinanceShell({ page, auth }: { page: string; auth?: Auth }) {
   const router = useRouter();
   const [sessionChecked, setSessionChecked] = useState(false);
   const attemptedConnection = useRef(false);
+  const [loginTimedOut, setLoginTimedOut] = useState(false);
+  useEffect(() => {
+    if (sessionChecked && (!auth || auth.ready)) { setLoginTimedOut(false); return; }
+    const timer = setTimeout(() => setLoginTimedOut(true), 15000);
+    return () => clearTimeout(timer);
+  }, [sessionChecked, auth?.ready]);
   const [status, setStatus] = useState<any>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [caps, setCaps] = useState<Capability[]>([]);
@@ -219,33 +233,28 @@ function FinanceShell({ page, auth }: { page: string; auth?: Auth }) {
   // discovery_only until the first grant and customer return are chain-verified.
   const fundingCanStart = capability("capital.testnet_funding")?.enabled && assets.some((entry: any) => entry.available === true);
   const refresh = useCallback(async () => {
-    const [configuration, identity, capabilities] = await Promise.allSettled([
-      api("status"),
-      api("session"),
-      api("grapnel/capabilities"),
-    ]);
-    if (configuration.status === "fulfilled") setStatus(configuration.value);
-    if (capabilities.status === "fulfilled")
-      setCaps(capabilities.value.capabilities ?? []);
-    if (identity.status === "fulfilled") {
-      setSession(identity.value);
-      const [b, o] = await Promise.allSettled([
-        api("grapnel/balances"),
-        api("grapnel/operations"),
-      ]);
-      if (b.status === "fulfilled")
-        setBalances(
-          Array.isArray(b.value) ? b.value : (b.value.balances ?? []),
-        );
-      if (o.status === "fulfilled") setOperations(o.value.operations ?? []);
-    } else {
+    let identity: Session | null = null;
+    try {
+      identity = await api("session");
+      setSession(identity);
+    } catch (error) {
       setSession(null);
-      setBalances([]);
-      setOperations([]);
-      setAssets([]);
-      setMarkets([]);
-      setLending([]);
-      setActive(null);
+      setBalances([]); setOperations([]); setAssets([]); setMarkets([]); setLending([]); setActive(null);
+      if (!(error instanceof ClientError && error.status === 401))
+        setError(error instanceof Error ? error.message : "Session check failed. Please retry.");
+    } finally {
+      setSessionChecked(true);
+    }
+    // Market and chain reads must never hold the login gate open.
+    void Promise.allSettled([api("status"), api("grapnel/capabilities")]).then(([configuration, capabilities]) => {
+      if (configuration.status === "fulfilled") setStatus(configuration.value);
+      if (capabilities.status === "fulfilled") setCaps(capabilities.value.capabilities ?? []);
+    });
+    if (identity) {
+      void Promise.allSettled([api("grapnel/balances"), api("grapnel/operations")]).then(([b, o]) => {
+        if (b.status === "fulfilled") setBalances(Array.isArray(b.value) ? b.value : (b.value.balances ?? []));
+        if (o.status === "fulfilled") setOperations(o.value.operations ?? []);
+      });
     }
   }, []);
   useEffect(() => {
@@ -394,7 +403,7 @@ function FinanceShell({ page, auth }: { page: string; auth?: Auth }) {
       await refresh();
     });
   if (!sessionChecked || (auth && !auth.ready) || !session) {
-    const loading = !sessionChecked || (auth && !auth.ready);
+    const loading = !loginTimedOut && (!sessionChecked || (auth && !auth.ready));
     return (
       <main className="login-screen">
         <section className="login-card">
@@ -402,9 +411,10 @@ function FinanceShell({ page, auth }: { page: string; auth?: Auth }) {
           <span className="badge"><i /> STELLAR TESTNET</span>
           <h1>{loading ? "Opening your workspace…" : "Welcome to Local Finance."}</h1>
           <p>Sign in to connect your wallet and open your dashboard.</p>
+          {loginTimedOut && <p className="login-error" role="alert">Sign-in is taking too long. Retry the connection.</p>}
           {error && <p className="login-error" role="alert">{customerMessage(error)}</p>}
-          <button className="button" onClick={connect} disabled={loading || busy || !auth}>
-            {loading ? "Checking session…" : busy ? "Connecting wallet…" : auth?.authenticated ? "Connect wallet" : "Sign in"}
+          <button className="button" onClick={loginTimedOut ? () => window.location.reload() : connect} disabled={loading || busy || !auth}>
+            {loginTimedOut ? "Retry connection" : loading ? "Checking session…" : busy ? "Connecting wallet…" : auth?.authenticated ? "Connect wallet" : "Sign in"}
             {!loading && !busy && <Icon name="arrow" size={16} />}
           </button>
           {!auth && <p className="login-error">Customer login is currently unavailable.</p>}
