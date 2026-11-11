@@ -192,5 +192,5 @@ it('signs only the exact USDC trustline limit and refuses a substituted issuer b
  let calls=0;const sign=async()=>{calls++;return {signature:`0x${wallet.sign(tx.hash()).toString('hex')}` as `0x${string}`};};
  await signPreparedAction(approved,sign,wallet.publicKey());expect(calls).toBe(1);
  const changed=build(new Asset('USDC',Keypair.random().publicKey()));
- await expect(signPreparedAction({...approved,unsignedXdr:changed.toXDR(),signingHashHex:changed.hash().toString('hex')},sign,wallet.publicKey())).rejects.toThrow('Trustline');expect(calls).toBe(1);
+ await expect(signPreparedAction({...approved,unsignedXdr:changed.toXDR(),signingHashHex:changed.hash().toString('hex')},sign,wallet.publicKey())).rejects.toThrow('USDC setup');expect(calls).toBe(1);
 });

@@ -116,7 +116,7 @@ export async function signPreparedAction(
   }
   if(operation.type==='changeTrust'){
     const issuer='GATALTGTWIOT6BUDBCZM3Q4OQ4BO2COLOAZ7IYSKPLC2PMSOPPGF5V56';
-    if(action.summary.action!=='wallet.usdc_trustline'||!(operation.line instanceof Asset)||operation.line.getCode()!=='USDC'||operation.line.getIssuer()!==issuer||action.summary.fromAssetId!==`${NETWORK}:classic:USDC:${issuer}`||action.summary.recipient!==expectedAddress||action.summary.amount!=='1000'||toAtomic(operation.limit,7)!==toAtomic('1000',7)||tx.fee!=='100'||action.summary.maxFeeStroops!=='100'||action.summary.contractId!==undefined||action.summary.toAssetId!==undefined||action.summary.minReceive!==undefined)throw Error('Trustline differs from the approved Testnet USDC limit');
+    if(action.summary.action!=='wallet.usdc_trustline'||!(operation.line instanceof Asset)||operation.line.getCode()!=='USDC'||operation.line.getIssuer()!==issuer||action.summary.fromAssetId!==`${NETWORK}:classic:USDC:${issuer}`||action.summary.recipient!==expectedAddress||action.summary.amount!=='1000'||toAtomic(operation.limit,7)!==toAtomic('1000',7)||tx.fee!=='100'||action.summary.maxFeeStroops!=='100'||action.summary.contractId!==undefined||action.summary.toAssetId!==undefined||action.summary.minReceive!==undefined)throw Error('USDC setup differs from the limit you reviewed');
   } else if (operation.type === "payment") {
     const assetId = operation.asset.isNative()
       ? `${NETWORK}:native:XLM`
