@@ -1,6 +1,6 @@
-# Integration gates — 2026-11-10
+# Integration gates — 2026-11-11
 
-Credential-free implementation is integrated and locally verified. **Full MVP acceptance is incomplete.** Provider credentials are configured; customer login/signing and hosting access remain pending; no customer/provider execution is claimed.
+Provider credentials and customer signing are integrated. **Full MVP acceptance is incomplete.** Actual payment, funding/return and native-XLM Blend supply/withdraw proofs are recorded below. Soroswap execution, USDC lending execution and public hosting remain pending.
 
 ## Gate 0 — passed
 Foundation committed before delegation as `6ed12fd`. Monorepo, seven module IDs, auth boundaries, Zod/TypeScript interfaces, OpenAPI and Postgres baseline frozen. Current additive API contract is 0.1.1; see docs/14_GATE0_FREEZE.md. Agents worked in isolated scoped worktrees; lead integrated commits.
@@ -8,8 +8,8 @@ Foundation committed before delegation as `6ed12fd`. Monorepo, seven module IDs,
 ## Implementation and verification
 
 - API: actual owner/key/entitlement behavior, tenant isolation, customer binding, idempotent durable operations, reservations, safe unsigned expiry and uncertain-send recovery.
-- Chain/Privy: user-owned wallet provisioning, verified identity, exact customer signing and approved-summary checks. Privy credentials authenticate successfully; customer login/signature and transaction proof remain pending.
-- Funding: actual treasury inventory reads, capped/locked preparation, fixed-recipient return, durable worker and evidence-backed readiness promotion. No grant or return executed.
+- Chain/Privy: customer wallet provisioning, verified identity, exact customer signing and approved-summary checks. Actual customer-signed Testnet payment and Blend transactions are verified below.
+- Funding: actual treasury inventory reads, capped preparation, fixed-recipient return, durable worker and evidence-backed readiness promotion. Grant and return are verified below.
 - Soroswap: source-verified API adapter, strict quote normalization and durable quote/order services. Authenticated Testnet protocol/pool discovery and exact XLM/USDC quotes succeed. Default asset list is mainnet and rejected; unsigned build returns 428 CREATE_TRUSTLINE. Customer trustline, swap XDR inspection and execution remain pending.
 - Blend: real pool/reserve/asset/liquidity reads; narrow native-XLM supply operation/auth/footprint inspector, record+enforce simulation, gated submission revalidation and observed position/wallet reconciliation. Withdrawal now has a dedicated exact-intent inspector, fresh record/enforce simulation, signed submission and position/wallet reconciliation path. Customer-signed XLM supply and withdrawal are verified with position and wallet deltas below; borrow/repay remain unavailable.
 - Dashboard: merged, branded with supplied logos, production build and real browser owner/key/module flows verified.
