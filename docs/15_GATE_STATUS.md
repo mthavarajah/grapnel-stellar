@@ -16,8 +16,8 @@ Foundation committed before delegation as `6ed12fd`. Monorepo, seven module IDs,
 - Fintech: merged independent frontend/BFF, real API reads, encrypted bounded customer sessions, exact signing UX, secret isolation, same-origin checks and idempotent timeout recovery. No customer login bypass.
 - QA: local tests/typechecks/builds, secret/history scans, browser checks, CI, container and cloud deployment inputs. See evidence/local-verification.json for counts and scope; fixture-based tests are never chain proof.
 
-## Gate 1 — pending
-Auth/tenant/customer-negative checks pass locally. The missing mandatory item is a real **Privy-signed customer Testnet payment** with confirmed hash/effects. Gate decision remains false; no fallback signer is authorized.
+## Gate 1 — passed
+Actual Privy customer signature and approved intent verified for completed 0.1 XLM Testnet payment `c1fd6b62b43b062ec88b4bdeddf86e45ea329ac1b9e5969a199289b536208ab2`, ledger 5669076. Independent Horizon reads confirm exact source, fixed treasury recipient, native asset and 0.1000000 debit/credit, plus 100-stroop fee. Auth/tenant/customer-negative suite rerun:55 passed. No fallback signer was used. This does not prove treasury funding, spot or lending execution.
 
 ## Gate 2 — pending
 No confirmed treasury grant, customer return, Soroswap swap, Blend supply or Blend withdrawal. Read-only simulations do not pass this gate. Financial writes remain behind Gate 1; unsupported/unproven paths fail closed.
