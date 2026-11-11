@@ -389,12 +389,14 @@ function FinanceShell({ page, auth }: { page: string; auth?: Auth }) {
   useEffect(()=>{
     setMarketHistory(null);
     if(!session||!selectedSpotMarket||category!=="crypto_spot"||!(page==="markets"||page==="trade")||!capability("trade.spot")?.enabled){setHistoryLoading(false);return;}
-    let alive=true;setHistoryLoading(true);
+    let alive=true,inFlight=false;setHistoryLoading(true);
     const expectedMarket=selectedSpotMarket.market_id??selectedSpotMarket.id;
-    void api(`grapnel/market-history?market_id=${encodeURIComponent(expectedMarket)}&range=${historyRange}`).then(result=>{
+    const refreshHistory=async()=>{if(inFlight)return;inFlight=true;await api(`grapnel/market-history?market_id=${encodeURIComponent(expectedMarket)}&range=${historyRange}`).then(result=>{
       if(alive&&result?.market_id===expectedMarket&&typeof result.base_asset_id==="string"&&typeof result.base_symbol==="string"&&typeof result.quote_symbol==="string"&&Array.isArray(result.points))setMarketHistory(result);
-    }).catch(()=>{}).finally(()=>{if(alive)setHistoryLoading(false);});
-    return()=>{alive=false;};
+    }).catch(()=>{}).finally(()=>{inFlight=false;if(alive)setHistoryLoading(false);});};
+    void refreshHistory();
+    const timer=historyRange==='live'?setInterval(()=>{if(document.visibilityState==='visible')void refreshHistory();},15000):undefined;
+    return()=>{alive=false;if(timer)clearInterval(timer);};
   },[session?.customer_id,selectedSpotMarket?.market_id,selectedSpotMarket?.id,category,page,historyRange,caps]);
   const swapAssetMap = new Map<string, SwapAsset>();
   for (const entry of markets) {
