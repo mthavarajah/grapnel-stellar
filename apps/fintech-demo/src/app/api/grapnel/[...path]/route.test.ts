@@ -41,9 +41,10 @@ beforeEach(() => {
 afterEach(() => vi.restoreAllMocks());
 describe("sample fintech BFF customer boundaries (offline fixtures)", () => {
   it("derives funding customer/wallet from verified session", async () => {
-    const upstream = vi
-      .spyOn(server, "grapnel")
-      .mockResolvedValue({ operation_id: operationId, status: "accepted" });
+    const upstream = vi.spyOn(server, "grapnel")
+      .mockResolvedValueOnce({capabilities:[{module:"capital.wallets",execution_status:"testnet_verified"}]})
+      .mockResolvedValueOnce([{asset_id:"stellar-testnet:native:XLM",available:true}])
+      .mockResolvedValueOnce({ operation_id: operationId, status: "accepted" });
     const response = await POST(
       request("fund", { asset_id: "stellar-testnet:native:XLM", amount: "1" }),
       context(["fund"]),

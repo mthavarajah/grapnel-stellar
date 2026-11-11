@@ -102,11 +102,18 @@ export async function POST(
       );
     const binding = { customer_id: s.customerId, wallet_id: s.walletId };
     if (route === "fund" || route === "return") {
-      await requireModule("capital.testnet_funding", s, true);
-      const body = z
-        .object({ asset_id: z.string().max(200), amount: money })
-        .strict()
-        .parse(raw);
+      // First fund/return creates the chain evidence that promotes this module.
+      // Permit only native XLM while Gate 1 and actual treasury inventory pass;
+      // do not require the round-trip proof before its own first execution.
+      await requireModule("capital.testnet_funding", s);
+      const body = z.object({asset_id:z.string().max(200),amount:money}).strict().parse(raw);
+      const capabilitySet = await grapnel("/capabilities", s);
+      const walletCapability = capabilitySet.capabilities?.find((c: {module:string}) => c.module === "capital.wallets");
+      if (walletCapability?.execution_status !== "testnet_verified")
+        throw new BffError(409, "EXECUTION_UNAVAILABLE", "Complete the customer wallet signing check first");
+      const fundingAssets = await grapnel("/capital/testnet/funding-assets", s);
+      if (!fundingAssets.some((a: {asset_id:string;available:boolean}) => a.asset_id === "stellar-testnet:native:XLM" && a.available === true))
+        throw new BffError(409, "EXECUTION_UNAVAILABLE", "Testnet treasury XLM is unavailable");
       return json(
         await grapnel(`/capital/testnet/${route}`, s, {
           method: "POST",
