@@ -70,6 +70,28 @@
     "reconciled": true,
     "independent_horizon_effects_verified": true
   },
+  "soroswap_reverse": {
+    "observed_at": "2026-11-11T16:41:16.660Z",
+    "network": "stellar-testnet",
+    "operation_id": "e86b216b-3e4a-4836-b29e-1aacc6ce160d",
+    "tx_hash": "a462d075d5cf9eebcd1845e42e46fb86141618de977a9037c42fdb488fea3ad3",
+    "explorer_url": "https://stellar.expert/explorer/testnet/tx/a462d075d5cf9eebcd1845e42e46fb86141618de977a9037c42fdb488fea3ad3",
+    "successful": true,
+    "ledger": 5678326,
+    "customer_wallet": "GB4PC65ZHBPVEZMAHY2K2KYMS3RFBIN2FQIE3LGTLEHT2DEWVMTD7JYQ",
+    "asset_in_id": "stellar-testnet:classic:USDC:GATALTGTWIOT6BUDBCZM3Q4OQ4BO2COLOAZ7IYSKPLC2PMSOPPGF5V56",
+    "asset_out_id": "stellar-testnet:native:XLM",
+    "amount_in": "1.0000000",
+    "amount_out": "6.6229406",
+    "fee_stroops": "16407",
+    "wallet_in_before": "15.0312556",
+    "wallet_in_after": "14.0312556",
+    "wallet_out_before": "9899.6015883",
+    "wallet_out_after": "9906.2228882",
+    "wallet_net_credit": "6.6212999",
+    "reconciled": true,
+    "independent_horizon_effects_verified": true
+  },
   "blend_supply": {
     "observed_at": "2026-11-11T04:30:26.961Z",
     "network": "stellar-testnet",
