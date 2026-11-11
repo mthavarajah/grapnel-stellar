@@ -340,4 +340,77 @@ describe("Noether public-only Testnet discovery", () => {
     expect(market?.reference_price).toBe('74260.3233333');
     expect(market?.stats).toBeNull();
   });
+
+  it('reads Noether candles with real source, interval, OHLC decimals, USD quote and available stats', async () => {
+    const timestamps = [Math.floor(now / 1000) - 120, Math.floor(now / 1000) - 60];
+    const candleBody = { source: 'binance', candles: [
+      { time: timestamps[0], open: 2.5, high: 3, low: 2, close: 2.75 },
+      { time: timestamps[1], open: 2.75, high: 3.25, low: 2.5, close: 3.125 },
+    ] };
+    const fetcher = vi.fn<typeof fetch>().mockImplementation(async url => {
+      const parsed = new URL(String(url));
+      if (parsed.pathname.endsWith('/health')) return response({ status: 'ok', network: 'testnet', indexer: { ledgerAgeSeconds: 2 } });
+      if (parsed.pathname.endsWith('/candles')) {
+        expect(Object.fromEntries(parsed.searchParams)).toEqual({ asset: 'BTC', interval: '5m', limit: '288' });
+        return response(candleBody);
+      }
+      return response({
+        stats: [{ asset: 'BTC', openInterestLong: '10000000', openInterestShort: '20000000', openInterestNet: '-10000000', openPositions: 2, volume24h: '30000000' }],
+        pool: { stale: false }, custody: { stale: false },
+      });
+    });
+    const adapter = new NoetherPublicAdapter({ network: 'testnet', networkPassphrase: NETWORK_PASSPHRASE }, { fetcher, now: () => now });
+    const result = await adapter.history('stellar-testnet:noether:BTC-PERP', '1d');
+    expect(result).toMatchObject({
+      market_id: 'stellar-testnet:noether:BTC-PERP', base_asset_id: 'stellar-testnet:noether:BTC-PERP', base_symbol: 'BTC',
+      quote_symbol: 'USD', interval: '5m', source: 'binance', source_url: NOETHER_TESTNET_API + '/v1/candles',
+      latest_price: '3.125', change_absolute: '0.375', change_percent: '13.636363636363636363',
+      latest_candle_age_seconds: 60, execution_status: 'discovery_only', executable: false,
+      points: [
+        { timestamp: new Date(timestamps[0]! * 1000).toISOString(), price: '2.75', open: '2.5', high: '3', low: '2', close: '2.75' },
+        { timestamp: new Date(timestamps[1]! * 1000).toISOString(), price: '3.125', open: '2.75', high: '3.25', low: '2.5', close: '3.125' },
+      ],
+      metrics: { asset: 'BTC', open_interest_long_atomic: '10000000', volume_24h_atomic: '30000000', indexer_ledger_age_seconds: 2 },
+    });
+    expect(fetcher.mock.calls.every(([, init]) => init?.method === 'GET')).toBe(true);
+  });
+
+  it('maps every dashboard range to a documented interval and bounded point count', async () => {
+    const expected = { live: ['1m', 60], '1d': ['5m', 288], '1w': ['1h', 168], '1m': ['4h', 180], '1y': ['1d', 365], all: ['1w', 1000] } as const;
+    for (const [range, [interval, limit]] of Object.entries(expected) as Array<[keyof typeof expected, (typeof expected)[keyof typeof expected]]>) {
+      const fetcher = vi.fn<typeof fetch>().mockImplementation(async url => {
+        const parsed = new URL(String(url));
+        if (parsed.pathname.endsWith('/health')) return response({ status: 'ok', network: 'testnet' });
+        expect(Object.fromEntries(parsed.searchParams)).toEqual({ asset: 'XLM', interval, limit: String(limit) });
+        return response({ source: 'noeracle', candles: [] });
+      });
+      const adapter = new NoetherPublicAdapter({ network: 'testnet', networkPassphrase: NETWORK_PASSPHRASE }, { fetcher, now: () => now });
+      const result = await adapter.history('stellar-testnet:noether:XLM-PERP', range);
+      expect(result).toMatchObject({ interval, source: 'noeracle', points: [], latest_price: null, as_of: null, change_absolute: null, change_percent: null, metrics: null });
+    }
+  });
+
+  it('rejects unknown market ids, non-seven-decimal candles and inconsistent OHLC without rounding', async () => {
+    const fetcher = vi.fn<typeof fetch>().mockImplementation(async url => String(url).endsWith('/health')
+      ? response({ status: 'ok', network: 'testnet' })
+      : response({ source: 'noeracle', candles: [{ time: Math.floor(now / 1000) - 60, open: 1.12345678, high: 2, low: 1, close: 1.5 }] }));
+    const adapter = new NoetherPublicAdapter({ network: 'testnet', networkPassphrase: NETWORK_PASSPHRASE }, { fetcher, now: () => now });
+    await expect(adapter.history('stellar-testnet:noether:BTC-PERP?bad=1', 'live')).rejects.toMatchObject({ code: 'INVALID_MARKET_ID' });
+    await expect(adapter.history('stellar-testnet:noether:BTC-PERP', 'live')).rejects.toMatchObject({ code: 'PROVIDER_INVALID_RESPONSE' });
+    expect(fetcher.mock.calls.every(([url]) => !String(url).includes('bad=1'))).toBe(true);
+  });
+
+  it('rejects out-of-order candles and preserves missing metrics as null', async () => {
+    const fetcher = vi.fn<typeof fetch>().mockImplementation(async url => {
+      const path = new URL(String(url)).pathname;
+      if (path.endsWith('/health')) return response({ status: 'ok', network: 'testnet' });
+      if (path.endsWith('/candles')) return response({ source: 'noeracle', candles: [
+        { time: 100, open: 2, high: 2, low: 2, close: 2 },
+        { time: 99, open: 1, high: 1, low: 1, close: 1 },
+      ] });
+      return response({ error: 'unavailable' }, 503);
+    });
+    const adapter = new NoetherPublicAdapter({ network: 'testnet', networkPassphrase: NETWORK_PASSPHRASE }, { fetcher, now: () => now });
+    await expect(adapter.history('stellar-testnet:noether:BTC-PERP', '1d')).rejects.toMatchObject({ code: 'PROVIDER_INVALID_RESPONSE' });
+  });
 });

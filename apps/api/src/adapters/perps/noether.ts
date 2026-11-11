@@ -6,6 +6,7 @@ import {
   fromAtomic,
   type AdapterCapabilities,
 } from "@grapnel/contracts";
+import type { HistoryRange, MarketHistory } from "../../modules/market-data/service.js";
 
 export const NOETHER_TESTNET_API =
   "https://noether-api.proudmeadow-533cf0d8.germanywestcentral.azurecontainerapps.io";
@@ -55,6 +56,26 @@ const marketStatsSchema = z.object({
   pool: z.object({ stale: z.boolean().optional(), asOfLedger: z.number().int().positive().optional() }).nullable().optional(),
   custody: z.object({ stale: z.boolean().optional(), ageMs: z.number().nonnegative().optional(), deficit: nonnegativeAtomicSchema.optional() }).nullable().optional(),
 });
+const candleSchema = z.object({
+  candles: z.array(z.object({
+    time: z.number().int().safe().nonnegative().max(253402300799),
+    open: z.number().finite().positive(),
+    high: z.number().finite().positive(),
+    low: z.number().finite().positive(),
+    close: z.number().finite().positive(),
+  })).max(1000),
+  source: z.enum(["noeracle", "binance"]),
+});
+const historyQuery: Record<HistoryRange, { interval: "1m" | "5m" | "1h" | "4h" | "1d" | "1w"; limit: number }> = {
+  live: { interval: "1m", limit: 60 },
+  "1d": { interval: "5m", limit: 288 },
+  "1w": { interval: "1h", limit: 168 },
+  "1m": { interval: "4h", limit: 180 },
+  "1y": { interval: "1d", limit: 365 },
+  // Noether has no cursor or explicit all-time range; bounded weekly candles
+  // return the provider's latest 1000 observations, not a lifetime guarantee.
+  all: { interval: "1w", limit: 1000 },
+};
 export interface NoetherPublicMarket {
   market_id: string;
   label: string;
@@ -107,6 +128,49 @@ export interface NoetherPublicMarketDetails extends NoetherPublicMarket {
   /** Null when data is unavailable or any freshness source is stale/unknown. */
   stats: (NoetherPublicMarketStats & Pick<NoetherPublicStatsSnapshot,
     'observed_at' | 'source_url' | 'indexer_ledger_age_seconds' | 'pool' | 'custody'>) | null;
+}
+export interface NoetherPerpsHistory extends Omit<MarketHistory, "points"> {
+  base_asset_id: string;
+  base_symbol: string;
+  interval: (typeof historyQuery)[HistoryRange]["interval"];
+  source: "noeracle" | "binance";
+  source_url: string;
+  observed_at: string;
+  latest_candle_age_seconds: number | null;
+  points: Array<{ timestamp: string; price: string; open: string; high: string; low: string; close: string }>;
+  metrics: (NoetherPublicMarketStats & Pick<NoetherPublicStatsSnapshot,
+    "observed_at" | "source_url" | "indexer_ledger_age_seconds" | "pool" | "custody">) | null;
+  execution_status: "discovery_only";
+  executable: false;
+}
+
+function candlePrice(value: number): { atomic: bigint; decimal: string } {
+  const text = String(value);
+  const match = /^(0|[1-9]\d*)(?:\.(\d{1,7}))?$/.exec(text);
+  if (!match) throw new GrapnelError(502, "PROVIDER_INVALID_RESPONSE", "Noether returned a candle price outside its documented 7-decimal precision");
+  const atomic = BigInt(match[1]!) * 10_000_000n + BigInt((match[2] ?? "").padEnd(7, "0"));
+  if (atomic <= 0n) throw new GrapnelError(502, "PROVIDER_INVALID_RESPONSE", "Noether returned a non-positive candle price");
+  const fixed = fromAtomic(atomic, 7);
+  const decimal = fixed.replace(/(\.\d*?[1-9])0+$/, "$1").replace(/\.0+$/, "");
+  return { atomic, decimal };
+}
+
+function decimalAtomic(value: bigint): string {
+  const negative = value < 0n;
+  const magnitude = negative ? -value : value;
+  const whole = magnitude / 10_000_000n;
+  const fraction = (magnitude % 10_000_000n).toString().padStart(7, "0").replace(/0+$/, "");
+  return `${negative ? "-" : ""}${whole}${fraction ? `.${fraction}` : ""}`;
+}
+
+function perpsPriceChange(first: bigint, last: bigint): { change_absolute: string; change_percent: string | null } {
+  const difference = last - first;
+  const scale = 10n ** 18n;
+  const percent = (difference * 100n * scale) / first;
+  const whole = (percent < 0n ? -percent : percent) / scale;
+  const tail = ((percent < 0n ? -percent : percent) % scale).toString().padStart(18, "0").replace(/0+$/, "");
+  const changePercent = percent === 0n && difference !== 0n ? null : `${percent < 0n ? "-" : ""}${whole}${tail ? `.${tail}` : ""}`;
+  return { change_absolute: decimalAtomic(difference), change_percent: changePercent };
 }
 export interface NoetherPublicDependencies {
   fetcher?: typeof fetch;
@@ -197,12 +261,14 @@ export class NoetherPublicAdapter {
       );
   }
   private async read(
-    path: "/v1/health" | "/v1/markets" | "/v1/markets/stats" | "/v1/keys/beta-status",
+    path: "/v1/health" | "/v1/markets" | "/v1/markets/stats" | "/v1/keys/beta-status" | "/v1/candles",
+    query?: Record<string, string>,
   ): Promise<unknown> {
     this.assertReadAllowed();
     let response: Response;
     try {
-      response = await this.fetcher(NOETHER_TESTNET_API + path, {
+      const queryString = query ? `?${new URLSearchParams(query).toString()}` : "";
+      response = await this.fetcher(NOETHER_TESTNET_API + path + queryString, {
         method: "GET",
         headers: { Accept: "application/json" },
         redirect: "error",
@@ -470,5 +536,70 @@ export class NoetherPublicAdapter {
         } : null,
       };
     });
+  }
+
+  /** Read bounded real Testnet candles; Noether may identify Binance fallback history in `source`. */
+  async history(marketId: string, range: HistoryRange): Promise<NoetherPerpsHistory> {
+    const match = /^stellar-testnet:noether:([A-Z0-9]{1,12})-PERP$/.exec(marketId);
+    if (!match) throw new GrapnelError(422, "INVALID_MARKET_ID", "A registered Noether Testnet perpetual market id is required");
+    if (!Object.hasOwn(historyQuery, range)) throw new GrapnelError(422, "INVALID_HISTORY_RANGE", "Unsupported market history range");
+    await this.verifyNetwork();
+    const symbol = match[1]!;
+    const { interval, limit } = historyQuery[range];
+    const parsed = candleSchema.safeParse(await this.read("/v1/candles", { asset: symbol, interval, limit: String(limit) }));
+    if (!parsed.success) throw new GrapnelError(502, "PROVIDER_INVALID_RESPONSE", "Noether candle history response is invalid");
+    let priorTime = -1;
+    const points = parsed.data.candles.map(candle => {
+      if (candle.time <= priorTime) throw new GrapnelError(502, "PROVIDER_INVALID_RESPONSE", "Noether candles are not strictly oldest-first");
+      priorTime = candle.time;
+      const open = candlePrice(candle.open);
+      const high = candlePrice(candle.high);
+      const low = candlePrice(candle.low);
+      const close = candlePrice(candle.close);
+      if (low.atomic > open.atomic || low.atomic > close.atomic || high.atomic < open.atomic || high.atomic < close.atomic || low.atomic > high.atomic)
+        throw new GrapnelError(502, "PROVIDER_INVALID_RESPONSE", "Noether candle OHLC values are inconsistent");
+      return {
+        timestamp: new Date(candle.time * 1000).toISOString(),
+        price: close.decimal,
+        open: open.decimal,
+        high: high.decimal,
+        low: low.decimal,
+        close: close.decimal,
+        closeAtomic: close.atomic,
+      };
+    });
+    const latest = points.at(-1);
+    const first = points[0];
+    const changes = first && latest ? perpsPriceChange(first.closeAtomic, latest.closeAtomic) : { change_absolute: null, change_percent: null };
+    const metrics = await this.freshStatsFor(symbol);
+    const observedAt = new Date(this.now()).toISOString();
+    const cleanPoints = points.map(({ closeAtomic: _atomic, ...point }) => point);
+    return {
+      market_id: marketId,
+      base_asset_id: marketId,
+      base_symbol: symbol,
+      quote_symbol: "USD",
+      latest_price: latest?.close ?? null,
+      as_of: latest?.timestamp ?? null,
+      points: cleanPoints,
+      ...changes,
+      interval,
+      source: parsed.data.source,
+      source_url: NOETHER_TESTNET_API + "/v1/candles",
+      observed_at: observedAt,
+      latest_candle_age_seconds: latest ? Math.max(0, Math.floor(this.now() / 1000 - Date.parse(latest.timestamp) / 1000)) : null,
+      metrics,
+      execution_status: "discovery_only",
+      executable: false,
+    };
+  }
+
+  private async freshStatsFor(symbol: string): Promise<NoetherPerpsHistory["metrics"]> {
+    let snapshot: NoetherPublicStatsSnapshot;
+    try { snapshot = await this.marketStats(); } catch { return null; }
+    const age = this.now() - Date.parse(snapshot.observed_at);
+    if (!Number.isFinite(age) || age < -5000 || age > 60000 || snapshot.indexer_ledger_age_seconds === null || snapshot.indexer_ledger_age_seconds > 60 || snapshot.pool?.stale !== false || snapshot.custody?.stale !== false) return null;
+    const stat = snapshot.markets.find(item => item.asset === symbol);
+    return stat ? { ...stat, observed_at: snapshot.observed_at, source_url: snapshot.source_url, indexer_ledger_age_seconds: snapshot.indexer_ledger_age_seconds, pool: snapshot.pool, custody: snapshot.custody } : null;
   }
 }
