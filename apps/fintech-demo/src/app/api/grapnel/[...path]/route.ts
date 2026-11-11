@@ -61,6 +61,15 @@ export async function GET(
       );
       return json(await grapnel(`/trade/markets?asset_class=${category}`, s));
     }
+    if(key==='market-history'){
+      const parsed=z.object({market_id:z.string().min(1).max(200),range:z.enum(['live','1d','1w','1m','1y','all'])}).safeParse({market_id:request.nextUrl.searchParams.get('market_id'),range:request.nextUrl.searchParams.get('range')??'live'});
+      if(!parsed.success)throw new BffError(422,'VALIDATION_ERROR','Select a market and time range');
+      const {market_id,range}=parsed.data;
+      const module=market_id.startsWith('stellar-testnet:noether:')?'trade.perps':market_id.startsWith('stellar-testnet:soroswap:')?'trade.spot':null;
+      if(!module)throw new BffError(404,'NOT_FOUND','Market not found');
+      await requireModule(module,s);
+      return json(await grapnel(`/trade/markets/${encodeURIComponent(market_id)}/history?range=${range}`,s));
+    }
     if(key==='usdc-status'){
       await requireModule('capital.wallets',s);
       const response=await grapnel(`/capital/wallets/${s.walletId}/balances`,s);
@@ -72,15 +81,17 @@ export async function GET(
     }
     if(key==='earn-balances'){
       await requireModule('capital.lending',s);
-      const [wallet,positions]=await Promise.all([grapnel(`/capital/wallets/${s.walletId}/balances`,s),grapnel(`/capital/lending/positions?customer_id=${s.customerId}`,s)]);
+      const [wallet,positions,earningsData]=await Promise.all([grapnel(`/capital/wallets/${s.walletId}/balances`,s),grapnel(`/capital/lending/positions?customer_id=${s.customerId}`,s),grapnel(`/capital/lending/earnings?customer_id=${s.customerId}&wallet_id=${s.walletId}`,s).catch(()=>null)]);
       const walletBalances=Array.isArray(wallet)?wallet:(wallet.balances??[]);
       const poolPositions=Array.isArray(positions)?positions:(positions.positions??[]);
+      const earnings=Array.isArray(earningsData)?earningsData:(earningsData?.earnings??[]);
       const ids=['stellar-testnet:native:XLM','stellar-testnet:classic:USDC:GATALTGTWIOT6BUDBCZM3Q4OQ4BO2COLOAZ7IYSKPLC2PMSOPPGF5V56'];
       const balances=ids.map(asset_id=>{
         const balance=walletBalances.find((b:{asset_id:string})=>b.asset_id===asset_id);
         const position=poolPositions.find((p:{asset_id:string})=>p.asset_id===asset_id);
         if(!position||(!balance&&asset_id===ids[0]))throw new BffError(503,'BALANCE_UNAVAILABLE','Current Earn balance could not be verified');
-        return {asset_id,wallet_amount:balance?.wallet_amount??'0.0000000',spendable:balance?.spendable??'0.0000000',in_earn:position.supplied,as_of:position.as_of,trustline_required:asset_id===ids[1]&&!balance};
+        const yieldRow=earnings.find((row:{asset_id:string})=>row.asset_id===asset_id);
+        return {asset_id,wallet_amount:balance?.wallet_amount??'0.0000000',spendable:balance?.spendable??'0.0000000',in_earn:position.supplied,earned:yieldRow?.earned??null,earned_since:yieldRow?.earned_since??null,as_of:position.as_of,trustline_required:asset_id===ids[1]&&!balance};
       });
       return json({balances,as_of:new Date().toISOString()});
     }

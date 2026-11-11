@@ -39,6 +39,21 @@ beforeEach(() => {
   });
 });
 afterEach(() => vi.restoreAllMocks());
+it('binds market history to the matching business module and safely encoded exact market',async()=>{
+ const market='stellar-testnet:soroswap:verified-pair:XLM-USDC';
+ const upstream=vi.spyOn(server,'grapnel').mockResolvedValue({market_id:market,points:[]});
+ const response=await GET(request(`market-history?market_id=${encodeURIComponent(market)}&range=1d`),context(['market-history']));
+ expect(response.status).toBe(200);expect(server.requireModule).toHaveBeenCalledWith('trade.spot',session);
+ expect(upstream).toHaveBeenCalledWith(`/trade/markets/${encodeURIComponent(market)}/history?range=1d`,session);
+});
+it('rejects invalid history ranges and disabled perps before reading any provider data',async()=>{
+ const upstream=vi.spyOn(server,'grapnel');
+ expect((await GET(request('market-history?market_id=stellar-testnet:noether:BTC-PERP&range=made-up'),context(['market-history']))).status).toBe(422);
+ expect(upstream).not.toHaveBeenCalled();
+ vi.mocked(server.requireModule).mockRejectedValueOnce(new server.BffError(403,'MODULE_NOT_ENABLED','This module is disabled'));
+ expect((await GET(request('market-history?market_id=stellar-testnet:noether:BTC-PERP&range=live'),context(['market-history']))).status).toBe(403);
+ expect(server.requireModule).toHaveBeenCalledWith('trade.perps',session);expect(upstream).not.toHaveBeenCalled();
+});
 describe("sample fintech BFF customer boundaries (offline fixtures)", () => {
   it("does not expose protocol positions in the consumer sample fintech", async () => {
     const upstream = vi.spyOn(server, "grapnel");
