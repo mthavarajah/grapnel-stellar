@@ -19,6 +19,10 @@ function fixture(options:{xlmCollateral?:bigint;usdcCollateral?:bigint;usdcDebt?
  return {adapter,prepare,input,pool};
 }
 describe('isolated borrowing pool risk and intent fixtures',()=>{
+ it('does not hide unsupported pool positions in a full account valuation',async()=>{
+  const known=fixture({xlmCollateral:100n});expect(await known.adapter.positionsForValuation(customer)).toHaveLength(2);
+  const unknown=fixture({unknownCollateral:true});await expect(unknown.adapter.positionsForValuation(customer)).rejects.toMatchObject({code:'EXECUTION_UNAVAILABLE',details:{reason:'UNPRICED_BORROW_POOL_POSITION'}});
+ });
  it('keeps the customer empty new-pool position separate from old Earn collateral',async()=>{const f=fixture(),read=await f.adapter.read(customer);expect(read.pool_id).toBe(BORROW_POOL_ID);expect(read.assets).toHaveLength(2);expect(read.assets.every(a=>a.borrowed==='0.0000000'&&a.available_to_borrow==='0.0000000'&&!a.can_prepare_borrow&&a.reason==='COLLATERAL_REQUIRED')).toBe(true);});
  it('uses exact individual collateral, pool oracle factors and conservative capacity',async()=>{const f=fixture({xlmCollateral:100000000n}),read=await f.adapter.read(customer),usdc=read.assets.find(a=>a.asset.id===BORROW_USDC_ID)!;expect(usdc.collateral_value).toBe('4.2000000');expect(usdc.borrow_limit).toBe('3.7800000');expect(usdc.available_to_borrow).toBe('3.2319000');expect(usdc.can_prepare_borrow).toBe(true);});
  it('subtracts existing effective debt and returns meaningful health',async()=>{const f=fixture({xlmCollateral:100000000n,usdcDebt:20000000n}),usdc=(await f.adapter.read(customer)).assets[1]!;expect(usdc.health_factor).toBe('1.7954999');expect(usdc.available_to_borrow).toBe('1.4318999');expect(usdc.repayable).toBe('2.0000000');});

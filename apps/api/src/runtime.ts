@@ -12,7 +12,7 @@ import { parseTestnetTransaction, StellarTestnetExecutor, verifySignedAction } f
 import { TestnetFundingAdapter } from './adapters/testnet-funding/index.js';
 import { BlendSorobanPreparer } from './adapters/stellar/blend-soroban.js';
 import {BlendBorrowSorobanPreparer} from './adapters/stellar/blend-borrow-preparer.js';
-import {BlendBorrowAdapter} from './adapters/blend/borrow.js';
+import {BlendBorrowAdapter,BORROW_ASSETS} from './adapters/blend/borrow.js';
 import {BORROW_POOL_ID,BorrowBaselineSchema,extractBorrowTransactionEvidence,inspectBorrowingDeltas,type BorrowingAction,type BorrowingAdapter} from './modules/lending/borrowing.js';
 import { BlendAdapter, type BlendPosition } from './adapters/blend/index.js';
 import { inspectBlendWithdrawDeltas } from './adapters/blend/withdraw-inspector.js';
@@ -28,6 +28,8 @@ import {STANDALONE_NATIVE_ROUTES,APPROVED_TOKEN_WASM} from './adapters/soroswap/
 import {SorobanTokenBalanceReader} from './adapters/stellar/token-balances.js';
 import {MarketDataService} from './modules/market-data/index.js';
 import {registerMarketHistoryRoutes} from './modules/market-data/routes.js';
+import {registerWalletValuationRoutes,registerAccountValuationRoutes} from './modules/wallets/valuation-routes.js';
+import {AccountValuationService} from './modules/wallets/account-valuation.js';
 import {MarketOverviewService,createYahooReferencePriceReader} from './modules/market-overview/index.js';
 import {createSpotReservation,inspectSpotDeltas,SpotBaselineSchema,SPOT_USDC_ID} from './modules/spot/reservations.js';
 import {SpotProofReadiness} from './modules/spot/proof.js';
@@ -113,6 +115,19 @@ export async function createRuntime(pool?:Pool) {
   const nativeReserve=t0===NATIVE_SAC?r0:r1,tokenReserve=t0===NATIVE_SAC?r1:r0;
   return {market_id:id,price:fromAtomic(nativeReserve*10n**18n/tokenReserve,18),quote_symbol:'XLM',observed_at:new Date().toISOString(),source:`stellar-testnet:pool:${reg.pair}`};
  });
+ const priceForAsset=async(assetId:string)=>{
+  const native=await referencePrices('XLM');if(!native)return null;
+  if(assetId===XLM.id)return native;
+  const market=spot.markets().find(row=>row.asset_in_id===XLM.id&&row.asset_out_id===assetId);
+  if(!market)return null;
+  const quote=await marketData.history(market.market_id,'live');
+  if(quote.quote_symbol!=='XLM'||!quote.latest_price||!quote.as_of)return null;
+  const product=toAtomic(quote.latest_price,18)*toAtomic(native.value,18)/10n**18n;
+  if(product<=0n)return null;
+  return {value:fromAtomic(product,18),as_of:new Date(Math.min(Date.parse(native.as_of),Date.parse(quote.as_of))).toISOString()};
+ };
+ const valuationAsset=(id:string)=>BORROW_ASSETS.find(asset=>asset.id===id)??spot.markets().flatMap(market=>[market.asset_in,market.asset_out]).find(asset=>asset.id===id);
+ const accountValuation=new AccountValuationService({walletBalances:customer=>wallets.balances(customer.businessId,customer.walletId),earnPositions:customer=>blend.positions(customer),borrowPositions:customer=>borrowing.positionsForValuation(customer),priceFor:priceForAsset,assetFor:valuationAsset});
  let fundingVerified=false;let fundingProofAt=0;let fundingProofRunning=false;
  const readFundingReadiness=async()=>{
   if(!await hasGate1Proof(chain))return {execution_status:'blocked' as const,reason:'GATE_1_SIGNING_PROOF_REQUIRED',actions:[]};
@@ -135,8 +150,8 @@ export async function createRuntime(pool?:Pool) {
   balanceReader:address=>chain.getClassicBalances(address),
   dashboardCustomerBalances:(businessId,walletId)=>wallets.balances(businessId,walletId),
   dashboardCustomerPositions:async customer=>{
-   const [positions,markets]=await Promise.all([blend.positions(customer),blend.markets()]);
-   return positions.map(position=>({provider:'blend',network:NETWORK,asset:markets.find(market=>market.market_id===position.market_id)?.asset??null,...position}));
+   const [positions,markets,borrowPositions]=await Promise.all([blend.positions(customer),blend.markets(),borrowing.positions(customer)]);
+   return [...positions.map(position=>({provider:'blend',network:NETWORK,asset:markets.find(market=>market.market_id===position.market_id)?.asset??null,...position})),...borrowPositions.map(position=>({provider:'blend',network:NETWORK,asset:valuationAsset(position.asset_id)??null,wallet_spendable:false,readiness:'discovery_only',...position}))];
   },
   capabilities:{
    'capital.lending':readBlendReadiness,
@@ -151,6 +166,8 @@ export async function createRuntime(pool?:Pool) {
    'capital.testnet_funding':readFundingReadiness
   },
   registerAdapters:async app=>{
+   await registerWalletValuationRoutes(app,{requireBusiness,requireCustomer,success,balances:customer=>wallets.balances(customer.businessId,customer.walletId),priceFor:priceForAsset});
+   await registerAccountValuationRoutes(app,{requireBusiness,requireCustomer,success,readAccount:customer=>accountValuation.read(customer)});
    app.get('/v1/market-overview',async request=>{
     const business=await requireBusiness(request,'capital.wallets');
     z.object({}).strict().parse(request.query);

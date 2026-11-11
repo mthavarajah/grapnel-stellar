@@ -26,7 +26,7 @@ type Session = {
   wallet_id: string;
   stellar_address: string;
 };
-type WalletValuation = {wallet_id:string;total_usd:string|null;priced_subtotal_usd:string;unpriced_asset_count:number;as_of:string};
+type WalletValuation = {wallet_id:string;total_usd:string|null;priced_subtotal_usd:string;unpriced_asset_count:number;unknown_source_count?:number;as_of:string};
 type BorrowAsset = {
   market_id:string;asset:AssetIdentity;borrow_apr:string|null;borrow_apy:string|null;
   available_liquidity:string|null;borrowed:string;repayable:string;
@@ -396,7 +396,8 @@ function FinanceShell({ page, auth, initialCategory }: { page: string; auth?: Au
   const [accountValuation,setAccountValuation]=useState<WalletValuation|null>(null);
   const [accountValueLoading,setAccountValueLoading]=useState(false);
   const [accountValueUnavailable,setAccountValueUnavailable]=useState(false);
-  const accountTotal=accountValuation?(accountValuation.unpriced_asset_count>0?accountValuation.priced_subtotal_usd:accountValuation.total_usd):null;
+  const accountPartial=!!accountValuation&&(accountValuation.unpriced_asset_count>0||(accountValuation.unknown_source_count??0)>0);
+  const accountTotal=accountValuation?(accountPartial?accountValuation.priced_subtotal_usd:accountValuation.total_usd):null;
   const accountValueOwner=useRef("");accountValueOwner.current=`${session?.customer_id??""}:${session?.wallet_id??""}`;
   const [caps, setCaps] = useState<Capability[]>([]);
   const [overviewSections,setOverviewSections] = useState<OverviewSection[]>([]);
@@ -1075,9 +1076,9 @@ function FinanceShell({ page, auth, initialCategory }: { page: string; auth?: Au
                     )}
                   </div>
                   </div><section className="account-assets-total" aria-label="Account assets" data-testid="account-assets-total" title={accountValuation?.as_of?`As of ${marketDate(accountValuation.as_of,true,true)}`:undefined}>
-                    <span className="account-assets-label">{accountValuation&&accountValuation.unpriced_asset_count>0?"Estimated priced assets":"Total Assets"}</span>
+                    <span className="account-assets-label">{accountPartial?"Estimated priced assets":"Total Assets"}</span>
                     <strong className="account-assets-value" aria-live="polite">{accountValueLoading||accountValueUnavailable||!accountValuation?"—":accountTotal==null?"—":`$${formatTokenAmount(accountTotal)}`}</strong>
-                    <small>{accountValueLoading?"Loading value…":accountValueUnavailable||!accountValuation||accountTotal==null?"Value unavailable":accountValuation.unpriced_asset_count>0?`${accountValuation.unpriced_asset_count} ${accountValuation.unpriced_asset_count===1?"asset":"assets"} not priced`:"Estimated account assets"}</small>
+                    <small>{accountValueLoading?"Loading value…":accountValueUnavailable||!accountValuation||accountTotal==null?"Value unavailable":(accountValuation.unknown_source_count??0)>0?"Some balances are updating":accountValuation.unpriced_asset_count>0?`${accountValuation.unpriced_asset_count} ${accountValuation.unpriced_asset_count===1?"asset":"assets"} not priced`:"Estimated account assets"}</small>
                   </section></div>
                 </div>
               </section>
