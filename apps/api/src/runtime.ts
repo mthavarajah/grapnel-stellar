@@ -244,7 +244,7 @@ export function createRuntimeWorkerChain(deps:RuntimeWorkerDependencies):WorkerC
     const customer:CustomerContext={businessId:op.business_id,customerId:op.customer_id,walletId:op.wallet_id,walletAddress:op.stellar_address,privyUserId:op.privy_user_id};
     try{
      const [positions,balances]=await Promise.all([blend.positions(customer),chain.getClassicBalances(customer.walletAddress)]);
-     if(action.summary.fromAssetId===BLEND_USDC_ASSET_ID)return inspectBlendUsdcDeltas({operation:op.type==='blend.supply'?'supply':'withdraw',baseline:op.result_json?.[op.type==='blend.supply'?'blend_supply_baseline':'blend_withdraw_baseline'],request:op.request_json,walletAddress:customer.walletAddress,positions,balances,confirmedLedger:confirmed.ledger});
+     if(action.summary.fromAssetId===BLEND_USDC_ASSET_ID)return inspectBlendUsdcDeltas({operation:op.type==='blend.supply'?'supply':'withdraw',baseline:op.result_json?.[op.type==='blend.supply'?'blend_supply_baseline':'blend_withdraw_baseline'],request:{asset_id:op.request_json.asset_id,market_id:op.request_json.market_id,amount:op.request_json.amount},walletAddress:customer.walletAddress,positions,balances,confirmedLedger:confirmed.ledger});
      if(op.type==='blend.withdraw'){
       const tx=await chain.horizon.transactions().transaction(hash).call();
       if(!tx.successful)return false;
