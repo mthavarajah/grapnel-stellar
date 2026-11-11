@@ -1,5 +1,8 @@
 # 09 — Optional Trade categories: stocks, commodities, perps
 
+## Current local implementation — November 11
+Other markets are now the active implementation priority. The demo owner enabled stocks, perps and commodities through the owner-session API (entitlement revision 9); that access change does not grant provider execution. The consumer perps browser reads the actual 16-market Noether catalog, observed price history and fresh utilization statistics through Grapnel. It provides market search and selection, chart periods and a disabled trading card. Utilization amounts are seven-decimal USDC notionals, not underlying token quantities. Missing or stale statistics are null. Business dashboard access and execution readiness are displayed separately. Stocks and commodities return empty eligible Testnet catalogs rather than substituting mainnet assets.
+
 ## Why these are lower priority
 They remain **business-selectable modules in the catalog**, but the submission must have genuine **Stellar Testnet** functionality. As researched November 10, stocks/SODAX and real-world commodity issuer access do not establish a usable Testnet route; Noether provides Testnet perps but trading keys are closed beta and Ontario is a restricted jurisdiction. Therefore these are **P2 discovery/read-only**, not required execution. Do not display Buy/Sell as working until a live eligible Testnet path is proven.
 

@@ -134,7 +134,10 @@ export async function createRuntime(pool?:Pool) {
    'capital.lending':readBlendReadiness,
    'trade.spot':()=>spotReadiness.capability(),
    'trade.stocks':stocksReadiness,
-   'trade.perps':async()=>({execution_status:'blocked' as const,reason:'REGION_RESTRICTED',actions:[]}),
+   'trade.perps':async()=>{
+    try{await perps.markets();return {execution_status:'discovery_only' as const,reason:'REGION_RESTRICTED',actions:['read_markets']};}
+    catch{return {execution_status:'blocked' as const,reason:'NOETHER_PUBLIC_MARKET_DATA_UNAVAILABLE',actions:[]};}
+   },
    'trade.commodities':async()=>({execution_status:'blocked' as const,reason:COMMODITIES_BLOCK_REASON,actions:[]}),
    'capital.wallets':async()=>{const current=await hasGate1Proof(chain);return {execution_status:current?'testnet_verified':'blocked',reason:current?null:privy?'Privy-signed Testnet payment proof is pending':'PRIVY_APP_ID and PRIVY_APP_SECRET are required',actions:current?['provision','balances','test_payment']:[]};},
    'capital.testnet_funding':readFundingReadiness
