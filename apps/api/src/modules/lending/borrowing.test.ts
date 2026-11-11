@@ -62,6 +62,12 @@ function metadataFixture(){
 }
 describe('Exact borrowing transaction metadata extraction',()=>{
  it('extracts actual before/after tokens and the same execution rates',()=>expect(extractBorrowTransactionEvidence({meta:meta(metadataFixture()),baseline,action:'borrow',txHash:hash,confirmedLedger:101})).toEqual(evidence));
+ it('supports current V4 operation metadata with exactly one operation',()=>{
+  const current=new xdr.TransactionMeta(4,new xdr.TransactionMetaV4({ext:new xdr.ExtensionPoint(0),txChangesBefore:[],operations:[new xdr.OperationMetaV2({ext:new xdr.ExtensionPoint(0),changes:metadataFixture(),events:[]})],txChangesAfter:[],sorobanMeta:null,events:[],diagnosticEvents:[]}));
+  expect(extractBorrowTransactionEvidence({meta:current,baseline,action:'borrow',txHash:hash,confirmedLedger:101})).toEqual(evidence);
+  current.v4().operations([...current.v4().operations(),...current.v4().operations()]);
+  expect(extractBorrowTransactionEvidence({meta:current,baseline,action:'borrow',txHash:hash,confirmedLedger:101})).toBeNull();
+ });
  it('rejects missing, duplicate or unrelated position changes',()=>{
   const f=metadataFixture();for(const changes of [f.slice(1),[...f,f[1]!],[f[0]!,xdr.LedgerEntryChange.ledgerEntryUpdated(entry('Positions',wallet,positionValue(new Map([[0,10000000n],[3,1n]])))),f[2]!]])expect(extractBorrowTransactionEvidence({meta:meta(changes),baseline,action:'borrow',txHash:hash,confirmedLedger:101})).toBeNull();
  });
