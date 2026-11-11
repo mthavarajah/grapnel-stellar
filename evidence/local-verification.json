@@ -41,7 +41,7 @@
     ]
   },
   "followup_verification": {
-    "observed_at": "2026-11-10T21:52:00Z",
+    "observed_at": "2026-11-11T02:53:10.847948+00:00",
     "offline_passed": 145,
     "offline_skipped": 32,
     "typecheck": "passed",
