@@ -179,11 +179,25 @@ export async function POST(
       path[0] === "lending" &&
       ["supply", "withdraw", "borrow", "repay"].includes(path[1]!)
     ) {
-      await requireModule("capital.lending", s, true);
       const body = z
         .object({ market_id: z.string(), asset_id: z.string(), amount: money })
         .strict()
         .parse(raw);
+      if (path[1] === "supply") {
+        // Allow the first customer-authorized Blend supply to establish
+        // execution proof. The API still rechecks Gate 1 and performs a fresh
+        // exact-asset simulation before exposing a signable operation.
+        await requireModule("capital.lending", s);
+        await requireModule("capital.wallets", s, true);
+        if (body.asset_id !== "stellar-testnet:native:XLM")
+          throw new BffError(
+            422,
+            "ASSET_MISMATCH",
+            "Only the verified native Testnet XLM reserve can be prepared",
+          );
+      } else {
+        await requireModule("capital.lending", s, true);
+      }
       return json(
         await grapnel(`/capital/lending/${path[1]}`, s, {
           method: "POST",
