@@ -1,0 +1,439 @@
+{
+  "observed_at": "2026-11-11T21:53:38.071Z",
+  "mode": "bounded_read_only_catalog_audit",
+  "network": "stellar-testnet",
+  "tx_hash": null,
+  "execution_proof": null,
+  "broadcast": false,
+  "source_public_account": "GB4PC65ZHBPVEZMAHY2K2KYMS3RFBIN2FQIE3LGTLEHT2DEWVMTD7JYQ",
+  "public_source": {
+    "page": "https://peridot.finance/app/margin",
+    "page_sha256": "de53ef0b0a92fc70cc6909f97172d762545286782598173c0cc6974617b1a677",
+    "bundle_url": "https://peridot.finance/_next/static/chunks/app/app/margin/page-924ea86e68006f99.js",
+    "bundle_sha256": "eca96d18dfd92f4ce122b65dd8d1fda4fc8b35a86ed481f87557b799da3e37ba",
+    "http_status": 200,
+    "contract_addresses": [
+      "CDMXPWG55776NECXQMWNBXMEQXZUAWA2AJBCQS7SU7SA64XHMO3KB3O6",
+      "CAKKHUGHP67UA4F42QOYPKNGRSBJEOE62MGDXA2UURTEYFOQGSMIRUFO",
+      "CBSTR53W52JHCRXW4I4QAL7FJJIT2D7MVFTNC3VJRNOPTIKCCZKDTKDL",
+      "CCYOZJCOPG34LLQQ7N24YXBM7LL62R7ONMZ3G6WZAAYPB5OYKOMJRN63",
+      "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC",
+      "CB32OVY4AADCHQT3DLKJYW5QVTWY5MOX7BBNZFT3SDHZ5HPSDDEA2THJ",
+      "CDPXNHHVSLX3HFAHV7XOISM23MZH36WSXTO45RNDOBIDFZBGTSOVD4OY",
+      "CCEW6NSPCV7XUEQV75ZMII5HK5DGXK5JP2QOTGLV4UFLDBPEKRGO4Y4B",
+      "CBCFTQSPDBAIZ6R6PJQKSQWKNKWH2QIV3I4J72SHWBIK3ADRRAM5A6GD",
+      "CCMNSENXDBNJSY72BDIPH5CCXLLHBKZ4LXTRKDLKZN4UI2NJFQLWTLD6"
+    ],
+    "asset_configuration_markers": {
+      "XLM": true,
+      "MOCK_USDT": true
+    },
+    "limitation": "Markers and hashes establish the public source reviewed; they are not an automatic exhaustive market parser. Public docs and bounded onchain registry checks are reported separately."
+  },
+  "source_files": [
+    {
+      "url": "https://raw.githubusercontent.com/PeridotFinance/Peridot-Soroban/fe8d562051195dbc0af667367514b479de36fc8d/peridot-contracts/contracts/simple-peridottroller/src/storage.rs",
+      "sha256": "1cf5f513a0f60f0d4c7417ce7c6f5a1b7bef0f564c1089116a15fd99882b58c9",
+      "status": 200
+    },
+    {
+      "url": "https://raw.githubusercontent.com/PeridotFinance/Peridot-Soroban/fe8d562051195dbc0af667367514b479de36fc8d/peridot-contracts/scripts/deploy_testnet.sh",
+      "sha256": "620fbfe2a6458fbff0752fb0260041a48b2d55aa47e23b963053ccba8dd7f474",
+      "status": 200
+    },
+    {
+      "url": "https://raw.githubusercontent.com/PeridotFinance/Peridot-Soroban/fe8d562051195dbc0af667367514b479de36fc8d/peridot-contracts/scripts/deploy_margin_controller_testnet.sh",
+      "sha256": "dbb08b2f20923182fb9a6568040a82684e412c85c3f7c61c63f78c2940e15eb2",
+      "status": 200
+    }
+  ],
+  "controller_registry": {
+    "address": "CDMXPWG55776NECXQMWNBXMEQXZUAWA2AJBCQS7SU7SA64XHMO3KB3O6",
+    "key": "SupportedMarkets",
+    "observed_ledger": 5682073,
+    "last_modified_ledger": 3398001,
+    "value": {
+      "CAGPHU6OE23PKSMSQLJ2IWDRMATAHD5HFBBX3S43UUJ4WP2IOH6KQC5A": true,
+      "CAWSZ65ADUYCT557CHHN4A2MFQIKL3PRATGIRW4UM2J3VE5ZL3DIN7OD": true,
+      "CB32OVY4AADCHQT3DLKJYW5QVTWY5MOX7BBNZFT3SDHZ5HPSDDEA2THJ": true,
+      "CCEW6NSPCV7XUEQV75ZMII5HK5DGXK5JP2QOTGLV4UFLDBPEKRGO4Y4B": true
+    },
+    "supported_vault_count": 4
+  },
+  "tokens": [
+    {
+      "vault": "CAGPHU6OE23PKSMSQLJ2IWDRMATAHD5HFBBX3S43UUJ4WP2IOH6KQC5A",
+      "underlying": {
+        "method": "get_underlying_token",
+        "success": true,
+        "ledger": 5682073,
+        "authorization_count": 0,
+        "value": "CDPXNHHVSLX3HFAHV7XOISM23MZH36WSXTO45RNDOBIDFZBGTSOVD4OY"
+      },
+      "tokenName": {
+        "method": "name",
+        "success": true,
+        "ledger": 5682073,
+        "authorization_count": 0,
+        "value": "Mock USDT"
+      },
+      "symbol": {
+        "method": "symbol",
+        "success": true,
+        "ledger": 5682073,
+        "authorization_count": 0,
+        "value": "USDT"
+      },
+      "decimals": {
+        "method": "decimals",
+        "success": true,
+        "ledger": 5682073,
+        "authorization_count": 0,
+        "value": 7
+      },
+      "controller": {
+        "method": "get_margin_controller",
+        "success": true,
+        "ledger": 5682073,
+        "authorization_count": 0,
+        "value": "CA5QDPU2C5QIA4NVNSBDBEGBOL6ET6ETVWJVP4KVO3F45NRXMOOU6OMI"
+      }
+    },
+    {
+      "vault": "CAWSZ65ADUYCT557CHHN4A2MFQIKL3PRATGIRW4UM2J3VE5ZL3DIN7OD",
+      "underlying": {
+        "method": "get_underlying_token",
+        "success": true,
+        "ledger": 5682073,
+        "authorization_count": 0,
+        "value": "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC"
+      },
+      "tokenName": {
+        "method": "name",
+        "success": true,
+        "ledger": 5682073,
+        "authorization_count": 0,
+        "value": "native"
+      },
+      "symbol": {
+        "method": "symbol",
+        "success": true,
+        "ledger": 5682073,
+        "authorization_count": 0,
+        "value": "native"
+      },
+      "decimals": {
+        "method": "decimals",
+        "success": true,
+        "ledger": 5682073,
+        "authorization_count": 0,
+        "value": 7
+      },
+      "controller": {
+        "method": "get_margin_controller",
+        "success": true,
+        "ledger": 5682073,
+        "authorization_count": 0,
+        "value": "CA5QDPU2C5QIA4NVNSBDBEGBOL6ET6ETVWJVP4KVO3F45NRXMOOU6OMI"
+      }
+    },
+    {
+      "vault": "CB32OVY4AADCHQT3DLKJYW5QVTWY5MOX7BBNZFT3SDHZ5HPSDDEA2THJ",
+      "underlying": {
+        "method": "get_underlying_token",
+        "success": true,
+        "ledger": 5682073,
+        "authorization_count": 0,
+        "value": "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC"
+      },
+      "tokenName": {
+        "method": "name",
+        "success": true,
+        "ledger": 5682073,
+        "authorization_count": 0,
+        "value": "native"
+      },
+      "symbol": {
+        "method": "symbol",
+        "success": true,
+        "ledger": 5682073,
+        "authorization_count": 0,
+        "value": "native"
+      },
+      "decimals": {
+        "method": "decimals",
+        "success": true,
+        "ledger": 5682073,
+        "authorization_count": 0,
+        "value": 7
+      },
+      "controller": {
+        "method": "get_margin_controller",
+        "success": true,
+        "ledger": 5682073,
+        "authorization_count": 0,
+        "value": "CAKKHUGHP67UA4F42QOYPKNGRSBJEOE62MGDXA2UURTEYFOQGSMIRUFO"
+      }
+    },
+    {
+      "vault": "CCEW6NSPCV7XUEQV75ZMII5HK5DGXK5JP2QOTGLV4UFLDBPEKRGO4Y4B",
+      "underlying": {
+        "method": "get_underlying_token",
+        "success": true,
+        "ledger": 5682073,
+        "authorization_count": 0,
+        "value": "CDPXNHHVSLX3HFAHV7XOISM23MZH36WSXTO45RNDOBIDFZBGTSOVD4OY"
+      },
+      "tokenName": {
+        "method": "name",
+        "success": true,
+        "ledger": 5682074,
+        "authorization_count": 0,
+        "value": "Mock USDT"
+      },
+      "symbol": {
+        "method": "symbol",
+        "success": true,
+        "ledger": 5682073,
+        "authorization_count": 0,
+        "value": "USDT"
+      },
+      "decimals": {
+        "method": "decimals",
+        "success": true,
+        "ledger": 5682074,
+        "authorization_count": 0,
+        "value": 7
+      },
+      "controller": {
+        "method": "get_margin_controller",
+        "success": true,
+        "ledger": 5682073,
+        "authorization_count": 0,
+        "value": "CAKKHUGHP67UA4F42QOYPKNGRSBJEOE62MGDXA2UURTEYFOQGSMIRUFO"
+      }
+    }
+  ],
+  "unique_underlying_count": 2,
+  "controller_metadata": [
+    {
+      "address": "CA5QDPU2C5QIA4NVNSBDBEGBOL6ET6ETVWJVP4KVO3F45NRXMOOU6OMI",
+      "in_current_public_app": false,
+      "wasm_hash": "403b4813c559b57494499044a4601d9c55438384c09fee74a692c05aab0a3118"
+    },
+    {
+      "address": "CAKKHUGHP67UA4F42QOYPKNGRSBJEOE62MGDXA2UURTEYFOQGSMIRUFO",
+      "in_current_public_app": true,
+      "wasm_hash": "da68ef52027b0821141b071eeac29ef0c2cef0b269864ca266de56e427c2d7e2"
+    }
+  ],
+  "pair_checks": [
+    {
+      "controller": "CA5QDPU2C5QIA4NVNSBDBEGBOL6ET6ETVWJVP4KVO3F45NRXMOOU6OMI",
+      "margin_asset": "CDPXNHHVSLX3HFAHV7XOISM23MZH36WSXTO45RNDOBIDFZBGTSOVD4OY",
+      "base_asset": "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC",
+      "side": "Long",
+      "config": {
+        "method": "get_perps_pair_config",
+        "success": true,
+        "ledger": 5682074,
+        "authorization_count": 0,
+        "value": null
+      },
+      "execution": {
+        "method": "get_perps_pair_execution_config",
+        "success": false,
+        "ledger": 5682074,
+        "error_code": "SIMULATION_UNAVAILABLE"
+      }
+    },
+    {
+      "controller": "CA5QDPU2C5QIA4NVNSBDBEGBOL6ET6ETVWJVP4KVO3F45NRXMOOU6OMI",
+      "margin_asset": "CDPXNHHVSLX3HFAHV7XOISM23MZH36WSXTO45RNDOBIDFZBGTSOVD4OY",
+      "base_asset": "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC",
+      "side": "Short",
+      "config": {
+        "method": "get_perps_pair_config",
+        "success": true,
+        "ledger": 5682074,
+        "authorization_count": 0,
+        "value": null
+      },
+      "execution": {
+        "method": "get_perps_pair_execution_config",
+        "success": false,
+        "ledger": 5682074,
+        "error_code": "SIMULATION_UNAVAILABLE"
+      }
+    },
+    {
+      "controller": "CA5QDPU2C5QIA4NVNSBDBEGBOL6ET6ETVWJVP4KVO3F45NRXMOOU6OMI",
+      "margin_asset": "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC",
+      "base_asset": "CDPXNHHVSLX3HFAHV7XOISM23MZH36WSXTO45RNDOBIDFZBGTSOVD4OY",
+      "side": "Long",
+      "config": {
+        "method": "get_perps_pair_config",
+        "success": true,
+        "ledger": 5682074,
+        "authorization_count": 0,
+        "value": null
+      },
+      "execution": {
+        "method": "get_perps_pair_execution_config",
+        "success": false,
+        "ledger": 5682074,
+        "error_code": "SIMULATION_UNAVAILABLE"
+      }
+    },
+    {
+      "controller": "CA5QDPU2C5QIA4NVNSBDBEGBOL6ET6ETVWJVP4KVO3F45NRXMOOU6OMI",
+      "margin_asset": "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC",
+      "base_asset": "CDPXNHHVSLX3HFAHV7XOISM23MZH36WSXTO45RNDOBIDFZBGTSOVD4OY",
+      "side": "Short",
+      "config": {
+        "method": "get_perps_pair_config",
+        "success": true,
+        "ledger": 5682074,
+        "authorization_count": 0,
+        "value": null
+      },
+      "execution": {
+        "method": "get_perps_pair_execution_config",
+        "success": false,
+        "ledger": 5682074,
+        "error_code": "SIMULATION_UNAVAILABLE"
+      }
+    },
+    {
+      "controller": "CAKKHUGHP67UA4F42QOYPKNGRSBJEOE62MGDXA2UURTEYFOQGSMIRUFO",
+      "margin_asset": "CDPXNHHVSLX3HFAHV7XOISM23MZH36WSXTO45RNDOBIDFZBGTSOVD4OY",
+      "base_asset": "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC",
+      "side": "Long",
+      "config": {
+        "method": "get_perps_pair_config",
+        "success": true,
+        "ledger": 5682074,
+        "authorization_count": 0,
+        "value": {
+          "liquidation_incentive_scaled": "10000",
+          "maintenance_margin_scaled": "50000",
+          "max_leverage": "5"
+        }
+      },
+      "execution": {
+        "method": "get_perps_pair_execution_config",
+        "success": true,
+        "ledger": 5682074,
+        "authorization_count": 0,
+        "value": {
+          "close_slippage_scaled": "50000",
+          "liquidation_slippage_scaled": "100000",
+          "max_open_deviation_scaled": "100000",
+          "open_slippage_scaled": "50000"
+        }
+      }
+    },
+    {
+      "controller": "CAKKHUGHP67UA4F42QOYPKNGRSBJEOE62MGDXA2UURTEYFOQGSMIRUFO",
+      "margin_asset": "CDPXNHHVSLX3HFAHV7XOISM23MZH36WSXTO45RNDOBIDFZBGTSOVD4OY",
+      "base_asset": "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC",
+      "side": "Short",
+      "config": {
+        "method": "get_perps_pair_config",
+        "success": true,
+        "ledger": 5682074,
+        "authorization_count": 0,
+        "value": null
+      },
+      "execution": {
+        "method": "get_perps_pair_execution_config",
+        "success": true,
+        "ledger": 5682074,
+        "authorization_count": 0,
+        "value": {
+          "close_slippage_scaled": "50000",
+          "liquidation_slippage_scaled": "100000",
+          "max_open_deviation_scaled": "100000",
+          "open_slippage_scaled": "50000"
+        }
+      }
+    },
+    {
+      "controller": "CAKKHUGHP67UA4F42QOYPKNGRSBJEOE62MGDXA2UURTEYFOQGSMIRUFO",
+      "margin_asset": "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC",
+      "base_asset": "CDPXNHHVSLX3HFAHV7XOISM23MZH36WSXTO45RNDOBIDFZBGTSOVD4OY",
+      "side": "Long",
+      "config": {
+        "method": "get_perps_pair_config",
+        "success": true,
+        "ledger": 5682074,
+        "authorization_count": 0,
+        "value": {
+          "liquidation_incentive_scaled": "10000",
+          "maintenance_margin_scaled": "50000",
+          "max_leverage": "10"
+        }
+      },
+      "execution": {
+        "method": "get_perps_pair_execution_config",
+        "success": true,
+        "ledger": 5682074,
+        "authorization_count": 0,
+        "value": {
+          "close_slippage_scaled": "50000",
+          "liquidation_slippage_scaled": "100000",
+          "max_open_deviation_scaled": "100000",
+          "open_slippage_scaled": "50000"
+        }
+      }
+    },
+    {
+      "controller": "CAKKHUGHP67UA4F42QOYPKNGRSBJEOE62MGDXA2UURTEYFOQGSMIRUFO",
+      "margin_asset": "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC",
+      "base_asset": "CDPXNHHVSLX3HFAHV7XOISM23MZH36WSXTO45RNDOBIDFZBGTSOVD4OY",
+      "side": "Short",
+      "config": {
+        "method": "get_perps_pair_config",
+        "success": true,
+        "ledger": 5682074,
+        "authorization_count": 0,
+        "value": null
+      },
+      "execution": {
+        "method": "get_perps_pair_execution_config",
+        "success": true,
+        "ledger": 5682074,
+        "authorization_count": 0,
+        "value": {
+          "close_slippage_scaled": "50000",
+          "liquidation_slippage_scaled": "100000",
+          "max_open_deviation_scaled": "100000",
+          "open_slippage_scaled": "50000"
+        }
+      }
+    }
+  ],
+  "documentation": [
+    {
+      "url": "https://peridot.finance/docs/margin-trading",
+      "sha256": "8af9bb26bf4a006262ac28bb5fa172060050a4f9a7f756d9a48b075ffb82b025",
+      "status": 200
+    },
+    {
+      "url": "https://peridot.finance/docs/networks-and-assets",
+      "sha256": "44c8cc12f64b16da8ca016f1736fc3afa51007b5b79387d5580c80661a650cc3",
+      "status": 200
+    }
+  ],
+  "other_deployment_readme": {
+    "url": "https://raw.githubusercontent.com/PeridotFinance/PeridotV2-Robinhood/main/README.md",
+    "sha256": "7ce36743c445ebbfd7563873fa9efe6f9190f61ea87072c0aa7728be5c6a7212",
+    "markers": {
+      "NVDA": true,
+      "USDG": true,
+      "chain4663": true,
+      "mainnet": true
+    }
+  },
+  "exhaustiveness": "Bounded to current official public app configuration and controller SupportedMarkets. Margin ABI exposes per-pair getters but no list-all-pairs method; Soroban RPC does not enumerate all unknown persistent keys. Do not infer chainwide absence or count oracle feeds as margin markets."
+}
