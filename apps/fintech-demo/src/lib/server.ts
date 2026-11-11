@@ -331,7 +331,7 @@ export async function requireModule(
     throw new BffError(
       409,
       "EXECUTION_UNAVAILABLE",
-      capability.reason ?? "This action has not passed Testnet verification",
+      "This action is unavailable right now",
     );
   return capability;
 }
