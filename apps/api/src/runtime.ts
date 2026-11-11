@@ -11,6 +11,7 @@ import { parseTestnetTransaction, StellarTestnetExecutor, verifySignedAction } f
 import { TestnetFundingAdapter } from './adapters/testnet-funding/index.js';
 import { BlendSorobanPreparer } from './adapters/stellar/blend-soroban.js';
 import { BlendAdapter, type BlendPosition } from './adapters/blend/index.js';
+import { inspectBlendWithdrawDeltas } from './adapters/blend/withdraw-inspector.js';
 import { registerLendingRoutes } from './modules/lending/routes.js';
 import { SoroswapSpotAdapter } from './adapters/soroswap/index.js';
 import { SpotService } from './modules/spot/service.js';
@@ -64,7 +65,7 @@ export async function createRuntime(pool?:Pool) {
   return blendReadiness;
  };
  const app=await buildApp({pool:db,config,identityVerifier:identity,
-  verifySignedAction:async(action,signed)=>{if(action.summary.action==='blend.supply')await soroban.verifyForSubmission(action,signed);else verifySignedAction(action,signed);return {txHash:parseTestnetTransaction(signed).hash().toString('hex')};},
+  verifySignedAction:async(action,signed)=>{if(action.summary.action==='blend.supply'||action.summary.action==='blend.withdraw')await soroban.verifyForSubmission(action,signed);else verifySignedAction(action,signed);return {txHash:parseTestnetTransaction(signed).hash().toString('hex')};},
   balanceReader:address=>chain.getClassicBalances(address),
   dashboardCustomerPositions:async customer=>{
    const [positions,markets]=await Promise.all([blend.positions(customer),blend.markets()]);
@@ -154,10 +155,10 @@ export function createRuntimeWorkerChain(deps:RuntimeWorkerDependencies):WorkerC
    const parsed=parseTestnetTransaction(envelope);const hash=parsed.hash().toString('hex');
    const operation=(await pool.query('SELECT o.*,w.stellar_address,c.privy_user_id FROM operations o JOIN wallets w ON w.business_id=o.business_id AND w.customer_id=o.customer_id AND w.id=o.wallet_id JOIN customers c ON c.business_id=o.business_id AND c.id=o.customer_id WHERE o.tx_hash=$1 AND o.signed_xdr=$2',[hash,envelope])).rows[0];
    if(!operation || (operation.type!=='wallet.test_payment' && (!gate1Passed || !await (deps.verifyGate1?.()??Promise.resolve(false)))))throw new GrapnelError(409,'EXECUTION_UNAVAILABLE','Gate 1 proof is required before financial provider execution');
-   if(operation.type==='blend.supply'){
+   if(operation.type==='blend.supply'||operation.type==='blend.withdraw'){
     if(operation.module_code!=='capital.lending'||operation.provider!=='blend'||typeof operation.privy_user_id!=='string'||!operation.privy_user_id.startsWith('did:privy:'))throw new GrapnelError(403,'INTENT_MISMATCH','Stored operation is not an approved Blend supply');
     const action=PreparedActionSchema.parse(operation.prepared_action);
-    if(action.operationId!==operation.id||action.customerId!==operation.customer_id||action.walletAddress!==operation.stellar_address||operation.request_json.asset_id!==XLM.id||action.summary.fromAssetId!==XLM.id||zeroAtomic(action.summary.amount??'')!==toAtomic(operation.request_json.amount,7))throw new GrapnelError(403,'INTENT_MISMATCH','Stored supply and customer approval do not match');
+    if(action.operationId!==operation.id||action.customerId!==operation.customer_id||action.walletAddress!==operation.stellar_address||operation.request_json.asset_id!==XLM.id||action.summary.action!==operation.type||action.summary.fromAssetId!==XLM.id||zeroAtomic(action.summary.amount??'')!==toAtomic(operation.request_json.amount,7))throw new GrapnelError(403,'INTENT_MISMATCH','Stored supply and customer approval do not match');
     await soroban.verifyForSubmission(action,envelope);
     await chain.verifyLiveNetwork();
     try{
@@ -175,15 +176,20 @@ export function createRuntimeWorkerChain(deps:RuntimeWorkerDependencies):WorkerC
   async verifyDeltas(id,hash){
    const op=(await pool.query('SELECT o.*,w.stellar_address,c.privy_user_id FROM operations o JOIN wallets w ON w.business_id=o.business_id AND w.customer_id=o.customer_id AND w.id=o.wallet_id JOIN customers c ON c.business_id=o.business_id AND c.id=o.customer_id WHERE o.id=$1 AND o.tx_hash=$2',[id,hash])).rows[0];
    if(!op)return false;
-   if(op.type==='blend.supply'){
+   if(op.type==='blend.supply'||op.type==='blend.withdraw'){
     if(op.module_code!=='capital.lending'||op.provider!=='blend'||typeof op.privy_user_id!=='string'||!op.privy_user_id.startsWith('did:privy:'))return false;
     const confirmed=await chain.server.getTransaction(hash);
     if(confirmed.status!=='SUCCESS')return false;
     const action=PreparedActionSchema.parse(op.prepared_action);
-    if(action.operationId!==op.id||action.customerId!==op.customer_id||action.walletAddress!==op.stellar_address||action.summary.action!=='blend.supply'||action.summary.fromAssetId!==XLM.id||op.request_json.asset_id!==XLM.id||zeroAtomic(action.summary.amount??'')!==toAtomic(op.request_json.amount,7))return false;
+    if(action.operationId!==op.id||action.customerId!==op.customer_id||action.walletAddress!==op.stellar_address||action.summary.action!==op.type||action.summary.fromAssetId!==XLM.id||op.request_json.asset_id!==XLM.id||zeroAtomic(action.summary.amount??'')!==toAtomic(op.request_json.amount,7))return false;
     const customer:CustomerContext={businessId:op.business_id,customerId:op.customer_id,walletId:op.wallet_id,walletAddress:op.stellar_address,privyUserId:op.privy_user_id};
     try{
      const [positions,balances]=await Promise.all([blend.positions(customer),chain.getClassicBalances(customer.walletAddress)]);
+     if(op.type==='blend.withdraw'){
+      const tx=await chain.horizon.transactions().transaction(hash).call();
+      if(!tx.successful)return false;
+      return inspectBlendWithdrawDeltas({baseline:op.result_json?.blend_withdraw_baseline,request:op.request_json,walletAddress:customer.walletAddress,positions,balances,confirmedLedger:confirmed.ledger,feeStroops:String(tx.fee_charged)});
+     }
      return inspectSupplyDeltas({baseline:op.result_json?.blend_supply_baseline,request:op.request_json,walletAddress:customer.walletAddress,positions,balances,confirmedLedger:confirmed.ledger});
     }catch{return {verified:false,result:{blend_supply_verification:{verified:false,reason:'LIVE_SUPPLY_RECONCILIATION_UNAVAILABLE'}}};}
    }

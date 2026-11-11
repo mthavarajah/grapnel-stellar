@@ -7,6 +7,7 @@ import {
   type ChainAction, type PreparedAction,
 } from '@grapnel/contracts';
 import { BLEND_REGISTRY_URL, buildBlendOperation, inspectBlendOperation, type BlendIntent } from '../blend/index.js';
+import { inspectBlendWithdrawAuthorization, inspectBlendWithdrawFootprint, inspectPreparedBlendWithdrawTransaction } from '../blend/withdraw-inspector.js';
 import { assertTestnet, parseTestnetTransaction, verifySignedAction } from './index.js';
 
 /** Narrow, source-account-only native XLM collateral supply. Never accepts arbitrary venue XDR. */
@@ -61,14 +62,14 @@ function sameObjectKeys(value: unknown, keys: string[]): value is Record<string,
     && Object.keys(value).sort().join(',') === keys.slice().sort().join(',');
 }
 function intentFor(input: ChainAction, registry: VerifiedBlendRegistry): BlendIntent {
-  if (input.summary.action === 'blend.withdraw') return unavailable('WITHDRAW_AUTH_FOOTPRINT_PROOF_REQUIRED');
-  if (input.summary.action !== 'blend.supply' || input.summary.fromAssetId !== XLM.id
+  const action=input.summary.action==='blend.supply'?'supply':input.summary.action==='blend.withdraw'?'withdraw':null;
+  if (!action || input.summary.fromAssetId !== XLM.id
     || input.summary.toAssetId !== undefined || input.summary.minReceive !== undefined
     || input.summary.recipient !== input.walletAddress || input.summary.contractId !== registry.poolId
     || !StrKey.isValidEd25519PublicKey(input.walletAddress)
     || new Set(input.allowedContracts).size !== 2 || input.allowedContracts.length !== 2
     || !input.allowedContracts.includes(registry.poolId) || !input.allowedContracts.includes(registry.reserveId)) {
-    return fail('BLEND_INTENT_MISMATCH', 'Only the exact native XLM collateral supply intent is supported');
+    return fail('BLEND_INTENT_MISMATCH', 'Only the exact native XLM collateral supply or withdrawal intent is supported');
   }
   let amountAtomic: bigint;
   try { amountAtomic = toAtomic(input.summary.amount ?? '', 7); }
@@ -77,7 +78,7 @@ function intentFor(input: ChainAction, registry: VerifiedBlendRegistry): BlendIn
   if (!Number.isFinite(expires) || expires <= Date.now() || expires > Date.now() + 120_000) {
     return fail('ACTION_EXPIRED', 'Soroban approval must expire within two minutes');
   }
-  const intent: BlendIntent = { action: 'supply', poolId: registry.poolId, reserveId: registry.reserveId, walletAddress: input.walletAddress, amountAtomic };
+  const intent: BlendIntent = { action, poolId: registry.poolId, reserveId: registry.reserveId, walletAddress: input.walletAddress, amountAtomic };
   inspectBlendOperation(input.operationXdr, intent);
   return intent;
 }
@@ -160,8 +161,13 @@ function inspectSimulation(sim: rpc.Api.SimulateTransactionResponse, intent: Ble
   if (!rpc.Api.isSimulationSuccess(sim) || rpc.Api.isSimulationRestore(sim) || !sim.result) unavailable('SOROBAN_SIMULATION_OR_RESTORE_FAILED');
   const fee = checkedFee(sim.minResourceFee);
   if (fee <= 0n || fee + 100n > ceiling || sim.transactionData.build().resourceFee().toString() !== fee.toString()) fail('SOROBAN_FEE_LIMIT', 'Resource fee exceeds the exact approved limit');
-  inspectBlendSupplyAuthorization(sim.result.auth, intent);
-  inspectBlendSupplyFootprint(sim.transactionData.build(), intent, registry, ceiling);
+  if(intent.action==='supply'){
+    inspectBlendSupplyAuthorization(sim.result.auth, intent);
+    inspectBlendSupplyFootprint(sim.transactionData.build(), intent, registry, ceiling);
+  }else{
+    inspectBlendWithdrawAuthorization(sim.result.auth,intent,registry);
+    inspectBlendWithdrawFootprint(sim.transactionData.build(),intent,registry,ceiling);
+  }
 }
 function inspectPreparedTransaction(tx: Transaction, input: ChainAction, intent: BlendIntent, registry: VerifiedBlendRegistry, ceiling: bigint): void {
   const expires = Date.parse(input.summary.expiresAt);
@@ -169,16 +175,18 @@ function inspectPreparedTransaction(tx: Transaction, input: ChainAction, intent:
     || tx.operations.length !== 1 || tx.memo.type !== 'none' || tx.extraSigners?.length
     || !tx.timeBounds || tx.timeBounds.minTime !== '0' || tx.timeBounds.maxTime === '0'
     || BigInt(tx.timeBounds.maxTime) * 1000n > BigInt(expires) || expires <= Date.now()
-    || checkedFee(tx.fee) > ceiling || checkedFee(tx.fee) <= 100n) fail('SOROBAN_TRANSACTION_MISMATCH', 'Transaction source, bounds, sequence or fee differs from the approved supply');
+    || checkedFee(tx.fee) > ceiling || checkedFee(tx.fee) <= 100n) fail('SOROBAN_TRANSACTION_MISMATCH', 'Transaction source, bounds, sequence or fee differs from the approved Blend action');
   const op = tx.operations[0];
   if (op?.type !== 'invokeHostFunction' || op.source || op.func.switch().name !== 'hostFunctionTypeInvokeContract') fail('SOROBAN_TRANSACTION_MISMATCH', 'Unexpected operation or sponsorship');
   const expected = xdr.Operation.fromXDR(buildBlendOperation(intent), 'base64').body().invokeHostFunctionOp().hostFunction();
-  if (op.func.toXDR('base64') !== expected.toXDR('base64')) fail('BLEND_INTENT_MISMATCH', 'Submitted invocation differs from the approved supply');
-  inspectBlendSupplyAuthorization(op.auth ?? [], intent);
+  if (op.func.toXDR('base64') !== expected.toXDR('base64')) fail('BLEND_INTENT_MISMATCH', 'Submitted invocation differs from the approved Blend action');
+  if(intent.action==='supply')inspectBlendSupplyAuthorization(op.auth ?? [], intent);
+  else inspectBlendWithdrawAuthorization(op.auth ?? [],intent,registry);
   const envelope = tx.toEnvelope().v1().tx();
   if (envelope.ext().switch() !== 1) fail('SOROBAN_FOOTPRINT_MISMATCH', 'Missing Soroban transaction data');
   const data = envelope.ext().sorobanData();
-  inspectBlendSupplyFootprint(data, intent, registry, ceiling);
+  if(intent.action==='supply')inspectBlendSupplyFootprint(data, intent, registry, ceiling);
+  else inspectBlendWithdrawFootprint(data,intent,registry,ceiling);
   if (checkedFee(tx.fee) < BigInt(data.resourceFee().toString()) + 100n) fail('SOROBAN_FEE_LIMIT', 'Declared fee does not cover resources');
 }
 function requireCoveredResources(tx: Transaction, sim: rpc.Api.SimulateTransactionSuccessResponse): void {
@@ -291,17 +299,22 @@ export class BlendSorobanPreparer {
   async verifyForSubmission(action: PreparedAction, signedXdr: string): Promise<void> {
     if (!this.config.gate1Passed) return unavailable('GATE_1_SIGNING_PROOF_REQUIRED');
     const registry = await this.registry();
-    // The optional callback is accepted by the canonical verifier after lead integration.
-    // On the current two-argument implementation it is ignored; the inspector also runs explicitly below.
     const verify = verifySignedAction as (action: PreparedAction, signed: string, inspect?: (action: PreparedAction, tx: Transaction) => void) => void;
-    verify(action, signedXdr, (approved, transaction) => inspectPreparedBlendSupplyTransaction(approved, transaction, registry, this.ceiling));
+    const inspectApproved=(approved:PreparedAction,transaction:Transaction)=>{
+      if(approved.summary.action==='blend.supply')inspectPreparedBlendSupplyTransaction(approved,transaction,registry,this.ceiling);
+      else if(approved.summary.action==='blend.withdraw')inspectPreparedBlendWithdrawTransaction(approved,transaction,registry,this.ceiling);
+      else unavailable('BLEND_ACTION_UNSUPPORTED');
+    };
+    verify(action, signedXdr, inspectApproved);
     const tx = parseTestnetTransaction(signedXdr);
-    const intent: BlendIntent = { action: 'supply', poolId: registry.poolId, reserveId: registry.reserveId,
+    const actionType=action.summary.action==='blend.supply'?'supply':action.summary.action==='blend.withdraw'?'withdraw':null;
+    if(!actionType)return unavailable('BLEND_ACTION_UNSUPPORTED');
+    const intent: BlendIntent = { action: actionType, poolId: registry.poolId, reserveId: registry.reserveId,
       walletAddress: action.walletAddress, amountAtomic: toAtomic(action.summary.amount ?? '', 7) };
     const input: ChainAction = { operationId: action.operationId, customerId: action.customerId, walletAddress: action.walletAddress,
       operationXdr: buildBlendOperation(intent), allowedContracts: [registry.poolId, registry.reserveId], summary: action.summary };
     intentFor(input, registry);
-    inspectPreparedBlendSupplyTransaction(action, tx, registry, this.ceiling);
+    inspectApproved(action,tx);
     const sim = await bounded(this.server.simulateTransaction(tx, undefined, 'enforce'));
     inspectSimulation(sim, intent, registry, this.ceiling);
     requireCoveredResources(tx, sim);

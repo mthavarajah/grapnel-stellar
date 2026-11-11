@@ -6,6 +6,7 @@ import {
   xdr,
 } from '@stellar/stellar-sdk';
 import {
+  AmountSchema,
   NETWORK,
   NETWORK_PASSPHRASE,
   GrapnelError,
@@ -16,6 +17,7 @@ import {
   type PreparedAction,
   type WalletBalance,
 } from '@grapnel/contracts';
+import { z } from 'zod';
 import { buildBlendOperation, type BlendIntent, type BlendPosition } from './index.js';
 import type { VerifiedBlendRegistry } from '../stellar/blend-soroban.js';
 
@@ -192,6 +194,15 @@ export interface BlendWithdrawDeltaVerification {
   verified: boolean;
   result: { blend_withdraw_verification: Record<string, unknown> };
 }
+const withdrawBaselineSchema = z.object({
+  asset_id: z.literal(XLM.id), market_id: z.string().min(1), pool_contract_id: z.string().min(1),
+  reserve_contract_id: z.string().min(1), wallet_address: z.string().min(1), wallet_amount: AmountSchema,
+  collateral: AmountSchema, as_of: z.string().datetime(), position_as_of: z.string().datetime(),
+  position_ledger: z.number().int().positive(),
+}).strict();
+const withdrawRequestSchema = z.object({
+  asset_id: z.literal(XLM.id), market_id: z.string().min(1), amount: AmountSchema,
+});
 
 const freshObservation = (value: string, maxAgeMs: number, now: number): boolean => {
   const at = Date.parse(value);
@@ -215,11 +226,15 @@ export function inspectBlendWithdrawDeltas(input: {
   const reject = (reason: string): BlendWithdrawDeltaVerification => ({ verified: false,
     result: { blend_withdraw_verification: { verified: false, reason, observed_at: new Date(now).toISOString() } } });
   try {
-    const baseline = input.baseline as BlendWithdrawBaseline;
-    if (!baseline || baseline.asset_id !== XLM.id || baseline.wallet_address !== input.walletAddress
-      || baseline.market_id !== input.request.market_id || input.request.asset_id !== XLM.id
-      || !Number.isSafeInteger(baseline.position_ledger) || baseline.position_ledger <= 0
-      || !/^[0-9]{1,12}$/.test(input.feeStroops) || BigInt(input.feeStroops) < 0n) return reject('WITHDRAW_BASELINE_OR_INTENT_MISMATCH');
+    const parsedBaseline = withdrawBaselineSchema.safeParse(input.baseline);
+    const parsedRequest = withdrawRequestSchema.safeParse(input.request);
+    if (!parsedBaseline.success || !parsedRequest.success || parsedBaseline.data.wallet_address !== input.walletAddress
+      || parsedBaseline.data.market_id !== parsedRequest.data.market_id
+      || !Number.isSafeInteger(input.confirmedLedger) || input.confirmedLedger <= 0
+      || !Number.isSafeInteger(Date.parse(parsedBaseline.data.as_of))
+      || !Number.isSafeInteger(Date.parse(parsedBaseline.data.position_as_of))
+      || !/^[0-9]{1,12}$/.test(input.feeStroops)) return reject('WITHDRAW_BASELINE_OR_INTENT_MISMATCH');
+    const baseline = parsedBaseline.data;
     const position = input.positions.find(p => p.market_id === baseline.market_id && p.asset_id === XLM.id
       && p.pool_contract_id === baseline.pool_contract_id && p.reserve_contract_id === baseline.reserve_contract_id);
     const balance = input.balances.find(b => b.asset_id === XLM.id && b.source === 'stellar_horizon_testnet');
@@ -228,7 +243,7 @@ export function inspectBlendWithdrawDeltas(input: {
       || Date.parse(position.as_of) < Date.parse(baseline.position_as_of) || Date.parse(balance.as_of) < Date.parse(baseline.as_of)) {
       return reject('POST_CHAIN_OBSERVATION_STALE');
     }
-    const requested = toAtomic(String(input.request.amount ?? ''), 7);
+    const requested = toAtomic(parsedRequest.data.amount, 7);
     const beforeCollateral = observedAtomic(baseline.collateral, 7);
     const afterCollateral = observedAtomic(position.collateral, 7);
     const beforeWallet = toAtomic(baseline.wallet_amount, 7);

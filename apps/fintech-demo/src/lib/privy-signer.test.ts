@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   Account,
+  xdr,
   Contract,
   StrKey,
   Asset,
@@ -9,6 +10,7 @@ import {
   Operation,
   TransactionBuilder,
 } from "@stellar/stellar-sdk";
+import { buildBlendOperation } from '../../../api/src/adapters/blend/index.js';
 import { signPreparedAction } from "./privy-signer.js";
 import type { PreparedAction } from "@grapnel/contracts";
 function fixture() {
@@ -142,4 +144,20 @@ it('never prompts Privy to sign an opaque contract invocation with a payment sum
  let calls=0;
  await expect(signPreparedAction({...action,unsignedXdr:tx.toXDR(),signingHashHex:tx.hash().toString('hex')},async()=>{calls++;return {signature:'0x00'};},wallet.publicKey())).rejects.toThrow('reviewed');
  expect(calls).toBe(0);
+});
+
+it('signs an exact Blend withdrawal and rejects a substituted action before prompting',async()=>{
+ const {wallet,action}=fixture();
+ const pool=StrKey.encodeContract(Buffer.alloc(32,31));
+ const raw=xdr.Operation.fromXDR(buildBlendOperation({action:'withdraw',poolId:pool,reserveId:Asset.native().contractId(Networks.TESTNET),walletAddress:wallet.publicKey(),amountAtomic:1000000n}),'base64').body().invokeHostFunctionOp().hostFunction();
+ const root=new xdr.SorobanAuthorizedInvocation({function:xdr.SorobanAuthorizedFunction.sorobanAuthorizedFunctionTypeContractFn(raw.invokeContract()),subInvocations:[]});
+ const auth=new xdr.SorobanAuthorizationEntry({credentials:xdr.SorobanCredentials.sorobanCredentialsSourceAccount(),rootInvocation:root});
+ const tx=new TransactionBuilder(new Account(wallet.publicKey(),'1'),{fee:'100',networkPassphrase:Networks.TESTNET}).addOperation(Operation.invokeHostFunction({func:raw,auth:[auth]})).setTimeout(60).build();
+ const approved={...action,unsignedXdr:tx.toXDR(),signingHashHex:tx.hash().toString('hex'),summary:{...action.summary,action:'blend.withdraw',recipient:wallet.publicKey(),contractId:pool}};
+ let calls=0;
+ const sign=async()=>{calls++;return {signature:`0x${wallet.sign(tx.hash()).toString('hex')}` as `0x${string}`};};
+ await signPreparedAction(approved,sign,wallet.publicKey());
+ expect(calls).toBe(1);
+ await expect(signPreparedAction({...approved,summary:{...approved.summary,action:'blend.supply'}},sign,wallet.publicKey())).rejects.toThrow('intent');
+ expect(calls).toBe(1);
 });

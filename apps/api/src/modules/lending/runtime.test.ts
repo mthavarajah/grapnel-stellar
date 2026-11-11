@@ -87,3 +87,17 @@ describe.skipIf(!databaseUrl)('Reconciliation baseline preservation (disposable 
   row=(await pool.query('SELECT state,result_json FROM operations WHERE id=$1',[id])).rows[0];expect(row.state).toBe('confirming');expect(row.result_json.blend_supply_baseline).toEqual(baseline);expect(row.result_json.blend_supply_verification.verified).toBe(false);
  });
 });
+
+it('routes an approved withdrawal through Soroban revalidation and rejects action substitution (offline dispatch fixture)',async()=>{
+ const {tx,row}=envelopeFixture();
+ const withdraw={...row,type:'blend.withdraw',prepared_action:{...row.prepared_action,summary:{...row.prepared_action.summary,action:'blend.withdraw'}}};
+ const valid=fakeRuntime(withdraw);
+ valid.send.mockResolvedValueOnce({hash:row.tx_hash,status:'PENDING'});
+ await valid.worker.broadcast(tx.toXDR());
+ expect(valid.verify).toHaveBeenCalledTimes(1);
+ expect(valid.send).toHaveBeenCalledTimes(1);
+ expect(valid.submit).not.toHaveBeenCalled();
+ const changed=fakeRuntime({...withdraw,prepared_action:row.prepared_action});
+ await expect(changed.worker.broadcast(tx.toXDR())).rejects.toMatchObject({code:'INTENT_MISMATCH'});
+ expect(changed.send).not.toHaveBeenCalled();
+});
