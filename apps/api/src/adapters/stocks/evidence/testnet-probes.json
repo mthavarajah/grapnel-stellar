@@ -1,0 +1,54 @@
+{
+  "observed_at": "2026-11-11T18:25:49.254Z",
+  "sodax_config": {
+    "url": "https://api.sodax.com/v1/be/config/all",
+    "status": 200,
+    "version": 27,
+    "horizon": "https://horizon.stellar.org"
+  },
+  "sodax_tokens": {
+    "url": "https://api.sodax.com/v1/swaps/tokens",
+    "status": 200,
+    "stellar_rwa_candidates": 46
+  },
+  "soroswap_assets": {
+    "url": "https://api.soroswap.finance/asset-list?name=soroswap&network=testnet",
+    "status": 200,
+    "response_network": "mainnet",
+    "asset_count": 50
+  },
+  "soroswap_protocols": {
+    "url": "https://api.soroswap.finance/protocols?network=testnet",
+    "status": 200,
+    "protocols": [
+      "soroswap",
+      "sdex"
+    ]
+  },
+  "soroswap_pools": {
+    "url": "https://api.soroswap.finance/pools?network=testnet&protocol=soroswap",
+    "status": 200,
+    "pool_count": 652,
+    "listed_stock_contract_matches": 0,
+    "same_code_issuer_testnet_sac_matches": 0
+  },
+  "horizon": [
+    {
+      "url": "https://horizon-testnet.stellar.org/assets?asset_code=AAPL&asset_issuer=GDYUTHY75A7WUZJQDPOP66FB32BOYGZRXHWTWO4Q6LQTANT5X3V5HNFA",
+      "status": 200,
+      "records": 0
+    },
+    {
+      "url": "https://horizon-testnet.stellar.org/assets?asset_code=NVDA&asset_issuer=GDYUTHY75A7WUZJQDPOP66FB32BOYGZRXHWTWO4Q6LQTANT5X3V5HNFA",
+      "status": 200,
+      "records": 0
+    },
+    {
+      "url": "https://horizon-testnet.stellar.org/assets?asset_code=TSLA&asset_issuer=GDYUTHY75A7WUZJQDPOP66FB32BOYGZRXHWTWO4Q6LQTANT5X3V5HNFA",
+      "status": 200,
+      "records": 0
+    }
+  ],
+  "executed_transactions": [],
+  "testnet_execution_verified": false
+}
