@@ -1,6 +1,18 @@
 import {test,expect} from '@playwright/test';
 // Explicit interface fixtures; these do not attest protocol or chain execution.
 const origin=process.env.E2E_FINTECH_URL??'http://localhost:3002';
+// Fully mocked sessions must never consume real authentication/provider quotas.
+// Run against an isolated app build with NEXT_PUBLIC_PRIVY_APP_ID empty.
+// A real-SDK build intentionally cannot initialize under this network policy.
+// This is local to these fixture files; public login smoke keeps its real SDK.
+test.use({serviceWorkers:'block'});
+test.beforeEach(async({context})=>{
+ const allowedOrigin=new URL(origin).origin;
+ await context.route('**/*',route=>{
+  const target=new URL(route.request().url());
+  return target.origin===allowedOrigin ? route.continue() : route.abort('blockedbyclient');
+ });
+});
 const XLM='stellar-testnet:native:XLM';
 const USDC='stellar-testnet:classic:USDC:GATALTGTWIOT6BUDBCZM3Q4OQ4BO2COLOAZ7IYSKPLC2PMSOPPGF5V56';
 test('Earn uses one amount control per asset, preserves each action amount, and never invents earned values',async({page})=>{

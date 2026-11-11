@@ -2,6 +2,18 @@ import { test, expect, type Page } from '@playwright/test';
 
 // Explicit browser fixtures only. These do not attest provider or chain execution.
 const origin = process.env.E2E_FINTECH_URL ?? 'http://localhost:3002';
+// Fully mocked sessions must never consume real authentication/provider quotas.
+// Run against an isolated app build with NEXT_PUBLIC_PRIVY_APP_ID empty.
+// A real-SDK build intentionally cannot initialize under this network policy.
+// This is local to these fixture files; public login smoke keeps its real SDK.
+test.use({serviceWorkers:'block'});
+test.beforeEach(async({context})=>{
+ const allowedOrigin=new URL(origin).origin;
+ await context.route('**/*',route=>{
+  const target=new URL(route.request().url());
+  return target.origin===allowedOrigin ? route.continue() : route.abort('blockedbyclient');
+ });
+});
 const XLM = 'stellar-testnet:native:XLM';
 const USDC = 'stellar-testnet:classic:USDC:GATALTGTWIOT6BUDBCZM3Q4OQ4BO2COLOAZ7IYSKPLC2PMSOPPGF5V56';
 const EURC = 'stellar-testnet:soroban:fixture-eurc';
@@ -190,4 +202,13 @@ test('actual multi-point history draws price observations and keeps the trading 
   await expect.poll(()=>page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
   await expect(page.getByRole('navigation',{name:'Breadcrumb'})).toHaveCSS('flex-direction','row');
   await page.screenshot({path:test.info().outputPath('market-detail-history-mobile.png'),fullPage:true});
+});
+
+
+test('fully mocked fixture context blocks third-party HTTP before it leaves the browser',async({page})=>{
+ await fixture(page);
+ const target='https://grapnel-fixture-third-party.invalid/provider-probe';
+ const failed=page.waitForEvent('requestfailed',request=>request.url()===target);
+ const result=await page.evaluate(url=>fetch(url).then(()=>false,()=>true),target);
+ expect(result).toBe(true);expect((await failed).failure()?.errorText).toContain('ERR_BLOCKED_BY_CLIENT');
 });
