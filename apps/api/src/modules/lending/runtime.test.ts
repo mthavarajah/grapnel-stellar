@@ -4,6 +4,7 @@ import { Account, Asset, Keypair, Networks, Operation, Transaction, TransactionB
 import type { Pool } from 'pg';
 import { XLM, type PreparedAction, type WalletBalance } from '@grapnel/contracts';
 import type { BlendPosition } from '../../adapters/blend/index.js';
+import { BLEND_USDC_ASSET_ID } from '../../adapters/blend/usdc-inspector.js';
 import type { StellarTestnetExecutor } from '../../adapters/stellar/index.js';
 import { createRuntimeWorkerChain, inspectSupplyDeltas, type SupplyBaseline } from '../../runtime.js';
 import { createPool } from '../../db/index.js';
@@ -54,10 +55,10 @@ function envelopeFixture(){
  const row={id:'operation',business_id:'business',customer_id:'customer',wallet_id:'wallet',stellar_address:wallet.publicKey(),privy_user_id:'did:privy:offline',type:'blend.supply',module_code:'capital.lending',provider:'blend',prepared_action:action,request_json:request,result_json:{blend_supply_baseline:baseline},signed_xdr:tx.toXDR(),tx_hash:tx.hash().toString('hex')};
  return {tx,row};
 }
-function fakeRuntime(row:unknown,gate1Passed=true,status='SUCCESS',currentGate=gate1Passed){
+function fakeRuntime(row:unknown,gate1Passed=true,status='SUCCESS',currentGate=gate1Passed,observed={positions:[position],balances:[balance]}){
  const submit=vi.fn(async()=>({txHash:'offline'}));const send=vi.fn(async(_tx:Transaction)=>({hash:'offline',status:'PENDING'}));
- const positions=vi.fn(async()=>[position]);const verify=vi.fn(async()=>{});
- const chain={reconcile:vi.fn(async()=>status==='SUCCESS'?'completed':'pending'),submit,verifyLiveNetwork:vi.fn(async()=>{}),getClassicBalances:vi.fn(async()=>[balance]),server:{sendTransaction:send,getTransaction:vi.fn(async()=>({status,ledger:100}))}} as unknown as StellarTestnetExecutor;
+ const positions=vi.fn(async()=>observed.positions);const verify=vi.fn(async()=>{});
+ const chain={reconcile:vi.fn(async()=>status==='SUCCESS'?'completed':'pending'),submit,verifyLiveNetwork:vi.fn(async()=>{}),getClassicBalances:vi.fn(async()=>observed.balances),server:{sendTransaction:send,getTransaction:vi.fn(async()=>({status,ledger:100}))}} as unknown as StellarTestnetExecutor;
  const pool={query:vi.fn(async()=>({rows:row?[row]:[]}))} as unknown as Pool;
  return {worker:createRuntimeWorkerChain({pool,chain,blend:{positions},soroban:{verifyForSubmission:verify},gate1Passed,verifyGate1:async()=>currentGate}),submit,send,positions,verify};
 }
