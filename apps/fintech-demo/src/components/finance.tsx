@@ -131,7 +131,7 @@ function Icon({ name, size = 20 }: { name: string; size?: number }) {
     </svg>
   );
 }
-const tradeCategories = [["crypto_spot", "Crypto spot"], ["stocks", "Stocks"], ["perps", "Perpetuals"], ["commodities", "Commodities"]] as const;
+const tradeCategories = [["crypto_spot", "Crypto"], ["stocks", "Stocks"], ["perps", "Perpetuals"], ["commodities", "Commodities"]] as const;
 const nav = [
   ["home", "Overview"],
   ["funds", "Funds"],
@@ -1143,7 +1143,6 @@ function FinanceShell({ page, auth, initialCategory }: { page: string; auth?: Au
               )}
               {(category === "perps" || category === "stocks") && selectedSpotMarket ? (
                 <>
-                  <nav className="market-breadcrumb" aria-label="Breadcrumb"><Link href="/home">Home</Link><span>/</span><Link href="/markets">Markets</Link><span>/</span><strong>{selectedSpotMarket.underlying?.symbol??selectedSpotMarket.label}</strong></nav>
                   <div className="market-detail-layout">
                     <section className="market-price-card" aria-label="Asset price" data-testid={category==="perps"?"perps-market-detail":"stocks-market-detail"}>
                       <div className="market-asset-heading"><AssetLogo symbol={selectedSpotMarket.underlying?.symbol??selectedSpotMarket.label} name={selectedSpotMarket.underlying?.name} assetId={selectedSpotMarket.market_id??selectedSpotMarket.id} size={48} /><div><h2>{selectedSpotMarket.underlying?.name??selectedSpotMarket.label}</h2><span>{selectedSpotMarket.underlying?.symbol} {category==="perps"?"perpetual":"stock"}</span></div></div>
@@ -1181,7 +1180,6 @@ function FinanceShell({ page, auth, initialCategory }: { page: string; auth?: Au
                 </>
               ) : category === "crypto_spot" && markets.length && selectedSpotMarket ? (
                 <>
-                <nav className="market-breadcrumb" aria-label="Breadcrumb"><Link href="/home">Home</Link><span>/</span><Link href="/markets">Markets</Link><span>/</span><strong>{marketHistory ? (swapAssetMap.has(marketHistory.base_asset_id) ? swapIdentity(marketHistory.base_asset_id) : marketHistory.base_symbol) : "Asset"}</strong></nav>
                 <div className="market-detail-layout">
                   <section className="market-price-card" aria-label="Asset price">
                     <div className="market-asset-heading">
