@@ -186,7 +186,7 @@ export async function createRuntime(pool?:Pool) {
    });
    await registerLendingRoutes(app,{adapter:blend,operations,balanceReader:address=>chain.getClassicBalances(address)});
    await registerSpotRoutes(app,{service:new SpotService(spot,db,operations,createSpotReservation(operations,readSpotBalances)),refreshReadiness:()=>spotReadiness.refresh(),requireBusiness,requireCustomer,success,
-    readDiscoveryMarkets:async category=>category==='perps'?perps.markets():category==='commodities'?commodities.markets():(await stocks.probe()).markets,
+    readDiscoveryMarkets:async category=>category==='perps'?perps.marketDetails():category==='commodities'?commodities.markets():(await stocks.probe()).markets,
     readPositions:async customer=>({wallet_holdings:await wallets.balances(customer.businessId,customer.walletId),venue_positions:[]})});
    await registerFundingRoutes(app,{service:new FundingService(funding,operations),requireBusiness,requireCustomer,success});
   }
