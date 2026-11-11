@@ -999,7 +999,7 @@ function FinanceShell({ page, auth }: { page: string; auth?: Auth }) {
                         <h3>
                           {m.asset?.code ?? m.code ?? m.symbol ?? "Reserve"}
                         </h3>
-                        <p className="small muted">Variable supply APY</p>
+                        <p className="small muted">Estimated variable supply APY · Testnet pool</p>
                         <strong className="apy">
                           {m.supply_apy_variable == null
                             ? "Unavailable"
@@ -1009,6 +1009,7 @@ function FinanceShell({ page, auth }: { page: string; auth?: Auth }) {
                               }).format(m.supply_apy_variable)}
                         </strong>
                         <code>{m.asset_id ?? m.reserve_contract_id}</code>
+                        {m.as_of && <p className="small muted">Observed {new Date(m.as_of).toLocaleString()}. Pool estimate; no earnings are credited by this rate display.</p>}
                         <p className="small">
                           {customerMessage(m.reason ?? m.readiness ?? "Live read; execution requires separate proof")}
                         </p>
