@@ -158,3 +158,16 @@ describe("sample fintech BFF customer boundaries (offline fixtures)", () => {
     expect(upstream).not.toHaveBeenCalled();
   });
 });
+
+it('binds Testnet USDC trustline preparation to the verified customer wallet',async()=>{
+ const upstream=vi.spyOn(server,'grapnel').mockResolvedValue({operation_id:operationId,status:'awaiting_customer_authorization'});
+ const response=await POST(request('usdc-trustline',{limit:'1000'}),context(['usdc-trustline']));
+ expect(response.status).toBe(202);
+ expect(upstream).toHaveBeenCalledWith(`/capital/wallets/${session.walletId}/usdc-trustline`,session,{method:'POST',body:{limit:'1000',customer_id:session.customerId},idempotencyKey:'offline-test-request'});
+});
+it('returns only safe Earn summaries from actual wallet and protocol observations',async()=>{
+ const usdc='stellar-testnet:classic:USDC:GATALTGTWIOT6BUDBCZM3Q4OQ4BO2COLOAZ7IYSKPLC2PMSOPPGF5V56';
+ vi.spyOn(server,'grapnel').mockResolvedValueOnce([{asset_id:'stellar-testnet:native:XLM',wallet_amount:'10.0000000',spendable:'8.0000000',as_of:new Date().toISOString()}]).mockResolvedValueOnce([{asset_id:'stellar-testnet:native:XLM',supplied:'0.0502446',as_of:new Date().toISOString()},{asset_id:usdc,supplied:'0.0000000',as_of:new Date().toISOString()}]);
+ const response=await GET(request('earn-balances'),context(['earn-balances']));const body=await response.json();
+ expect(response.status).toBe(200);expect(body.data.balances[0].in_earn).toBe('0.0502446');expect(body.data.balances[1]).toMatchObject({wallet_amount:'0.0000000',trustline_required:true});expect(JSON.stringify(body)).not.toContain('pool_contract_id');
+});

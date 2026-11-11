@@ -12,6 +12,8 @@ import { TestnetFundingAdapter } from './adapters/testnet-funding/index.js';
 import { BlendSorobanPreparer } from './adapters/stellar/blend-soroban.js';
 import { BlendAdapter, type BlendPosition } from './adapters/blend/index.js';
 import { inspectBlendWithdrawDeltas } from './adapters/blend/withdraw-inspector.js';
+import {registerUsdcTrustline} from './modules/wallets/usdc.js';
+import {verifyPreparedUsdcTrustline,TESTNET_USDC_ISSUER} from './adapters/stellar/usdc-trustline.js';
 import { registerLendingRoutes } from './modules/lending/routes.js';
 import { SoroswapSpotAdapter } from './adapters/soroswap/index.js';
 import { SpotService } from './modules/spot/service.js';
@@ -65,8 +67,9 @@ export async function createRuntime(pool?:Pool) {
   return blendReadiness;
  };
  const app=await buildApp({pool:db,config,identityVerifier:identity,
-  verifySignedAction:async(action,signed)=>{if(action.summary.action==='blend.supply'||action.summary.action==='blend.withdraw')await soroban.verifyForSubmission(action,signed);else verifySignedAction(action,signed);return {txHash:parseTestnetTransaction(signed).hash().toString('hex')};},
+  verifySignedAction:async(action,signed)=>{if(action.summary.action==='wallet.usdc_trustline')verifyPreparedUsdcTrustline(action,signed);else if(action.summary.action==='blend.supply'||action.summary.action==='blend.withdraw')await soroban.verifyForSubmission(action,signed);else verifySignedAction(action,signed);return {txHash:parseTestnetTransaction(signed).hash().toString('hex')};},
   balanceReader:address=>chain.getClassicBalances(address),
+  dashboardCustomerBalances:(businessId,walletId)=>wallets.balances(businessId,walletId),
   dashboardCustomerPositions:async customer=>{
    const [positions,markets]=await Promise.all([blend.positions(customer),blend.markets()]);
    return positions.map(position=>({provider:'blend',network:NETWORK,asset:markets.find(market=>market.market_id===position.market_id)?.asset??null,...position}));
@@ -78,6 +81,7 @@ export async function createRuntime(pool?:Pool) {
    'capital.testnet_funding':readFundingReadiness
   },
   registerAdapters:async app=>{
+   await registerUsdcTrustline(app,{chain,operations,verifyGate1:()=>hasGate1Proof(chain)});
    // Revalidate the actual chain proof for every new provider intent. A
    // startup snapshot must not survive a Testnet reset or unavailable proof.
    app.addHook('preHandler',async request=>{
@@ -155,6 +159,21 @@ export function createRuntimeWorkerChain(deps:RuntimeWorkerDependencies):WorkerC
    const parsed=parseTestnetTransaction(envelope);const hash=parsed.hash().toString('hex');
    const operation=(await pool.query('SELECT o.*,w.stellar_address,c.privy_user_id FROM operations o JOIN wallets w ON w.business_id=o.business_id AND w.customer_id=o.customer_id AND w.id=o.wallet_id JOIN customers c ON c.business_id=o.business_id AND c.id=o.customer_id WHERE o.tx_hash=$1 AND o.signed_xdr=$2',[hash,envelope])).rows[0];
    if(!operation || (operation.type!=='wallet.test_payment' && (!gate1Passed || !await (deps.verifyGate1?.()??Promise.resolve(false)))))throw new GrapnelError(409,'EXECUTION_UNAVAILABLE','Gate 1 proof is required before financial provider execution');
+   if(operation.type==='wallet.usdc_trustline'){
+    const action=PreparedActionSchema.parse(operation.prepared_action);
+    if(operation.module_code!=='capital.wallets'||operation.provider!=='stellar'||action.operationId!==operation.id||action.customerId!==operation.customer_id||action.walletAddress!==operation.stellar_address||action.summary.amount!==operation.request_json.limit)throw new GrapnelError(403,'INTENT_MISMATCH','Stored trustline and approval differ');
+    verifyPreparedUsdcTrustline(action,envelope);
+    await chain.verifyLiveNetwork();
+    const latest=(await chain.horizon.ledgers().order('desc').limit(1).call()).records[0]!;
+    if(BigInt(latest.base_reserve_in_stroops)!==5000000n)throw new GrapnelError(409,'EXECUTION_UNAVAILABLE','Trustline reserve changed; new approval is required');
+    const account=await chain.horizon.loadAccount(action.walletAddress);
+    if(BigInt(account.sequence)+1n!==BigInt(parsed.sequence))throw new GrapnelError(409,'SEQUENCE_CHANGED','Prepare a fresh trustline transaction');
+    const sent=await chain.server.sendTransaction(parsed).catch(()=>{throw new GrapnelError(503,'SUBMISSION_UNCERTAIN','Reconcile stored trustline hash before retry',true,{tx_hash:hash});});
+    if(sent.hash!==hash)throw new GrapnelError(502,'PROVIDER_INVALID','RPC transaction hash mismatch');
+    if(sent.status==='ERROR')throw new GrapnelError(409,'CHAIN_REJECTED','Stellar rejected trustline creation');
+    if(!['PENDING','DUPLICATE'].includes(sent.status))throw new GrapnelError(503,'SUBMISSION_UNCERTAIN','Reconcile stored trustline hash before retry',true,{tx_hash:hash});
+    return {txHash:hash};
+   }
    if(operation.type==='blend.supply'||operation.type==='blend.withdraw'){
     if(operation.module_code!=='capital.lending'||operation.provider!=='blend'||typeof operation.privy_user_id!=='string'||!operation.privy_user_id.startsWith('did:privy:'))throw new GrapnelError(403,'INTENT_MISMATCH','Stored operation is not an approved Blend supply');
     const action=PreparedActionSchema.parse(operation.prepared_action);
@@ -176,6 +195,16 @@ export function createRuntimeWorkerChain(deps:RuntimeWorkerDependencies):WorkerC
   async verifyDeltas(id,hash){
    const op=(await pool.query('SELECT o.*,w.stellar_address,c.privy_user_id FROM operations o JOIN wallets w ON w.business_id=o.business_id AND w.customer_id=o.customer_id AND w.id=o.wallet_id JOIN customers c ON c.business_id=o.business_id AND c.id=o.customer_id WHERE o.id=$1 AND o.tx_hash=$2',[id,hash])).rows[0];
    if(!op)return false;
+   if(op.type==='wallet.usdc_trustline'){
+    if(op.module_code!=='capital.wallets'||op.provider!=='stellar')return false;
+    const tx=await chain.horizon.transactions().transaction(hash).call();
+    if(!tx.successful||tx.source_account!==op.stellar_address)return false;
+    const parsed=parseTestnetTransaction(op.signed_xdr);const trust=parsed.operations[0];
+    if(parsed.hash().toString('hex')!==hash||trust?.type!=='changeTrust'||!('getCode' in trust.line)||trust.line.getCode()!=='USDC'||trust.line.getIssuer()!==TESTNET_USDC_ISSUER||trust.limit!==op.request_json.limit&&toAtomic(trust.limit,7)!==toAtomic(op.request_json.limit,7))return false;
+    const effects=await chain.horizon.effects().forTransaction(hash).limit(100).call();
+    const created=effects.records.some(e=>e.type==='trustline_created'&&e.account===op.stellar_address&&'asset_code'in e&&e.asset_code==='USDC'&&e.asset_issuer===TESTNET_USDC_ISSUER);
+    return {verified:created,result:{usdc_trustline_verification:{verified:created,issuer:TESTNET_USDC_ISSUER,limit:trust.limit,ledger:tx.ledger,observed_at:new Date().toISOString()}}};
+   }
    if(op.type==='blend.supply'||op.type==='blend.withdraw'){
     if(op.module_code!=='capital.lending'||op.provider!=='blend'||typeof op.privy_user_id!=='string'||!op.privy_user_id.startsWith('did:privy:'))return false;
     const confirmed=await chain.server.getTransaction(hash);

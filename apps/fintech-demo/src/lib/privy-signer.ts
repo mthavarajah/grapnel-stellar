@@ -42,6 +42,23 @@ function inspectBlendApproval(action: PreparedAction, operation: Transaction['op
       || values.length!==3 || values[0]!==action.walletAddress || values[1]!==pool || values[2]!==amount)throw Error();
   }catch{throw Error('Contract invocation differs from the reviewed native XLM Blend intent');}
 }
+function inspectSpotApproval(action:PreparedAction,operation:Transaction['operations'][number]):void {
+  try {
+    const issuer='GATALTGTWIOT6BUDBCZM3Q4OQ4BO2COLOAZ7IYSKPLC2PMSOPPGF5V56';
+    const router='CCJUD55AG6W5HAI5LRVNKAE5WDP5XGZBUDS5WNTIVDU7O264UZZE7BRD';
+    const pair='CBR76WMT6J733CCVBP23M2EL5QGP5HXLPEFNFZGZ7IB6QHOJAHP7YM3V';
+    const native=Asset.native().contractId(NETWORK_PASSPHRASE),usdc=new Asset('USDC',issuer).contractId(NETWORK_PASSPHRASE);
+    if(operation.type!=='invokeHostFunction'||operation.source||operation.func.switch().name!=='hostFunctionTypeInvokeContract'||action.summary.action!=='spot.swap'||action.summary.contractId!==router||action.summary.fromAssetId!==`${NETWORK}:native:XLM`||action.summary.toAssetId!==`${NETWORK}:classic:USDC:${issuer}`||action.summary.recipient!==action.walletAddress||!action.summary.amount||!action.summary.minReceive||BigInt(action.summary.maxFeeStroops??'0')>10000000n)throw Error();
+    const fn=operation.func.invokeContract(),values=fn.args().map(scValToNative);
+    const amount=toAtomic(action.summary.amount,7),minimum=toAtomic(action.summary.minReceive,7);
+    if(Address.fromScAddress(fn.contractAddress()).toString()!==router||fn.functionName().toString()!=='swap_exact_tokens_for_tokens'||values.length!==5||values[0]!==amount||values[1]!==minimum||!Array.isArray(values[2])||values[2].length!==2||values[2][0]!==native||values[2][1]!==usdc||values[3]!==action.walletAddress||typeof values[4]!=='bigint'||values[4]*1000n<BigInt(Date.parse(action.summary.expiresAt))||values[4]*1000n>BigInt(Date.now()+3600000))throw Error();
+    const auth=operation.auth;if(auth?.length!==1||auth[0]!.credentials().switch().name!=='sorobanCredentialsSourceAccount')throw Error();
+    const root=auth[0]!.rootInvocation();if(root.function().switch().name!=='sorobanAuthorizedFunctionTypeContractFn'||root.function().contractFn().toXDR('base64')!==fn.toXDR('base64')||root.subInvocations().length!==1)throw Error();
+    const child=root.subInvocations()[0]!;if(child.subInvocations().length||child.function().switch().name!=='sorobanAuthorizedFunctionTypeContractFn')throw Error();
+    const transfer=child.function().contractFn(),args=transfer.args().map(scValToNative);
+    if(Address.fromScAddress(transfer.contractAddress()).toString()!==native||transfer.functionName().toString()!=='transfer'||args.length!==3||args[0]!==action.walletAddress||args[1]!==pair||args[2]!==amount)throw Error();
+  }catch{throw Error('Swap differs from the reviewed XLM to USDC intent');}
+}
 /** Sign only the exact server-prepared action after the customer reviews the summary. */
 export async function signPreparedAction(
   action: PreparedAction,
@@ -90,7 +107,10 @@ export async function signPreparedAction(
       "Prepared transaction differs from the approved fee or source intent",
     );
   }
-  if (operation.type === "payment") {
+  if(operation.type==='changeTrust'){
+    const issuer='GATALTGTWIOT6BUDBCZM3Q4OQ4BO2COLOAZ7IYSKPLC2PMSOPPGF5V56';
+    if(action.summary.action!=='wallet.usdc_trustline'||!(operation.line instanceof Asset)||operation.line.getCode()!=='USDC'||operation.line.getIssuer()!==issuer||action.summary.fromAssetId!==`${NETWORK}:classic:USDC:${issuer}`||action.summary.recipient!==expectedAddress||action.summary.amount!=='1000'||toAtomic(operation.limit,7)!==toAtomic('1000',7)||tx.fee!=='100'||action.summary.maxFeeStroops!=='100'||action.summary.contractId!==undefined||action.summary.toAssetId!==undefined||action.summary.minReceive!==undefined)throw Error('Trustline differs from the approved Testnet USDC limit');
+  } else if (operation.type === "payment") {
     const assetId = operation.asset.isNative()
       ? `${NETWORK}:native:XLM`
       : `${NETWORK}:classic:${operation.asset.getCode()}:${operation.asset.getIssuer()}`;
@@ -105,7 +125,7 @@ export async function signPreparedAction(
       );
     }
   } else if (operation.type === "invokeHostFunction") {
-    inspectBlendApproval(action,operation);
+    if(action.summary.action==='spot.swap')inspectSpotApproval(action,operation);else inspectBlendApproval(action,operation);
   } else {
     throw Error(
       "This transaction operation has no supported approval inspector",

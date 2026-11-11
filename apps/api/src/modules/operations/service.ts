@@ -45,12 +45,16 @@ export class OperationService {
  async createIdempotent(input:CreateOperationInput,prepare?:(client:PoolClient,operationId:string)=>Promise<void>):Promise<{operation:Operation;created:boolean}>{
   if(!input.idempotencyKey || input.idempotencyKey.length>200)throw new GrapnelError(400,'IDEMPOTENCY_KEY_REQUIRED','Idempotency-Key must contain 1–200 characters');
   const requestHash=digest(canonicalJson(input.request));
+  await this.expireUnsignedActions(input.businessId);
   return transaction(this.pool,async client=>{
    await lock(client,`idempotency:${input.businessId}:${input.route}:${input.idempotencyKey}`);
    const existing=(await client.query('SELECT operation_id,request_hash FROM idempotency_records WHERE business_id=$1 AND route=$2 AND idempotency_key=$3',[input.businessId,input.route,input.idempotencyKey])).rows[0];
    if(existing){if(existing.request_hash!==requestHash)throw new GrapnelError(409,'IDEMPOTENCY_CONFLICT','This idempotency key was used with a different request');const row=(await client.query('SELECT * FROM operations WHERE business_id=$1 AND id=$2',[input.businessId,existing.operation_id])).rows[0];return {operation:serializeOperation(row),created:false};}
    const wallet=(await client.query('SELECT id FROM wallets WHERE business_id=$1 AND customer_id=$2 AND id=$3',[input.businessId,input.customerId,input.walletId])).rows[0];
    if(!wallet)throw new GrapnelError(404,'NOT_FOUND','Customer wallet not found');
+   await lock(client,`wallet:${input.businessId}:${input.walletId}`);
+   const pending=(await client.query("SELECT id FROM operations WHERE business_id=$1 AND wallet_id=$2 AND state NOT IN ('completed','failed','rejected','expired') LIMIT 1",[input.businessId,input.walletId])).rows[0];
+   if(pending)throw new GrapnelError(409,'WALLET_OPERATION_PENDING','Finish the pending wallet action before preparing another');
    const operationId=randomUUID();
    await client.query("INSERT INTO operations(id,business_id,customer_id,wallet_id,module_code,type,state,request_json,provider) VALUES($1,$2,$3,$4,$5,$6,'accepted',$7,$8)",[operationId,input.businessId,input.customerId,input.walletId,input.module,input.type,JSON.stringify(input.request),input.provider]);
    await client.query('INSERT INTO idempotency_records(business_id,route,idempotency_key,request_hash,operation_id) VALUES($1,$2,$3,$4,$5)',[input.businessId,input.route,input.idempotencyKey,requestHash,operationId]);

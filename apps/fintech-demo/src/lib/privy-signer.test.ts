@@ -161,3 +161,15 @@ it('signs an exact Blend withdrawal and rejects a substituted action before prom
  await expect(signPreparedAction({...approved,summary:{...approved.summary,action:'blend.supply'}},sign,wallet.publicKey())).rejects.toThrow('intent');
  expect(calls).toBe(1);
 });
+
+it('signs only the exact USDC trustline limit and refuses a substituted issuer before prompting',async()=>{
+ const {wallet,action}=fixture();
+ const issuer='GATALTGTWIOT6BUDBCZM3Q4OQ4BO2COLOAZ7IYSKPLC2PMSOPPGF5V56';
+ const build=(line:Asset)=>new TransactionBuilder(new Account(wallet.publicKey(),'1'),{fee:'100',networkPassphrase:Networks.TESTNET}).addOperation(Operation.changeTrust({asset:line,limit:'1000'})).setTimeout(60).build();
+ const tx=build(new Asset('USDC',issuer));
+ const approved={...action,unsignedXdr:tx.toXDR(),signingHashHex:tx.hash().toString('hex'),summary:{...action.summary,action:'wallet.usdc_trustline',amount:'1000',fromAssetId:`stellar-testnet:classic:USDC:${issuer}`,recipient:wallet.publicKey()}};
+ let calls=0;const sign=async()=>{calls++;return {signature:`0x${wallet.sign(tx.hash()).toString('hex')}` as `0x${string}`};};
+ await signPreparedAction(approved,sign,wallet.publicKey());expect(calls).toBe(1);
+ const changed=build(new Asset('USDC',Keypair.random().publicKey()));
+ await expect(signPreparedAction({...approved,unsignedXdr:changed.toXDR(),signingHashHex:changed.hash().toString('hex')},sign,wallet.publicKey())).rejects.toThrow('Trustline');expect(calls).toBe(1);
+});

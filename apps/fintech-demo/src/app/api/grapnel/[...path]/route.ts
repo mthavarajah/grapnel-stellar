@@ -61,6 +61,29 @@ export async function GET(
       );
       return json(await grapnel(`/trade/markets?asset_class=${category}`, s));
     }
+    if(key==='usdc-status'){
+      await requireModule('capital.wallets',s);
+      const response=await grapnel(`/capital/wallets/${s.walletId}/balances`,s);
+      const balances=Array.isArray(response)?response:(response.balances??[]);
+      const native=balances.find((b:{asset_id:string})=>b.asset_id==='stellar-testnet:native:XLM');
+      if(!native?.as_of)throw new BffError(503,'BALANCE_UNAVAILABLE','Current wallet balance could not be verified');
+      const usdc=balances.find((b:{asset_id:string})=>b.asset_id==='stellar-testnet:classic:USDC:GATALTGTWIOT6BUDBCZM3Q4OQ4BO2COLOAZ7IYSKPLC2PMSOPPGF5V56');
+      return json({enabled:!!usdc,wallet_amount:usdc?.wallet_amount??'0.0000000',spendable:usdc?.spendable??'0.0000000',as_of:usdc?.as_of??native.as_of});
+    }
+    if(key==='earn-balances'){
+      await requireModule('capital.lending',s);
+      const [wallet,positions]=await Promise.all([grapnel(`/capital/wallets/${s.walletId}/balances`,s),grapnel(`/capital/lending/positions?customer_id=${s.customerId}`,s)]);
+      const walletBalances=Array.isArray(wallet)?wallet:(wallet.balances??[]);
+      const poolPositions=Array.isArray(positions)?positions:(positions.positions??[]);
+      const ids=['stellar-testnet:native:XLM','stellar-testnet:classic:USDC:GATALTGTWIOT6BUDBCZM3Q4OQ4BO2COLOAZ7IYSKPLC2PMSOPPGF5V56'];
+      const balances=ids.map(asset_id=>{
+        const balance=walletBalances.find((b:{asset_id:string})=>b.asset_id===asset_id);
+        const position=poolPositions.find((p:{asset_id:string})=>p.asset_id===asset_id);
+        if(!position||(!balance&&asset_id===ids[0]))throw new BffError(503,'BALANCE_UNAVAILABLE','Current Earn balance could not be verified');
+        return {asset_id,wallet_amount:balance?.wallet_amount??'0.0000000',spendable:balance?.spendable??'0.0000000',in_earn:position.supplied,as_of:position.as_of,trustline_required:asset_id===ids[1]&&!balance};
+      });
+      return json({balances,as_of:new Date().toISOString()});
+    }
     if (key === "lending-markets") {
       await requireModule("capital.lending", s);
       return json(await grapnel("/capital/lending/markets", s));
@@ -114,6 +137,11 @@ export async function POST(
         202,
       );
     }
+    if(route==='usdc-trustline'){
+      await requireModule('capital.wallets',s,true);
+      const body=z.object({limit:z.literal('1000')}).strict().parse(raw);
+      return json(await grapnel(`/capital/wallets/${s.walletId}/usdc-trustline`,s,{method:'POST',body:{...body,customer_id:s.customerId},idempotencyKey:key}),202);
+    }
     if (route === "test-payment") {
       await requireModule("capital.wallets", s);
       const body = z.object({ amount: money }).strict().parse(raw);
@@ -127,7 +155,8 @@ export async function POST(
       );
     }
     if (route === "quote") {
-      await requireModule("trade.spot", s, true);
+      await requireModule("trade.spot", s);
+      await requireModule("capital.wallets", s, true);
       const body = z
         .object({
           market_id: z.string(),
@@ -151,7 +180,8 @@ export async function POST(
       );
     }
     if (route === "order") {
-      await requireModule("trade.spot", s, true);
+      await requireModule("trade.spot", s);
+      await requireModule("capital.wallets", s, true);
       const body = z
         .object({ quote_id: z.string().uuid() })
         .strict()

@@ -16,6 +16,7 @@ export interface AppOptions {
  pool?:Pool;config?:ApiConfig;identityVerifier?:IdentityVerifier;
  verifySignedAction?:(action:PreparedAction,signedXdr:string,customerIdentity:string)=>Promise<{txHash:string}>;
  balanceReader?:(address:string)=>Promise<WalletBalance[]>;
+ dashboardCustomerBalances?:(businessId:string,walletId:string)=>Promise<WalletBalance[]>;
  dashboardCustomerPositions?:(customer:CustomerContext)=>Promise<unknown[]>;
  capabilities?:Partial<Record<ModuleId,()=>Promise<Pick<Capability,'execution_status'|'reason'|'actions'>>>>;
  registerAdapters?:(app:FastifyInstance)=>Promise<void>;
@@ -79,6 +80,16 @@ export async function buildApp(options:AppOptions={}):Promise<FastifyInstance>{
     WHERE business_id=c.business_id AND customer_id=c.id ORDER BY (status='active') DESC,created_at DESC LIMIT 1) w ON true
    WHERE c.business_id=$1 ORDER BY c.created_at DESC LIMIT 250`,[owner.businessId])).rows;
   return success(request,{customers:rows.map(row=>({customer_id:row.customer_id,external_customer_id:row.external_customer_id,created_at:row.created_at,wallet:row.wallet_id?{wallet_id:row.wallet_id,address:row.wallet_address,status:row.wallet_status}:null}))});
+ });
+ app.get('/v1/dashboard/customers/:id/balances',async request=>{
+  const owner=await requireOwner(request);const {id}=z.object({id:z.string().uuid()}).parse(request.params);
+  const row=(await pool.query(`SELECT c.id,w.id AS wallet_id FROM customers c LEFT JOIN LATERAL
+   (SELECT id FROM wallets WHERE business_id=c.business_id AND customer_id=c.id AND status='active' ORDER BY created_at DESC LIMIT 1) w ON true
+   WHERE c.business_id=$1 AND c.id=$2`,[owner.businessId,id])).rows[0];
+  if(!row)throw new GrapnelError(404,'NOT_FOUND','Customer not found');
+  if(!row.wallet_id)return success(request,{customer_id:id,wallet_id:null,balances:[],as_of:new Date().toISOString()});
+  if(!options.dashboardCustomerBalances)throw new GrapnelError(503,'BALANCE_UNAVAILABLE','Live wallet balance reads are unavailable',true);
+  return success(request,{customer_id:id,wallet_id:row.wallet_id,balances:await options.dashboardCustomerBalances(owner.businessId,row.wallet_id),as_of:new Date().toISOString()});
  });
  app.get('/v1/dashboard/customers/:id/lending-positions',async request=>{
   const owner=await requireOwner(request);

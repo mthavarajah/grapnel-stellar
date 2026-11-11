@@ -19,7 +19,7 @@ async function proxy(
   const route = path.join("/");
   const allowed =
     routes[route] ??
-    (/^dashboard\/customers\/[0-9a-f-]{36}\/lending-positions$/.test(route)
+    (/^dashboard\/customers\/[0-9a-f-]{36}\/(?:lending-positions|balances)$/.test(route)
       ? ["GET"]
       : /^dashboard\/api-keys\/[0-9a-f-]{36}$/.test(route)
         ? ["DELETE"]

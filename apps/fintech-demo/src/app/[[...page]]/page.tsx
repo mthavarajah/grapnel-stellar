@@ -1,5 +1,5 @@
 import Finance from "@/components/finance";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 export default async function Page({
   params,
 }: {
@@ -7,11 +7,13 @@ export default async function Page({
 }) {
   const path = (await params).page ?? [];
   const page = path[0] ?? "home";
+  if(path.length===1 && ["fund","return"].includes(page))redirect("/funds");
   if (
     path.length > 1 ||
     ![
       "home",
       "login",
+      "funds",
       "fund",
       "return",
       "markets",

@@ -2,7 +2,7 @@
   "openapi": "3.1.0",
   "info": {
     "title": "Grapnel Testnet API",
-    "version": "0.1.2",
+    "version": "0.1.3",
     "description": "Stellar Testnet only. See docs/03_API.md and packages/contracts for frozen payload schemas."
   },
   "servers": [
@@ -934,23 +934,95 @@
     "/v1/dashboard/customers": {
       "get": {
         "operationId": "get_v1_dashboard_customers",
-        "security": [{"ownerSession": []}],
+        "security": [
+          {
+            "ownerSession": []
+          }
+        ],
         "responses": {
-          "200": {"description": "Tenant-scoped customer and wallet metadata", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/Envelope"}}}},
-          "401": {"description": "Owner session required", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/Error"}}}}
+          "200": {
+            "description": "Tenant-scoped customer and wallet metadata",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Owner session required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
         }
       }
     },
     "/v1/dashboard/customers/{id}/lending-positions": {
       "get": {
         "operationId": "get_v1_dashboard_customer_lending_positions",
-        "security": [{"ownerSession": []}],
-        "parameters": [{"name": "id", "in": "path", "required": true, "schema": {"type": "string", "format": "uuid"}}],
+        "security": [
+          {
+            "ownerSession": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
         "responses": {
-          "200": {"description": "Fresh Testnet Blend position for the tenant customer wallet", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/Envelope"}}}},
-          "401": {"description": "Owner session required", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/Error"}}}},
-          "404": {"description": "Customer does not belong to this tenant", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/Error"}}}},
-          "503": {"description": "Live Blend read unavailable", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/Error"}}}}
+          "200": {
+            "description": "Fresh Testnet Blend position for the tenant customer wallet",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Owner session required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Customer does not belong to this tenant",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Live Blend read unavailable",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
         }
       }
     },
@@ -2878,6 +2950,81 @@
           }
         }
       }
+    },
+    "/v1/capital/wallets/{id}/usdc-trustline": {
+      "post": {
+        "operationId": "prepare_usdc_trustline",
+        "security": [
+          {
+            "businessKey": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "X-Customer-Identity",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "customer_id",
+                  "limit"
+                ],
+                "properties": {
+                  "customer_id": {
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  "limit": {
+                    "const": "1000"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "202": {
+            "description": "Customer approval required for exact Testnet USDC trustline; summary.amount is trust limit, not transfer amount"
+          },
+          "401": {
+            "description": "Business key required"
+          },
+          "403": {
+            "description": "Customer session/module denied"
+          },
+          "409": {
+            "description": "Gate, trustline or reserve preflight unavailable"
+          }
+        }
+      }
     }
   },
   "components": {
@@ -3257,6 +3404,13 @@
             "type": "object"
           },
           "customer_action_token": {
+            "type": "string"
+          },
+          "display_amount": {
+            "type": "string",
+            "description": "Exact approved input amount for customer activity"
+          },
+          "display_asset_id": {
             "type": "string"
           }
         },

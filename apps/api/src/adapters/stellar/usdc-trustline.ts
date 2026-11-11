@@ -37,3 +37,11 @@ export function verifyUsdcTrustline(prepared:ReviewedUsdcTrustline,signedXdr:str
  const customer=Keypair.fromPublicKey(prepared.intent.walletAddress);
  if(signed.signatures.length!==1||!signed.signatures[0]!.hint().equals(customer.signatureHint())||!customer.verify(signed.hash(),signed.signatures[0]!.signature()))throw new GrapnelError(403,'INVALID_CUSTOMER_SIGNATURE','Exact trustline approval requires the customer wallet signature');
 }
+
+/** Bridge the frozen customer approval envelope into the narrow trustline verifier. */
+export function verifyPreparedUsdcTrustline(action:import('@grapnel/contracts').PreparedAction,signedXdr:string):void {
+ const unsigned=parseTestnetTransaction(action.unsignedXdr);
+ const assetId=`stellar-testnet:classic:USDC:${TESTNET_USDC_ISSUER}`;
+ if(action.network!=='stellar-testnet'||action.authorization.method!=='privy_stellar'||action.summary.action!=='wallet.usdc_trustline'||action.summary.fromAssetId!==assetId||action.summary.recipient!==action.walletAddress||action.summary.maxFeeStroops!=='100'||action.summary.expiresAt!==action.authorization.expiresAt||action.summary.contractId!==undefined||action.summary.toAssetId!==undefined||action.summary.minReceive!==undefined)reject('Trustline summary differs from the approved asset and limit');
+ verifyUsdcTrustline({intent:{network:'stellar-testnet',action:'wallet.usdc_trustline',walletAddress:action.walletAddress,assetCode:'USDC',issuer:TESTNET_USDC_ISSUER,limit:action.summary.amount??'',sequence:unsigned.sequence,maxFeeStroops:'100',expiresAt:action.summary.expiresAt},unsignedXdr:action.unsignedXdr,signingHashHex:action.signingHashHex},signedXdr);
+}
