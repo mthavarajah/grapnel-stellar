@@ -16,7 +16,7 @@ function fixture(options:{xlmCollateral?:bigint;usdcCollateral?:bigint;usdcDebt?
  const deps:BorrowDependencies={now:()=>NOW,verifyRegistry:async()=>{},loadPool:async()=>pool,readOracle:async()=>{if(options.oracleFails)throw Error('Unavailable fixture');return {decimals:7,ledger:123,prices:new Map([[BORROW_XLM_RESERVE,{price:4200000n,timestamp:Math.floor(NOW/1000)-(options.stale?61:0)}],[BORROW_USDC_RESERVE,{price:10000000n,timestamp:Math.floor(NOW/1000)}]])};},readBalance:async(_id,owner)=>{if(owner===BORROW_POOL_ID&&options.liquidityFails)throw Error('Fixture liquidity unavailable');return owner===BORROW_POOL_ID?(options.liquidity??10000000000n):options.walletEmpty?0n:10000000000n;},prepareAndSimulate:prepare};
  const adapter=new BlendBorrowAdapter({network:'testnet',passphrase:NETWORK_PASSPHRASE,gate1Passed:true},deps);
  const input=(reserve=BORROW_USDC_RESERVE,asset=BORROW_USDC_ID,amount='1')=>({operationId:'fixture-operation',marketId:`stellar-testnet:blend:${BORROW_POOL_ID}:${reserve}`,assetId:asset,amount});
- return {adapter,prepare,input,pool};
+ return {adapter,prepare,input,pool,deps};
 }
 describe('isolated borrowing pool risk and intent fixtures',()=>{
  it('does not hide unsupported pool positions in a full account valuation',async()=>{
@@ -27,12 +27,38 @@ describe('isolated borrowing pool risk and intent fixtures',()=>{
  it('uses exact individual collateral, pool oracle factors and conservative capacity',async()=>{const f=fixture({xlmCollateral:100000000n}),read=await f.adapter.read(customer),usdc=read.assets.find(a=>a.asset.id===BORROW_USDC_ID)!;expect(usdc.collateral_value).toBe('4.2000000');expect(usdc.borrow_limit).toBe('3.7800000');expect(usdc.available_to_borrow).toBe('3.2319000');expect(usdc.can_prepare_borrow).toBe(true);});
  it('subtracts existing effective debt and returns meaningful health',async()=>{const f=fixture({xlmCollateral:100000000n,usdcDebt:20000000n}),usdc=(await f.adapter.read(customer)).assets[1]!;expect(usdc.health_factor).toBe('1.7954999');expect(usdc.available_to_borrow).toBe('1.4318999');expect(usdc.repayable).toBe('2.0000000');});
  it.each([{stale:true},{oracleFails:true},{status:3},{unknownCollateral:true}])('fails borrow closed while preserving actual debt/rate reads (%j)',async options=>{const f=fixture({xlmCollateral:100000000n,usdcDebt:10000000n,...options}),rows=(await f.adapter.read(customer)).assets;expect(rows.every(a=>!a.can_prepare_borrow)).toBe(true);expect(rows[1]!.borrowed).toBe('1.0000000');expect(rows[1]!.borrow_apr).toBe('0.12');await expect(f.adapter.prepare('borrow',f.input(),customer)).rejects.toMatchObject({code:'EXECUTION_UNAVAILABLE'});expect(f.prepare).not.toHaveBeenCalled();});
+ it('accepts only the exact published conservative borrow bound, not one atomic unit above it',async()=>{
+  const f=fixture({xlmCollateral:100000000n}),limit=(await f.adapter.read(customer)).assets[1]!.available_to_borrow!;
+  await f.adapter.prepare('borrow',f.input(BORROW_USDC_RESERVE,BORROW_USDC_ID,limit),customer);
+  expect(f.prepare).toHaveBeenCalledOnce();
+  await expect(f.adapter.prepare('borrow',f.input(BORROW_USDC_RESERVE,BORROW_USDC_ID,'3.2319001'),customer)).rejects.toMatchObject({code:'EXECUTION_UNAVAILABLE',details:{reason:'BORROW_CAPACITY_EXCEEDED'}});
+  expect(f.prepare).toHaveBeenCalledOnce();
+ });
+ it('does not permit new debt when the live reserve is already at its utilization ceiling',async()=>{
+  const f=fixture({xlmCollateral:100000000n}),reserve=f.pool.reserves.get(BORROW_USDC_RESERVE)!;
+  reserve.totalLiabilities=()=>reserve.totalSupply()*9500000n/10000000n;
+  expect((await f.adapter.read(customer)).assets[1]!.available_to_borrow).toBe('0.0000000');
+  await expect(f.adapter.prepare('borrow',f.input(),customer)).rejects.toMatchObject({code:'EXECUTION_UNAVAILABLE'});expect(f.prepare).not.toHaveBeenCalled();
+ });
+ it('rejects future oracle timestamps and nonpositive prices before preparing debt',async()=>{
+  for(const change of ['future','zero'] as const){
+   const f=fixture({xlmCollateral:100000000n}),readOracle=f.deps.readOracle!;
+   f.deps.readOracle=async()=>{const snapshot=await readOracle(),price=snapshot.prices.get(BORROW_USDC_RESERVE)!;snapshot.prices.set(BORROW_USDC_RESERVE,{price:change==='zero'?0n:price.price,timestamp:change==='future'?Math.floor(NOW/1000)+10:price.timestamp});return snapshot;};
+   expect((await f.adapter.read(customer)).assets[1]!.can_prepare_borrow).toBe(false);
+   await expect(f.adapter.prepare('borrow',f.input(),customer)).rejects.toMatchObject({code:'EXECUTION_UNAVAILABLE'});expect(f.prepare).not.toHaveBeenCalled();
+  }
+ });
  it('caps available borrowing by actual liquidity',async()=>{const f=fixture({xlmCollateral:100000000n,liquidity:100n});expect((await f.adapter.read(customer)).assets[1]!.available_to_borrow).toBe('0.0000100');});
  it('does not require an oracle quote to reduce existing debt',async()=>{const f=fixture({usdcDebt:10000000n,stale:true});expect((await f.adapter.read(customer)).assets[1]!.can_prepare_repay).toBe(true);await f.adapter.prepare('repay',f.input(),customer);expect(f.prepare).toHaveBeenCalledOnce();});
  it('advertises new-pool collateral setup from actual wallet funds and exact live metadata',async()=>{const f=fixture(),read=await f.adapter.read(customer);expect(read.assets.every(row=>row.can_prepare_collateral_supply&&row.collateral==='0.0000000'&&row.as_of_ledger===123&&!row.can_prepare_collateral_withdraw)).toBe(true);});
  it.each([{status:3},{walletEmpty:true}])('does not advertise supply when prerequisites fail (%j)',async options=>{const read=await fixture(options).adapter.read(customer);expect(read.assets.every(row=>!row.can_prepare_collateral_supply)).toBe(true);});
  it('keeps withdrawal available after a full-repayment empty liabilities map',async()=>{const f=fixture({xlmCollateral:10000000n}),user=await f.pool.loadUser(WALLET);user.positions.liabilities.clear();const read=await f.adapter.read(customer),positions=await f.adapter.positions(customer);expect(read.assets[0]).toMatchObject({borrowed:'0.0000000',collateral:'1.0000000',can_prepare_repay:false,can_prepare_collateral_withdraw:true});expect(read.assets[1]!.can_prepare_collateral_withdraw).toBe(false);expect(positions.every(row=>row.debt_tokens==='0'&&row.borrowed==='0.0000000')).toBe(true);});
  it.each([{usdcDebt:1n},{liquidityFails:true},{liquidity:0n}])('does not advertise collateral withdrawal with debt or missing liquidity (case %#)',async options=>{const read=await fixture({xlmCollateral:10000000n,...options}).adapter.read(customer);expect(read.assets.every(row=>!row.can_prepare_collateral_withdraw)).toBe(true);});
+ it('returns a structured liquidity rejection for a funded collateral position when reserve liquidity is zero',async()=>{
+  const f=fixture({xlmCollateral:10000000n,liquidity:0n});
+  await expect(f.adapter.prepareCollateral('withdraw',f.input(BORROW_XLM_RESERVE,XLM.id),customer)).rejects.toMatchObject({code:'EXECUTION_UNAVAILABLE',details:{reason:'COLLATERAL_WITHDRAW_LIQUIDITY_UNAVAILABLE'}});
+  expect(f.prepare).not.toHaveBeenCalled();
+ });
  it('parses confirmed zero balances separately from positive spend amounts',()=>{expect(borrowReadAtomic('0.0000000')).toBe(0n);expect(borrowReadAtomic('1.0000000')).toBe(10000000n);});
  it('rejects repayment without debt as a structured unavailable response',async()=>{const f=fixture();await expect(f.adapter.prepare('repay',f.input(),customer)).rejects.toMatchObject({code:'EXECUTION_UNAVAILABLE'});expect(f.prepare).not.toHaveBeenCalled();});
  it('rejects repayment above actual current debt',async()=>{const f=fixture({usdcDebt:100n});await expect(f.adapter.prepare('repay',f.input(),customer)).rejects.toMatchObject({code:'EXECUTION_UNAVAILABLE'});expect(f.prepare).not.toHaveBeenCalled();});
