@@ -1,3 +1,4 @@
+import {STANDALONE_NATIVE_ROUTES,isApprovedStandaloneAssetId,standaloneAssetId} from '../../adapters/soroswap/direct-assets.js';
 import type {Pool} from 'pg';
 import {Address,Keypair,Transaction,TransactionBuilder,rpc,scValToNative,StrKey,xdr} from '@stellar/stellar-sdk';
 import {NETWORK_PASSPHRASE,PreparedActionSchema,XLM,toAtomic} from '@grapnel/contracts';
@@ -17,7 +18,7 @@ export function confirmedSpotObservation(result:rpc.Api.GetTransactionResponse):
   const tx=TransactionBuilder.fromXDR(result.envelopeXdr.toXDR('base64'),NETWORK_PASSPHRASE);if(!(tx instanceof Transaction)||tx.hash().toString('hex')!==result.txHash)return null;
   const meta=result.resultMetaXdr,events:xdr.ContractEvent[]=meta.switch()===4?meta.v4().operations().flatMap(o=>o.events()):meta.switch()===3?(meta.v3().sorobanMeta()?.events()??[]):[];
   const transfers:SpotTransfer[]=[];
-  for(const e of events){if(e.type().name!=='contract'||!e.contractId()||e.body().switch()!==0)continue;const id=StrKey.encodeContract(e.contractId()! as unknown as Buffer),body=e.body().v0(),topics=body.topics().map(scValToNative);if(topics[0]!=='transfer'||![NATIVE_SAC,USDC_SAC].includes(id))continue;const value=scValToNative(body.data());if(topics.length!==4||typeof topics[1]!=='string'||typeof topics[2]!=='string'||typeof topics[3]!=='string'||typeof value!=='bigint'||value<=0n)return null;transfers.push({contract:id,from:topics[1],to:topics[2],asset:topics[3],amount:value.toString()});}
+  for(const e of events){if(e.type().name!=='contract'||!e.contractId()||e.body().switch()!==0)continue;const id=StrKey.encodeContract(e.contractId()! as unknown as Buffer),body=e.body().v0(),topics=body.topics().map(scValToNative);if(topics[0]!=='transfer'||![NATIVE_SAC,USDC_SAC,...STANDALONE_NATIVE_ROUTES.map(r=>r.contract)].includes(id))continue;const value=scValToNative(body.data());const standalone=STANDALONE_NATIVE_ROUTES.some(r=>r.contract===id);if(topics.length!==(standalone?3:4)||typeof topics[1]!=='string'||typeof topics[2]!=='string'||(!standalone&&typeof topics[3]!=='string')||typeof value!=='bigint'||value<=0n)return null;transfers.push({contract:id,from:topics[1],to:topics[2],asset:standalone?`soroban:${id}`:String(topics[3]),amount:value.toString()});}
   return {hash:result.txHash,ledger:result.ledger,created_at:Number(result.createdAt)*1000,fee_stroops:result.resultXdr.feeCharged().toString(),envelope_xdr:tx.toXDR(),transfers};
  }catch{return null;}
 }
@@ -35,8 +36,8 @@ export function verifyStoredSpotProof(record:StoredSpotProof,chain:SpotChainObse
   inspectApprovedSwapTransaction(action,tx,registry,chain.created_at);
   if(toAtomic(action.summary.amount??'',7)!==BigInt(record.amount_in_atomic)||toAtomic(action.summary.minReceive??'',7)!==BigInt(record.min_out_atomic)||BigInt(chain.fee_stroops)>BigInt(baseline.max_fee_stroops))return null;
   const walletTransfers=chain.transfers.filter(t=>t.from===record.wallet_address||t.to===record.wallet_address);if(walletTransfers.length!==2)return null;
-  const reverse=baseline.asset_in_id===SPOT_USDC_ID;
-  const debit=walletTransfers.find(t=>t.contract===(reverse?USDC_SAC:NATIVE_SAC)&&t.asset===(reverse?`USDC:${USDC_ISSUER}`:'native')&&t.from===record.wallet_address&&t.to===registry.pair),credit=walletTransfers.find(t=>t.contract===(reverse?NATIVE_SAC:USDC_SAC)&&t.asset===(reverse?'native':`USDC:${USDC_ISSUER}`)&&t.from===registry.pair&&t.to===record.wallet_address);
+  const reverse=baseline.asset_in_id!==XLM.id;const tokenAssetId=reverse?baseline.asset_in_id:baseline.asset_out_id;const standalone=STANDALONE_NATIVE_ROUTES.find(r=>standaloneAssetId(r.contract)===tokenAssetId);const token=standalone?.contract??USDC_SAC,tokenMarker=standalone?`soroban:${token}`:`USDC:${USDC_ISSUER}`;
+  const debit=walletTransfers.find(t=>t.contract===(reverse?token:NATIVE_SAC)&&t.asset===(reverse?tokenMarker:'native')&&t.from===record.wallet_address&&t.to===registry.pair),credit=walletTransfers.find(t=>t.contract===(reverse?NATIVE_SAC:token)&&t.asset===(reverse?'native':tokenMarker)&&t.from===registry.pair&&t.to===record.wallet_address);
   if(!debit||!credit||debit.amount!==record.actual_in_atomic||credit.amount!==record.actual_out_atomic||BigInt(credit.amount)<BigInt(record.min_out_atomic))return null;
   if(atomic(observed.wallet_in_before)-atomic(observed.wallet_in_after)!==BigInt(debit.amount)+(reverse?0n:BigInt(chain.fee_stroops))||atomic(observed.wallet_out_after)-atomic(observed.wallet_out_before)+(reverse?BigInt(chain.fee_stroops):0n)!==BigInt(credit.amount))return null;
   return {market_id:record.market_id,asset_in_id:baseline.asset_in_id,asset_out_id:baseline.asset_out_id,tx_hash:chain.hash,ledger:chain.ledger,verified_at:new Date(now).toISOString(),valid_until:now+30000,[VERIFIED]:true};
@@ -44,16 +45,16 @@ export function verifyStoredSpotProof(record:StoredSpotProof,chain:SpotChainObse
 }
 export class SpotProofReadiness {
  private running:Promise<void>|null=null;private checkedAt=0;
- constructor(private pool:Pool,private adapter:SoroswapSpotAdapter,private inspector:Pick<SoroswapDirectInspector,'registry'|'market'> & Partial<Pick<SoroswapDirectInspector,'markets'>>,private server:Pick<rpc.Server,'getNetwork'|'getTransaction'>){}
+ constructor(private pool:Pool,private adapter:SoroswapSpotAdapter,private inspector:Pick<SoroswapDirectInspector,'registry'|'market'> & Partial<Pick<SoroswapDirectInspector,'markets'>> & {registryForMarket?(id:string):Promise<SwapRegistry>},private server:Pick<rpc.Server,'getNetwork'|'getTransaction'>){}
  async refresh():Promise<void>{if(this.running)return this.running;if(Date.now()-this.checkedAt<25000)return;this.running=this.recheck().finally(()=>{this.checkedAt=Date.now();this.running=null;});return this.running;}
  private async recheck():Promise<void>{
   this.adapter.clearExecutionProof();
   try{
    if((await this.server.getNetwork()).passphrase!==NETWORK_PASSPHRASE)throw Error('Wrong network');
-   const markets=this.inspector.markets?await this.inspector.markets():[await this.inspector.market()],registry=await this.inspector.registry();
+   const markets=this.inspector.markets?await this.inspector.markets():[await this.inspector.market()],registry=this.inspector.registryForMarket?undefined:await this.inspector.registry();
    for(const market of markets){this.adapter.refreshVerifiedMarket(market);let verified=false;
    const rows=(await this.pool.query(`SELECT p.id,p.business_id,p.customer_id,w.stellar_address AS wallet_address,c.privy_user_id,p.state,p.module_code,p.provider,p.type,p.tx_hash,p.signed_xdr,p.prepared_action,p.result_json,o.market_id,q.amount_in_atomic,q.min_out_atomic,o.actual_in_atomic,o.actual_out_atomic FROM operations p JOIN orders o ON o.business_id=p.business_id AND o.customer_id=p.customer_id AND o.operation_id=p.id JOIN trade_quotes q ON q.business_id=o.business_id AND q.customer_id=o.customer_id AND q.id=o.quote_id JOIN wallets w ON w.business_id=p.business_id AND w.customer_id=p.customer_id AND w.id=p.wallet_id JOIN customers c ON c.business_id=p.business_id AND c.id=p.customer_id WHERE p.state='completed' AND p.module_code='trade.spot' AND p.type='spot.swap' AND p.provider='soroswap' AND o.market_id=$1 AND p.tx_hash IS NOT NULL AND o.actual_out_atomic>0 ORDER BY p.updated_at DESC LIMIT 10`,[market.id])).rows as StoredSpotProof[];
-   for(const record of rows){const observation=confirmedSpotObservation(await this.server.getTransaction(record.tx_hash));if(!observation)continue;const proof=verifyStoredSpotProof(record,observation,registry);if(!proof)continue;this.adapter.applyVerifiedExecution(proof);await this.pool.query("UPDATE provider_markets SET readiness='testnet_verified',reason=NULL,as_of=$2 WHERE id=$1 AND module_code='trade.spot' AND provider='soroswap'",[market.id,proof.verified_at]);verified=true;break;}
+   for(const record of rows){const observation=confirmedSpotObservation(await this.server.getTransaction(record.tx_hash));if(!observation)continue;const proofRegistry=this.inspector.registryForMarket?await this.inspector.registryForMarket(market.id):registry;const proof=verifyStoredSpotProof(record,observation,proofRegistry!);if(!proof)continue;this.adapter.applyVerifiedExecution(proof);await this.pool.query("UPDATE provider_markets SET readiness='testnet_verified',reason=NULL,as_of=$2 WHERE id=$1 AND module_code='trade.spot' AND provider='soroswap'",[market.id,proof.verified_at]);verified=true;break;}
    if(!verified)await this.pool.query("UPDATE provider_markets SET readiness='discovery_only',reason='Current completed swap proof is unavailable',as_of=now() WHERE id=$1 AND module_code='trade.spot'",[market.id]);}
   }catch{this.adapter.invalidateRoute();}
  }

@@ -65,7 +65,7 @@ export class SoroswapSpotAdapter {
     return {module:'trade.spot' as const,provider:'soroswap',execution_status:'blocked' as const,reason,actions:[] as string[]};
   }
   markets() {
-    return [...this.registry.values()].map(m=>({market_id:m.id,provider:'soroswap',network:NETWORK,asset_class:'crypto_spot',asset_in_id:m.asset_in.id,asset_out_id:m.asset_out.id,preparation_available:Boolean(this.config.apiKey&&this.config.gate1Passed&&this.inspect&&m.route_verified_at),executable:this.verified(m),execution_status:this.verified(m)?'testnet_verified':'discovery_only',reason:this.verified(m)?null:(this.capability().reason??'SOROSWAP_SWAP_CHAIN_PROOF_REQUIRED'),as_of:m.route_verified_at}));
+    return [...this.registry.values()].map(m=>({market_id:m.id,provider:'soroswap',network:NETWORK,asset_class:'crypto_spot',asset_in_id:m.asset_in.id,asset_out_id:m.asset_out.id,asset_in:m.asset_in,asset_out:m.asset_out,preparation_available:Boolean(this.config.apiKey&&this.config.gate1Passed&&this.inspect&&m.route_verified_at),executable:this.verified(m),execution_status:this.verified(m)?'testnet_verified':'discovery_only',reason:this.verified(m)?null:(this.capability().reason??'SOROSWAP_SWAP_CHAIN_PROOF_REQUIRED'),as_of:m.route_verified_at}));
   }
   market(id:string):SpotMarket {
     const found=this.registry.get(id);if(!found)throw new GrapnelError(404,'NOT_FOUND','Verified spot market not found');return found;
@@ -112,9 +112,18 @@ export class SoroswapSpotAdapter {
     // provider tolerance so that its rounded minimum can still satisfy the
     // customer's original strict (ceiling) bound; validation below is unchanged.
     const providerSlippageBps=Math.max(0,input.slippageBps-1);
-    const response=record(await this.request('/quote?network=testnet',{assetIn:market.asset_in.contractId,assetOut:market.asset_out.contractId,amount:amount.toString(),tradeType:'EXACT_IN',protocols:market.protocols,slippageBps:providerSlippageBps}));
-    if(response.tradeType!=='EXACT_IN'||response.assetIn!==market.asset_in.contractId||response.assetOut!==market.asset_out.contractId||atomic(response.amountIn)!==amount)return invalid('Quote input asset, amount, or trade type mismatch');
-    const out=atomic(response.amountOut),minimum=atomic(response.otherAmountThreshold);
+    const requestQuote=async(bps:number)=>record(await this.request('/quote?network=testnet',{assetIn:market.asset_in.contractId,assetOut:market.asset_out.contractId,amount:amount.toString(),tradeType:'EXACT_IN',protocols:market.protocols,slippageBps:bps}));
+    const checkInput=(response:Record<string,unknown>)=>{if(response.tradeType!=='EXACT_IN'||response.assetIn!==market.asset_in.contractId||response.assetOut!==market.asset_out.contractId||atomic(response.amountIn)!==amount)return invalid('Quote input asset, amount, or trade type mismatch');};
+    let response=await requestQuote(providerSlippageBps);checkInput(response);
+    let out=atomic(response.amountOut),minimum=atomic(response.otherAmountThreshold);
+    // For low atomic output one basis point cannot cover floor rounding.
+    // Retry once with the exact tighter integer tolerance; the approved bound
+    // and all final validation remain unchanged, even if output moves meanwhile.
+    if(out>0n&&minimum<=out&&input.slippageBps>0&&minimum<(out*BigInt(10000-input.slippageBps)+9999n)/10000n){
+      const required=(out*BigInt(10000-input.slippageBps)+9999n)/10000n;
+      const tighter=Number((out-required)*10000n/out);
+      if(tighter>=0&&tighter<providerSlippageBps){response=await requestQuote(tighter);checkInput(response);out=atomic(response.amountOut);minimum=atomic(response.otherAmountThreshold);}
+    }
     if(out<=0n||minimum<=0n||minimum>out||minimum<(out*BigInt(10000-input.slippageBps)+9999n)/10000n)return invalid('Quote output violates approved slippage');
     if(response.gaslessTrustline!==undefined||response.trustlineInfo!==undefined||response.platformFee!==undefined)return unavailable('UNINSPECTED_TRUSTLINE_OR_FEE_ROUTE');
     if(!Array.isArray(response.routePlan)||!response.routePlan.length)return unavailable('NO_TESTNET_LIQUIDITY_OR_ROUTE');

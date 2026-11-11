@@ -1,0 +1,982 @@
+{
+  "observed_at": "2026-11-11T16:51:51.326Z",
+  "network": "testnet",
+  "mode": "read_only_discovery",
+  "broadcast": false,
+  "source_urls": [
+    "https://raw.githubusercontent.com/soroswap/core/main/public/tokens.json",
+    "https://raw.githubusercontent.com/soroswap/core/main/public/random_tokens.json",
+    "https://raw.githubusercontent.com/blend-capital/blend-utils/main/testnet.contracts.json"
+  ],
+  "assets": [
+    {
+      "name": "Stellar Lumens",
+      "contract": "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC",
+      "code": "XLM",
+      "icon": "https://assets.coingecko.com/coins/images/100/standard/Stellar_symbol_black_RGB.png",
+      "decimals": 7,
+      "status": "deployed",
+      "executable": "contractExecutableStellarAsset",
+      "wasm_hash": null,
+      "metadata": {
+        "decimal": 7,
+        "name": "native",
+        "symbol": "native"
+      },
+      "verified_identity": {
+        "kind": "native",
+        "code": "XLM",
+        "decimals": 7
+      }
+    },
+    {
+      "name": "Dogstar",
+      "contract": "CCZGLAUBDKJSQK72QOZHVU7CUWKW45OZWYWCLL27AEK74U2OIBK6LXF2",
+      "code": "XTAR",
+      "icon": "https://www.dogstarcoin.com/assets/img/dogstarcoin-logo.png",
+      "decimals": 7,
+      "status": "deployed",
+      "executable": "contractExecutableWasm",
+      "wasm_hash": "263d165c1a1bf5a0dddbd0f21744a55cd8cacedf96ade78f53c570df11490e46",
+      "metadata": {
+        "decimal": 7,
+        "name": "Dogstar",
+        "symbol": "XTAR"
+      },
+      "verified_identity": {
+        "kind": "soroban",
+        "code": "XTAR",
+        "decimals": 7
+      }
+    },
+    {
+      "name": "ArgentinePeso",
+      "contract": "CBRQHWJDLPYVR4BSVUUWJCZGG4N4FF3CUZKDGRVTE36FAWNEJZEMQRME",
+      "code": "ARST",
+      "icon": "https://static.ultrastellar.com/media/assets/img/648754b5-f91d-46c4-97f9-557642976a75.png",
+      "decimals": 7,
+      "status": "deployed",
+      "executable": "contractExecutableWasm",
+      "wasm_hash": "263d165c1a1bf5a0dddbd0f21744a55cd8cacedf96ade78f53c570df11490e46",
+      "metadata": {
+        "decimal": 7,
+        "name": "ArgentinePeso",
+        "symbol": "ARST"
+      },
+      "verified_identity": {
+        "kind": "soroban",
+        "code": "ARST",
+        "decimals": 7
+      }
+    },
+    {
+      "name": "USDCoin",
+      "contract": "CB3TLW74NBIOT3BUWOZ3TUM6RFDF6A4GVIRUQRQZABG5KPOUL4JJOV2F",
+      "code": "USDC",
+      "icon": "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48/logo.png",
+      "decimals": 7,
+      "status": "deployed",
+      "executable": "contractExecutableWasm",
+      "wasm_hash": "263d165c1a1bf5a0dddbd0f21744a55cd8cacedf96ade78f53c570df11490e46",
+      "metadata": {
+        "decimal": 7,
+        "name": "USDCoin",
+        "symbol": "USDC"
+      },
+      "verified_identity": {
+        "kind": "soroban",
+        "code": "USDC",
+        "decimals": 7
+      }
+    },
+    {
+      "name": "Aquarius",
+      "contract": "CDBCM2JWK2ERIE6EAVAZJJW3P25U5S3FLNHJDY72AVSVAVTU4E6NAQ43",
+      "code": "AQUA",
+      "icon": "https://static.ultrastellar.com/media/assets/img/1878ee2d-2fd1-4e31-89a7-5a430f1596f8.png",
+      "decimals": 7,
+      "status": "deployed",
+      "executable": "contractExecutableWasm",
+      "wasm_hash": "263d165c1a1bf5a0dddbd0f21744a55cd8cacedf96ade78f53c570df11490e46",
+      "metadata": {
+        "decimal": 7,
+        "name": "Aquarius",
+        "symbol": "AQUA"
+      },
+      "verified_identity": {
+        "kind": "soroban",
+        "code": "AQUA",
+        "decimals": 7
+      }
+    },
+    {
+      "name": "Ripple",
+      "contract": "CDDIA6HYANLPMDKBVQRIIXY3NA6S3TMHZFJUNPMBEJGZ5JSHN3E2TAUI",
+      "code": "XRP",
+      "icon": "https://static.ultrastellar.com/media/assets/img/4ab58d77-b70f-4a6c-9944-6f273d549cd5.png",
+      "decimals": 7,
+      "status": "deployed",
+      "executable": "contractExecutableWasm",
+      "wasm_hash": "263d165c1a1bf5a0dddbd0f21744a55cd8cacedf96ade78f53c570df11490e46",
+      "metadata": {
+        "decimal": 7,
+        "name": "Ripple",
+        "symbol": "XRP"
+      },
+      "verified_identity": {
+        "kind": "soroban",
+        "code": "XRP",
+        "decimals": 7
+      }
+    },
+    {
+      "name": "Bitcoin",
+      "contract": "CB7ICEHVRIRMF3CF6SIP2C2R3Z4E7WRPATT552QSVLIXZ5RSN6KLUDAE",
+      "code": "BTC",
+      "icon": "https://static.ultrastellar.com/media/assets/img/c3380651-52e5-4054-9121-a438c60a1ec4.png",
+      "decimals": 7,
+      "status": "deployed",
+      "executable": "contractExecutableWasm",
+      "wasm_hash": "263d165c1a1bf5a0dddbd0f21744a55cd8cacedf96ade78f53c570df11490e46",
+      "metadata": {
+        "decimal": 7,
+        "name": "Bitcoin",
+        "symbol": "BTC"
+      },
+      "verified_identity": {
+        "kind": "soroban",
+        "code": "BTC",
+        "decimals": 7
+      }
+    },
+    {
+      "name": "EURoCoin",
+      "contract": "CBQDUWBOHS7P4TZIJ3KUPUZQOWMKJC6CQPPFEONSV3BH4X27YVEXWNOT",
+      "code": "EURC",
+      "icon": "https://static.ultrastellar.com/media/assets/img/f8b00dbf-64b3-488f-bcd2-354f29e2cdc8.png",
+      "decimals": 7,
+      "status": "deployed",
+      "executable": "contractExecutableWasm",
+      "wasm_hash": "263d165c1a1bf5a0dddbd0f21744a55cd8cacedf96ade78f53c570df11490e46",
+      "metadata": {
+        "decimal": 7,
+        "name": "EURoCoin",
+        "symbol": "EURC"
+      },
+      "verified_identity": {
+        "kind": "soroban",
+        "code": "EURC",
+        "decimals": 7
+      }
+    },
+    {
+      "name": "BrazilianReal",
+      "contract": "CAFLDVK2REIV6AWNCSTW4HVAGHJNCAROPLTXQYG23VSKL3PSUXEBHYAX",
+      "code": "BRL",
+      "icon": "https://static.ultrastellar.com/media/assets/img/03e2b3a2-f310-4426-8ff1-ec960b033195.png",
+      "decimals": 7,
+      "status": "deployed",
+      "executable": "contractExecutableWasm",
+      "wasm_hash": "263d165c1a1bf5a0dddbd0f21744a55cd8cacedf96ade78f53c570df11490e46",
+      "metadata": {
+        "decimal": 7,
+        "name": "BrazilianReal",
+        "symbol": "BRL"
+      },
+      "verified_identity": {
+        "kind": "soroban",
+        "code": "BRL",
+        "decimals": 7
+      }
+    },
+    {
+      "name": "uxivax",
+      "contract": "CADHV5C672FOGEUMCGYO2D6VQME3Y3NAP2FZRYJGA3VMDNOL5NAWQI7R",
+      "code": "UXIV",
+      "issuer": "GCPJFNZAARY3Z2AM7RVXDZDLPOEBT4QHTQXFOFKMZHLV7PPDKE2M67Q6",
+      "icon": "",
+      "decimals": 7,
+      "status": "deployed",
+      "executable": "contractExecutableStellarAsset",
+      "wasm_hash": null,
+      "metadata": {
+        "decimal": 7,
+        "name": "UXIV:GCPJFNZAARY3Z2AM7RVXDZDLPOEBT4QHTQXFOFKMZHLV7PPDKE2M67Q6",
+        "symbol": "UXIV"
+      },
+      "verified_identity": {
+        "kind": "classic",
+        "code": "UXIV",
+        "issuer": "GCPJFNZAARY3Z2AM7RVXDZDLPOEBT4QHTQXFOFKMZHLV7PPDKE2M67Q6",
+        "decimals": 7
+      }
+    },
+    {
+      "name": "cyonef",
+      "contract": "CBSWSTWY2OR7322PIIRU6Q6CY3VMMBBL6GX7TO5JV2M6OS2CG5ZHN7FX",
+      "code": "CYON",
+      "issuer": "GCPJFNZAARY3Z2AM7RVXDZDLPOEBT4QHTQXFOFKMZHLV7PPDKE2M67Q6",
+      "icon": "",
+      "decimals": 7,
+      "status": "deployed",
+      "executable": "contractExecutableStellarAsset",
+      "wasm_hash": null,
+      "metadata": {
+        "decimal": 7,
+        "name": "CYON:GCPJFNZAARY3Z2AM7RVXDZDLPOEBT4QHTQXFOFKMZHLV7PPDKE2M67Q6",
+        "symbol": "CYON"
+      },
+      "verified_identity": {
+        "kind": "classic",
+        "code": "CYON",
+        "issuer": "GCPJFNZAARY3Z2AM7RVXDZDLPOEBT4QHTQXFOFKMZHLV7PPDKE2M67Q6",
+        "decimals": 7
+      }
+    },
+    {
+      "name": "jamnov",
+      "contract": "CBGFKYQJYMZC7HNW7RGQQOUR2LP5HAAQ3MPHDENMBNKBKOEDIWXJADAT",
+      "code": "JAMN",
+      "issuer": "GCPJFNZAARY3Z2AM7RVXDZDLPOEBT4QHTQXFOFKMZHLV7PPDKE2M67Q6",
+      "icon": "",
+      "decimals": 7,
+      "status": "deployed",
+      "executable": "contractExecutableStellarAsset",
+      "wasm_hash": null,
+      "metadata": {
+        "decimal": 7,
+        "name": "JAMN:GCPJFNZAARY3Z2AM7RVXDZDLPOEBT4QHTQXFOFKMZHLV7PPDKE2M67Q6",
+        "symbol": "JAMN"
+      },
+      "verified_identity": {
+        "kind": "classic",
+        "code": "JAMN",
+        "issuer": "GCPJFNZAARY3Z2AM7RVXDZDLPOEBT4QHTQXFOFKMZHLV7PPDKE2M67Q6",
+        "decimals": 7
+      }
+    },
+    {
+      "name": "veofiz",
+      "contract": "CBV3JJ7CJK2J2YEJRM2HPFXT4GKBO574XEEVX6YL725R6CRARXITLDCH",
+      "code": "VEOF",
+      "issuer": "GCPJFNZAARY3Z2AM7RVXDZDLPOEBT4QHTQXFOFKMZHLV7PPDKE2M67Q6",
+      "icon": "",
+      "decimals": 7,
+      "status": "deployed",
+      "executable": "contractExecutableStellarAsset",
+      "wasm_hash": null,
+      "metadata": {
+        "decimal": 7,
+        "name": "VEOF:GCPJFNZAARY3Z2AM7RVXDZDLPOEBT4QHTQXFOFKMZHLV7PPDKE2M67Q6",
+        "symbol": "VEOF"
+      },
+      "verified_identity": {
+        "kind": "classic",
+        "code": "VEOF",
+        "issuer": "GCPJFNZAARY3Z2AM7RVXDZDLPOEBT4QHTQXFOFKMZHLV7PPDKE2M67Q6",
+        "decimals": 7
+      }
+    },
+    {
+      "name": "ulkwek",
+      "contract": "CAT5LVARRSDJGFHYA6NKZ4JLXTBJTVRZQRCOEK72ENW6COGPZJFJUZMQ",
+      "code": "ULKW",
+      "icon": "",
+      "decimals": 7,
+      "status": "deployed",
+      "executable": "contractExecutableWasm",
+      "wasm_hash": "263d165c1a1bf5a0dddbd0f21744a55cd8cacedf96ade78f53c570df11490e46",
+      "metadata": {
+        "decimal": 7,
+        "name": "ulkwek",
+        "symbol": "ULKW"
+      },
+      "verified_identity": {
+        "kind": "soroban",
+        "code": "ULKW",
+        "decimals": 7
+      }
+    },
+    {
+      "name": "ramjun",
+      "contract": "CDXHI266H5MOP3PTGMEPB2FPYBHQS223IB5RP6PUKO62QYQNZLQKQ3TN",
+      "code": "RAMJ",
+      "icon": "",
+      "decimals": 7,
+      "status": "deployed",
+      "executable": "contractExecutableWasm",
+      "wasm_hash": "263d165c1a1bf5a0dddbd0f21744a55cd8cacedf96ade78f53c570df11490e46",
+      "metadata": {
+        "decimal": 7,
+        "name": "ramjun",
+        "symbol": "RAMJ"
+      },
+      "verified_identity": {
+        "kind": "soroban",
+        "code": "RAMJ",
+        "decimals": 7
+      }
+    },
+    {
+      "name": "PILD:GCPJFNZAARY3Z2AM7RVXDZDLPOEBT4QHTQXFOFKMZHLV7PPDKE2M67Q6",
+      "contract": "CDOE7CS35BJPWB3SWPMJIYTQIW4INAPM4ORKM4MBWEGISDBGISAG74IW",
+      "code": "PILD",
+      "issuer": "GCPJFNZAARY3Z2AM7RVXDZDLPOEBT4QHTQXFOFKMZHLV7PPDKE2M67Q6",
+      "icon": "",
+      "decimals": 7,
+      "status": "deployed",
+      "executable": "contractExecutableStellarAsset",
+      "wasm_hash": null,
+      "metadata": {
+        "decimal": 7,
+        "name": "PILD:GCPJFNZAARY3Z2AM7RVXDZDLPOEBT4QHTQXFOFKMZHLV7PPDKE2M67Q6",
+        "symbol": "PILD"
+      },
+      "verified_identity": {
+        "kind": "classic",
+        "code": "PILD",
+        "issuer": "GCPJFNZAARY3Z2AM7RVXDZDLPOEBT4QHTQXFOFKMZHLV7PPDKE2M67Q6",
+        "decimals": 7
+      }
+    },
+    {
+      "name": "HELL:GCPJFNZAARY3Z2AM7RVXDZDLPOEBT4QHTQXFOFKMZHLV7PPDKE2M67Q6",
+      "contract": "CBBAEB5PNNZOWF2XJD6MCFFLRNZXLSESSOUM6EKVCJA5OSPIGGIPE2WL",
+      "code": "HELL",
+      "issuer": "GCPJFNZAARY3Z2AM7RVXDZDLPOEBT4QHTQXFOFKMZHLV7PPDKE2M67Q6",
+      "icon": "",
+      "decimals": 7,
+      "status": "deployed",
+      "executable": "contractExecutableStellarAsset",
+      "wasm_hash": null,
+      "metadata": {
+        "decimal": 7,
+        "name": "HELL:GCPJFNZAARY3Z2AM7RVXDZDLPOEBT4QHTQXFOFKMZHLV7PPDKE2M67Q6",
+        "symbol": "HELL"
+      },
+      "verified_identity": {
+        "kind": "classic",
+        "code": "HELL",
+        "issuer": "GCPJFNZAARY3Z2AM7RVXDZDLPOEBT4QHTQXFOFKMZHLV7PPDKE2M67Q6",
+        "decimals": 7
+      }
+    },
+    {
+      "name": "volvok",
+      "contract": "CCN65IVRTYROTAJLNLWS2KPZTKH3MUZGPNLGZRCOHKAAZAW6OXXTOYDF",
+      "code": "VOLV",
+      "icon": "",
+      "decimals": 7,
+      "status": "deployed",
+      "executable": "contractExecutableWasm",
+      "wasm_hash": "263d165c1a1bf5a0dddbd0f21744a55cd8cacedf96ade78f53c570df11490e46",
+      "metadata": {
+        "decimal": 7,
+        "name": "volvok",
+        "symbol": "VOLV"
+      },
+      "verified_identity": {
+        "kind": "soroban",
+        "code": "VOLV",
+        "decimals": 7
+      }
+    },
+    {
+      "name": "trovok",
+      "contract": "CB7DIN7BSDUBABMO4MHAISPO6NIV7UXXUXWR3ODMH4IUK3VZLVZU5OEY",
+      "code": "TROV",
+      "icon": "",
+      "decimals": 7,
+      "status": "deployed",
+      "executable": "contractExecutableWasm",
+      "wasm_hash": "263d165c1a1bf5a0dddbd0f21744a55cd8cacedf96ade78f53c570df11490e46",
+      "metadata": {
+        "decimal": 7,
+        "name": "trovok",
+        "symbol": "TROV"
+      },
+      "verified_identity": {
+        "kind": "soroban",
+        "code": "TROV",
+        "decimals": 7
+      }
+    },
+    {
+      "name": "ASDE:GCPJFNZAARY3Z2AM7RVXDZDLPOEBT4QHTQXFOFKMZHLV7PPDKE2M67Q6",
+      "contract": "CBSUPZUWWNSJ6RJBMSOQ6RF23LCU3IYJYI3CH7AVM3F3TIJ2JADA2KUX",
+      "code": "ASDE",
+      "issuer": "GCPJFNZAARY3Z2AM7RVXDZDLPOEBT4QHTQXFOFKMZHLV7PPDKE2M67Q6",
+      "icon": "",
+      "decimals": 7,
+      "status": "deployed",
+      "executable": "contractExecutableStellarAsset",
+      "wasm_hash": null,
+      "metadata": {
+        "decimal": 7,
+        "name": "ASDE:GCPJFNZAARY3Z2AM7RVXDZDLPOEBT4QHTQXFOFKMZHLV7PPDKE2M67Q6",
+        "symbol": "ASDE"
+      },
+      "verified_identity": {
+        "kind": "classic",
+        "code": "ASDE",
+        "issuer": "GCPJFNZAARY3Z2AM7RVXDZDLPOEBT4QHTQXFOFKMZHLV7PPDKE2M67Q6",
+        "decimals": 7
+      }
+    },
+    {
+      "name": "wBTC",
+      "contract": "CAP5AMC2OHNVREO66DFIN6DHJMPOBAJ2KCDDIMFBR7WWJH5RZBFM3UEI",
+      "code": "wBTC",
+      "decimals": 7,
+      "issuer": "GATALTGTWIOT6BUDBCZM3Q4OQ4BO2COLOAZ7IYSKPLC2PMSOPPGF5V56",
+      "source": "official Blend Testnet registry",
+      "status": "deployed",
+      "executable": "contractExecutableStellarAsset",
+      "wasm_hash": null,
+      "metadata": {
+        "decimal": 7,
+        "name": "wBTC:GATALTGTWIOT6BUDBCZM3Q4OQ4BO2COLOAZ7IYSKPLC2PMSOPPGF5V56",
+        "symbol": "wBTC"
+      },
+      "verified_identity": {
+        "kind": "classic",
+        "code": "wBTC",
+        "issuer": "GATALTGTWIOT6BUDBCZM3Q4OQ4BO2COLOAZ7IYSKPLC2PMSOPPGF5V56",
+        "decimals": 7
+      }
+    },
+    {
+      "name": "PIED:GCPJFNZAARY3Z2AM7RVXDZDLPOEBT4QHTQXFOFKMZHLV7PPDKE2M67Q6",
+      "contract": "CCLDM52UQMSZG5DC32HRBJNHUEL3GMPP37T5KOPCGGDPGNKQF6CFQBRW",
+      "code": "PIED",
+      "issuer": "GCPJFNZAARY3Z2AM7RVXDZDLPOEBT4QHTQXFOFKMZHLV7PPDKE2M67Q6",
+      "icon": "",
+      "decimals": 7,
+      "status": "deployed",
+      "executable": "contractExecutableStellarAsset",
+      "wasm_hash": null,
+      "metadata": {
+        "decimal": 7,
+        "name": "PIED:GCPJFNZAARY3Z2AM7RVXDZDLPOEBT4QHTQXFOFKMZHLV7PPDKE2M67Q6",
+        "symbol": "PIED"
+      },
+      "verified_identity": {
+        "kind": "classic",
+        "code": "PIED",
+        "issuer": "GCPJFNZAARY3Z2AM7RVXDZDLPOEBT4QHTQXFOFKMZHLV7PPDKE2M67Q6",
+        "decimals": 7
+      }
+    },
+    {
+      "name": "wETH",
+      "contract": "CAZAQB3D7KSLSNOSQKYD2V4JP5V2Y3B4RDJZRLBFCCIXDCTE3WHSY3UE",
+      "code": "wETH",
+      "decimals": 7,
+      "issuer": "GATALTGTWIOT6BUDBCZM3Q4OQ4BO2COLOAZ7IYSKPLC2PMSOPPGF5V56",
+      "source": "official Blend Testnet registry",
+      "status": "deployed",
+      "executable": "contractExecutableStellarAsset",
+      "wasm_hash": null,
+      "metadata": {
+        "decimal": 7,
+        "name": "wETH:GATALTGTWIOT6BUDBCZM3Q4OQ4BO2COLOAZ7IYSKPLC2PMSOPPGF5V56",
+        "symbol": "wETH"
+      },
+      "verified_identity": {
+        "kind": "classic",
+        "code": "wETH",
+        "issuer": "GATALTGTWIOT6BUDBCZM3Q4OQ4BO2COLOAZ7IYSKPLC2PMSOPPGF5V56",
+        "decimals": 7
+      }
+    },
+    {
+      "name": "USDC",
+      "contract": "CAQCFVLOBK5GIULPNZRGATJJMIZL5BSP7X5YJVMGCPTUEPFM4AVSRCJU",
+      "code": "USDC",
+      "decimals": 7,
+      "issuer": "GATALTGTWIOT6BUDBCZM3Q4OQ4BO2COLOAZ7IYSKPLC2PMSOPPGF5V56",
+      "source": "official Blend Testnet registry",
+      "status": "deployed",
+      "executable": "contractExecutableStellarAsset",
+      "wasm_hash": null,
+      "metadata": {
+        "decimal": 7,
+        "name": "USDC:GATALTGTWIOT6BUDBCZM3Q4OQ4BO2COLOAZ7IYSKPLC2PMSOPPGF5V56",
+        "symbol": "USDC"
+      },
+      "verified_identity": {
+        "kind": "classic",
+        "code": "USDC",
+        "issuer": "GATALTGTWIOT6BUDBCZM3Q4OQ4BO2COLOAZ7IYSKPLC2PMSOPPGF5V56",
+        "decimals": 7
+      }
+    }
+  ],
+  "pool_requests": [
+    {
+      "method": "GET",
+      "path": "/pools/CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC/CDBCM2JWK2ERIE6EAVAZJJW3P25U5S3FLNHJDY72AVSVAVTU4E6NAQ43?network=testnet&protocol=soroswap",
+      "asset": "CDBCM2JWK2ERIE6EAVAZJJW3P25U5S3FLNHJDY72AVSVAVTU4E6NAQ43",
+      "error": "SyntaxError"
+    },
+    {
+      "method": "GET",
+      "path": "/pools/CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC/CBRQHWJDLPYVR4BSVUUWJCZGG4N4FF3CUZKDGRVTE36FAWNEJZEMQRME?network=testnet&protocol=soroswap",
+      "asset": "CBRQHWJDLPYVR4BSVUUWJCZGG4N4FF3CUZKDGRVTE36FAWNEJZEMQRME",
+      "error": "SyntaxError"
+    },
+    {
+      "method": "GET",
+      "path": "/pools/CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC/CB3TLW74NBIOT3BUWOZ3TUM6RFDF6A4GVIRUQRQZABG5KPOUL4JJOV2F?network=testnet&protocol=soroswap",
+      "status": 200,
+      "asset": "CB3TLW74NBIOT3BUWOZ3TUM6RFDF6A4GVIRUQRQZABG5KPOUL4JJOV2F",
+      "pools": [
+        {
+          "protocol": "soroswap",
+          "address": "CDVAIOYHCD4RUSLQNVFI7RIZBFT2JZMJWM4RTOLQZQXL4QAVXU5RFKDB",
+          "tokenA": "CB3TLW74NBIOT3BUWOZ3TUM6RFDF6A4GVIRUQRQZABG5KPOUL4JJOV2F",
+          "tokenB": "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC",
+          "reserveA": "342345011339",
+          "reserveB": "2392397554187"
+        }
+      ],
+      "verified_pools": [
+        {
+          "id": "CDVAIOYHCD4RUSLQNVFI7RIZBFT2JZMJWM4RTOLQZQXL4QAVXU5RFKDB",
+          "verified": true,
+          "token0": "CB3TLW74NBIOT3BUWOZ3TUM6RFDF6A4GVIRUQRQZABG5KPOUL4JJOV2F",
+          "token1": "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC",
+          "reserve0": "342345011339",
+          "reserve1": "2392397554187"
+        }
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/pools/CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC/CCZGLAUBDKJSQK72QOZHVU7CUWKW45OZWYWCLL27AEK74U2OIBK6LXF2?network=testnet&protocol=soroswap",
+      "status": 200,
+      "asset": "CCZGLAUBDKJSQK72QOZHVU7CUWKW45OZWYWCLL27AEK74U2OIBK6LXF2",
+      "pools": [
+        {
+          "protocol": "soroswap",
+          "address": "CDH4NEG6TAII2AXGJY52WSMMOGCPMFIQBBH245ATW2TIZ7MBYM23YOAR",
+          "tokenA": "CCZGLAUBDKJSQK72QOZHVU7CUWKW45OZWYWCLL27AEK74U2OIBK6LXF2",
+          "tokenB": "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC",
+          "reserveA": "4455108116",
+          "reserveB": "14473462803"
+        }
+      ],
+      "verified_pools": [
+        {
+          "id": "CDH4NEG6TAII2AXGJY52WSMMOGCPMFIQBBH245ATW2TIZ7MBYM23YOAR",
+          "verified": true,
+          "token0": "CCZGLAUBDKJSQK72QOZHVU7CUWKW45OZWYWCLL27AEK74U2OIBK6LXF2",
+          "token1": "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC",
+          "reserve0": "4455108116",
+          "reserve1": "14473462803"
+        }
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/pools/CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC/CDDIA6HYANLPMDKBVQRIIXY3NA6S3TMHZFJUNPMBEJGZ5JSHN3E2TAUI?network=testnet&protocol=soroswap",
+      "status": 429,
+      "asset": "CDDIA6HYANLPMDKBVQRIIXY3NA6S3TMHZFJUNPMBEJGZ5JSHN3E2TAUI",
+      "pools": {
+        "statusCode": 429,
+        "message": "Rate limit exceeded",
+        "error": "Too Many Requests",
+        "retryAfter": 1
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/pools/CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC/CBQDUWBOHS7P4TZIJ3KUPUZQOWMKJC6CQPPFEONSV3BH4X27YVEXWNOT?network=testnet&protocol=soroswap",
+      "status": 429,
+      "asset": "CBQDUWBOHS7P4TZIJ3KUPUZQOWMKJC6CQPPFEONSV3BH4X27YVEXWNOT",
+      "pools": {
+        "statusCode": 429,
+        "message": "Rate limit exceeded",
+        "error": "Too Many Requests",
+        "retryAfter": 1
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/pools/CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC/CB7ICEHVRIRMF3CF6SIP2C2R3Z4E7WRPATT552QSVLIXZ5RSN6KLUDAE?network=testnet&protocol=soroswap",
+      "status": 200,
+      "asset": "CB7ICEHVRIRMF3CF6SIP2C2R3Z4E7WRPATT552QSVLIXZ5RSN6KLUDAE",
+      "pools": [
+        {
+          "protocol": "soroswap",
+          "address": "CDZL65OIXMVK63DCIWKJ7ULKVHZ7V4B4OM3XQHRNHR4OCFADIUV4FL64",
+          "tokenA": "CB7ICEHVRIRMF3CF6SIP2C2R3Z4E7WRPATT552QSVLIXZ5RSN6KLUDAE",
+          "tokenB": "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC",
+          "reserveA": "6274105",
+          "reserveB": "160200000000"
+        }
+      ],
+      "verified_pools": [
+        {
+          "id": "CDZL65OIXMVK63DCIWKJ7ULKVHZ7V4B4OM3XQHRNHR4OCFADIUV4FL64",
+          "verified": true,
+          "token0": "CB7ICEHVRIRMF3CF6SIP2C2R3Z4E7WRPATT552QSVLIXZ5RSN6KLUDAE",
+          "token1": "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC",
+          "reserve0": "6274105",
+          "reserve1": "160200000000"
+        }
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/pools/CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC/CAFLDVK2REIV6AWNCSTW4HVAGHJNCAROPLTXQYG23VSKL3PSUXEBHYAX?network=testnet&protocol=soroswap",
+      "status": 429,
+      "asset": "CAFLDVK2REIV6AWNCSTW4HVAGHJNCAROPLTXQYG23VSKL3PSUXEBHYAX",
+      "pools": {
+        "statusCode": 429,
+        "message": "Rate limit exceeded",
+        "error": "Too Many Requests",
+        "retryAfter": 1
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/pools/CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC/CADHV5C672FOGEUMCGYO2D6VQME3Y3NAP2FZRYJGA3VMDNOL5NAWQI7R?network=testnet&protocol=soroswap",
+      "status": 429,
+      "asset": "CADHV5C672FOGEUMCGYO2D6VQME3Y3NAP2FZRYJGA3VMDNOL5NAWQI7R",
+      "pools": {
+        "statusCode": 429,
+        "message": "Rate limit exceeded",
+        "error": "Too Many Requests",
+        "retryAfter": 1
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/pools/CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC/CBSWSTWY2OR7322PIIRU6Q6CY3VMMBBL6GX7TO5JV2M6OS2CG5ZHN7FX?network=testnet&protocol=soroswap",
+      "status": 429,
+      "asset": "CBSWSTWY2OR7322PIIRU6Q6CY3VMMBBL6GX7TO5JV2M6OS2CG5ZHN7FX",
+      "pools": {
+        "statusCode": 429,
+        "message": "Rate limit exceeded",
+        "error": "Too Many Requests",
+        "retryAfter": 1
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/pools/CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC/CBGFKYQJYMZC7HNW7RGQQOUR2LP5HAAQ3MPHDENMBNKBKOEDIWXJADAT?network=testnet&protocol=soroswap",
+      "status": 429,
+      "asset": "CBGFKYQJYMZC7HNW7RGQQOUR2LP5HAAQ3MPHDENMBNKBKOEDIWXJADAT",
+      "pools": {
+        "statusCode": 429,
+        "message": "Rate limit exceeded",
+        "error": "Too Many Requests",
+        "retryAfter": 1
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/pools/CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC/CAT5LVARRSDJGFHYA6NKZ4JLXTBJTVRZQRCOEK72ENW6COGPZJFJUZMQ?network=testnet&protocol=soroswap",
+      "status": 429,
+      "asset": "CAT5LVARRSDJGFHYA6NKZ4JLXTBJTVRZQRCOEK72ENW6COGPZJFJUZMQ",
+      "pools": {
+        "statusCode": 429,
+        "message": "Rate limit exceeded",
+        "error": "Too Many Requests",
+        "retryAfter": 1
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/pools/CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC/CBV3JJ7CJK2J2YEJRM2HPFXT4GKBO574XEEVX6YL725R6CRARXITLDCH?network=testnet&protocol=soroswap",
+      "status": 429,
+      "asset": "CBV3JJ7CJK2J2YEJRM2HPFXT4GKBO574XEEVX6YL725R6CRARXITLDCH",
+      "pools": {
+        "statusCode": 429,
+        "message": "Rate limit exceeded",
+        "error": "Too Many Requests",
+        "retryAfter": 1
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/pools/CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC/CDXHI266H5MOP3PTGMEPB2FPYBHQS223IB5RP6PUKO62QYQNZLQKQ3TN?network=testnet&protocol=soroswap",
+      "status": 429,
+      "asset": "CDXHI266H5MOP3PTGMEPB2FPYBHQS223IB5RP6PUKO62QYQNZLQKQ3TN",
+      "pools": {
+        "statusCode": 429,
+        "message": "Rate limit exceeded",
+        "error": "Too Many Requests",
+        "retryAfter": 1
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/pools/CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC/CDOE7CS35BJPWB3SWPMJIYTQIW4INAPM4ORKM4MBWEGISDBGISAG74IW?network=testnet&protocol=soroswap",
+      "status": 429,
+      "asset": "CDOE7CS35BJPWB3SWPMJIYTQIW4INAPM4ORKM4MBWEGISDBGISAG74IW",
+      "pools": {
+        "statusCode": 429,
+        "message": "Rate limit exceeded",
+        "error": "Too Many Requests",
+        "retryAfter": 1
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/pools/CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC/CBBAEB5PNNZOWF2XJD6MCFFLRNZXLSESSOUM6EKVCJA5OSPIGGIPE2WL?network=testnet&protocol=soroswap",
+      "status": 429,
+      "asset": "CBBAEB5PNNZOWF2XJD6MCFFLRNZXLSESSOUM6EKVCJA5OSPIGGIPE2WL",
+      "pools": {
+        "statusCode": 429,
+        "message": "Rate limit exceeded",
+        "error": "Too Many Requests",
+        "retryAfter": 1
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/pools/CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC/CCN65IVRTYROTAJLNLWS2KPZTKH3MUZGPNLGZRCOHKAAZAW6OXXTOYDF?network=testnet&protocol=soroswap",
+      "status": 429,
+      "asset": "CCN65IVRTYROTAJLNLWS2KPZTKH3MUZGPNLGZRCOHKAAZAW6OXXTOYDF",
+      "pools": {
+        "statusCode": 429,
+        "message": "Rate limit exceeded",
+        "error": "Too Many Requests",
+        "retryAfter": 1
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/pools/CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC/CB7DIN7BSDUBABMO4MHAISPO6NIV7UXXUXWR3ODMH4IUK3VZLVZU5OEY?network=testnet&protocol=soroswap",
+      "status": 429,
+      "asset": "CB7DIN7BSDUBABMO4MHAISPO6NIV7UXXUXWR3ODMH4IUK3VZLVZU5OEY",
+      "pools": {
+        "statusCode": 429,
+        "message": "Rate limit exceeded",
+        "error": "Too Many Requests",
+        "retryAfter": 1
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/pools/CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC/CBSUPZUWWNSJ6RJBMSOQ6RF23LCU3IYJYI3CH7AVM3F3TIJ2JADA2KUX?network=testnet&protocol=soroswap",
+      "status": 429,
+      "asset": "CBSUPZUWWNSJ6RJBMSOQ6RF23LCU3IYJYI3CH7AVM3F3TIJ2JADA2KUX",
+      "pools": {
+        "statusCode": 429,
+        "message": "Rate limit exceeded",
+        "error": "Too Many Requests",
+        "retryAfter": 1
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/pools/CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC/CAP5AMC2OHNVREO66DFIN6DHJMPOBAJ2KCDDIMFBR7WWJH5RZBFM3UEI?network=testnet&protocol=soroswap",
+      "status": 429,
+      "asset": "CAP5AMC2OHNVREO66DFIN6DHJMPOBAJ2KCDDIMFBR7WWJH5RZBFM3UEI",
+      "pools": {
+        "statusCode": 429,
+        "message": "Rate limit exceeded",
+        "error": "Too Many Requests",
+        "retryAfter": 1
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/pools/CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC/CCLDM52UQMSZG5DC32HRBJNHUEL3GMPP37T5KOPCGGDPGNKQF6CFQBRW?network=testnet&protocol=soroswap",
+      "status": 429,
+      "asset": "CCLDM52UQMSZG5DC32HRBJNHUEL3GMPP37T5KOPCGGDPGNKQF6CFQBRW",
+      "pools": {
+        "statusCode": 429,
+        "message": "Rate limit exceeded",
+        "error": "Too Many Requests",
+        "retryAfter": 1
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/pools/CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC/CAZAQB3D7KSLSNOSQKYD2V4JP5V2Y3B4RDJZRLBFCCIXDCTE3WHSY3UE?network=testnet&protocol=soroswap",
+      "status": 429,
+      "asset": "CAZAQB3D7KSLSNOSQKYD2V4JP5V2Y3B4RDJZRLBFCCIXDCTE3WHSY3UE",
+      "pools": {
+        "statusCode": 429,
+        "message": "Rate limit exceeded",
+        "error": "Too Many Requests",
+        "retryAfter": 1
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/pools/CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC/CAQCFVLOBK5GIULPNZRGATJJMIZL5BSP7X5YJVMGCPTUEPFM4AVSRCJU?network=testnet&protocol=soroswap",
+      "status": 429,
+      "asset": "CAQCFVLOBK5GIULPNZRGATJJMIZL5BSP7X5YJVMGCPTUEPFM4AVSRCJU",
+      "pools": {
+        "statusCode": 429,
+        "message": "Rate limit exceeded",
+        "error": "Too Many Requests",
+        "retryAfter": 1
+      }
+    }
+  ],
+  "factory_pairs": [
+    {
+      "asset": "CDBCM2JWK2ERIE6EAVAZJJW3P25U5S3FLNHJDY72AVSVAVTU4E6NAQ43",
+      "code": "AQUA",
+      "status": "mapping_missing_or_unavailable"
+    },
+    {
+      "asset": "CBRQHWJDLPYVR4BSVUUWJCZGG4N4FF3CUZKDGRVTE36FAWNEJZEMQRME",
+      "code": "ARST",
+      "status": "mapping_missing_or_unavailable"
+    },
+    {
+      "asset": "CCZGLAUBDKJSQK72QOZHVU7CUWKW45OZWYWCLL27AEK74U2OIBK6LXF2",
+      "code": "XTAR",
+      "pair": "CDH4NEG6TAII2AXGJY52WSMMOGCPMFIQBBH245ATW2TIZ7MBYM23YOAR",
+      "token0": "CCZGLAUBDKJSQK72QOZHVU7CUWKW45OZWYWCLL27AEK74U2OIBK6LXF2",
+      "token1": "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC",
+      "reserve0": "4455108116",
+      "reserve1": "14473462803",
+      "factory": "CDP3HMUH6SMS3S7NPGNDJLULCOXXEPSHY4JKUKMBNQMATHDHWXRRJTBY",
+      "wasm_hash": "8447525edd62f72ffaf52136358034657ea0511a8fec1cd0ebde649f86cca464",
+      "liquidity_positive": true
+    },
+    {
+      "asset": "CB3TLW74NBIOT3BUWOZ3TUM6RFDF6A4GVIRUQRQZABG5KPOUL4JJOV2F",
+      "code": "USDC",
+      "pair": "CDVAIOYHCD4RUSLQNVFI7RIZBFT2JZMJWM4RTOLQZQXL4QAVXU5RFKDB",
+      "token0": "CB3TLW74NBIOT3BUWOZ3TUM6RFDF6A4GVIRUQRQZABG5KPOUL4JJOV2F",
+      "token1": "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC",
+      "reserve0": "342345011339",
+      "reserve1": "2392392576688",
+      "factory": "CDP3HMUH6SMS3S7NPGNDJLULCOXXEPSHY4JKUKMBNQMATHDHWXRRJTBY",
+      "wasm_hash": "8447525edd62f72ffaf52136358034657ea0511a8fec1cd0ebde649f86cca464",
+      "liquidity_positive": true
+    },
+    {
+      "asset": "CDDIA6HYANLPMDKBVQRIIXY3NA6S3TMHZFJUNPMBEJGZ5JSHN3E2TAUI",
+      "code": "XRP",
+      "pair": "CBCRYX4VG5GCKQ5KUIHV3AUOIEKEJKXDOXO5DWFYNRPK547N6MNVGEOZ",
+      "token0": "CDDIA6HYANLPMDKBVQRIIXY3NA6S3TMHZFJUNPMBEJGZ5JSHN3E2TAUI",
+      "token1": "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC",
+      "reserve0": "19400590239",
+      "reserve1": "10313124409",
+      "factory": "CDP3HMUH6SMS3S7NPGNDJLULCOXXEPSHY4JKUKMBNQMATHDHWXRRJTBY",
+      "wasm_hash": "8447525edd62f72ffaf52136358034657ea0511a8fec1cd0ebde649f86cca464",
+      "liquidity_positive": true
+    },
+    {
+      "asset": "CAFLDVK2REIV6AWNCSTW4HVAGHJNCAROPLTXQYG23VSKL3PSUXEBHYAX",
+      "code": "BRL",
+      "status": "mapping_missing_or_unavailable"
+    },
+    {
+      "asset": "CADHV5C672FOGEUMCGYO2D6VQME3Y3NAP2FZRYJGA3VMDNOL5NAWQI7R",
+      "code": "UXIV",
+      "status": "mapping_missing_or_unavailable"
+    },
+    {
+      "asset": "CB7ICEHVRIRMF3CF6SIP2C2R3Z4E7WRPATT552QSVLIXZ5RSN6KLUDAE",
+      "code": "BTC",
+      "pair": "CDZL65OIXMVK63DCIWKJ7ULKVHZ7V4B4OM3XQHRNHR4OCFADIUV4FL64",
+      "token0": "CB7ICEHVRIRMF3CF6SIP2C2R3Z4E7WRPATT552QSVLIXZ5RSN6KLUDAE",
+      "token1": "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC",
+      "reserve0": "6274105",
+      "reserve1": "160200000000",
+      "factory": "CDP3HMUH6SMS3S7NPGNDJLULCOXXEPSHY4JKUKMBNQMATHDHWXRRJTBY",
+      "wasm_hash": "8447525edd62f72ffaf52136358034657ea0511a8fec1cd0ebde649f86cca464",
+      "liquidity_positive": true
+    },
+    {
+      "asset": "CBSWSTWY2OR7322PIIRU6Q6CY3VMMBBL6GX7TO5JV2M6OS2CG5ZHN7FX",
+      "code": "CYON",
+      "status": "mapping_missing_or_unavailable"
+    },
+    {
+      "asset": "CBGFKYQJYMZC7HNW7RGQQOUR2LP5HAAQ3MPHDENMBNKBKOEDIWXJADAT",
+      "code": "JAMN",
+      "status": "mapping_missing_or_unavailable"
+    },
+    {
+      "asset": "CBQDUWBOHS7P4TZIJ3KUPUZQOWMKJC6CQPPFEONSV3BH4X27YVEXWNOT",
+      "code": "EURC",
+      "pair": "CDRKRVJLWZNKB4W5GCJU27R6LVT2GD2WNYVUPBB2J3MXBEOHMB74WOX5",
+      "token0": "CBQDUWBOHS7P4TZIJ3KUPUZQOWMKJC6CQPPFEONSV3BH4X27YVEXWNOT",
+      "token1": "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC",
+      "reserve0": "94149338070",
+      "reserve1": "272356839953",
+      "factory": "CDP3HMUH6SMS3S7NPGNDJLULCOXXEPSHY4JKUKMBNQMATHDHWXRRJTBY",
+      "wasm_hash": "8447525edd62f72ffaf52136358034657ea0511a8fec1cd0ebde649f86cca464",
+      "liquidity_positive": true
+    },
+    {
+      "asset": "CBV3JJ7CJK2J2YEJRM2HPFXT4GKBO574XEEVX6YL725R6CRARXITLDCH",
+      "code": "VEOF",
+      "status": "mapping_missing_or_unavailable"
+    },
+    {
+      "asset": "CAT5LVARRSDJGFHYA6NKZ4JLXTBJTVRZQRCOEK72ENW6COGPZJFJUZMQ",
+      "code": "ULKW",
+      "status": "mapping_missing_or_unavailable"
+    },
+    {
+      "asset": "CDXHI266H5MOP3PTGMEPB2FPYBHQS223IB5RP6PUKO62QYQNZLQKQ3TN",
+      "code": "RAMJ",
+      "status": "mapping_missing_or_unavailable"
+    },
+    {
+      "asset": "CDOE7CS35BJPWB3SWPMJIYTQIW4INAPM4ORKM4MBWEGISDBGISAG74IW",
+      "code": "PILD",
+      "status": "mapping_missing_or_unavailable"
+    },
+    {
+      "asset": "CBBAEB5PNNZOWF2XJD6MCFFLRNZXLSESSOUM6EKVCJA5OSPIGGIPE2WL",
+      "code": "HELL",
+      "status": "mapping_missing_or_unavailable"
+    },
+    {
+      "asset": "CCN65IVRTYROTAJLNLWS2KPZTKH3MUZGPNLGZRCOHKAAZAW6OXXTOYDF",
+      "code": "VOLV",
+      "status": "mapping_missing_or_unavailable"
+    },
+    {
+      "asset": "CB7DIN7BSDUBABMO4MHAISPO6NIV7UXXUXWR3ODMH4IUK3VZLVZU5OEY",
+      "code": "TROV",
+      "status": "mapping_missing_or_unavailable"
+    },
+    {
+      "asset": "CBSUPZUWWNSJ6RJBMSOQ6RF23LCU3IYJYI3CH7AVM3F3TIJ2JADA2KUX",
+      "code": "ASDE",
+      "status": "mapping_missing_or_unavailable"
+    },
+    {
+      "asset": "CAP5AMC2OHNVREO66DFIN6DHJMPOBAJ2KCDDIMFBR7WWJH5RZBFM3UEI",
+      "code": "wBTC",
+      "status": "mapping_missing_or_unavailable"
+    },
+    {
+      "asset": "CCLDM52UQMSZG5DC32HRBJNHUEL3GMPP37T5KOPCGGDPGNKQF6CFQBRW",
+      "code": "PIED",
+      "status": "mapping_missing_or_unavailable"
+    },
+    {
+      "asset": "CAZAQB3D7KSLSNOSQKYD2V4JP5V2Y3B4RDJZRLBFCCIXDCTE3WHSY3UE",
+      "code": "wETH",
+      "status": "mapping_missing_or_unavailable"
+    },
+    {
+      "asset": "CAQCFVLOBK5GIULPNZRGATJJMIZL5BSP7X5YJVMGCPTUEPFM4AVSRCJU",
+      "code": "USDC",
+      "pair": "CBR76WMT6J733CCVBP23M2EL5QGP5HXLPEFNFZGZ7IB6QHOJAHP7YM3V",
+      "token0": "CAQCFVLOBK5GIULPNZRGATJJMIZL5BSP7X5YJVMGCPTUEPFM4AVSRCJU",
+      "token1": "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC",
+      "reserve0": "93167742077",
+      "reserve1": "618834701553",
+      "factory": "CDP3HMUH6SMS3S7NPGNDJLULCOXXEPSHY4JKUKMBNQMATHDHWXRRJTBY",
+      "wasm_hash": "8447525edd62f72ffaf52136358034657ea0511a8fec1cd0ebde649f86cca464",
+      "liquidity_positive": true
+    }
+  ]
+}

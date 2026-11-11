@@ -1,0 +1,382 @@
+{
+  "observed_at": "2026-11-11T16:55:34.928Z",
+  "network": "testnet",
+  "mode": "read_only_unsigned_diagnostic",
+  "broadcast": false,
+  "rows": [
+    {
+      "direction": "XLM-BTC",
+      "assetIn": "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC",
+      "assetOut": "CB7ICEHVRIRMF3CF6SIP2C2R3Z4E7WRPATT552QSVLIXZ5RSN6KLUDAE",
+      "amount": "10000000",
+      "source": "GA237QIWQI6TUI3DTTWQELRHCGNMB3WWMSKY7LLXW3B4FBQJN3TN6IP4",
+      "quote_status": 201,
+      "quote": {
+        "assetIn": "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC",
+        "assetOut": "CB7ICEHVRIRMF3CF6SIP2C2R3Z4E7WRPATT552QSVLIXZ5RSN6KLUDAE",
+        "tradeType": "EXACT_IN",
+        "amountIn": "10000000",
+        "amountOut": "390",
+        "otherAmountThreshold": "388",
+        "priceImpactPct": "0.00",
+        "platform": "router",
+        "routePlan": [
+          {
+            "swapInfo": {
+              "protocol": "soroswap",
+              "path": [
+                "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC",
+                "CB7ICEHVRIRMF3CF6SIP2C2R3Z4E7WRPATT552QSVLIXZ5RSN6KLUDAE"
+              ]
+            },
+            "percent": "100.00"
+          }
+        ],
+        "rawTrade": {
+          "amountIn": "10000000",
+          "amountOutMin": "388",
+          "distribution": [
+            {
+              "protocol_id": "soroswap",
+              "path": [
+                "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC",
+                "CB7ICEHVRIRMF3CF6SIP2C2R3Z4E7WRPATT552QSVLIXZ5RSN6KLUDAE"
+              ],
+              "parts": 10,
+              "is_exact_in": true
+            }
+          ]
+        }
+      },
+      "build": {
+        "xdr": "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",
+        "action": "SIGN_TRANSACTION",
+        "description": "Sign the transaction with the user wallet and send the signed XDR to /send endpoint or your own rpc"
+      },
+      "build_status": 201,
+      "decoded": {
+        "source": "GA237QIWQI6TUI3DTTWQELRHCGNMB3WWMSKY7LLXW3B4FBQJN3TN6IP4",
+        "signatures": 0,
+        "fee": "785878",
+        "timebounds": {
+          "minTime": "0",
+          "maxTime": "1794416317"
+        },
+        "operations": [
+          {
+            "type": "invokeHostFunction",
+            "invocation": {
+              "contract": "CCJUD55AG6W5HAI5LRVNKAE5WDP5XGZBUDS5WNTIVDU7O264UZZE7BRD",
+              "function": "swap_exact_tokens_for_tokens",
+              "args": [
+                "10000000",
+                "388",
+                [
+                  "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC",
+                  "CB7ICEHVRIRMF3CF6SIP2C2R3Z4E7WRPATT552QSVLIXZ5RSN6KLUDAE"
+                ],
+                "GA237QIWQI6TUI3DTTWQELRHCGNMB3WWMSKY7LLXW3B4FBQJN3TN6IP4",
+                "1794419736"
+              ]
+            },
+            "auth": [
+              {
+                "credentials": "sorobanCredentialsSourceAccount",
+                "root": {
+                  "contract": "CCJUD55AG6W5HAI5LRVNKAE5WDP5XGZBUDS5WNTIVDU7O264UZZE7BRD",
+                  "function": "swap_exact_tokens_for_tokens",
+                  "args": [
+                    "10000000",
+                    "388",
+                    [
+                      "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC",
+                      "CB7ICEHVRIRMF3CF6SIP2C2R3Z4E7WRPATT552QSVLIXZ5RSN6KLUDAE"
+                    ],
+                    "GA237QIWQI6TUI3DTTWQELRHCGNMB3WWMSKY7LLXW3B4FBQJN3TN6IP4",
+                    "1794419736"
+                  ],
+                  "children": [
+                    {
+                      "contract": "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC",
+                      "function": "transfer",
+                      "args": [
+                        "GA237QIWQI6TUI3DTTWQELRHCGNMB3WWMSKY7LLXW3B4FBQJN3TN6IP4",
+                        "CDZL65OIXMVK63DCIWKJ7ULKVHZ7V4B4OM3XQHRNHR4OCFADIUV4FL64",
+                        "10000000"
+                      ],
+                      "children": []
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        ],
+        "resources": {
+          "instructions": 3256163,
+          "resource_fee": "555823",
+          "read_bytes": 1308,
+          "write_bytes": 1456,
+          "read_only": [
+            {
+              "type": "contractData",
+              "contract": "CCJUD55AG6W5HAI5LRVNKAE5WDP5XGZBUDS5WNTIVDU7O264UZZE7BRD",
+              "key": "INSTANCE",
+              "durability": "persistent"
+            },
+            {
+              "type": "contractData",
+              "contract": "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC",
+              "key": "INSTANCE",
+              "durability": "persistent"
+            },
+            {
+              "type": "code",
+              "hash": "263d165c1a1bf5a0dddbd0f21744a55cd8cacedf96ade78f53c570df11490e46"
+            },
+            {
+              "type": "code",
+              "hash": "4b95bbf9caec2c6e00c786f53c5f392c2fcdb8435ac0a862ab5e0645eb65824c"
+            },
+            {
+              "type": "code",
+              "hash": "8447525edd62f72ffaf52136358034657ea0511a8fec1cd0ebde649f86cca464"
+            }
+          ],
+          "read_write": [
+            {
+              "type": "account",
+              "xdr": "AAAAAAAAAAA1v8EWgj06I2Oc7QIuJxGawO7WZJWPrXe2w8KGCW7m3w=="
+            },
+            {
+              "type": "contractData",
+              "contract": "CB7ICEHVRIRMF3CF6SIP2C2R3Z4E7WRPATT552QSVLIXZ5RSN6KLUDAE",
+              "key": [
+                "Balance",
+                "GA237QIWQI6TUI3DTTWQELRHCGNMB3WWMSKY7LLXW3B4FBQJN3TN6IP4"
+              ],
+              "durability": "persistent"
+            },
+            {
+              "type": "contractData",
+              "contract": "CB7ICEHVRIRMF3CF6SIP2C2R3Z4E7WRPATT552QSVLIXZ5RSN6KLUDAE",
+              "key": [
+                "Balance",
+                "CDZL65OIXMVK63DCIWKJ7ULKVHZ7V4B4OM3XQHRNHR4OCFADIUV4FL64"
+              ],
+              "durability": "persistent"
+            },
+            {
+              "type": "contractData",
+              "contract": "CB7ICEHVRIRMF3CF6SIP2C2R3Z4E7WRPATT552QSVLIXZ5RSN6KLUDAE",
+              "key": "INSTANCE",
+              "durability": "persistent"
+            },
+            {
+              "type": "contractData",
+              "contract": "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC",
+              "key": [
+                "Balance",
+                "CDZL65OIXMVK63DCIWKJ7ULKVHZ7V4B4OM3XQHRNHR4OCFADIUV4FL64"
+              ],
+              "durability": "persistent"
+            },
+            {
+              "type": "contractData",
+              "contract": "CDZL65OIXMVK63DCIWKJ7ULKVHZ7V4B4OM3XQHRNHR4OCFADIUV4FL64",
+              "key": "INSTANCE",
+              "durability": "persistent"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "direction": "BTC-XLM",
+      "assetIn": "CB7ICEHVRIRMF3CF6SIP2C2R3Z4E7WRPATT552QSVLIXZ5RSN6KLUDAE",
+      "assetOut": "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC",
+      "amount": "1000",
+      "source": "GC53JCXZHW3SVNRE4CT6XFP46WX4ACFQU32P4PR3CU43OB7AKKMFXZ6Y",
+      "quote_status": 201,
+      "quote": {
+        "assetIn": "CB7ICEHVRIRMF3CF6SIP2C2R3Z4E7WRPATT552QSVLIXZ5RSN6KLUDAE",
+        "assetOut": "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC",
+        "tradeType": "EXACT_IN",
+        "amountIn": "1000",
+        "amountOut": "25452877",
+        "otherAmountThreshold": "25328157",
+        "priceImpactPct": "0.00",
+        "platform": "router",
+        "routePlan": [
+          {
+            "swapInfo": {
+              "protocol": "soroswap",
+              "path": [
+                "CB7ICEHVRIRMF3CF6SIP2C2R3Z4E7WRPATT552QSVLIXZ5RSN6KLUDAE",
+                "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC"
+              ]
+            },
+            "percent": "100.00"
+          }
+        ],
+        "rawTrade": {
+          "amountIn": "1000",
+          "amountOutMin": "25328157",
+          "distribution": [
+            {
+              "protocol_id": "soroswap",
+              "path": [
+                "CB7ICEHVRIRMF3CF6SIP2C2R3Z4E7WRPATT552QSVLIXZ5RSN6KLUDAE",
+                "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC"
+              ],
+              "parts": 10,
+              "is_exact_in": true
+            }
+          ]
+        }
+      },
+      "build": {
+        "xdr": "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",
+        "action": "SIGN_TRANSACTION",
+        "description": "Sign the transaction with the user wallet and send the signed XDR to /send endpoint or your own rpc"
+      },
+      "build_status": 201,
+      "decoded": {
+        "source": "GC53JCXZHW3SVNRE4CT6XFP46WX4ACFQU32P4PR3CU43OB7AKKMFXZ6Y",
+        "signatures": 0,
+        "fee": "786710",
+        "timebounds": {
+          "minTime": "0",
+          "maxTime": "1794416320"
+        },
+        "operations": [
+          {
+            "type": "invokeHostFunction",
+            "invocation": {
+              "contract": "CCJUD55AG6W5HAI5LRVNKAE5WDP5XGZBUDS5WNTIVDU7O264UZZE7BRD",
+              "function": "swap_exact_tokens_for_tokens",
+              "args": [
+                "1000",
+                "25328157",
+                [
+                  "CB7ICEHVRIRMF3CF6SIP2C2R3Z4E7WRPATT552QSVLIXZ5RSN6KLUDAE",
+                  "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC"
+                ],
+                "GC53JCXZHW3SVNRE4CT6XFP46WX4ACFQU32P4PR3CU43OB7AKKMFXZ6Y",
+                "1794419740"
+              ]
+            },
+            "auth": [
+              {
+                "credentials": "sorobanCredentialsSourceAccount",
+                "root": {
+                  "contract": "CCJUD55AG6W5HAI5LRVNKAE5WDP5XGZBUDS5WNTIVDU7O264UZZE7BRD",
+                  "function": "swap_exact_tokens_for_tokens",
+                  "args": [
+                    "1000",
+                    "25328157",
+                    [
+                      "CB7ICEHVRIRMF3CF6SIP2C2R3Z4E7WRPATT552QSVLIXZ5RSN6KLUDAE",
+                      "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC"
+                    ],
+                    "GC53JCXZHW3SVNRE4CT6XFP46WX4ACFQU32P4PR3CU43OB7AKKMFXZ6Y",
+                    "1794419740"
+                  ],
+                  "children": [
+                    {
+                      "contract": "CB7ICEHVRIRMF3CF6SIP2C2R3Z4E7WRPATT552QSVLIXZ5RSN6KLUDAE",
+                      "function": "transfer",
+                      "args": [
+                        "GC53JCXZHW3SVNRE4CT6XFP46WX4ACFQU32P4PR3CU43OB7AKKMFXZ6Y",
+                        "CDZL65OIXMVK63DCIWKJ7ULKVHZ7V4B4OM3XQHRNHR4OCFADIUV4FL64",
+                        "1000"
+                      ],
+                      "children": []
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        ],
+        "resources": {
+          "instructions": 3289238,
+          "resource_fee": "556655",
+          "read_bytes": 1456,
+          "write_bytes": 1456,
+          "read_only": [
+            {
+              "type": "contractData",
+              "contract": "CCJUD55AG6W5HAI5LRVNKAE5WDP5XGZBUDS5WNTIVDU7O264UZZE7BRD",
+              "key": "INSTANCE",
+              "durability": "persistent"
+            },
+            {
+              "type": "contractData",
+              "contract": "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC",
+              "key": "INSTANCE",
+              "durability": "persistent"
+            },
+            {
+              "type": "code",
+              "hash": "263d165c1a1bf5a0dddbd0f21744a55cd8cacedf96ade78f53c570df11490e46"
+            },
+            {
+              "type": "code",
+              "hash": "4b95bbf9caec2c6e00c786f53c5f392c2fcdb8435ac0a862ab5e0645eb65824c"
+            },
+            {
+              "type": "code",
+              "hash": "8447525edd62f72ffaf52136358034657ea0511a8fec1cd0ebde649f86cca464"
+            }
+          ],
+          "read_write": [
+            {
+              "type": "account",
+              "xdr": "AAAAAAAAAAC7tIr5PbcqtiTgp+uV/PWvwAiwpvT+PjsVObcH4FKYWw=="
+            },
+            {
+              "type": "contractData",
+              "contract": "CB7ICEHVRIRMF3CF6SIP2C2R3Z4E7WRPATT552QSVLIXZ5RSN6KLUDAE",
+              "key": [
+                "Balance",
+                "GC53JCXZHW3SVNRE4CT6XFP46WX4ACFQU32P4PR3CU43OB7AKKMFXZ6Y"
+              ],
+              "durability": "persistent"
+            },
+            {
+              "type": "contractData",
+              "contract": "CB7ICEHVRIRMF3CF6SIP2C2R3Z4E7WRPATT552QSVLIXZ5RSN6KLUDAE",
+              "key": [
+                "Balance",
+                "CDZL65OIXMVK63DCIWKJ7ULKVHZ7V4B4OM3XQHRNHR4OCFADIUV4FL64"
+              ],
+              "durability": "persistent"
+            },
+            {
+              "type": "contractData",
+              "contract": "CB7ICEHVRIRMF3CF6SIP2C2R3Z4E7WRPATT552QSVLIXZ5RSN6KLUDAE",
+              "key": "INSTANCE",
+              "durability": "persistent"
+            },
+            {
+              "type": "contractData",
+              "contract": "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC",
+              "key": [
+                "Balance",
+                "CDZL65OIXMVK63DCIWKJ7ULKVHZ7V4B4OM3XQHRNHR4OCFADIUV4FL64"
+              ],
+              "durability": "persistent"
+            },
+            {
+              "type": "contractData",
+              "contract": "CDZL65OIXMVK63DCIWKJ7ULKVHZ7V4B4OM3XQHRNHR4OCFADIUV4FL64",
+              "key": "INSTANCE",
+              "durability": "persistent"
+            }
+          ]
+        }
+      }
+    }
+  ]
+}

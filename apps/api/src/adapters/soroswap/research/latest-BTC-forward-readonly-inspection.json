@@ -1,0 +1,69 @@
+{
+  "observed_at": "2026-11-11T17:20:51.965Z",
+  "network": "stellar-testnet",
+  "mode": "read_only_inspection",
+  "broadcast": false,
+  "signable": false,
+  "source": "GA237QIWQI6TUI3DTTWQELRHCGNMB3WWMSKY7LLXW3B4FBQJN3TN6IP4",
+  "source_owned_by_grapnel": false,
+  "quote": {
+    "asset_in_id": "stellar-testnet:native:XLM",
+    "asset_out_id": "stellar-testnet:soroban:CB7ICEHVRIRMF3CF6SIP2C2R3Z4E7WRPATT552QSVLIXZ5RSN6KLUDAE",
+    "amount_in": "1.0000000",
+    "expected_out": "0.0000390",
+    "min_receive": "0.0000389"
+  },
+  "original": {
+    "extension_version": 1,
+    "archived_rw_indices": [
+      2,
+      3,
+      4,
+      5
+    ],
+    "instructions": 3256163,
+    "read_bytes": 1308,
+    "write_bytes": 1456,
+    "resource_fee": "555823",
+    "total_fee": "635239",
+    "expires_at": "2026-11-11T17:23:51.000Z",
+    "read_only_keys": 5,
+    "read_write_keys": 6,
+    "signatures": 0
+  },
+  "canonical": {
+    "extension_version": 1,
+    "archived_rw_indices": [
+      2,
+      3,
+      4,
+      5
+    ],
+    "instructions": 3596226,
+    "read_bytes": 1308,
+    "write_bytes": 1456,
+    "resource_fee": "612410",
+    "total_fee": "635239",
+    "expires_at": "2026-11-11T17:21:19.000Z",
+    "read_only_keys": 5,
+    "read_write_keys": 6,
+    "signatures": 0
+  },
+  "simulations": [
+    {
+      "ledger": 5678801,
+      "success": true,
+      "minimum_resource_fee": "555827",
+      "instructions": 3269296
+    },
+    {
+      "ledger": 5678801,
+      "success": true,
+      "minimum_resource_fee": "555827",
+      "instructions": 3269296
+    }
+  ],
+  "tx_hash": null,
+  "operation_id": null,
+  "customer_id": null
+}
