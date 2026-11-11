@@ -71,10 +71,10 @@ export async function createRuntime(pool?:Pool) {
  };
  const gate1Passed=await hasGate1Proof(chain);
  const funding=new TestnetFundingAdapter({network:config.network,networkPassphrase:NETWORK_PASSPHRASE,treasurySecret:process.env.DEMO_TREASURY_SECRET,enabled:process.env.TESTNET_FUNDING_ENABLED==='true',gate1Passed,maxPerCustomerAtomic:BigInt(process.env.TESTNET_FUNDING_MAX_PER_CUSTOMER_ATOMIC??'250000000'),maxPerTenantAtomic:BigInt(process.env.TESTNET_FUNDING_MAX_PER_TENANT_ATOMIC??'1000000000'),maxGlobalAtomic:BigInt(process.env.TESTNET_FUNDING_MAX_GLOBAL_ATOMIC??'2000000000')});
- const spotInspector=new SoroswapConfiguredInspector();
+ const spotInspector=new SoroswapConfiguredInspector({quoteReadSource:funding.treasuryAddress??undefined});
  let spotMarkets:Awaited<ReturnType<SoroswapConfiguredInspector['markets']>>=[];
  if(process.env.SOROSWAP_API_KEY){try{spotMarkets=await spotInspector.markets();}catch{/* Discovery failure leaves an empty market registry; never promote a guessed route. */}}
- const spot=new SoroswapSpotAdapter({network:config.network,networkPassphrase:NETWORK_PASSPHRASE,apiKey:process.env.SOROSWAP_API_KEY,gate1Passed,markets:spotMarkets},undefined,spotInspector.inspect);
+ const spot=new SoroswapSpotAdapter({network:config.network,networkPassphrase:NETWORK_PASSPHRASE,apiKey:process.env.SOROSWAP_API_KEY,gate1Passed,markets:spotMarkets},undefined,spotInspector.inspect,spotInspector.readExactQuote);
  standaloneMarketAssets=()=>[...new Map(spot.markets().flatMap(market=>[market.asset_in,market.asset_out]).filter(asset=>asset.kind==='soroban').map(asset=>[asset.id,asset])).values()];
  const spotReadiness=new SpotProofReadiness(db,spot,spotInspector,chain.server);
  const soroban=new BlendSorobanPreparer({network:config.network,passphrase:NETWORK_PASSPHRASE,rpcUrl:process.env.STELLAR_RPC_URL,gate1Passed});
