@@ -1,0 +1,22 @@
+{
+  "observed_at": "2026-11-11T03:30:22.228Z",
+  "network": "stellar-testnet",
+  "mode": "read_only_simulation",
+  "source": "GCY4DPMIBYCQ352UDKVWDJFKRXOIB2YCOLF2PQFUZHZPYU4WD4PW3LBE",
+  "purpose": "withdraw_preflight_only_existing_treasury_not_customer_acceptance",
+  "amount_atomic": "10000000",
+  "registry": {
+    "poolId": "CCEBVDYM32YNYCVNRXQKDFFPISJJCV557CDZEIRBEE4NCV4KHPQ44HGF",
+    "reserveId": "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC",
+    "poolWasmHash": "a41fc53d6753b6c04eb15b021c55052366a4c8e0e21bc72700f461264ec1350e",
+    "reserveIndex": 0
+  },
+  "ledger": 5668835,
+  "simulation_success": false,
+  "error": "HostError: Error(Contract, #1217)\n\nEvent log (newest first):\n   0: [Diagnostic Event] contract:CCEBVDYM32YNYCVNRXQKDFFPISJJCV557CDZEIRBEE4NCV4KHPQ44HGF, topics:[error, Error(Contract, #1217)], data:\"escalating error to VM trap from failed host function call: fail_with_error\"\n   1: [Diagnostic Event] contract:CCEBVDYM32YNYCVNRXQKDFFPISJJCV557CDZEIRBEE4NCV4KHPQ44HGF, topics:[error, Error(Contract, #1217)], data:[\"failing with contract error\", 1217]\n   2: [Diagnostic Event] topics:[fn_call, CCEBVDYM32YNYCVNRXQKDFFPISJJCV557CDZEIRBEE4NCV4KHPQ44HGF, submit], data:[GCY4DPMIBYCQ352UDKVWDJFKRXOIB2YCOLF2PQFUZHZPYU4WD4PW3LBE, GCY4DPMIBYCQ352UDKVWDJFKRXOIB2YCOLF2PQFUZHZPYU4WD4PW3LBE, GCY4DPMIBYCQ352UDKVWDJFKRXOIB2YCOLF2PQFUZHZPYU4WD4PW3LBE, [{address: CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC, amount: 10000000, request_type: 3}]]\n",
+  "broadcast": false,
+  "signed": false,
+  "tx_hash": null,
+  "execution_available": false,
+  "remaining_requirement": "Actual customer collateral position; no-debt/health checks; observed standalone withdraw auth and footprint; exact-envelope revalidation and confirmed balance/position deltas"
+}
