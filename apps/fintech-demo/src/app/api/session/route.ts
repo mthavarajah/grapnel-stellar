@@ -56,7 +56,7 @@ export async function POST(request: NextRequest) {
       throw new BffError(
         401,
         "INVALID_CUSTOMER_IDENTITY",
-        "Privy session has expired",
+        "Your session has expired. Please sign in again",
       );
     const session: CustomerSession = {
       userId,
@@ -79,7 +79,7 @@ export async function POST(request: NextRequest) {
         new BffError(
           422,
           "VALIDATION_ERROR",
-          "A Privy identity token is required",
+          "Please sign in to continue",
         ),
       );
     return failure(error);

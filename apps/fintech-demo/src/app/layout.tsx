@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 import "./globals.css";
 export const metadata: Metadata = {
-  title: "Local Finance · Stellar Testnet",
+  title: "Local Finance",
   description:
-    "An independent sample fintech built with Grapnel APIs on Stellar Testnet. Testnet tokens only, no real money.",
+    "Your balances, markets and savings in one place.",
 };
 export default function RootLayout({
   children,

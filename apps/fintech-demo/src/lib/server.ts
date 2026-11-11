@@ -138,7 +138,7 @@ export function readSessionCookies(
     throw new BffError(
       401,
       "CUSTOMER_SESSION_REQUIRED",
-      "Sign in with Privy to continue",
+      "Sign in to continue",
     );
   if (!metadata.startsWith("v1:")) return openSession(metadata); // Small legacy cookie.
   const match = /^v1:([1-4])$/.exec(metadata);
@@ -209,7 +209,7 @@ export async function verifyIdentity(token: string): Promise<string> {
     throw new BffError(
       503,
       "SETUP_REQUIRED",
-      "Privy server credentials have not been configured",
+      "Sign-in is temporarily unavailable",
     );
   try {
     const client = new PrivyClient({
@@ -223,7 +223,7 @@ export async function verifyIdentity(token: string): Promise<string> {
     throw new BffError(
       401,
       "INVALID_CUSTOMER_IDENTITY",
-      "Privy identity could not be verified",
+      "Your session could not be verified. Please sign in again",
     );
   }
 }
