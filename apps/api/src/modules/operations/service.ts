@@ -54,7 +54,7 @@ export class OperationService {
    if(!wallet)throw new GrapnelError(404,'NOT_FOUND','Customer wallet not found');
    await lock(client,`wallet:${input.businessId}:${input.walletId}`);
    const pending=(await client.query("SELECT id FROM operations WHERE business_id=$1 AND wallet_id=$2 AND state NOT IN ('completed','failed','rejected','expired') LIMIT 1",[input.businessId,input.walletId])).rows[0];
-   if(pending)throw new GrapnelError(409,'WALLET_OPERATION_PENDING','Finish the pending wallet action before preparing another');
+   if(pending)throw new GrapnelError(409,'WALLET_OPERATION_PENDING','Finish the pending wallet action before preparing another',false,{operation_id:pending.id});
    const operationId=randomUUID();
    await client.query("INSERT INTO operations(id,business_id,customer_id,wallet_id,module_code,type,state,request_json,provider) VALUES($1,$2,$3,$4,$5,$6,'accepted',$7,$8)",[operationId,input.businessId,input.customerId,input.walletId,input.module,input.type,JSON.stringify(input.request),input.provider]);
    await client.query('INSERT INTO idempotency_records(business_id,route,idempotency_key,request_hash,operation_id) VALUES($1,$2,$3,$4,$5)',[input.businessId,input.route,input.idempotencyKey,requestHash,operationId]);

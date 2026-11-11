@@ -13,6 +13,7 @@ export class BffError extends Error {
     public status: number,
     public code: string,
     message: string,
+    public details?: {operation_id:string},
   ) {
     super(message);
   }
@@ -287,6 +288,7 @@ export async function grapnel(
       response.status,
       body.error?.code ?? "GRAPNEL_ERROR",
       body.error?.message ?? "The request could not be completed",
+      body.error?.code==='WALLET_OPERATION_PENDING' && typeof body.error?.details?.operation_id==='string' && /^[0-9a-f-]{36}$/i.test(body.error.details.operation_id) ? {operation_id:body.error.details.operation_id} : undefined,
     );
   return body.data;
 }
@@ -306,7 +308,7 @@ export function failure(error: unknown) {
           "The request could not be completed",
         );
   return NextResponse.json(
-    { error: { code: e.code, message: e.message } },
+    { error: { code: e.code, message: e.message, ...(e.details?{details:e.details}:{}) } },
     { status: e.status, headers: { "Cache-Control": "no-store" } },
   );
 }
