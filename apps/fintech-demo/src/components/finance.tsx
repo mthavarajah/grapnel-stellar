@@ -700,7 +700,7 @@ function FinanceShell({ page, auth }: { page: string; auth?: Auth }) {
                 <div className="wallet-hero">
                   <div className="wallet-label">
                     <span>
-                      <Icon name="wallet" /> YOUR TESTNET WALLET
+                      <Icon name="wallet" /> YOUR WALLET
                     </span>
                     <span className="hero-dot">●</span>
                   </div>
