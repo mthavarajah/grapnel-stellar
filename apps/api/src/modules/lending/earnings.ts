@@ -1,8 +1,12 @@
-import { Address, Horizon, StrKey, Transaction, TransactionBuilder, xdr } from '@stellar/stellar-sdk';
+import { Address, Horizon, Keypair, StrKey, Transaction, TransactionBuilder, xdr } from '@stellar/stellar-sdk';
 import type { Pool } from 'pg';
 import { GrapnelError, NETWORK_PASSPHRASE, XLM, fromAtomic, type CustomerContext } from '@grapnel/contracts';
 import { buildBlendOperation, type BlendPosition } from '../../adapters/blend/index.js';
 import { BLEND_USDC_ASSET_ID } from '../../adapters/blend/usdc-inspector.js';
+import { inspectBlendUsdcSupplyAuthorization, inspectBlendUsdcWithdrawAuthorization } from '../../adapters/blend/usdc-inspector.js';
+import { inspectBlendSupplyAuthorization } from '../../adapters/stellar/blend-soroban.js';
+import { inspectBlendWithdrawAuthorization } from '../../adapters/blend/withdraw-inspector.js';
+import type { VerifiedBlendRegistry } from '../../adapters/stellar/blend-soroban.js';
 
 const HORIZON_TESTNET = 'https://horizon-testnet.stellar.org';
 const PAGE_SIZE = 200;
@@ -113,11 +117,20 @@ function validateCompletedOperation(row: EarningsRow, wallet: string): VerifiedO
     if (!(tx instanceof Transaction) || typeof unsignedXdr !== 'string' || tx.hash().toString('hex') !== row.tx_hash || tx.source !== wallet) return null;
     const unsigned = TransactionBuilder.fromXDR(unsignedXdr, NETWORK_PASSPHRASE);
     if (!(unsigned instanceof Transaction) || unsigned.signatures.length !== 0 || unsigned.hash().toString('hex') !== row.tx_hash) return null;
-    const expectedOperation = xdr.Operation.fromXDR(buildBlendOperation({
-      action: proofOperation, poolId, reserveId, walletAddress: wallet, amountAtomic: amount,
-    }), 'base64');
+    const intent = { action: proofOperation, poolId, reserveId, walletAddress: wallet, amountAtomic: amount } as const;
+    const expectedOperation = xdr.Operation.fromXDR(buildBlendOperation(intent), 'base64');
     const txOperations = tx.toEnvelope().v1().tx().operations();
-    if (txOperations.length !== 1 || txOperations[0]!.toXDR('base64') !== expectedOperation.toXDR('base64')) return null;
+    if (txOperations.length !== 1 || tx.operations.length !== 1 || tx.operations[0]!.source
+      || txOperations[0]!.body().invokeHostFunctionOp().hostFunction().toXDR('base64')
+        !== expectedOperation.body().invokeHostFunctionOp().hostFunction().toXDR('base64')) return null;
+    const registry: VerifiedBlendRegistry = { poolId, reserveId, reserveIndex: 0, poolWasmHash: '0'.repeat(64) };
+    const auth = txOperations[0]!.body().invokeHostFunctionOp().auth();
+    if (assetId === BLEND_USDC_ASSET_ID) {
+      if (proofOperation === 'supply') inspectBlendUsdcSupplyAuthorization(auth, intent, registry);
+      else inspectBlendUsdcWithdrawAuthorization(auth, intent, registry);
+    } else if (proofOperation === 'supply') inspectBlendSupplyAuthorization(auth, intent);
+    else inspectBlendWithdrawAuthorization(auth, intent, registry);
+    if (tx.signatures.length !== 1 || !Keypair.fromPublicKey(wallet).verify(tx.hash(), tx.signatures[0]!.signature())) return null;
     const proofLedger = proof.confirmed_ledger;
     const observedLedger = proof.observed_ledger;
     if (!Number.isSafeInteger(proofLedger) || (proofLedger as number) < (baselineLedger as number)

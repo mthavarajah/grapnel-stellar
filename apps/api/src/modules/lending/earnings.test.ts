@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest';
-import { Account, Keypair, StrKey, TransactionBuilder, xdr } from '@stellar/stellar-sdk';
+import { Account, Address, Contract, Keypair, StrKey, TransactionBuilder, nativeToScVal, xdr } from '@stellar/stellar-sdk';
 import { NETWORK_PASSPHRASE, XLM, type CustomerContext } from '@grapnel/contracts';
 import type { BlendPosition } from '../../adapters/blend/index.js';
 import { buildBlendOperation } from '../../adapters/blend/index.js';
@@ -22,11 +22,24 @@ function amountAtomic(value: string): bigint {
   const [whole, fraction = ''] = value.split('.');
   return BigInt(whole!) * 10_000_000n + BigInt(fraction.padEnd(7, '0') || '0');
 }
-function envelope(action: 'supply' | 'withdraw' = 'supply', reserveId = reserveXlm, amount = '0.1000000'): string {
+function envelope(action: 'supply' | 'withdraw' = 'supply', reserveId = reserveXlm, amount = '0.1000000', options: { signer?: Keypair; wrongAuth?: boolean } = {}): { signed: string; unsigned: string } {
+  const amountAtomicValue = amountAtomic(amount);
+  const intent = { action, poolId, reserveId, walletAddress: wallet, amountAtomic: amountAtomicValue };
+  const operation = xdr.Operation.fromXDR(buildBlendOperation(intent), 'base64');
+  const rootFn = operation.body().invokeHostFunctionOp().hostFunction().invokeContract();
+  const contractFn = xdr.SorobanAuthorizedFunction.sorobanAuthorizedFunctionTypeContractFn;
+  const grantAmount = options.wrongAuth ? amountAtomicValue + 1n : amountAtomicValue;
+  const transfer = new Contract(reserveId).call('transfer', Address.fromString(wallet).toScVal(), Address.fromString(poolId).toScVal(), nativeToScVal(grantAmount, { type: 'i128' }))
+    .body().invokeHostFunctionOp().hostFunction().invokeContract();
+  const children = action === 'supply' ? [new xdr.SorobanAuthorizedInvocation({ function: contractFn(transfer), subInvocations: [] })] : [];
+  const auth = [new xdr.SorobanAuthorizationEntry({ credentials: xdr.SorobanCredentials.sorobanCredentialsSourceAccount(),
+    rootInvocation: new xdr.SorobanAuthorizedInvocation({ function: contractFn(rootFn), subInvocations: children }) })];
+  operation.body().invokeHostFunctionOp().auth(auth);
   const tx = new TransactionBuilder(new Account(wallet, String(sequence++)), { fee: '100', networkPassphrase: NETWORK_PASSPHRASE })
-    .addOperation(xdr.Operation.fromXDR(buildBlendOperation({ action, poolId, reserveId,
-      walletAddress: wallet, amountAtomic: amountAtomic(amount) }), 'base64')).setTimeout(60).build();
-  return tx.toXDR();
+    .addOperation(operation).setTimeout(60).build();
+  const unsigned = tx.toXDR();
+  tx.sign(options.signer ?? key);
+  return { signed: tx.toXDR(), unsigned };
 }
 function proof(assetId: string, marketId: string, reserveId: string, amount: string, operation: 'supply' | 'withdraw', ledger: number) {
   return { verified: true, asset_id: assetId, operation, market_id: marketId, pool_contract_id: poolId,
@@ -38,10 +51,13 @@ function baseline(assetId: string, marketId: string, reserveId: string, collater
     wallet_address: wallet, wallet_amount: '20.0000000', collateral, as_of: at, position_as_of: at, position_ledger: ledger };
 }
 function operation(type: 'blend.supply' | 'blend.withdraw', assetId: string, marketId: string, reserveId: string, amount: string, at: string, preCollateral: string, ledger: number): EarningsRow {
-  const verb = type.split('.')[1]! as 'supply' | 'withdraw', signedXdr = envelope(verb, reserveId, amount), hash = hashOf(signedXdr), id = `${type}-${at}`;
+  return buildOperation(type, assetId, marketId, reserveId, amount, at, preCollateral, ledger);
+}
+function buildOperation(type: 'blend.supply' | 'blend.withdraw', assetId: string, marketId: string, reserveId: string, amount: string, at: string, preCollateral: string, ledger: number, options: { signer?: Keypair; wrongAuth?: boolean } = {}): EarningsRow {
+  const verb = type.split('.')[1]! as 'supply' | 'withdraw', transaction = envelope(verb, reserveId, amount, options), signedXdr = transaction.signed, hash = hashOf(signedXdr), id = `${type}-${at}`;
   const observation = proof(assetId, marketId, reserveId, amount, verb as 'supply' | 'withdraw', ledger + 1);
   const resultKey = assetId === BLEND_USDC_ASSET_ID ? 'blend_usdc_verification' : type === 'blend.supply' ? 'blend_supply_verification' : 'blend_withdraw_verification';
-  const prepared = { operationId: id, customerId: customer.customerId, unsignedXdr: signedXdr, network: 'stellar-testnet', walletAddress: wallet, signingHashHex: hash,
+  const prepared = { operationId: id, customerId: customer.customerId, unsignedXdr: transaction.unsigned, network: 'stellar-testnet', walletAddress: wallet, signingHashHex: hash,
     summary: { action: type, fromAssetId: assetId, amount, contractId: poolId } };
   return { id, business_id: customer.businessId, customer_id: customer.customerId, wallet_id: customer.walletId,
     stellar_address: wallet, module_code: 'capital.lending', provider: 'blend', type, state: 'completed', network: 'stellar-testnet',
@@ -91,7 +107,7 @@ describe('tenant-scoped Blend earnings since verified baseline', () => {
 
   it('returns null for an untracked external Blend pool submit and truncated history', async () => {
     const supply = operation('blend.supply', XLM.id, 'market-XLM', reserveXlm, '0.1000000', supplyAt, '0.0000000', 100);
-    const externalXdr = envelope(), externalTx: AccountHistory['transactions'][number] = {
+    const externalXdr = envelope().signed, externalTx: AccountHistory['transactions'][number] = {
       hash: hashOf(externalXdr), ledger: 103, successful: true, envelopeXdr: externalXdr,
       createdAt: '2026-11-11T16:45:00.000Z', sourceAccount: wallet,
     };
@@ -119,6 +135,15 @@ describe('tenant-scoped Blend earnings since verified baseline', () => {
     expect((await waiting.reader.getEarnings(customer))[0]).toMatchObject({ asset_id: XLM.id, earned: null });
     const incomplete = makeReader([{ ...supply, result_json: { blend_supply_baseline: baseline(XLM.id, 'market-XLM', reserveXlm, '0.0000000', 100, supplyAt) } }], [pos(XLM.id, 'market-XLM', reserveXlm, '0.1003000')]);
     expect((await incomplete.reader.getEarnings(customer))[0]).toMatchObject({ asset_id: XLM.id, earned: null });
+  });
+
+  it('requires the exact source-account authorization tree and the customer Ed25519 signature', async () => {
+    const badAuth = buildOperation('blend.supply', XLM.id, 'market-XLM', reserveXlm, '0.1000000', supplyAt, '0.0000000', 100, { wrongAuth: true });
+    const wrongSigner = buildOperation('blend.supply', XLM.id, 'market-XLM', reserveXlm, '0.1000000', supplyAt, '0.0000000', 100, { signer: Keypair.random() });
+    for (const row of [badAuth, wrongSigner]) {
+      const { reader } = makeReader([row], [pos(XLM.id, 'market-XLM', reserveXlm, '0.1000000')]);
+      expect((await reader.getEarnings(customer))[0]).toMatchObject({ earned: null });
+    }
   });
 
   it('returns 0 since null only when there is no tracked history and live collateral is zero', async () => {
