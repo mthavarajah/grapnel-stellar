@@ -329,16 +329,22 @@ function FinanceShell({ page, auth }: { page: string; auth?: Auth }) {
       !session
     )
       throw Error("A current customer authorization is required");
+    if(Date.parse(active.prepared_action.summary.expiresAt)<=Date.now())throw Error("This approval has expired. Refresh the operation before continuing.");
     const signed = await auth.sign(
       active.prepared_action,
       session.stellar_address,
     );
-    setActive(
-      await api(`grapnel/operations/${active.operation_id}/authorize`, {
+    try {
+      setActive(await api(`grapnel/operations/${active.operation_id}/authorize`, {
         customer_action_token: active.customer_action_token,
         signed_xdr: signed,
-      }),
-    );
+      }));
+    } catch (cause) {
+      // Recover status only: authorization may have committed before a timeout.
+      // Never automatically sign again or resend a financial request here.
+      try { setActive(await api(`grapnel/operations/${active.operation_id}`)); } catch { /* retain the known operation for manual recovery */ }
+      throw cause;
+    }
   }
   const connect = () =>
     action(async () => {
@@ -1183,6 +1189,7 @@ function FinanceShell({ page, auth }: { page: string; auth?: Auth }) {
               </div>
             )}
             <code className="operation-id">{active.operation_id}</code>
+            {error && <div className="inline-note" role="alert">{error}</div>}
             {active.error && (
               <div className="inline-note">{active.error.message}</div>
             )}

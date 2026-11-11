@@ -34,3 +34,6 @@ Actual inspected Blend supply simulation was independently rechecked by the lead
 
 ## Next access step
 Follow docs/16_CREDENTIAL_HANDOFF.md: configure Privy/Soroswap secrets server-side and identify/connect hosting. Then perform customer consent and real Testnet acceptance sequentially, followed by public deployment and functional demo recording. Recheck current provider state at that time.
+
+## Follow-up hardening
+Provider POST requests and durable-worker broadcasts now revalidate the current Gate 1 transaction proof instead of relying only on startup state. Missing proof blocks new execution; already-submitted hashes can still reconcile. Wallet/funding capability reads also recheck proof. The worker regression covers stale proof blocking broadcasts while allowing confirmed position reconciliation. Customer approval errors appear inside the modal; an authorization error triggers status recovery without automatic signing or resubmission. Offline suite: 145 passed, 32 database-dependent skips; workspace typecheck, fintech production build and secret scan passed. No new chain write or acceptance proof.

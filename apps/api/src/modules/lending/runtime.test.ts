@@ -54,15 +54,16 @@ function envelopeFixture(){
  const row={id:'operation',business_id:'business',customer_id:'customer',wallet_id:'wallet',stellar_address:wallet.publicKey(),privy_user_id:'did:privy:offline',type:'blend.supply',module_code:'capital.lending',provider:'blend',prepared_action:action,request_json:request,result_json:{blend_supply_baseline:baseline},signed_xdr:tx.toXDR(),tx_hash:tx.hash().toString('hex')};
  return {tx,row};
 }
-function fakeRuntime(row:unknown,gate1Passed=true,status='SUCCESS'){
+function fakeRuntime(row:unknown,gate1Passed=true,status='SUCCESS',currentGate=gate1Passed){
  const submit=vi.fn(async()=>({txHash:'offline'}));const send=vi.fn(async(_tx:Transaction)=>({hash:'offline',status:'PENDING'}));
  const positions=vi.fn(async()=>[position]);const verify=vi.fn(async()=>{});
  const chain={reconcile:vi.fn(async()=>status==='SUCCESS'?'completed':'pending'),submit,verifyLiveNetwork:vi.fn(async()=>{}),getClassicBalances:vi.fn(async()=>[balance]),server:{sendTransaction:send,getTransaction:vi.fn(async()=>({status,ledger:100}))}} as unknown as StellarTestnetExecutor;
  const pool={query:vi.fn(async()=>({rows:row?[row]:[]}))} as unknown as Pool;
- return {worker:createRuntimeWorkerChain({pool,chain,blend:{positions},soroban:{verifyForSubmission:verify},gate1Passed}),submit,send,positions,verify};
+ return {worker:createRuntimeWorkerChain({pool,chain,blend:{positions},soroban:{verifyForSubmission:verify},gate1Passed,verifyGate1:async()=>currentGate}),submit,send,positions,verify};
 }
 describe('Durable worker provider boundaries (offline doubles; no sender touches network)',()=>{
  it('never executes provider verification or send when Gate1 is absent',async()=>{const {tx,row}=envelopeFixture();const f=fakeRuntime(row,false);await expect(f.worker.broadcast(tx.toXDR())).rejects.toMatchObject({code:'EXECUTION_UNAVAILABLE'});expect(f.verify).not.toHaveBeenCalled();expect(f.send).not.toHaveBeenCalled();expect(f.submit).not.toHaveBeenCalled();});
+ it('blocks a new broadcast when startup proof has become unavailable, but still reconciles sent supply',async()=>{const {tx,row}=envelopeFixture();const f=fakeRuntime(row,true,'SUCCESS',false);await expect(f.worker.broadcast(tx.toXDR())).rejects.toMatchObject({code:'EXECUTION_UNAVAILABLE'});expect(f.send).not.toHaveBeenCalled();expect(await f.worker.lookup(row.tx_hash)).toMatchObject({state:'completed',found:true});expect(await f.worker.verifyDeltas(row.id,row.tx_hash)).toMatchObject({verified:true});});
  it('rejects an envelope without an exact durable operation and unknown operation types',async()=>{const {tx,row}=envelopeFixture();for(const missing of [undefined,{...row,type:'unreviewed.action'}]){const f=fakeRuntime(missing);await expect(f.worker.broadcast(tx.toXDR())).rejects.toMatchObject({code:'EXECUTION_UNAVAILABLE'});expect(f.send).not.toHaveBeenCalled();expect(f.submit).not.toHaveBeenCalled();}});
  it('requires stored approved supply amount to match the exact request',async()=>{const {tx,row}=envelopeFixture();const f=fakeRuntime({...row,request_json:{...request,amount:'2'}});await expect(f.worker.broadcast(tx.toXDR())).rejects.toMatchObject({code:'INTENT_MISMATCH'});expect(f.verify).not.toHaveBeenCalled();expect(f.send).not.toHaveBeenCalled();});
  it('re-runs the exact inspector before any future supply send and keeps uncertain result hash',async()=>{const {tx,row}=envelopeFixture();const f=fakeRuntime(row);f.verify.mockRejectedValueOnce(Error('Changed footprint'));await expect(f.worker.broadcast(tx.toXDR())).rejects.toThrow('Changed footprint');expect(f.send).not.toHaveBeenCalled();});

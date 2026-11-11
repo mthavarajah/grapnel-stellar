@@ -48,6 +48,7 @@ export async function createRuntime(pool?:Pool) {
  const blend=new BlendAdapter({network:config.network,passphrase:NETWORK_PASSPHRASE,rpcUrl:process.env.STELLAR_RPC_URL,gate1Passed},{prepareAndSimulate:input=>soroban.prepare(input)});
  let fundingVerified=false;let fundingProofAt=0;let fundingProofRunning=false;
  const readFundingReadiness=async()=>{
+  if(!await hasGate1Proof(chain))return {execution_status:'blocked' as const,reason:'GATE_1_SIGNING_PROOF_REQUIRED',actions:[]};
   const reason=funding.blockedReason();
   if(reason)return {execution_status:'blocked' as const,reason,actions:[]};
   if(!fundingProofRunning && Date.now()-fundingProofAt>30000){fundingProofRunning=true;void hasFundingRoundTripProof(db,funding.treasuryAddress!,proof=>verifyNativeTransfer(chain,proof)).then(value=>{fundingVerified=value;}).catch(()=>{fundingVerified=false;}).finally(()=>{fundingProofAt=Date.now();fundingProofRunning=false;});}
@@ -68,10 +69,20 @@ export async function createRuntime(pool?:Pool) {
   capabilities:{
    'capital.lending':readBlendReadiness,
    'trade.spot':async()=>spot.capability(),
-   'capital.wallets':async()=>({execution_status:gate1Passed?'testnet_verified':'blocked',reason:gate1Passed?null:privy?'Privy-signed Testnet payment proof is pending':'PRIVY_APP_ID and PRIVY_APP_SECRET are required',actions:gate1Passed?['provision','balances','test_payment']:[]}),
+   'capital.wallets':async()=>{const current=await hasGate1Proof(chain);return {execution_status:current?'testnet_verified':'blocked',reason:current?null:privy?'Privy-signed Testnet payment proof is pending':'PRIVY_APP_ID and PRIVY_APP_SECRET are required',actions:current?['provision','balances','test_payment']:[]};},
    'capital.testnet_funding':readFundingReadiness
   },
   registerAdapters:async app=>{
+   // Revalidate the actual chain proof for every new provider intent. A
+   // startup snapshot must not survive a Testnet reset or unavailable proof.
+   app.addHook('preHandler',async request=>{
+    if(request.method!=='POST')return;
+    const path=request.url.split('?')[0]!;
+    const module=path.startsWith('/v1/capital/testnet/')?'capital.testnet_funding':path.startsWith('/v1/capital/lending/')?'capital.lending':path.startsWith('/v1/trade/')?'trade.spot':null;
+    if(!module)return;
+    await requireBusiness(request,module);
+    if(!await hasGate1Proof(chain))throw new GrapnelError(409,'EXECUTION_UNAVAILABLE','Current Gate 1 chain proof is required before financial provider execution');
+   });
    app.post('/v1/capital/wallets',async request=>{const business=await requireBusiness(request,'capital.wallets');const body=WalletInputSchema.parse(request.body);return success(request,await wallets.provision(business.businessId,body.customer_id,body.privy_identity_proof));});
    app.get('/v1/capital/wallets/:id',async request=>{const b=await requireBusiness(request,'capital.wallets');return success(request,await wallets.get(b.businessId,(request.params as {id:string}).id));});
    app.get('/v1/capital/wallets/:id/balances',async request=>{const b=await requireBusiness(request,'capital.wallets');return success(request,await wallets.balances(b.businessId,(request.params as {id:string}).id));});
@@ -98,7 +109,7 @@ export async function createRuntime(pool?:Pool) {
   }
  });
  app.addHook('onClose',async()=>{if(!pool)await db.end();});
- const workerChain=createRuntimeWorkerChain({pool:db,chain,blend,soroban,gate1Passed});
+ const workerChain=createRuntimeWorkerChain({pool:db,chain,blend,soroban,gate1Passed,verifyGate1:()=>hasGate1Proof(chain)});
  return {app,config,pool:db,chain,wallets,operations,funding,gate1Passed,worker:new OperationWorker(db,workerChain)};
 }
 
@@ -129,7 +140,7 @@ export function inspectSupplyDeltas(input:{baseline:unknown;request:{asset_id?:u
   return {verified:true,result:{blend_supply_verification:{verified:true,asset_id:XLM.id,market_id:baseline.market_id,pool_contract_id:baseline.pool_contract_id,reserve_contract_id:baseline.reserve_contract_id,requested_atomic:amount.toString(),collateral_before:baseline.collateral,collateral_after:position.collateral,collateral_delta:fromAtomic(collateralDelta,7),wallet_before:baseline.wallet_amount,wallet_after:balance.wallet_amount,wallet_debit:fromAtomic(walletDebit,7),confirmed_ledger:input.confirmedLedger,observed_ledger:position.as_of_ledger,position_as_of:position.as_of,wallet_as_of:balance.as_of,observed_at:new Date(now).toISOString()}}};
  }catch{return unverified('INVALID_SUPPLY_OBSERVATION');}
 }
-export interface RuntimeWorkerDependencies {pool:Pool;chain:StellarTestnetExecutor;blend:Pick<BlendAdapter,'positions'>;soroban:Pick<BlendSorobanPreparer,'verifyForSubmission'>;gate1Passed:boolean;}
+export interface RuntimeWorkerDependencies {pool:Pool;chain:StellarTestnetExecutor;blend:Pick<BlendAdapter,'positions'>;soroban:Pick<BlendSorobanPreparer,'verifyForSubmission'>;gate1Passed:boolean;verifyGate1?:()=>Promise<boolean>;}
 /** No network send exists outside the durable worker's recorded hash/envelope path. */
 export function createRuntimeWorkerChain(deps:RuntimeWorkerDependencies):WorkerChain {
  const {pool,chain,blend,soroban,gate1Passed}=deps;
@@ -138,7 +149,7 @@ export function createRuntimeWorkerChain(deps:RuntimeWorkerDependencies):WorkerC
   async broadcast(envelope){
    const parsed=parseTestnetTransaction(envelope);const hash=parsed.hash().toString('hex');
    const operation=(await pool.query('SELECT o.*,w.stellar_address,c.privy_user_id FROM operations o JOIN wallets w ON w.business_id=o.business_id AND w.customer_id=o.customer_id AND w.id=o.wallet_id JOIN customers c ON c.business_id=o.business_id AND c.id=o.customer_id WHERE o.tx_hash=$1 AND o.signed_xdr=$2',[hash,envelope])).rows[0];
-   if(!operation || (!gate1Passed && operation.type!=='wallet.test_payment'))throw new GrapnelError(409,'EXECUTION_UNAVAILABLE','Gate 1 proof is required before financial provider execution');
+   if(!operation || (operation.type!=='wallet.test_payment' && (!gate1Passed || !await (deps.verifyGate1?.()??Promise.resolve(false)))))throw new GrapnelError(409,'EXECUTION_UNAVAILABLE','Gate 1 proof is required before financial provider execution');
    if(operation.type==='blend.supply'){
     if(operation.module_code!=='capital.lending'||operation.provider!=='blend'||typeof operation.privy_user_id!=='string'||!operation.privy_user_id.startsWith('did:privy:'))throw new GrapnelError(403,'INTENT_MISMATCH','Stored operation is not an approved Blend supply');
     const action=PreparedActionSchema.parse(operation.prepared_action);
@@ -161,7 +172,7 @@ export function createRuntimeWorkerChain(deps:RuntimeWorkerDependencies):WorkerC
    const op=(await pool.query('SELECT o.*,w.stellar_address,c.privy_user_id FROM operations o JOIN wallets w ON w.business_id=o.business_id AND w.customer_id=o.customer_id AND w.id=o.wallet_id JOIN customers c ON c.business_id=o.business_id AND c.id=o.customer_id WHERE o.id=$1 AND o.tx_hash=$2',[id,hash])).rows[0];
    if(!op)return false;
    if(op.type==='blend.supply'){
-    if(!gate1Passed||op.module_code!=='capital.lending'||op.provider!=='blend'||typeof op.privy_user_id!=='string'||!op.privy_user_id.startsWith('did:privy:'))return false;
+    if(op.module_code!=='capital.lending'||op.provider!=='blend'||typeof op.privy_user_id!=='string'||!op.privy_user_id.startsWith('did:privy:'))return false;
     const confirmed=await chain.server.getTransaction(hash);
     if(confirmed.status!=='SUCCESS')return false;
     const action=PreparedActionSchema.parse(op.prepared_action);
