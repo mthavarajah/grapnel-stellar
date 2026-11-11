@@ -3,6 +3,7 @@ import { Account, Address, Asset, Contract, StrKey, TransactionBuilder, rpc, scV
 import { GrapnelError, NETWORK, NETWORK_PASSPHRASE, XLM, fromAtomic, toAtomic, type AssetIdentity, type ChainAction, type CustomerContext, type PreparedAction } from '@grapnel/contracts';
 
 export const BLEND_REGISTRY_URL = 'https://raw.githubusercontent.com/blend-capital/blend-utils/main/testnet.contracts.json';
+const BLEND_USDC_ASSET_ID='stellar-testnet:classic:USDC:GATALTGTWIOT6BUDBCZM3Q4OQ4BO2COLOAZ7IYSKPLC2PMSOPPGF5V56';
 export interface BlendConfig { network:string;passphrase:string;rpcUrl?:string;gate1Passed?:boolean; }
 export interface BlendReadDependencies {
  fetcher?:typeof fetch;
@@ -130,7 +131,7 @@ export class BlendAdapter {
   const {pool,markets}=await this.snapshot();const market=markets.find(m=>m.market_id===input.marketId);
   if(!market)throw new GrapnelError(404,'NOT_FOUND','Verified Blend market not found');
   if(market.asset_id!==input.assetId)throw new GrapnelError(422,'ASSET_MISMATCH','Asset must match the exact verified reserve');
-  if(input.assetId!==XLM.id)return unavailable('ONLY_NATIVE_XLM_RESERVE_BUILDER_REVIEWED');
+  if(input.assetId!==XLM.id&&input.assetId!==BLEND_USDC_ASSET_ID)return unavailable('ASSET_RESERVE_NOT_REVIEWED');
   let amount:bigint;try{amount=toAtomic(input.amount,market.asset.decimals);}catch{throw new GrapnelError(422,'INVALID_AMOUNT','Amount precision must match the reserve');}
   const reserve=pool.reserves.get(market.reserve_contract_id)!;
   if(pool.metadata.status!==0||!('enabled' in reserve.config)||reserve.config.enabled!==true)return unavailable('POOL_OR_RESERVE_NOT_ACTIVE');

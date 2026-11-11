@@ -1,11 +1,13 @@
 import { Address, Contract, StrKey, Transaction, nativeToScVal, scValToNative, xdr } from '@stellar/stellar-sdk';
-import { GrapnelError, NETWORK, NETWORK_PASSPHRASE, PreparedActionSchema, toAtomic, type PreparedAction } from '@grapnel/contracts';
+import { AmountSchema, GrapnelError, NETWORK, NETWORK_PASSPHRASE, PreparedActionSchema, fromAtomic, toAtomic, type PreparedAction, type WalletBalance } from '@grapnel/contracts';
 import type { VerifiedBlendRegistry } from '../stellar/blend-soroban.js';
-import { buildBlendOperation, type BlendIntent } from './index.js';
+import { buildBlendOperation, type BlendIntent, type BlendPosition } from './index.js';
+import { z } from 'zod';
 
 export const BLEND_USDC_ISSUER = 'GATALTGTWIOT6BUDBCZM3Q4OQ4BO2COLOAZ7IYSKPLC2PMSOPPGF5V56';
 export const BLEND_USDC_CODE = 'USDC';
 export const BLEND_USDC_DECIMALS = 7;
+export const BLEND_USDC_ASSET_ID = `stellar-testnet:classic:${BLEND_USDC_CODE}:${BLEND_USDC_ISSUER}`;
 const fail=(code:string,message:string):never=>{throw new GrapnelError(403,code,message);};
 const keyXdr=(key:xdr.LedgerKey)=>key.toXDR('base64');
 const address=(a:xdr.ScAddress)=>Address.fromScAddress(a).toString();
@@ -80,5 +82,25 @@ export function inspectPreparedBlendUsdcAction(action:PreparedAction,tx:Transact
  const envelope=tx.toEnvelope().v1().tx();if(envelope.ext().switch()!==1)fail('SOROBAN_FOOTPRINT_MISMATCH','Missing USDC Soroban resources');const data=envelope.ext().sorobanData();
  if(operation==='supply')inspectBlendUsdcSupplyAuthorization(op.auth??[],intent,registry);else inspectBlendUsdcWithdrawAuthorization(op.auth??[],intent,registry);
  inspectBlendUsdcFootprint(data,intent,registry,operation,feeCeiling);if(BigInt(tx.fee)<BigInt(data.resourceFee().toString())+100n)fail('SOROBAN_FEE_LIMIT','Transaction fee does not cover USDC Blend resources');
+}
+
+export interface BlendUsdcDeltaResult{verified:boolean;result:{blend_usdc_verification:Record<string,unknown>};}
+const usdcSnapshot=z.object({asset_id:z.literal(BLEND_USDC_ASSET_ID),market_id:z.string().min(1),pool_contract_id:z.string().min(1),reserve_contract_id:z.string().min(1),wallet_address:z.string().min(1),wallet_amount:AmountSchema,collateral:AmountSchema,as_of:z.string().datetime(),position_as_of:z.string().datetime(),position_ledger:z.number().int().positive()}).strict();
+const freshAt=(value:string,maxAge:number,now:number)=>{const at=Date.parse(value);return Number.isFinite(at)&&at<=now+1000&&now-at<=maxAge;};
+const usdcAtomic=(value:string)=>/^0(?:\.0+)?$/.test(value)?0n:toAtomic(value,BLEND_USDC_DECIMALS);
+/** Confirm exact USDC wallet and Blend position deltas. XLM resource fee is kept in its own reservation and is not subtracted from USDC deltas. */
+export function inspectBlendUsdcDeltas(input:{operation:'supply'|'withdraw';baseline:unknown;request:{asset_id?:unknown;market_id?:unknown;amount?:unknown};walletAddress:string;positions:BlendPosition[];balances:WalletBalance[];confirmedLedger:number;now?:number}):BlendUsdcDeltaResult{
+ const now=input.now??Date.now(),reject=(reason:string):BlendUsdcDeltaResult=>({verified:false,result:{blend_usdc_verification:{verified:false,reason,observed_at:new Date(now).toISOString()}}});
+ try{
+  const p=usdcSnapshot.safeParse(input.baseline),amountSchema=z.object({asset_id:z.literal(BLEND_USDC_ASSET_ID),market_id:z.string().min(1),amount:AmountSchema}).strict().safeParse(input.request);
+  if(!p.success||!amountSchema.success||p.data.wallet_address!==input.walletAddress||p.data.market_id!==amountSchema.data.market_id||!Number.isSafeInteger(input.confirmedLedger)||input.confirmedLedger<=0)return reject('USDC_BASELINE_OR_INTENT_MISMATCH');
+  const b=p.data,position=input.positions.find(x=>x.market_id===b.market_id&&x.asset_id===BLEND_USDC_ASSET_ID&&x.pool_contract_id===b.pool_contract_id&&x.reserve_contract_id===b.reserve_contract_id);
+  const balance=input.balances.find(x=>x.asset_id===BLEND_USDC_ASSET_ID&&x.source==='stellar_horizon_testnet');
+  if(!position||!balance||position.as_of_ledger<input.confirmedLedger||position.as_of_ledger<b.position_ledger||!freshAt(position.as_of,30000,now)||!freshAt(balance.as_of,15000,now)||Date.parse(position.as_of)<Date.parse(b.position_as_of)||Date.parse(balance.as_of)<Date.parse(b.as_of))return reject('USDC_POST_CHAIN_OBSERVATION_STALE');
+  const requested=toAtomic(amountSchema.data.amount,BLEND_USDC_DECIMALS),beforeCollateral=usdcAtomic(b.collateral),afterCollateral=usdcAtomic(position.collateral),beforeWallet=usdcAtomic(b.wallet_amount),afterWallet=usdcAtomic(balance.wallet_amount);
+  const collateralDelta=afterCollateral-beforeCollateral,walletDelta=afterWallet-beforeWallet;
+  if(requested<=0n||(input.operation==='supply'&&(collateralDelta<=0n||walletDelta> -requested))||(input.operation==='withdraw'&&(collateralDelta>=0n||walletDelta<requested)))return reject('USDC_POSITION_OR_BALANCE_DELTA_MISSING');
+  return{verified:true,result:{blend_usdc_verification:{verified:true,asset_id:BLEND_USDC_ASSET_ID,operation:input.operation,market_id:b.market_id,pool_contract_id:b.pool_contract_id,reserve_contract_id:b.reserve_contract_id,requested_atomic:requested.toString(),collateral_before:b.collateral,collateral_after:position.collateral,collateral_delta:fromAtomic(collateralDelta,BLEND_USDC_DECIMALS),wallet_before:b.wallet_amount,wallet_after:balance.wallet_amount,wallet_delta:fromAtomic(walletDelta,BLEND_USDC_DECIMALS),confirmed_ledger:input.confirmedLedger,observed_ledger:position.as_of_ledger,position_as_of:position.as_of,wallet_as_of:balance.as_of,observed_at:new Date(now).toISOString(),soroban_fee_asset_id:'stellar-testnet:native:XLM'}}};
+ }catch{return reject('INVALID_USDC_OBSERVATION');}
 }
 

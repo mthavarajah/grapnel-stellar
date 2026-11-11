@@ -16,7 +16,8 @@ const wallet = fixtureSigner.publicKey();
 const stranger = Keypair.random().publicKey();
 const pool = StrKey.encodeContract(Buffer.alloc(32, 1));
 const reserve = Asset.native().contractId(NETWORK_PASSPHRASE);
-const registry: VerifiedBlendRegistry = { poolId: pool, reserveId: reserve, poolWasmHash: 'a'.repeat(64), reserveIndex: 0 };
+const usdcReserve = new Asset('USDC','GATALTGTWIOT6BUDBCZM3Q4OQ4BO2COLOAZ7IYSKPLC2PMSOPPGF5V56').contractId(NETWORK_PASSPHRASE);
+const registry: VerifiedBlendRegistry = { poolId: pool, reserveId: reserve, poolWasmHash: 'a'.repeat(64), reserveIndex: 0, usdcReserveId:usdcReserve, usdcReserveIndex:3 };
 const intent: BlendIntent = { action: 'supply', poolId: pool, reserveId: reserve, walletAddress: wallet, amountAtomic: 10_000_000n };
 const address = (v: string) => Address.fromString(v).toScVal();
 const symbol = (v: string) => nativeToScVal(v, { type: 'symbol' });
@@ -79,7 +80,7 @@ function mockDependencies() {
       : contractValue(symbolMap),
     simulateTransaction: async () => simulation,
   };
-  const fetcher: typeof fetch = async () => new Response(JSON.stringify({ ids: { TestnetV2: pool, XLM: reserve }, hashes: { lendingPoolV2: registry.poolWasmHash } }));
+  const fetcher: typeof fetch = async () => new Response(JSON.stringify({ ids: { TestnetV2: pool, XLM: reserve,USDC:usdcReserve }, hashes: { lendingPoolV2: registry.poolWasmHash } }));
   return { server, fetcher, simulation };
 }
 const config = { network: 'testnet', passphrase: NETWORK_PASSPHRASE, gate1Passed: true };
@@ -166,7 +167,7 @@ describe('inspected preparation and enforce simulation', () => {
   });
   it('rejects a mismatched live registry hash and wrong RPC network', async () => {
     const wrongHash = mockDependencies();
-    wrongHash.fetcher = async () => new Response(JSON.stringify({ ids: { TestnetV2: pool, XLM: reserve }, hashes: { lendingPoolV2: 'b'.repeat(64) } }));
+    wrongHash.fetcher = async () => new Response(JSON.stringify({ ids: { TestnetV2: pool, XLM: reserve,USDC:usdcReserve }, hashes: { lendingPoolV2: 'b'.repeat(64) } }));
     await expect(new BlendSorobanPreparer(config, wrongHash).prepare(input())).rejects.toMatchObject({ details: { reason: 'BLEND_LIVE_CONTRACT_OR_RESERVE_MISMATCH' } });
     const wrongNetwork = mockDependencies(); wrongNetwork.server.getNetwork = async () => ({ passphrase: 'Public Global Stellar Network ; September 2015' as typeof NETWORK_PASSPHRASE, protocolVersion: '30' });
     await expect(new BlendSorobanPreparer(config, wrongNetwork).prepare(input())).rejects.toMatchObject({ code: 'NETWORK_MISMATCH' });

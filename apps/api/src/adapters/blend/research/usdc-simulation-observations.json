@@ -13,6 +13,30 @@
   },
   "pool_contract": "CCEBVDYM32YNYCVNRXQKDFFPISJJCV557CDZEIRBEE4NCV4KHPQ44HGF",
   "pool_code_hash": "a41fc53d6753b6c04eb15b021c55052366a4c8e0e21bc72700f461264ec1350e",
+  "preparer_record_enforce": {
+    "supply": {
+      "observed_ledger": 5677920,
+      "simulation_succeeded": true,
+      "authorization": "sorobanCredentialsSourceAccount",
+      "read_only_footprint_entries": 6,
+      "read_write_footprint_entries": 4,
+      "resource_fee_stroops": "525734",
+      "total_fee_stroops": "525834",
+      "broadcast": false,
+      "signable": false
+    },
+    "withdraw": {
+      "observed_ledger": 5677923,
+      "simulation_succeeded": true,
+      "authorization": "sorobanCredentialsSourceAccount",
+      "read_only_footprint_entries": 6,
+      "read_write_footprint_entries": 4,
+      "resource_fee_stroops": "524975",
+      "total_fee_stroops": "525075",
+      "broadcast": false,
+      "signable": false
+    }
+  },
   "supply": {
     "observed_ledger": 5677654,
     "source_account": "GDZQK2N4SKPXFG4SJOE2G2H2IIOI7UOTZIJJ7TFH7GXJFL34JBNQHP5O",

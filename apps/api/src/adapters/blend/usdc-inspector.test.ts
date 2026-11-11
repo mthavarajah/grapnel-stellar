@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { Address, Asset, Contract, Keypair, StrKey, nativeToScVal, xdr } from '@stellar/stellar-sdk';
 import { NETWORK_PASSPHRASE } from '@grapnel/contracts';
 import { buildBlendOperation, type BlendIntent } from './index.js';
-import { inspectBlendUsdcSupplyAuthorization, inspectBlendUsdcWithdrawAuthorization } from './usdc-inspector.js';
+import { BLEND_USDC_ASSET_ID, inspectBlendUsdcDeltas, inspectBlendUsdcSupplyAuthorization, inspectBlendUsdcWithdrawAuthorization } from './usdc-inspector.js';
 import type { VerifiedBlendRegistry } from '../stellar/blend-soroban.js';
 
 const user=Keypair.random().publicKey(),pool=StrKey.encodeContract(Buffer.alloc(32,21));
@@ -26,4 +26,13 @@ describe('exact Blend classic USDC authorization',()=>{
  });
  it('accepts a standalone exact USDC withdrawal with no token grant',()=>expect(()=>inspectBlendUsdcWithdrawAuthorization(authorization('withdraw'),intent('withdraw'),registry)).not.toThrow());
  it('rejects any nested customer grant on withdrawal',()=>expect(()=>inspectBlendUsdcWithdrawAuthorization(authorization('supply'),intent('withdraw'),registry)).toThrow());
+});
+
+describe('USDC Blend position and wallet reconciliation',()=>{
+ const time='2026-11-11T15:00:00.000Z',baseline={asset_id:BLEND_USDC_ASSET_ID,market_id:'usdc-market',pool_contract_id:pool,reserve_contract_id:reserve,wallet_address:user,wallet_amount:'10.0000000',collateral:'0.0000000',as_of:time,position_as_of:time,position_ledger:100};
+ const position={market_id:'usdc-market',pool_contract_id:pool,reserve_contract_id:reserve,asset_id:BLEND_USDC_ASSET_ID,supplied:'1.0000000',collateral:'1.0000000',borrowed:'0.0000000',wallet_spendable:false as const,supply_apy_variable:null,health_factor:null,as_of_ledger:101,as_of:time,readiness:'discovery_only' as const};
+ const observation={baseline,request:{asset_id:BLEND_USDC_ASSET_ID,market_id:'usdc-market',amount:'1.0000000'},walletAddress:user,positions:[position],balances:[{asset_id:BLEND_USDC_ASSET_ID,wallet_amount:'9.0000000',reserved:'0',spendable:'8.0000000',as_of:time,source:'stellar_horizon_testnet' as const}],confirmedLedger:100,now:Date.parse(time)};
+ it('verifies USDC supply from exact trustline debit and Blend collateral growth',()=>expect(inspectBlendUsdcDeltas({operation:'supply',...observation})).toMatchObject({verified:true,result:{blend_usdc_verification:{verified:true,requested_atomic:'10000000',wallet_delta:'-1.0000000',collateral_delta:'1.0000000',soroban_fee_asset_id:'stellar-testnet:native:XLM'}}}));
+ it('verifies USDC withdrawal without subtracting the separately reserved XLM fee',()=>expect(inspectBlendUsdcDeltas({operation:'withdraw',...observation,baseline:{...baseline,wallet_amount:'9.0000000',collateral:'1.0000000'},positions:[{...position,collateral:'0.0000000',supplied:'0.0000000'}],balances:[{...observation.balances[0]!,wallet_amount:'10.0000000'}]})).toMatchObject({verified:true,result:{blend_usdc_verification:{verified:true,wallet_delta:'1.0000000',collateral_delta:'-1.0000000'}}}));
+ it('does not accept XLM balances or stale USDC reads as a USDC delta',()=>{expect(inspectBlendUsdcDeltas({operation:'supply',...observation,balances:[]}).verified).toBe(false);expect(inspectBlendUsdcDeltas({operation:'supply',...observation,request:{...observation.request,asset_id:'stellar-testnet:native:XLM'}}).verified).toBe(false);});
 });

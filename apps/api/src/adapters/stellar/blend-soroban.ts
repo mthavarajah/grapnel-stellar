@@ -8,6 +8,7 @@ import {
 } from '@grapnel/contracts';
 import { BLEND_REGISTRY_URL, buildBlendOperation, inspectBlendOperation, type BlendIntent } from '../blend/index.js';
 import { inspectBlendWithdrawAuthorization, inspectBlendWithdrawFootprint, inspectPreparedBlendWithdrawTransaction } from '../blend/withdraw-inspector.js';
+import { BLEND_USDC_CODE, BLEND_USDC_DECIMALS, BLEND_USDC_ISSUER, inspectBlendUsdcFootprint, inspectBlendUsdcSupplyAuthorization, inspectBlendUsdcWithdrawAuthorization, inspectPreparedBlendUsdcAction } from '../blend/usdc-inspector.js';
 import { assertTestnet, parseTestnetTransaction, verifySignedAction } from './index.js';
 
 /** Narrow, source-account-only native XLM collateral supply. Never accepts arbitrary venue XDR. */
@@ -17,6 +18,7 @@ export interface BlendSorobanConfig {
 }
 export interface VerifiedBlendRegistry {
   poolId: string; reserveId: string; poolWasmHash: string; reserveIndex: number;
+  usdcReserveId?: string; usdcReserveIndex?: number;
 }
 export interface BlendSorobanDependencies {
   fetcher?: typeof fetch;
@@ -63,13 +65,15 @@ function sameObjectKeys(value: unknown, keys: string[]): value is Record<string,
 }
 function intentFor(input: ChainAction, registry: VerifiedBlendRegistry): BlendIntent {
   const action=input.summary.action==='blend.supply'?'supply':input.summary.action==='blend.withdraw'?'withdraw':null;
-  if (!action || input.summary.fromAssetId !== XLM.id
+  const usdcAssetId=`stellar-testnet:classic:${BLEND_USDC_CODE}:${BLEND_USDC_ISSUER}`;
+  const selectedReserve=input.summary.fromAssetId===XLM.id?registry.reserveId:input.summary.fromAssetId===usdcAssetId?registry.usdcReserveId:undefined;
+  if (!action || !selectedReserve
     || input.summary.toAssetId !== undefined || input.summary.minReceive !== undefined
     || input.summary.recipient !== input.walletAddress || input.summary.contractId !== registry.poolId
     || !StrKey.isValidEd25519PublicKey(input.walletAddress)
     || new Set(input.allowedContracts).size !== 2 || input.allowedContracts.length !== 2
-    || !input.allowedContracts.includes(registry.poolId) || !input.allowedContracts.includes(registry.reserveId)) {
-    return fail('BLEND_INTENT_MISMATCH', 'Only the exact native XLM collateral supply or withdrawal intent is supported');
+    || !input.allowedContracts.includes(registry.poolId) || !input.allowedContracts.includes(selectedReserve)) {
+    return fail('BLEND_INTENT_MISMATCH', 'Only an exact verified XLM or classic USDC Blend supply/withdrawal intent is supported');
   }
   let amountAtomic: bigint;
   try { amountAtomic = toAtomic(input.summary.amount ?? '', 7); }
@@ -78,9 +82,14 @@ function intentFor(input: ChainAction, registry: VerifiedBlendRegistry): BlendIn
   if (!Number.isFinite(expires) || expires <= Date.now() || expires > Date.now() + 120_000) {
     return fail('ACTION_EXPIRED', 'Soroban approval must expire within two minutes');
   }
-  const intent: BlendIntent = { action, poolId: registry.poolId, reserveId: registry.reserveId, walletAddress: input.walletAddress, amountAtomic };
+  const intent: BlendIntent = { action, poolId: registry.poolId, reserveId: selectedReserve, walletAddress: input.walletAddress, amountAtomic };
   inspectBlendOperation(input.operationXdr, intent);
   return intent;
+}
+function registryForIntent(registry:VerifiedBlendRegistry,intent:BlendIntent):VerifiedBlendRegistry{
+ if(intent.reserveId===registry.reserveId)return registry;
+ if(intent.reserveId===registry.usdcReserveId&&Number.isInteger(registry.usdcReserveIndex))return {...registry,reserveId:intent.reserveId,reserveIndex:registry.usdcReserveIndex!};
+ return fail('BLEND_INTENT_MISMATCH','Intent reserve is not an independently verified Blend Testnet reserve');
 }
 function requireSupply(intent: BlendIntent): void {
   if (intent.action !== 'supply') unavailable('WITHDRAW_AUTH_FOOTPRINT_PROOF_REQUIRED');
@@ -161,7 +170,12 @@ function inspectSimulation(sim: rpc.Api.SimulateTransactionResponse, intent: Ble
   if (!rpc.Api.isSimulationSuccess(sim) || rpc.Api.isSimulationRestore(sim) || !sim.result) unavailable('SOROBAN_SIMULATION_OR_RESTORE_FAILED');
   const fee = checkedFee(sim.minResourceFee);
   if (fee <= 0n || fee + 100n > ceiling || sim.transactionData.build().resourceFee().toString() !== fee.toString()) fail('SOROBAN_FEE_LIMIT', 'Resource fee exceeds the exact approved limit');
-  if(intent.action==='supply'){
+  const selected=registryForIntent(registry,intent);
+  if(intent.reserveId===registry.usdcReserveId){
+    if(intent.action==='supply')inspectBlendUsdcSupplyAuthorization(sim.result.auth,intent,selected);
+    else inspectBlendUsdcWithdrawAuthorization(sim.result.auth,intent,selected);
+    inspectBlendUsdcFootprint(sim.transactionData.build(),intent,selected,intent.action,ceiling);
+  }else if(intent.action==='supply'){
     inspectBlendSupplyAuthorization(sim.result.auth, intent);
     inspectBlendSupplyFootprint(sim.transactionData.build(), intent, registry, ceiling);
   }else{
@@ -180,13 +194,18 @@ function inspectPreparedTransaction(tx: Transaction, input: ChainAction, intent:
   if (op?.type !== 'invokeHostFunction' || op.source || op.func.switch().name !== 'hostFunctionTypeInvokeContract') fail('SOROBAN_TRANSACTION_MISMATCH', 'Unexpected operation or sponsorship');
   const expected = xdr.Operation.fromXDR(buildBlendOperation(intent), 'base64').body().invokeHostFunctionOp().hostFunction();
   if (op.func.toXDR('base64') !== expected.toXDR('base64')) fail('BLEND_INTENT_MISMATCH', 'Submitted invocation differs from the approved Blend action');
-  if(intent.action==='supply')inspectBlendSupplyAuthorization(op.auth ?? [], intent);
-  else inspectBlendWithdrawAuthorization(op.auth ?? [],intent,registry);
+  const selected=registryForIntent(registry,intent);
+  if(intent.reserveId===registry.usdcReserveId){
+    if(intent.action==='supply')inspectBlendUsdcSupplyAuthorization(op.auth??[],intent,selected);
+    else inspectBlendUsdcWithdrawAuthorization(op.auth??[],intent,selected);
+  }else if(intent.action==='supply')inspectBlendSupplyAuthorization(op.auth ?? [], intent);
+  else inspectBlendWithdrawAuthorization(op.auth ?? [],intent,selected);
   const envelope = tx.toEnvelope().v1().tx();
   if (envelope.ext().switch() !== 1) fail('SOROBAN_FOOTPRINT_MISMATCH', 'Missing Soroban transaction data');
   const data = envelope.ext().sorobanData();
-  if(intent.action==='supply')inspectBlendSupplyFootprint(data, intent, registry, ceiling);
-  else inspectBlendWithdrawFootprint(data,intent,registry,ceiling);
+  if(intent.reserveId===registry.usdcReserveId)inspectBlendUsdcFootprint(data,intent,selected,intent.action,ceiling);
+  else if(intent.action==='supply')inspectBlendSupplyFootprint(data, intent, selected, ceiling);
+  else inspectBlendWithdrawFootprint(data,intent,selected,ceiling);
   if (checkedFee(tx.fee) < BigInt(data.resourceFee().toString()) + 100n) fail('SOROBAN_FEE_LIMIT', 'Declared fee does not cover resources');
 }
 function requireCoveredResources(tx: Transaction, sim: rpc.Api.SimulateTransactionSuccessResponse): void {
@@ -205,14 +224,15 @@ function requireCoveredResources(tx: Transaction, sim: rpc.Api.SimulateTransacti
  * A registry value is trusted only when obtained from live official registry+contract validation below. */
 export function inspectPreparedBlendSupplyTransaction(action: PreparedAction, tx: Transaction, registry: VerifiedBlendRegistry, feeCeiling: bigint = DEFAULT_FEE_CEILING): void {
   PreparedActionSchema.parse(action);
+  if (action.network !== NETWORK || action.authorization.method !== 'privy_stellar'
+    || action.summary.expiresAt !== action.authorization.expiresAt || action.summary.maxFeeStroops !== tx.fee
+    || tx.hash().toString('hex') !== action.signingHashHex) fail('SOROBAN_TRANSACTION_MISMATCH', 'Approved summary, fee or digest differs from the transaction');
+  if(action.summary.fromAssetId===`stellar-testnet:classic:${BLEND_USDC_CODE}:${BLEND_USDC_ISSUER}`){inspectPreparedBlendUsdcAction(action,tx,registryForIntent(registry,{action:'supply',poolId:registry.poolId,reserveId:registry.usdcReserveId??'',walletAddress:action.walletAddress,amountAtomic:1n}),'supply',feeCeiling);return;}
   const intent: BlendIntent = { action: 'supply', poolId: registry.poolId, reserveId: registry.reserveId,
     walletAddress: action.walletAddress, amountAtomic: toAtomic(action.summary.amount ?? '', 7) };
   const input: ChainAction = { operationId: action.operationId, customerId: action.customerId, walletAddress: action.walletAddress,
     operationXdr: buildBlendOperation(intent), allowedContracts: [registry.poolId, registry.reserveId], summary: action.summary };
   intentFor(input, registry);
-  if (action.network !== NETWORK || action.authorization.method !== 'privy_stellar'
-    || action.summary.expiresAt !== action.authorization.expiresAt || action.summary.maxFeeStroops !== tx.fee
-    || tx.hash().toString('hex') !== action.signingHashHex) fail('SOROBAN_TRANSACTION_MISMATCH', 'Approved summary, fee or digest differs from the transaction');
   inspectPreparedTransaction(tx, input, intent, registry, feeCeiling);
 }
 
@@ -236,22 +256,30 @@ export class BlendSorobanPreparer {
     if (!response.ok) return unavailable('BLEND_REGISTRY_UNAVAILABLE');
     let body: { ids?: Record<string, string>; hashes?: Record<string, string> };
     try { body = await response.json() as typeof body; } catch { return unavailable('BLEND_REGISTRY_INVALID'); }
-    const poolId = body.ids?.TestnetV2, reserveId = body.ids?.XLM, poolWasmHash = body.hashes?.lendingPoolV2;
+    const poolId = body.ids?.TestnetV2, reserveId = body.ids?.XLM, usdcReserveId=body.ids?.USDC, poolWasmHash = body.hashes?.lendingPoolV2;
+    const expectedUsdcSac=new Asset(BLEND_USDC_CODE,BLEND_USDC_ISSUER).contractId(NETWORK_PASSPHRASE);
     if (!poolId || !StrKey.isValidContract(poolId) || reserveId !== Asset.native().contractId(NETWORK_PASSPHRASE)
+      || usdcReserveId!==expectedUsdcSac || !StrKey.isValidContract(usdcReserveId)
       || !poolWasmHash || !/^[a-f0-9]{64}$/.test(poolWasmHash)) return unavailable('BLEND_REGISTRY_INVALID');
-    const [pool, token, reserve] = await Promise.all([
+    const [pool, token, reserve, usdcToken, usdcReserve] = await Promise.all([
       bounded(this.server.getContractData(poolId, xdr.ScVal.scvLedgerKeyContractInstance())),
       bounded(this.server.getContractData(reserveId, xdr.ScVal.scvLedgerKeyContractInstance())),
       bounded(this.server.getContractData(poolId, symbolKey('ResConfig', reserveId))),
+      bounded(this.server.getContractData(usdcReserveId, xdr.ScVal.scvLedgerKeyContractInstance())),
+      bounded(this.server.getContractData(poolId, symbolKey('ResConfig', usdcReserveId))),
     ]);
     try {
       const executable = pool.val.contractData().val().instance().executable();
       const tokenExecutable = token.val.contractData().val().instance().executable();
       const cfg = scValToNative(reserve.val.contractData().val()) as Record<string, unknown>;
+      const usdcTokenExecutable=usdcToken.val.contractData().val().instance().executable();
+      const usdcCfg=scValToNative(usdcReserve.val.contractData().val()) as Record<string,unknown>;
       if (executable.switch().name !== 'contractExecutableWasm' || executable.wasmHash().toString('hex') !== poolWasmHash
         || tokenExecutable.switch().name !== 'contractExecutableStellarAsset' || cfg.decimals !== 7 || cfg.enabled !== true
-        || !Number.isInteger(cfg.index) || Number(cfg.index) < 0 || Number(cfg.index) > 63) throw new Error();
-      return { poolId, reserveId, poolWasmHash, reserveIndex: Number(cfg.index) };
+        || !Number.isInteger(cfg.index) || Number(cfg.index) < 0 || Number(cfg.index) > 63
+        || usdcTokenExecutable.switch().name!=='contractExecutableStellarAsset'||usdcCfg.decimals!==BLEND_USDC_DECIMALS||usdcCfg.enabled!==true
+        || !Number.isInteger(usdcCfg.index)||Number(usdcCfg.index)<0||Number(usdcCfg.index)>63) throw new Error();
+      return { poolId, reserveId, poolWasmHash, reserveIndex: Number(cfg.index),usdcReserveId,usdcReserveIndex:Number(usdcCfg.index) };
     } catch { return unavailable('BLEND_LIVE_CONTRACT_OR_RESERVE_MISMATCH'); }
   }
   async getVerifiedRegistry(): Promise<VerifiedBlendRegistry> { return this.registry(); }
@@ -288,7 +316,7 @@ export class BlendSorobanPreparer {
     return { action, report: { mode: 'read_only_simulation', broadcast: false, signable: false,
       ledger: enforced.latestLedger, resource_fee_stroops: recorded.minResourceFee, total_fee_stroops: prepared.fee,
       source_account_auth_entries: 1, read_only_entries: footprint.readOnly().length, read_write_entries: footprint.readWrite().length,
-      pool_contract_id: registry.poolId, reserve_contract_id: registry.reserveId } };
+      pool_contract_id: registry.poolId, reserve_contract_id: intent.reserveId } };
   }
   async inspectReadOnly(input: ChainAction): Promise<BlendInspectionReport> { return (await this.simulate(input)).report; }
   async prepare(input: ChainAction): Promise<PreparedAction> {
@@ -302,6 +330,7 @@ export class BlendSorobanPreparer {
     const verify = verifySignedAction as (action: PreparedAction, signed: string, inspect?: (action: PreparedAction, tx: Transaction) => void) => void;
     const inspectApproved=(approved:PreparedAction,transaction:Transaction)=>{
       if(approved.summary.action==='blend.supply')inspectPreparedBlendSupplyTransaction(approved,transaction,registry,this.ceiling);
+      else if(approved.summary.action==='blend.withdraw'&&approved.summary.fromAssetId===`stellar-testnet:classic:${BLEND_USDC_CODE}:${BLEND_USDC_ISSUER}`)inspectPreparedBlendUsdcAction(approved,transaction,registryForIntent(registry,{action:'withdraw',poolId:registry.poolId,reserveId:registry.usdcReserveId??'',walletAddress:approved.walletAddress,amountAtomic:1n}),'withdraw',this.ceiling);
       else if(approved.summary.action==='blend.withdraw')inspectPreparedBlendWithdrawTransaction(approved,transaction,registry,this.ceiling);
       else unavailable('BLEND_ACTION_UNSUPPORTED');
     };
@@ -309,10 +338,12 @@ export class BlendSorobanPreparer {
     const tx = parseTestnetTransaction(signedXdr);
     const actionType=action.summary.action==='blend.supply'?'supply':action.summary.action==='blend.withdraw'?'withdraw':null;
     if(!actionType)return unavailable('BLEND_ACTION_UNSUPPORTED');
-    const intent: BlendIntent = { action: actionType, poolId: registry.poolId, reserveId: registry.reserveId,
+    const selectedReserve=action.summary.fromAssetId===`stellar-testnet:classic:${BLEND_USDC_CODE}:${BLEND_USDC_ISSUER}`?registry.usdcReserveId:registry.reserveId;
+    if(!selectedReserve)return unavailable('BLEND_ASSET_RESERVE_UNVERIFIED');
+    const intent: BlendIntent = { action: actionType, poolId: registry.poolId, reserveId: selectedReserve,
       walletAddress: action.walletAddress, amountAtomic: toAtomic(action.summary.amount ?? '', 7) };
     const input: ChainAction = { operationId: action.operationId, customerId: action.customerId, walletAddress: action.walletAddress,
-      operationXdr: buildBlendOperation(intent), allowedContracts: [registry.poolId, registry.reserveId], summary: action.summary };
+      operationXdr: buildBlendOperation(intent), allowedContracts: [registry.poolId, selectedReserve], summary: action.summary };
     intentFor(input, registry);
     inspectApproved(action,tx);
     const sim = await bounded(this.server.simulateTransaction(tx, undefined, 'enforce'));

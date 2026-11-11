@@ -2,6 +2,7 @@ import { z } from 'zod';
 import type { FastifyInstance } from 'fastify';
 import { GrapnelError, LendingInputSchema, AmountSchema, XLM, toAtomic, type WalletBalance } from '@grapnel/contracts';
 import { BlendAdapter } from '../../adapters/blend/index.js';
+import { BLEND_USDC_ASSET_ID } from '../../adapters/blend/usdc-inspector.js';
 import { requireBusiness, requireCustomer, success } from '../../lib/context.js';
 import { lock } from '../../db/index.js';
 import type { OperationService } from '../operations/service.js';
@@ -9,6 +10,16 @@ import type { OperationService } from '../operations/service.js';
 export interface LendingRoutesDependencies {
  adapter:BlendAdapter;operations:OperationService;
  balanceReader:(address:string)=>Promise<WalletBalance[]>;
+}
+export interface BlendReservation {assetId:string;amountAtomic:bigint;}
+/** Keep Blend's XLM resource fee independent from a classic USDC supply amount. */
+export function blendReservationPlan(action:'supply'|'withdraw',assetId:string,amount:string,feeStroops:string):BlendReservation[]{
+ if(!/^\d{1,12}$/.test(feeStroops)||BigInt(feeStroops)<=0n)throw new GrapnelError(409,'EXECUTION_UNAVAILABLE','A reviewed Soroban fee is required');
+ let amountAtomic:bigint;try{amountAtomic=toAtomic(amount,7);}catch{throw new GrapnelError(422,'INVALID_AMOUNT','Blend amount must use exact seven-decimal precision');}
+ if(amountAtomic<=0n)throw new GrapnelError(422,'INVALID_AMOUNT','Blend amount must be positive');const fee=BigInt(feeStroops);
+ if(assetId===XLM.id)return[{assetId:XLM.id,amountAtomic:(action==='supply'?amountAtomic:0n)+fee}];
+ if(assetId===BLEND_USDC_ASSET_ID)return[...(action==='supply'?[{assetId,amountAtomic}]:[]),{assetId:XLM.id,amountAtomic:fee}];
+ throw new GrapnelError(422,'ASSET_MISMATCH','Only verified XLM and classic USDC Blend reserves are supported');
 }
 /** All write requests use the frozen core identity, durable idempotency and reservations. */
 export async function registerLendingRoutes(app:FastifyInstance,deps:LendingRoutesDependencies):Promise<void> {
@@ -35,21 +46,17 @@ export async function registerLendingRoutes(app:FastifyInstance,deps:LendingRout
     if(pending.rowCount)throw new GrapnelError(409,'POSITION_BUSY','An earlier position operation awaits reconciliation');
     const prepared=await deps.adapter.prepare(action,{operationId,marketId:body.market_id,assetId:body.asset_id,amount:body.amount},customer);
     if(action==='supply'||action==='withdraw'){
-     if(body.asset_id!==XLM.id)throw new GrapnelError(422,'ASSET_MISMATCH','Only the verified native XLM reserve is supported for preparation');
+     if(body.asset_id!==XLM.id&&body.asset_id!==BLEND_USDC_ASSET_ID)throw new GrapnelError(422,'ASSET_MISMATCH','Only verified XLM and classic USDC Blend reserves are supported');
      const fee=prepared.summary.maxFeeStroops;
      if(!fee || !/^\d+$/.test(fee) || BigInt(fee)<=0n)throw new GrapnelError(409,'EXECUTION_UNAVAILABLE','A reviewed Soroban fee ceiling is required');
      const positions=await deps.adapter.positions(customer);
-     const position=positions.find(position=>position.market_id===body.market_id && position.asset_id===XLM.id && position.pool_contract_id===prepared.summary.contractId);
+     const position=positions.find(position=>position.market_id===body.market_id && position.asset_id===body.asset_id && position.pool_contract_id===prepared.summary.contractId);
      if(!position || !Number.isSafeInteger(position.as_of_ledger) || position.as_of_ledger<=0 || !Number.isFinite(Date.parse(position.as_of)) || Date.now()-Date.parse(position.as_of)>30000 || Date.parse(position.as_of)>Date.now()+1000)throw new GrapnelError(409,'POSITION_BASELINE_UNAVAILABLE','A fresh verified Blend collateral baseline is required');
      AmountSchema.parse(position.collateral);
-     const balance=(await deps.balanceReader(customer.walletAddress)).find(balance=>balance.asset_id===XLM.id);
-     if(!balance)throw new GrapnelError(409,'BALANCE_UNAVAILABLE','Confirmed native XLM balance is required');
-     const available=/^0(?:\.0+)?$/.test(balance.spendable)?0n:toAtomic(balance.spendable,7);
-     // Reserve the actual approved Soroban resource fee, including on a withdrawal.
-     // The classic balance reader already excludes minimum balance and a conservative base fee.
-     const required=(action==='supply'?toAtomic(body.amount,7):0n)+BigInt(fee);
-     await deps.operations.reserve(client,{businessId:customer.businessId,customerId:customer.customerId,walletId:customer.walletId,operationId,assetId:XLM.id,amountAtomic:required,spendableAtomic:available,observedAt:new Date(balance.as_of),expiresAt:new Date(prepared.authorization.expiresAt)});
-     await client.query("UPDATE operations SET result_json=COALESCE(result_json,'{}'::jsonb)||$3::jsonb WHERE business_id=$1 AND id=$2",[customer.businessId,operationId,JSON.stringify({[action==='withdraw'?'blend_withdraw_baseline':'blend_supply_baseline']:{asset_id:XLM.id,market_id:body.market_id,pool_contract_id:position.pool_contract_id,reserve_contract_id:position.reserve_contract_id,wallet_address:customer.walletAddress,wallet_amount:balance.wallet_amount,collateral:position.collateral,as_of:balance.as_of,position_as_of:position.as_of,position_ledger:position.as_of_ledger}})]);
+     const balances=await deps.balanceReader(customer.walletAddress),reservationPlan=blendReservationPlan(action,body.asset_id,body.amount,fee);
+     for(const reservation of reservationPlan){const balance=balances.find(x=>x.asset_id===reservation.assetId);if(!balance)throw new GrapnelError(409,'BALANCE_UNAVAILABLE',`Confirmed ${reservation.assetId===XLM.id?'XLM':'USDC'} balance is required`);const available=/^0(?:\.0+)?$/.test(balance.spendable)?0n:toAtomic(balance.spendable,7);await deps.operations.reserve(client,{businessId:customer.businessId,customerId:customer.customerId,walletId:customer.walletId,operationId,assetId:reservation.assetId,amountAtomic:reservation.amountAtomic,spendableAtomic:available,observedAt:new Date(balance.as_of),expiresAt:new Date(prepared.authorization.expiresAt)});}
+     const balance=balances.find(x=>x.asset_id===body.asset_id)!;
+     await client.query("UPDATE operations SET result_json=COALESCE(result_json,'{}'::jsonb)||$3::jsonb WHERE business_id=$1 AND id=$2",[customer.businessId,operationId,JSON.stringify({[action==='withdraw'?'blend_withdraw_baseline':'blend_supply_baseline']:{asset_id:body.asset_id,market_id:body.market_id,pool_contract_id:position.pool_contract_id,reserve_contract_id:position.reserve_contract_id,wallet_address:customer.walletAddress,wallet_amount:balance.wallet_amount,collateral:position.collateral,as_of:balance.as_of,position_as_of:position.as_of,position_ledger:position.as_of_ledger}})]);
     }
     await deps.operations.setPrepared(client,customer.businessId,operationId,prepared);
    });
