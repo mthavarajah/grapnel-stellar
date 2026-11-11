@@ -210,11 +210,11 @@ export async function POST(
         // fresh exact-asset simulation before exposing a signable operation.
         await requireModule("capital.lending", s);
         await requireModule("capital.wallets", s, true);
-        if (body.asset_id !== "stellar-testnet:native:XLM")
+        if (!["stellar-testnet:native:XLM", "stellar-testnet:classic:USDC:GATALTGTWIOT6BUDBCZM3Q4OQ4BO2COLOAZ7IYSKPLC2PMSOPPGF5V56"].includes(body.asset_id))
           throw new BffError(
             422,
             "ASSET_MISMATCH",
-            "Only the verified native Testnet XLM reserve can be prepared",
+            "Select the supported XLM or USDC reserve",
           );
       } else {
         await requireModule("capital.lending", s, true);
