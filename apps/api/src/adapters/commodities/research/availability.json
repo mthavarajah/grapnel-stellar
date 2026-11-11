@@ -1,0 +1,39 @@
+{
+  "observed_at": "2026-11-11T16:50:40.659Z",
+  "network": "stellar-testnet",
+  "mode": "read_only",
+  "execution_status": "blocked",
+  "reason": "NO_VERIFIED_TESTNET_COMMODITY_ISSUER_OR_LIQUID_ROUTE",
+  "checks": {
+    "testnet_horizon_asset_code_collisions": {
+      "WTGOLD": { "http_status": 200, "issuer_count": 0 },
+      "GOLD": { "http_status": 200, "issuer_count": 112 },
+      "XAU": { "http_status": 200, "issuer_count": 27 },
+      "XAG": { "http_status": 200, "issuer_count": 5 },
+      "SILVER": { "http_status": 200, "issuer_count": 73 },
+      "PAXG": { "http_status": 200, "issuer_count": 2 },
+      "XAUM": { "http_status": 200, "issuer_count": 0 }
+    },
+    "xau_cl_candidate": {
+      "issuer": "GBCB4WO6J4ET55RWK2SVX76LUQ4PQ7TCDHG2YFILQML7D6XR3HACLXAU",
+      "testnet_sac_derived_from_exact_classic_asset": "CBHHPMGPBNN4UGOBMNBTRYHED64SXATLCV7JCUUDS6NNS6D4H6Z2YC2G",
+      "classification": "excluded_not_backed_by_physical_gold_per_issuer_toml",
+      "testnet_issuer_account_http_status": 404,
+      "exact_testnet_classic_asset_records": 0,
+      "sdex_xlm_orderbook_http_status": 200,
+      "sdex_bids": 0,
+      "sdex_asks": 0
+    },
+    "soroswap_exact_asset_quote": {
+      "network": "testnet",
+      "protocols_http_status": 200,
+      "protocols": ["soroswap", "sdex"],
+      "xlm_to_xau_cl_quote_http_status": 400,
+      "provider_error": "Quote Failed",
+      "route_count": null
+    },
+    "candidate_limit": "Code-collision scan is not an exhaustive asset registry; no issuer/commodity/backing/liquidity claim is inferred from ticker symbols."
+  },
+  "signed": false,
+  "broadcast": false
+}
