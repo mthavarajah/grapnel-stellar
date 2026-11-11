@@ -23,4 +23,4 @@ Current scoped intent DTO is `PeridotStepIntent` in intents.ts. Underlying atomi
 
 ## Validation
 
-46 focused tests pass; API TypeScript check passes. Tests mutate auth recipient/amount/extra invocation, amount budgets, code and account keys, archive indices, duplicate scope, network and fees. Main canonical margin workflow inspectors and customer route integration remain incomplete. Do not advertise margin executable yet.
+53 focused tests pass; API TypeScript check passes. Tests mutate auth recipient/amount/extra invocation, amount budgets, code and account keys, archive indices, duplicate scope, network and fees. `state.ts` adds fail-closed owner/pool/asset/phase reads; synthetic state tests do not prove actual deployed PendingOpen/Closing transitions. These reads remain subject to confirmation against actual QA traces. Main canonical margin auth/footprint inspectors and customer route integration remain incomplete. Do not advertise margin executable yet.
