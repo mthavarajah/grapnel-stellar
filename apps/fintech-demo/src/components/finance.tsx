@@ -144,6 +144,38 @@ function customerMessage(message: string): string {
   return message;
 }
 const assetCode = (id?: string): string => id === XLM_ASSET ? "XLM" : id === USDC_ASSET ? "USDC" : "Asset";
+type MarketHistory = {
+  market_id:string; base_asset_id:string; base_symbol:string; quote_symbol:string;
+  latest_price:string|null; as_of:string|null;
+  points:{timestamp:string;price:string}[];
+  change_absolute:string|null; change_percent:string|null;
+};
+type HistoryRange = "live"|"1d"|"1w"|"1m"|"1y"|"all";
+function displayChange(value:string|null|undefined):string {
+  if(typeof value!=="string"||!/^[-+]?\d+(?:\.\d+)?$/.test(value))return "—";
+  const amount=value.replace(/^[-+]/, ""), formatted=formatTokenAmount(amount);
+  return formatted==="Unavailable"?"—":`${value.startsWith("-")?"-":"+"}${formatted}`;
+}
+function PriceChart({history,loading}:{history:MarketHistory|null;loading:boolean}) {
+  const points=(history?.points??[]).flatMap(point=>{
+    try {const timestamp=Date.parse(point.timestamp),price=toAtomic(point.price,38);return Number.isFinite(timestamp)?[{timestamp,price}]:[];}catch{return [];}
+  }).sort((a,b)=>a.timestamp-b.timestamp).filter((point,index,all)=>index===0||point.timestamp!==all[index-1]!.timestamp);
+  if(loading)return <div className="market-chart-empty" role="status">Loading price history…</div>;
+  if(!points.length)return <div className="market-chart-empty" role="status">Price history is not available yet.</div>;
+  const min=points.reduce((current,p)=>p.price<current?p.price:current,points[0]!.price);
+  const max=points.reduce((current,p)=>p.price>current?p.price:current,points[0]!.price);
+  const first=points[0]!.timestamp,last=points[points.length-1]!.timestamp;
+  const coordinates=points.map(point=>({x:last===first?300:20+(point.timestamp-first)*560/(last-first),y:max===min?140:260-Number((point.price-min)*240000n/(max-min))/1000}));
+  return <div className="market-chart-wrap">
+    <svg viewBox="0 0 600 280" role="img" aria-label="Price history" className="market-chart">
+      <title>{`${history!.base_symbol} price in ${history!.quote_symbol}`}</title>
+      {[60,140,220].map(y=><line key={y} x1="20" x2="580" y1={y} y2={y} className="market-chart-grid" />)}
+      {coordinates.length>1&&<polyline points={coordinates.map(p=>`${p.x},${p.y}`).join(" ")} className="market-chart-line" />}
+      <circle cx={coordinates.at(-1)!.x} cy={coordinates.at(-1)!.y} r="4" className="market-chart-dot" />
+    </svg>
+    {points.length===1?<p className="market-chart-caption">One price observation. More history is not available yet.</p>:<div className="market-chart-dates"><span>{new Date(first).toLocaleString()}</span><span>{new Date(last).toLocaleString()}</span></div>}
+  </div>;
+}
 type SwapAsset = {id:string;code:string;name?:string;decimals?:number};
 function displayAssetIdentity(item: SwapAsset, identities: SwapAsset[]): string {
   const matchingCode=identities.filter(other=>other.code===item.code);
@@ -258,6 +290,9 @@ function FinanceShell({ page, auth }: { page: string; auth?: Auth }) {
   const [fundingError, setFundingError] = useState("");
   const [markets, setMarkets] = useState<any[]>([]);
   const [lending, setLending] = useState<any[]>([]);
+  const [historyRange,setHistoryRange] = useState<HistoryRange>("live");
+  const [marketHistory,setMarketHistory] = useState<MarketHistory|null>(null);
+  const [historyLoading,setHistoryLoading] = useState(false);
   const [earnBalances, setEarnBalances] = useState<EarnBalance[]>([]);
   const [earnBalancesLoading, setEarnBalancesLoading] = useState(false);
   const [earnBalancesError, setEarnBalancesError] = useState("");
@@ -351,6 +386,16 @@ function FinanceShell({ page, auth }: { page: string; auth?: Auth }) {
   // discovery_only until the first grant and customer return are chain-verified.
   const fundingCanStart = capability("capital.testnet_funding")?.enabled && assets.some((entry: any) => entry.available === true);
   const selectedSpotMarket = markets.find(entry => (entry.market_id ?? entry.id) === market);
+  useEffect(()=>{
+    setMarketHistory(null);
+    if(!session||!selectedSpotMarket||category!=="crypto_spot"||!(page==="markets"||page==="trade")||!capability("trade.spot")?.enabled){setHistoryLoading(false);return;}
+    let alive=true;setHistoryLoading(true);
+    const expectedMarket=selectedSpotMarket.market_id??selectedSpotMarket.id;
+    void api(`grapnel/market-history?market_id=${encodeURIComponent(expectedMarket)}&range=${historyRange}`).then(result=>{
+      if(alive&&result?.market_id===expectedMarket&&typeof result.base_asset_id==="string"&&typeof result.base_symbol==="string"&&typeof result.quote_symbol==="string"&&Array.isArray(result.points))setMarketHistory(result);
+    }).catch(()=>{}).finally(()=>{if(alive)setHistoryLoading(false);});
+    return()=>{alive=false;};
+  },[session?.customer_id,selectedSpotMarket?.market_id,selectedSpotMarket?.id,category,page,historyRange,caps]);
   const swapAssetMap = new Map<string, SwapAsset>();
   for (const entry of markets) {
     for (const side of ["in", "out"] as const) {
@@ -989,7 +1034,22 @@ function FinanceShell({ page, auth }: { page: string; auth?: Auth }) {
                 ))}
               </div>
               {category === "crypto_spot" && markets.length && selectedSpotMarket ? (
+                <>
+                <nav className="market-breadcrumb" aria-label="Breadcrumb"><Link href="/home">Home</Link><span>/</span><Link href="/markets">Markets</Link><span>/</span><strong>{marketHistory ? (swapAssetMap.has(marketHistory.base_asset_id) ? swapIdentity(marketHistory.base_asset_id) : marketHistory.base_symbol) : "Asset"}</strong></nav>
+                <div className="market-detail-layout">
+                  <section className="market-price-card" aria-label="Asset price">
+                    <div className="market-asset-heading">
+                      {marketHistory&&swapLogo(marketHistory.base_asset_id) ? <img src={swapLogo(marketHistory.base_asset_id)!} alt="" width={48} height={48} /> : <span className="market-asset-fallback" aria-hidden="true">{marketHistory?.base_symbol.slice(0,1)??"·"}</span>}
+                      <div><h2>{marketHistory ? (swapAssetMap.get(marketHistory.base_asset_id)?.name ?? marketHistory.base_symbol) : "Asset price"}</h2><span>{marketHistory?.base_symbol??""}</span></div>
+                    </div>
+                    <div className="market-price-heading"><strong>{marketHistory?.latest_price ? formatTokenAmount(marketHistory.latest_price) : "—"}</strong><span>{marketHistory?.latest_price ? `${marketHistory.quote_symbol} per ${marketHistory.base_symbol}` : "Price unavailable"}</span></div>
+                    <div className="market-price-change" aria-label="Price change"><strong>{marketHistory&&marketHistory.points.length>1?displayChange(marketHistory.change_absolute):"—"}</strong>{marketHistory?.change_absolute&&marketHistory.points.length>1&&<span>{marketHistory.quote_symbol}</span>}<span>({marketHistory&&marketHistory.points.length>1?displayChange(marketHistory.change_percent):"—"}{marketHistory?.change_percent&&marketHistory.points.length>1?"%":""})</span></div>
+                    <PriceChart history={marketHistory} loading={historyLoading} />
+                    <div className="market-periods" role="group" aria-label="Price timeframe">{(["live","1d","1w","1m","1y","all"] as const).map(period => <button type="button" key={period} aria-pressed={historyRange===period} onClick={()=>setHistoryRange(period)}>{period.toUpperCase()}</button>)}</div>
+                    {marketHistory?.as_of&&<p className="market-price-observed">Updated {new Date(marketHistory.as_of).toLocaleString()}</p>}
+                  </section>
                 <section className="swap-card" aria-label="Swap assets">
+                  <h2 className="swap-card-title">Swap</h2>
                   <div className="swap-token-panel">
                     <span className="swap-panel-label">Sell</span>
                     <div className="swap-panel-main">
@@ -1052,6 +1112,8 @@ function FinanceShell({ page, auth }: { page: string; auth?: Auth }) {
                         setQuoteClock(Date.now());setQuote(next);
                       })}>{busy ? "Getting quote…" : "Get quote"}</button>}
                 </section>
+                </div>
+                </>
               ) : <section className="card"><Empty icon="markets" title="No markets available." text={category === "crypto_spot" ? "Try refreshing to check available assets." : "This category is currently unavailable."} /></section>}
             </>
           )}

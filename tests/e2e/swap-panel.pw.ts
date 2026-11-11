@@ -12,8 +12,8 @@ const markets = [
   {market_id:'usdc-xlm',asset_in_id:USDC,asset_out_id:XLM,asset_in:identity(USDC,'USDC',7,'USD Coin'),asset_out:identity(XLM,'XLM',7),preparation_available:true},
   {market_id:'eurc-usdc',asset_in_id:EURC,asset_out_id:USDC,asset_in:identity(EURC,'EURC',6),asset_out:identity(USDC,'USDC',7,'USD Coin'),preparation_available:true},
 ];
-async function fixture(page:Page,{expired=false,blockExtra=false,duplicateUsdc=false,portfolioAssets=false}={}) {
-  const calls:{quote:any[];order:any[];sign:number}={quote:[],order:[],sign:0};
+async function fixture(page:Page,{expired=false,blockExtra=false,duplicateUsdc=false,portfolioAssets=false,historyMode="empty"}={} as {expired?:boolean;blockExtra?:boolean;duplicateUsdc?:boolean;portfolioAssets?:boolean;historyMode?:"empty"|"single"|"multiple"}) {
+  const calls:{quote:any[];order:any[];sign:number;history:string[]}={quote:[],order:[],sign:0,history:[]};
   let operation:any;
   const alternate='stellar-testnet:soroban:standalone-usdc-fixture-a1b2c3d';
   const unnamed='stellar-testnet:soroban:unnamed-usdc-fixture-e4f5g6h';
@@ -28,6 +28,11 @@ async function fixture(page:Page,{expired=false,blockExtra=false,duplicateUsdc=f
     if(path.endsWith('/session'))data={customer_id:'customer',wallet_id:'wallet',stellar_address:'fixture-address'};
     else if(path.endsWith('/capabilities'))data={capabilities:[{module:'capital.wallets',enabled:true,execution_status:'testnet_verified'},{module:'trade.spot',enabled:true,execution_status:'blocked'},{module:'trade.stocks',enabled:false},{module:'trade.perps',enabled:false},{module:'trade.commodities',enabled:false}]};
     else if(path.endsWith('/markets'))data=availableMarkets.map(item=>blockExtra&&item.market_id==='eurc-usdc'?{...item,preparation_available:false}:item);
+    else if(path.endsWith('/market-history')){
+      const url=new URL(route.request().url());calls.history.push(url.searchParams.get('range')!);
+      const points=historyMode==='empty'?[]:historyMode==='single'?[{timestamp:'2026-11-11T10:00:00Z',price:'6.123456789'}]:[{timestamp:'2026-11-11T10:00:00Z',price:'6.0000000'},{timestamp:'2026-11-11T10:05:00Z',price:'6.123456789'},{timestamp:'2026-11-11T10:10:00Z',price:'6.0500000'}];
+      data={market_id:url.searchParams.get('market_id'),base_asset_id:USDC,base_symbol:'USDC',quote_symbol:'XLM',latest_price:points.at(-1)?.price??null,as_of:points.at(-1)?.timestamp??null,points,change_absolute:historyMode==='multiple'?'0.05':null,change_percent:historyMode==='multiple'?'0.833333':null};
+    }
     else if(path.endsWith('/usdc-status'))data={enabled:true,spendable:'12.3456789',wallet_amount:'12.3456789'};
     else if(path.endsWith('/balances'))data=portfolioAssets?[
       {asset_id:XLM,asset:{...identity(XLM,'XLM',7),kind:'native'},spendable:'0',wallet_amount:'0',reserved:'0'},
@@ -145,4 +150,44 @@ test('portfolio uses asset metadata, keeps native/classic zero balances, and hid
   await expect(page.getByText('XRP',{exact:true})).toHaveCount(0);
   await expect(page.locator('tbody tr')).toHaveCount(4);
   await expect(page.getByRole('cell',{name:'0.123456',exact:true})).toHaveCount(2);
+});
+
+
+test('market detail shows selected asset and honest empty history beside the swap',async({page})=>{
+  await fixture(page);
+  const profile=page.getByRole('region',{name:'Asset price',exact:true});
+  await expect(profile.getByRole('heading',{name:'USD Coin',exact:true})).toBeVisible();
+  await expect(profile.getByText('Price history is not available yet.',{exact:true})).toBeVisible();
+  await expect(profile.getByRole('button',{name:'LIVE',exact:true})).toHaveAttribute('aria-pressed','true');
+  await expect(page.getByRole('navigation',{name:'Breadcrumb'})).toContainText('Home/Markets/USDC');
+  await expect(page.locator('.market-detail-layout svg[aria-label="Price history"]')).toHaveCount(0);
+  await page.getByRole('button',{name:'Flip assets',exact:true}).click();
+  await expect(profile.getByRole('heading',{name:'USD Coin',exact:true})).toBeVisible();
+  await page.screenshot({path:test.info().outputPath('market-detail-empty-desktop.png'),fullPage:true});
+});
+
+
+test('single actual price renders only a dot with its explicit unit and no invented change',async({page})=>{
+  const calls=await fixture(page,{historyMode:'single'});
+  const profile=page.getByRole('region',{name:'Asset price',exact:true});
+  await expect(profile.getByText('6.12345',{exact:true})).toBeVisible();
+  await expect(profile.getByText('XLM per USDC',{exact:true})).toBeVisible();
+  await expect(profile.locator('svg circle')).toHaveCount(1);await expect(profile.locator('svg polyline')).toHaveCount(0);
+  await expect(profile.getByLabel('Price change')).toHaveText('—(—)');
+  await profile.getByRole('button',{name:'1D',exact:true}).click();
+  await expect.poll(()=>calls.history.at(-1)).toBe('1d');
+  await expect(profile.getByRole('button',{name:'1D',exact:true})).toHaveAttribute('aria-pressed','true');
+});
+
+test('actual multi-point history draws price observations and keeps the trading widget beside it',async({page})=>{
+  await fixture(page,{historyMode:'multiple'});
+  const profile=page.getByRole('region',{name:'Asset price',exact:true});
+  await expect(profile.locator('svg polyline')).toHaveCount(1);
+  await expect(profile.getByLabel('Price change')).toContainText('+0.05XLM(+0.833333%)');
+  await expect(profile.getByText('6.05',{exact:true})).toBeVisible();
+  await page.screenshot({path:test.info().outputPath('market-detail-history-desktop.png'),fullPage:true});
+  await page.setViewportSize({width:390,height:844});
+  await expect.poll(()=>page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
+  await expect(page.getByRole('navigation',{name:'Breadcrumb'})).toHaveCSS('flex-direction','row');
+  await page.screenshot({path:test.info().outputPath('market-detail-history-mobile.png'),fullPage:true});
 });
