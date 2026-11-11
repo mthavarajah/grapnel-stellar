@@ -1,0 +1,217 @@
+{
+  "observed_at": "2026-11-11T21:21:58.355Z",
+  "mode": "READ_ONLY_TTL_NOT_RESTORATION",
+  "broadcast": false,
+  "tx_hash": null,
+  "rows": [
+    {
+      "role": "troller",
+      "kind": "instance",
+      "ledger": 5681694,
+      "entries": [
+        {
+          "live_until": 6353788,
+          "key_xdr": "AAAABgAAAAHZd9jd7//mkFeDLNDdhIXzQFgaAkIoS/Kn5A9y52O2oAAAABQAAAAB"
+        }
+      ]
+    },
+    {
+      "role": "troller",
+      "kind": "code",
+      "ledger": 5681694,
+      "entries": [
+        {
+          "live_until": 6353788,
+          "key_xdr": "AAAAB/LgGK5k/jNF43EbRtzffgWr7haavWCFvD98eAj+elqz"
+        }
+      ]
+    },
+    {
+      "role": "margin",
+      "kind": "instance",
+      "ledger": 5681694,
+      "entries": [
+        {
+          "live_until": 6353790,
+          "key_xdr": "AAAABgAAAAEUo9DHf79AcLzUHYeppoyCkjie0ww7g1SkZkwV0DSYiAAAABQAAAAB"
+        }
+      ]
+    },
+    {
+      "role": "margin",
+      "kind": "code",
+      "ledger": 5681694,
+      "entries": [
+        {
+          "live_until": 6353790,
+          "key_xdr": "AAAAB9po71ICewghFBsHHurCnvDCzvCyaYZMombeVuQnwtfi"
+        }
+      ]
+    },
+    {
+      "role": "swap_adapter",
+      "kind": "instance",
+      "ledger": 5681694,
+      "entries": [
+        {
+          "live_until": 6420915,
+          "key_xdr": "AAAABgAAAAFlOPd27pJxRvbiOQAv5UpRPQ/sqWbRbqmLXPmhQhZUOQAAABQAAAAB"
+        }
+      ]
+    },
+    {
+      "role": "swap_adapter",
+      "kind": "code",
+      "ledger": 5681694,
+      "entries": [
+        {
+          "live_until": 6353967,
+          "key_xdr": "AAAAB8584MZkwjcUq40cTyyyUjpb0xKa8ixynj+2tSW2lIVE"
+        }
+      ]
+    },
+    {
+      "role": "oracle",
+      "kind": "instance",
+      "ledger": 5681694,
+      "entries": [
+        {
+          "live_until": 6989241,
+          "key_xdr": "AAAABgAAAAGw7KROebfFrhD7dcxcLPrX7UfuazOzetkAMPD12FOYmAAAABQAAAAB"
+        }
+      ]
+    },
+    {
+      "role": "oracle",
+      "kind": "code",
+      "ledger": 5681694,
+      "entries": [
+        {
+          "live_until": 6989242,
+          "key_xdr": "AAAAByX8MGBly7mwVGHbeOwlmALLkWBTuls6uRGwpy3RqBQ5"
+        }
+      ]
+    },
+    {
+      "role": "native_token",
+      "kind": "instance",
+      "ledger": 5681694,
+      "entries": [
+        {
+          "live_until": 8468435,
+          "key_xdr": "AAAABgAAAAHXkotywnA8z+r365/0701QSlWouXn8m0UOoshCtNHOYQAAABQAAAAB"
+        }
+      ]
+    },
+    {
+      "role": "native_vault",
+      "kind": "instance",
+      "ledger": 5681694,
+      "entries": [
+        {
+          "live_until": 0,
+          "key_xdr": "AAAABgAAAAF3p1ccAAYjwnsa1JxbsKztjrHX+ELclnuQz56d8hjIDQAAABQAAAAB"
+        }
+      ]
+    },
+    {
+      "role": "native_vault",
+      "kind": "code",
+      "ledger": 5681694,
+      "entries": [
+        {
+          "live_until": 0,
+          "key_xdr": "AAAAB8ImgHQcUOtSdYpyCzbUTES38/hicby4hz75BzRgfeEg"
+        }
+      ]
+    },
+    {
+      "role": "mock_usdt",
+      "kind": "instance",
+      "ledger": 5681694,
+      "entries": [
+        {
+          "live_until": 5791691,
+          "key_xdr": "AAAABgAAAAHfdpz1ku+zlAev7uRJmtsyffrSvN3OxaNwUDLkJpydUQAAABQAAAAB"
+        }
+      ]
+    },
+    {
+      "role": "mock_usdt",
+      "kind": "code",
+      "ledger": 5681694,
+      "entries": [
+        {
+          "live_until": 0,
+          "key_xdr": "AAAABy7UMota0kpqgpwdHWZUNJ9b2Iv2n8PqB7kDSxh5fhhm"
+        }
+      ]
+    },
+    {
+      "role": "mock_usdt_vault",
+      "kind": "instance",
+      "ledger": 5681694,
+      "entries": [
+        {
+          "live_until": 0,
+          "key_xdr": "AAAABgAAAAGJbzZPFX96EhX/csQjp1dGa6upfqDpmXXlCrGF5FRM7gAAABQAAAAB"
+        }
+      ]
+    },
+    {
+      "role": "mock_usdt_vault",
+      "kind": "code",
+      "ledger": 5681694,
+      "entries": [
+        {
+          "live_until": 0,
+          "key_xdr": "AAAAB8ImgHQcUOtSdYpyCzbUTES38/hicby4hz75BzRgfeEg"
+        }
+      ]
+    },
+    {
+      "role": "aquarius_router",
+      "kind": "instance",
+      "ledger": 5681694,
+      "entries": [
+        {
+          "live_until": 8699218,
+          "key_xdr": "AAAABgAAAAFEWcJPGECM+j56YKlCymqsfUEV2jif6kewUK2AcYgZ0AAAABQAAAAB"
+        }
+      ]
+    },
+    {
+      "role": "aquarius_router",
+      "kind": "code",
+      "ledger": 5681694,
+      "entries": [
+        {
+          "live_until": 8692827,
+          "key_xdr": "AAAAB9NGaM0LlX9OVJcZAylRUDSVMQpNHEAd3OWRwPFSg0JU"
+        }
+      ]
+    },
+    {
+      "role": "aquarius_pool",
+      "kind": "instance",
+      "ledger": 5681694,
+      "entries": [
+        {
+          "live_until": 8438626,
+          "key_xdr": "AAAABgAAAAGY2RG3GFqZY/oI0PP0QrrWcKs8XecVDWrLeURpqSwXaQAAABQAAAAB"
+        }
+      ]
+    },
+    {
+      "role": "aquarius_pool",
+      "kind": "code",
+      "ledger": 5681694,
+      "entries": [
+        {
+          "live_until": 8684849,
+          "key_xdr": "AAAAB9aRE1qt6T/w98Ip4AnN4EITCgUSTPcgKwPREka0+bRz"
+        }
+      ]
+    }
+  ]
+}
