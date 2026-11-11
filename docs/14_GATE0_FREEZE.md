@@ -1,5 +1,8 @@
 # Gate 0 freeze — contract v0.1.0
 
+## Lead-approved additive revision 0.1.6 — 2026-11-11
+The existing entitled `GET /v1/trade/markets?asset_class=perps` discovery rows may include nullable `stats`. A non-null value contains the exact-symbol-matched Noether statistics: `asset`, `open_interest_long_atomic`, `open_interest_short_atomic`, signed `open_interest_net_atomic`, `volume_24h_atomic` (all integer strings denominated in USDC notional with seven decimal places), integer `open_positions`, nullable `capacity`, and snapshot `observed_at`, `source_url`, `indexer_ledger_age_seconds`, `pool`, and `custody`. Missing, failed or stale statistics stay null while independently available prices remain usable. This grants no trading permission and never changes `executable:false` or `execution_status:discovery_only`. Consumer categories remain hidden when their tenant entitlement is disabled. Existing history routes and customer authorization are unchanged.
+
 ## Lead-approved additive revision 0.1.5 — 2026-11-11
 Adds customer-scoped `GET /v1/capital/lending/earnings?customer_id&wallet_id` (wallet optional) with rows `{asset_id,earned:string|null,earned_since:string|null}`. Earnings use actual verified principal flows and current positions, never projected APY; incomplete or untracked history returns null. Adds entitled `GET /v1/trade/markets/:id/history?range=live|1d|1w|1m|1y|all`, returning `{market_id,base_asset_id,base_symbol,quote_symbol,latest_price:string|null,as_of:string|null,points:[{timestamp,price}],change_absolute:string|null,change_percent:string|null}`. History contains only actual observed data, without invented backfill or interpolation. No write permissions change.
 

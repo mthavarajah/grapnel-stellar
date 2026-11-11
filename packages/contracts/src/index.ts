@@ -1,5 +1,5 @@
 import { z } from 'zod';
-export const CONTRACT_VERSION = '0.1.5' as const;
+export const CONTRACT_VERSION = '0.1.6' as const;
 export const NETWORK = 'stellar-testnet' as const;
 export const NETWORK_PASSPHRASE = 'Test SDF Network ; September 2015' as const;
 export const MODULE_IDS = ['capital.wallets','capital.testnet_funding','capital.lending','trade.spot','trade.stocks','trade.perps','trade.commodities'] as const;
