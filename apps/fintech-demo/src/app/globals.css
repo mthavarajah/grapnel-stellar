@@ -1525,7 +1525,7 @@ footer strong {
 .spot-setup p { margin-top: 0; }
 .text-button { border: 0; background: transparent; color: var(--blue); text-decoration: underline; padding: 0 4px; }
 .quote-summary strong { overflow-wrap: anywhere; }
-.form-layout { grid-template-columns: minmax(0, 680px); }
+.form-layout { grid-template-columns: minmax(0, 1fr); max-width: none; width: 100%; }
 .funds-tabs { margin-bottom: 24px; }
 .funds-tabs button { flex: 1; }
 
