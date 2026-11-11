@@ -58,7 +58,7 @@ export async function buildApp(options:AppOptions={}):Promise<FastifyInstance>{
   }));
  };
  app.get('/health',async(_request,reply)=>{try{await pool.query('SELECT 1');return {status:'ok',network:NETWORK,db:'ok'};}catch{reply.code(503);return {status:'degraded',network:NETWORK,db:'unavailable'};}});
- app.get('/openapi.json',async(_request,reply)=>{reply.type('application/json');return JSON.parse(await readFile(new URL('../../../openapi/grapnel.json',import.meta.url),'utf8'));});
+ app.get('/openapi.json',async(_request,reply)=>{reply.type('application/json');return JSON.parse(await readFile(new URL('../../../openapi/grapnel.yaml',import.meta.url),'utf8'));});
  app.get('/docs',async(_request,reply)=>reply.type('text/html').send('<!doctype html><html><head><meta name="viewport" content="width=device-width"><title>Grapnel API</title><link rel="stylesheet" href="https://unpkg.com/swagger-ui-dist@5.30.2/swagger-ui.css"></head><body><div id="swagger-ui"></div><script src="https://unpkg.com/swagger-ui-dist@5.30.2/swagger-ui-bundle.js"></script><script>SwaggerUIBundle({url:"/openapi.json",dom_id:"#swagger-ui",persistAuthorization:false})</script></body></html>'));
  app.post('/v1/dashboard/login',{config:{rateLimit:{max:5,timeWindow:'1 minute'}}},async(request,reply)=>{
   if(request.headers.origin!==config.dashboardOrigin)throw new GrapnelError(403,'CSRF_INVALID','Owner login requires the dashboard origin');
