@@ -1,6 +1,6 @@
 # Integration gates — 2026-11-11
 
-Provider credentials and customer signing are integrated. **Full MVP acceptance is incomplete.** Actual payment, funding/return and native-XLM Blend supply/withdraw proofs are recorded below. Soroswap execution, USDC lending execution and public hosting remain pending.
+Provider credentials and customer signing are integrated. **Onchain Gate 2 is passed; public deployment remains incomplete.** Actual payment, funding/return, Soroswap swap and native-XLM Blend supply/withdraw proofs are recorded below. The additional USDC lending execution flow remains pending.
 
 ## Gate 0 — passed
 Foundation committed before delegation as `6ed12fd`. Monorepo, seven module IDs, auth boundaries, Zod/TypeScript interfaces, OpenAPI and Postgres baseline frozen. Current additive API contract is 0.1.1; see docs/14_GATE0_FREEZE.md. Agents worked in isolated scoped worktrees; lead integrated commits.
@@ -19,12 +19,14 @@ Foundation committed before delegation as `6ed12fd`. Monorepo, seven module IDs,
 ## Gate 1 — passed
 Actual Privy customer signature and approved intent verified for completed 0.1 XLM Testnet payment `c1fd6b62b43b062ec88b4bdeddf86e45ea329ac1b9e5969a199289b536208ab2`, ledger 5669076. Independent Horizon reads confirm exact source, fixed treasury recipient, native asset and 0.1000000 debit/credit, plus 100-stroop fee. Auth/tenant/customer-negative suite rerun:55 passed. No fallback signer was used. Gate 1 alone does not prove treasury funding, spot or lending execution; the Blend supply proof is separately recorded under Gate 2.
 
-## Gate 2 — partially passed
+## Gate 2 — passed for the core onchain MVP
 Treasury grant and customer return are verified for the same customer wallet and amount, in order. The 0.1 XLM grant is `70d688bc1a5e1a852a2d19ff0d2c9d9c3215b5458e2e2a2700bf24064be06b1c` (ledger 5669361); the customer-signed 0.1 XLM return is `4f1dcf32382fa783e9efafbcdf6eacee64fa926ece108bd3277165e6e86acece` (ledger 5669372). Horizon independently confirms exact native XLM debit/credit effects and 100-stroop fees. The live API now promotes funding to `testnet_verified`.
 
 A customer-signed Blend TestnetV2 native-XLM collateral supply is verified: `eed88945a8c1327f260a1808136d3c3e8c2dd2f62607628fe8ce95d04d54af35` (ledger 5669556). Horizon confirms a successful pool invocation and 0.1000000 XLM transfer from the customer wallet to the Blend pool. Grapnel reconciliation confirms wallet debit 0.1454406 XLM including 454406 stroops fee and collateral increase from 0 to 0.0999997 XLM. See [transaction](https://stellar.expert/explorer/testnet/tx/eed88945a8c1327f260a1808136d3c3e8c2dd2f62607628fe8ce95d04d54af35) and [evidence](../evidence/testnet.json).
 
-Blend withdrawal is now verified: `c5483ff9c241eb8f9449c32f1cb5556f6d4071df82474e754bc9bd298ba0c268`, ledger 5677438. Horizon confirms the exact 0.05 XLM pool-to-customer transfer. Grapnel confirms collateral decreased from 0.1002446 to 0.0502446 XLM and wallet net credit was 0.0487196 XLM after 12804 stroops fee. Soroswap swap remains unproven. Read-only simulations do not pass acceptance gates. Financial writes remain behind Gate 1; unsupported/unproven paths fail closed.
+Blend withdrawal is verified: `c5483ff9c241eb8f9449c32f1cb5556f6d4071df82474e754bc9bd298ba0c268`, ledger 5677438. Horizon confirms the exact0.05 XLM pool-to-customer transfer. Grapnel confirms collateral decreased from0.1002446 to0.0502446 XLM and wallet net credit was0.0487196 XLM after12804stroops fee.
+
+The customer-signed Soroswap swap is verified: `eb4e7f22eac0b36195047ac231074ede70d7f1930e43d9f897557d43438b7e9a`, ledger5678121. Independent Horizon transaction/effects reads confirm successful execution, exact100XLM debit and15.0312556 classic USDC credit with the pinned Testnet issuer. The durable operation completed only after matching balance changes; the fee was16407stroops. This completes the core funding/return + spot + Blend supply/withdraw proof set. Additional USDC Blend supply/withdraw remains unverified. See `evidence/testnet.json`.
 
 ## Gate 3 — partially complete
 Public source published and unauthenticated access verified: https://github.com/mthavarajah/grapnel-stellar . Public dashboard/API/fintech URLs and qualifying video remain absent. Owned Grapnel contract IDs: none. Referenced Blend contracts belong to Blend.
