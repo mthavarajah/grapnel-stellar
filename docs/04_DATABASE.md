@@ -60,3 +60,7 @@ Create `Demo Fintech` tenant through dashboard flow, optional fixture user and m
 - Return requires real customer signature, always pays verified configured treasury recipient and preserves XLM reserve.
 - No `fiat_sessions` table or bank/card provider state is created for this demo.
 - No successful operation without real Testnet confirmation.
+
+## Durable Margin workflows (migration 0003)
+
+`margin_workflows` stores one active workflow per tenant/wallet, immutable economic terms and ownership, a revision and its active child operation. `margin_workflow_steps` binds each attempt to a real existing customer operation with composite tenant/customer/wallet foreign keys, exact intent digest, provider baseline and verified chain evidence. The parent is not an operation and never blocks its own child through the wallet pending-operation rule. Creation and steps are idempotent; a completed signed child and independent matching transaction proof are required before phase advancement. No next step is automatically authorized. Provider execution remains unavailable until each adapter step and customer signing path is integrated.

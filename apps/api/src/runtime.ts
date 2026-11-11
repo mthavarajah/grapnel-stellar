@@ -55,6 +55,15 @@ export async function hasGate1Proof(chain:StellarTestnetExecutor):Promise<boolea
   return tx.successful===true && tx.source_account===proof.wallet_address;
  }catch{return false;}
 }
+/** Provider writes must check their own current entitlement, including Margin-only tenants. */
+export function financialRouteModule(path:string):'capital.testnet_funding'|'capital.lending'|'trade.perps'|'trade.spot'|null {
+ const pathname=path.split('?')[0]!;
+ if(pathname.startsWith('/v1/capital/testnet/'))return 'capital.testnet_funding';
+ if(pathname.startsWith('/v1/capital/lending/'))return 'capital.lending';
+ if(pathname.startsWith('/v1/trade/margin/'))return 'trade.perps';
+ if(pathname.startsWith('/v1/trade/'))return 'trade.spot';
+ return null;
+}
 export async function createRuntime(pool?:Pool) {
  const config=loadConfig();
  const db=pool??createPool(config.databaseUrl);
@@ -191,7 +200,7 @@ export async function createRuntime(pool?:Pool) {
    app.addHook('preHandler',async request=>{
     if(request.method!=='POST')return;
     const path=request.url.split('?')[0]!;
-    const module=path.startsWith('/v1/capital/testnet/')?'capital.testnet_funding':path.startsWith('/v1/capital/lending/')?'capital.lending':path.startsWith('/v1/trade/')?'trade.spot':null;
+    const module=financialRouteModule(path);
     if(!module)return;
     await requireBusiness(request,module);
     if(!await hasGate1Proof(chain))throw new GrapnelError(409,'EXECUTION_UNAVAILABLE','Current Gate 1 chain proof is required before financial provider execution');
