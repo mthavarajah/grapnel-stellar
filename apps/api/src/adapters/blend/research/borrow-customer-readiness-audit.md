@@ -18,8 +18,8 @@ Direct one-unit borrow preparation correctly rejected `COLLATERAL_REQUIRED`. Dir
 2. Choose USDC, add **1 USDC collateral**, review the exact new-pool transaction and approve through the normal Privy customer flow. Wait for its durable operation to complete; this first real debit belongs to the customer, not this diagnostic.
 3. Refresh the Borrow card. Its collateral and available-to-borrow must now be positive from fresh source reads. Existing Earn collateral must remain separate.
 4. Review and approve a small **0.1 USDC borrow** only if fresh available capacity permits it. Wait for completion and verify both wallet receipt and debt increase.
-5. Repay the exact freshly returned debt amount (the app's Max/repayable amount), accounting for accrued interest. Wait for verified wallet/debt changes.
-6. Only after debt is zero, withdraw collateral up to the freshly read available amount. Preserve sufficient wallet XLM for the actual reviewed network fee.
+5. Repayment acceptance needs an explicit fresh-value/full-repayment UX check. The current input has no Max control, and copying a displayed significant-digit amount can leave interest dust; the present adapter also rejects requests above its fresh debt read even though the protocol can refund an overpayment. Do not claim a complete customer repay/withdraw cycle until the lead integrates a bounded, explicitly reviewed repayment-all flow or otherwise verifies the exact final debt is zero. Ordinary repayment below the current debt remains available.
+6. Only after independently verified zero debt, withdraw collateral up to the freshly read available amount. Preserve sufficient wallet XLM for the actual reviewed network fee.
 
 Capture real customer operation IDs/hashes and the source-backed wallet/debt/collateral changes. The earlier own-account QA cycles remain separate proof and do not establish customer Privy execution.
 
