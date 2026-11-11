@@ -1,0 +1,178 @@
+{
+  "observed_at": "2026-11-11T21:27:20.408Z",
+  "network": "Test SDF Network ; September 2015",
+  "signing_mode": "ephemeral_qa_ed25519_NOT_Privy_customer_flow",
+  "customer_privy_proof": false,
+  "max_actions": 19,
+  "actions_attempted": 6,
+  "qa_addresses": [
+    "GDPZCCUJX5EPXVEO4TFGFF3TZTKGR63YUKAX7VEL4PLFNBMES2B6TGCZ",
+    "GAYBUMUKX57LEXP7CGWXCZOCOFJJL7F22PERRI2LCKZC7EP7BSPQGBLM",
+    "GD4ZUVGTLJ6652NJJFPG5BZUP2E26PDY3BBDMJLZEVQQBGFVYSNHU7J4"
+  ],
+  "actions": [
+    {
+      "label": "friendbot_activation",
+      "address": "GDPZCCUJX5EPXVEO4TFGFF3TZTKGR63YUKAX7VEL4PLFNBMES2B6TGCZ",
+      "hash": "2dee0e116b1e14ef8caf49d4440b3a03880db42a23e21c2ba5405bc2d606389a",
+      "status": "verified_account_exists",
+      "native_balance": "10000.0000000"
+    },
+    {
+      "label": "friendbot_activation",
+      "address": "GAYBUMUKX57LEXP7CGWXCZOCOFJJL7F22PERRI2LCKZC7EP7BSPQGBLM",
+      "hash": "ffb49f749644d7d319a55d5b8728bc7f3269a7c2d5882194142b9193d403e17b",
+      "status": "verified_account_exists",
+      "native_balance": "10000.0000000"
+    },
+    {
+      "label": "friendbot_activation",
+      "address": "GD4ZUVGTLJ6652NJJFPG5BZUP2E26PDY3BBDMJLZEVQQBGFVYSNHU7J4",
+      "hash": "181da54b60f9a36cad06b14b46215ccdfbd0daed207c1f64fcb0522d3b7d14f6",
+      "status": "verified_account_exists",
+      "native_balance": "10000.0000000"
+    },
+    {
+      "label": "qa_native_consolidation",
+      "hash": "6cb877f1116c8750574faff5477e9c93c07c388ba89fb729de632e5a11e93065",
+      "from": "GAYBUMUKX57LEXP7CGWXCZOCOFJJL7F22PERRI2LCKZC7EP7BSPQGBLM",
+      "to": "GDPZCCUJX5EPXVEO4TFGFF3TZTKGR63YUKAX7VEL4PLFNBMES2B6TGCZ",
+      "amount": "9995",
+      "status": "SUCCESS",
+      "ledger": 5681765
+    },
+    {
+      "label": "qa_native_consolidation",
+      "hash": "ed45a620f229810655e34506fd39988be70910d54e00b66f5dcaf3162f4fe523",
+      "from": "GD4ZUVGTLJ6652NJJFPG5BZUP2E26PDY3BBDMJLZEVQQBGFVYSNHU7J4",
+      "to": "GDPZCCUJX5EPXVEO4TFGFF3TZTKGR63YUKAX7VEL4PLFNBMES2B6TGCZ",
+      "amount": "9995",
+      "status": "SUCCESS",
+      "ledger": 5681766
+    },
+    {
+      "label": "qa_rebalance_native_to_mock_usdt",
+      "hash": "c946a2d64993c27c21ef7ad7ea65d2e2b2ae5cc273be3b8e2b2ab3a121f2cc25",
+      "sequence": "24402981973655553",
+      "fee_stroops": "6967484",
+      "status": "SUCCESS",
+      "explorer": "https://stellar.expert/explorer/testnet/tx/c946a2d64993c27c21ef7ad7ea65d2e2b2ae5cc273be3b8e2b2ab3a121f2cc25",
+      "send_status": "PENDING",
+      "ledger": 5681770,
+      "return_value": "46507242451"
+    }
+  ],
+  "snapshots": [
+    {
+      "phase": "funded",
+      "balances": {
+        "native": "29990.0000000",
+        "mock_usdt_atomic": "0",
+        "vault_receipt_atomic": "0",
+        "margin_receipt_atomic": "0"
+      }
+    },
+    {
+      "phase": "rebalance",
+      "intent": {
+        "purpose": "qa_rebalance",
+        "walletAddress": "GDPZCCUJX5EPXVEO4TFGFF3TZTKGR63YUKAX7VEL4PLFNBMES2B6TGCZ",
+        "inputXlmAtomic": "280000000000",
+        "minimumMockUsdtAtomic": "46274706239"
+      },
+      "before": {
+        "native": "29990.0000000",
+        "mock_usdt_atomic": "0",
+        "vault_receipt_atomic": "0",
+        "margin_receipt_atomic": "0"
+      },
+      "after": {
+        "native": "1989.4492786",
+        "mock_usdt_atomic": "46507242451",
+        "vault_receipt_atomic": "0",
+        "margin_receipt_atomic": "0"
+      },
+      "market": {
+        "market_id": "stellar-testnet:peridot:XLM-USDT-MARGIN",
+        "label": "XLM / Mock USDT Margin",
+        "asset_class": "perps",
+        "instrument_type": "leveraged_margin",
+        "module": "trade.perps",
+        "provider": "peridot",
+        "network": "stellar-testnet",
+        "underlying": {
+          "symbol": "XLM",
+          "name": "Stellar Lumens",
+          "display_decimals": 7
+        },
+        "base": {
+          "id": "stellar-testnet:native:XLM",
+          "network": "stellar-testnet",
+          "kind": "native",
+          "code": "XLM",
+          "name": "Stellar Lumens",
+          "decimals": 7,
+          "contractId": "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC",
+          "verified": true,
+          "sourceUrl": "https://peridot.finance/app/margin"
+        },
+        "collateral": {
+          "id": "stellar-testnet:soroban:CDPXNHHVSLX3HFAHV7XOISM23MZH36WSXTO45RNDOBIDFZBGTSOVD4OY",
+          "network": "stellar-testnet",
+          "kind": "soroban",
+          "code": "USDT",
+          "name": "Mock USDT",
+          "decimals": 7,
+          "contractId": "CDPXNHHVSLX3HFAHV7XOISM23MZH36WSXTO45RNDOBIDFZBGTSOVD4OY",
+          "verified": true,
+          "sourceUrl": "https://peridot.finance/app/margin"
+        },
+        "directions": [
+          "long",
+          "short"
+        ],
+        "min_leverage": 2,
+        "max_leverage": 5,
+        "reference_price_atomic": "1499365",
+        "reference_price": "0.1499365",
+        "price_decimals": 7,
+        "oracle_timestamp": "2026-11-11T21:25:00.000Z",
+        "oracle_age_seconds": 195,
+        "price_status": "current",
+        "observed_at": "2026-11-11T21:28:15.482Z",
+        "source_url": "https://peridot.finance/app/margin",
+        "ledger": 5681770,
+        "execution_status": "discovery_only",
+        "executable": false,
+        "preparation_available": false,
+        "reason": "PERIDOT_THREE_STEP_INSPECTOR_REQUIRED",
+        "reason_message": "Peridot leveraged margin requires a separately reviewed customer-signed three-step workflow before execution.",
+        "stats": null,
+        "risk": {
+          "oracle_band_scaled": "50000",
+          "scale": "1000000",
+          "pool_price_mock_usdt_per_xlm": "0.1534678",
+          "oracle_price_mock_usdt_per_xlm": "0.1500599",
+          "deviation_scaled": "22710",
+          "oracle_band_exceeded": false,
+          "onchain_long_parameters": {
+            "liquidation_incentive_scaled": "10000",
+            "maintenance_margin_scaled": "50000",
+            "max_leverage": "5"
+          },
+          "onchain_short_parameters": null,
+          "onchain_execution_parameters": {
+            "close_slippage_scaled": "50000",
+            "liquidation_slippage_scaled": "100000",
+            "max_open_deviation_scaled": "100000",
+            "open_slippage_scaled": "50000"
+          },
+          "native_available_liquidity_atomic": "9371653653",
+          "mock_usdt_available_liquidity_atomic": "623483682306",
+          "pool_swap_paused": false
+        }
+      }
+    }
+  ],
+  "last_error": "The QA vault deposit exceeds its exact reviewed Testnet scope"
+}
