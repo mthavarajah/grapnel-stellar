@@ -73,6 +73,33 @@ describe('Durable worker provider boundaries (offline doubles; no sender touches
  it('returns structured observed evidence only after mocked RPC success and actual fixture deltas',async()=>{const {row}=envelopeFixture();const f=fakeRuntime(row);const result=await f.worker.verifyDeltas(row.id,row.tx_hash);expect(result).toMatchObject({verified:true,result:{blend_supply_verification:{verified:true}}});});
 });
 
+function usdcRuntimeFixture(action:'supply'|'withdraw',issuer=BLEND_USDC_ASSET_ID){
+ const {tx,row}=envelopeFixture(),usdcBaseline={asset_id:issuer,market_id:'usdc-market',pool_contract_id:'live-pool',reserve_contract_id:'live-usdc-sac',wallet_address:wallet.publicKey(),wallet_amount:action==='supply'?'10.0000000':'9.0000000',collateral:action==='supply'?'0.0000000':'1.0000000',as_of:asOf,position_as_of:asOf,position_ledger:99};
+ const usdcPosition:BlendPosition={market_id:'usdc-market',pool_contract_id:'live-pool',reserve_contract_id:'live-usdc-sac',asset_id:issuer,supplied:action==='supply'?'1.0000000':'0.0000000',collateral:action==='supply'?'1.0000000':'0.0000000',borrowed:'0.0000000',wallet_spendable:false,supply_apy_variable:null,health_factor:null,as_of_ledger:101,as_of:asOf,readiness:'discovery_only'};
+ const usdcBalance:WalletBalance={asset_id:issuer,wallet_amount:action==='supply'?'9.0000000':'10.0000000',reserved:'0',spendable:'8.0000000',as_of:asOf,source:'stellar_horizon_testnet'};
+ const exactAction:PreparedAction={...row.prepared_action,summary:{...row.prepared_action.summary,action:`blend.${action}`,fromAssetId:issuer,amount:'1.0000000'}};
+ return {tx,row:{...row,type:`blend.${action}`,prepared_action:exactAction,request_json:{customer_id:'offline-customer',wallet_id:'offline-wallet',asset_id:issuer,market_id:'usdc-market',amount:'1.0000000'},result_json:{[action==='supply'?'blend_supply_baseline':'blend_withdraw_baseline']:usdcBaseline}},observed:{positions:[usdcPosition],balances:[usdcBalance]}};
+}
+describe('Blend USDC reconciliation dispatch in the durable worker',()=>{
+ it.each(['supply','withdraw'] as const)('routes %s through USDC-only deltas without subtracting the separate XLM fee',async action=>{
+  const fixture=usdcRuntimeFixture(action),f=fakeRuntime(fixture.row,true,'SUCCESS',true,fixture.observed);const result=await f.worker.verifyDeltas(fixture.row.id,fixture.row.tx_hash);
+  expect(result).toMatchObject({verified:true,result:{blend_usdc_verification:{verified:true,asset_id:BLEND_USDC_ASSET_ID,operation:action,requested_atomic:'10000000',wallet_delta:action==='supply'?'-1.0000000':'1.0000000',soroban_fee_asset_id:XLM.id}}});
+ });
+ it('rejects a different classic issuer rather than matching by USDC code',async()=>{
+  const otherIssuer='stellar-testnet:classic:USDC:GAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAWHF',fixture=usdcRuntimeFixture('supply',otherIssuer),f=fakeRuntime(fixture.row,true,'SUCCESS',true,fixture.observed);
+  expect(await f.worker.verifyDeltas(fixture.row.id,fixture.row.tx_hash)).toBe(false);
+ });
+ it.each(['supply','withdraw'] as const)('rejects extra %s USDC movement instead of folding the XLM fee into token deltas',async action=>{
+  const fixture=usdcRuntimeFixture(action),balance=fixture.observed.balances[0]!;
+  fixture.observed.balances[0]={...balance,wallet_amount:action==='supply'?'8.9400000':'10.0600000'};
+  const f=fakeRuntime(fixture.row,true,'SUCCESS',true,fixture.observed);
+  expect(await f.worker.verifyDeltas(fixture.row.id,fixture.row.tx_hash)).toMatchObject({verified:false,result:{blend_usdc_verification:{verified:false}}});
+ });
+ it('keeps the native XLM worker reconciliation path intact',async()=>{
+  const {row}=envelopeFixture(),f=fakeRuntime(row);expect(await f.worker.verifyDeltas(row.id,row.tx_hash)).toMatchObject({verified:true,result:{blend_supply_verification:{verified:true,asset_id:XLM.id}}});
+ });
+});
+
 const databaseUrl=process.env.SUPPLY_RUNTIME_TEST_DATABASE_URL;
 describe.skipIf(!databaseUrl)('Reconciliation baseline preservation (disposable Postgres, offline operations)',()=>{
  let pool:Pool;let operations:OperationService;const businessId=randomUUID(),customerId=randomUUID(),walletId=randomUUID();
