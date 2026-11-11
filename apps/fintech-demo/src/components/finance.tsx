@@ -128,19 +128,22 @@ function Icon({ name, size = 20 }: { name: string; size?: number }) {
     </svg>
   );
 }
+const tradeCategories = [["crypto_spot", "Crypto spot"], ["stocks", "Stocks"], ["perps", "Perpetuals"], ["commodities", "Commodities"]] as const;
 const nav = [
   ["home", "Overview"],
-  ["funds", "Testnet funds"],
+  ["funds", "Funds"],
   ["markets", "Markets"],
   ["earn", "Earn"],
   ["activity", "Activity"],
 ];
 function customerMessage(message: string): string {
-  if (message.includes("GATE_1_SIGNING_PROOF_REQUIRED") || /Gate 1.*proof/i.test(message)) return "Complete the signing check on Overview.";
+  if (/GATE_1_SIGNING_PROOF_REQUIRED|Gate 1|[A-Z]+(?:_[A-Z0-9]+)+|Privy|Stellar|Soroswap|Blend|provider|protocol/i.test(message)) return "This action is unavailable right now. Please try again.";
   if (message.includes("MODULE_NOT_ENABLED") || /module.*(disabled|not enabled)/i.test(message)) return "This module is unavailable.";
   return message;
 }
 const assetCode = (id?: string): string => id === XLM_ASSET ? "XLM" : id === USDC_ASSET ? "USDC" : "Asset";
+const supportedSpotPair = (input?: string, output?: string): boolean =>
+  input === XLM_ASSET && output === USDC_ASSET || input === USDC_ASSET && output === XLM_ASSET;
 const statusLabel = (status: string): string => ({completed:"Completed",awaiting_customer_authorization:"Needs approval",preparing:"Preparing",submitted:"Submitted",confirming:"Confirming",failed:"Failed",rejected:"Declined",expired:"Expired",recovery_required:"Check transaction"}[status] ?? "In progress");
 function activityLabel(op: Operation): string {
   if (op.type === "wallet.usdc_trustline") return op.status === "completed" ? "Enabled USDC" : "Enable USDC";
@@ -161,9 +164,9 @@ const short = (v: string) =>
 const title: Record<string, string> = {
   home: "Overview",
   login: "Your wallet. Your approval.",
-  fund: "Get Testnet funds",
-  funds: "Testnet funds",
-  return: "Return Testnet Funds",
+  fund: "Get funds",
+  funds: "Funds",
+  return: "Return funds",
   markets: "Markets",
   trade: "Markets",
   earn: "Earn",
@@ -199,7 +202,7 @@ function PrivyFinance({ page }: { page: string }) {
   const { signRawHash } = useSignRawHash();
   const connect = async () => {
     const token = await loginToken();
-    if (!token) throw Error("Sign in with Privy first");
+    if (!token) throw Error("Please sign in first");
     await api("session", { identity_token: token });
     void refreshUser().catch(() => {});
   };
@@ -303,6 +306,12 @@ function FinanceShell({ page, auth }: { page: string; auth?: Auth }) {
   }, [quote]);
   const polling = useRef({ id: "", attempt: 0 });
   const capability = (module: string) => caps.find((c) => c.module === module);
+  const enabledTradeCategories = tradeCategories.filter(([id]) => capability("trade." + (id === "crypto_spot" ? "spot" : id))?.enabled);
+  useEffect(() => {
+    if (!caps.length || enabledTradeCategories.some(([id]) => id === category)) return;
+    setCategory(enabledTradeCategories[0]?.[0] ?? "unavailable"); setMarket(""); setMarkets([]); setQuote(null);
+  }, [caps, category]);
+
   const executable = (module: string) =>
     capability(module)?.enabled &&
     capability(module)?.execution_status === "testnet_verified";
@@ -321,9 +330,14 @@ function FinanceShell({ page, auth }: { page: string; auth?: Auth }) {
   const selectedSpotMarket = markets.find(entry => (entry.market_id ?? entry.id) === market);
   const canPrepareSpot = !!session && category === "crypto_spot" && capability("trade.spot")?.enabled === true &&
     capability("capital.wallets")?.execution_status === "testnet_verified" &&
-    selectedSpotMarket?.asset_in_id === XLM_ASSET && selectedSpotMarket?.asset_out_id === USDC_ASSET &&
+    supportedSpotPair(selectedSpotMarket?.asset_in_id, selectedSpotMarket?.asset_out_id) &&
     (selectedSpotMarket?.preparation_available === true || selectedSpotMarket?.executable === true);
   const quoteExpired = !quote || !Number.isFinite(Date.parse(quote.expires_at)) || Date.parse(quote.expires_at) <= quoteClock;
+  const quoteMatchesMarket = quote && quote.market_id === market && quote.asset_in_id === selectedSpotMarket?.asset_in_id && quote.asset_out_id === selectedSpotMarket?.asset_out_id;
+  const spotInputCode = assetCode(selectedSpotMarket?.asset_in_id);
+  const spotOutputCode = assetCode(selectedSpotMarket?.asset_out_id);
+  const spotInputBalance = selectedSpotMarket?.asset_in_id === USDC_ASSET ? usdcStatus?.spendable : balances.find(entry => entry.asset_id === XLM_ASSET)?.spendable;
+
 
   const refresh = useCallback(async () => {
     let identity: Session | null = null;
@@ -382,7 +396,7 @@ function FinanceShell({ page, auth }: { page: string; auth?: Auth }) {
           const selected = caps.find(c => c.module === "trade." + (category === "crypto_spot" ? "spot" : category));
           if (selected?.enabled && category === "crypto_spot") {
             const m = await api("grapnel/markets?asset_class=" + category);
-            if (alive) setMarkets((Array.isArray(m) ? m : (m.markets ?? [])).filter((entry: {asset_in_id:string;asset_out_id:string}) => entry.asset_in_id === XLM_ASSET && entry.asset_out_id === USDC_ASSET));
+            if (alive) setMarkets((Array.isArray(m) ? m : (m.markets ?? [])).filter((entry: {asset_in_id:string;asset_out_id:string}) => supportedSpotPair(entry.asset_in_id, entry.asset_out_id)));
             if (alive) void refreshUsdcStatus();
           } else if (alive) setMarkets([]);
         }
@@ -537,7 +551,7 @@ function FinanceShell({ page, auth }: { page: string; auth?: Auth }) {
       <main className="login-screen">
         <section className="login-card">
           <div className="brand"><span className="brandmark">l<span>f</span></span><span>local finance</span></div>
-          <span className="badge"><i /> STELLAR TESTNET</span>
+
           <h1>{loading ? "Opening your workspace…" : "Welcome to Local Finance."}</h1>
           <p>Sign in to connect your wallet and open your dashboard.</p>
           {loginTimedOut && <p className="login-error" role="alert">Sign-in is taking too long. Retry the connection.</p>}
@@ -566,7 +580,7 @@ function FinanceShell({ page, auth }: { page: string; auth?: Auth }) {
         <div className="workspace">
           <span className="workspace-avatar">L</span>
           <div>
-            Personal workspace<small>Stellar Testnet</small>
+            Personal workspace
           </div>
           <span className="chevron">⌄</span>
         </div>
@@ -587,18 +601,7 @@ function FinanceShell({ page, auth }: { page: string; auth?: Auth }) {
             </Link>
           ))}
         </nav>
-        <div className="sidebar-bottom">
-          <div className="shield">
-            <Icon name="shield" />
-            <p>
-              Built on Stellar.
-              <br />
-              <strong>Powered by</strong>
-              <GrapnelMark />
-            </p>
-          </div>
 
-        </div>
       </aside>
       <div className="main">
         <header className="topbar">
@@ -609,9 +612,7 @@ function FinanceShell({ page, auth }: { page: string; auth?: Auth }) {
             </strong>
           </span>
           <div className="top-actions">
-            <span className="badge">
-              <i /> STELLAR TESTNET
-            </span>
+
             {session ? (
               <button
                 className="avatar"
@@ -709,7 +710,7 @@ function FinanceShell({ page, auth }: { page: string; auth?: Auth }) {
                   </h2>
                   <p>
                     {session
-                      ? "Your Stellar Testnet wallet."
+                      ? "Your wallet is ready."
                       : "Sign in to connect your wallet."}
                   </p>
                   <div className="wallet-address">
@@ -734,7 +735,7 @@ function FinanceShell({ page, auth }: { page: string; auth?: Auth }) {
                     {session ? (
                       <>
                         <Link className="button light" href="/funds">
-                          <Icon name="fund" size={17} /> Get Testnet funds
+                          <Icon name="fund" size={17} /> Get funds
                         </Link>
                         <Link className="button ghost" href="/funds">
                           Return funds <Icon name="arrow" size={16} />
@@ -748,7 +749,7 @@ function FinanceShell({ page, auth }: { page: string; auth?: Auth }) {
                       >
                         {auth?.authenticated
                           ? "Connect my wallet"
-                          : "Sign in with Privy"}
+                          : "Sign in"}
                         <Icon name="arrow" size={17} />
                       </button>
                     )}
@@ -756,9 +757,7 @@ function FinanceShell({ page, auth }: { page: string; auth?: Auth }) {
                 </div>
                 <div className="path-card">
                   <span className="eyebrow">WALLET DETAILS</span>
-                  <h3>Stellar Testnet</h3>
-                  <div className="detail-row"><span>Wallet provider</span><strong>Privy</strong></div>
-                  <div className="detail-row"><span>Network</span><strong>Testnet</strong></div>
+                  <h3>Your wallet</h3>
                   <div className="detail-row"><span>Status</span><strong>{session ? "Connected" : "Not connected"}</strong></div>
                 </div>
               </section>
@@ -777,14 +776,11 @@ function FinanceShell({ page, auth }: { page: string; auth?: Auth }) {
                     <Icon name="markets" />
                   </span>
                   <span className="status-pill">
-                    {capability("trade.spot")?.execution_status.replaceAll(
-                      "_",
-                      " ",
-                    ) ?? "Awaiting connection"}
+                    Markets
                   </span>
                   <h3>Find your next opportunity.</h3>
                   <p>
-                    View available Testnet markets.
+                    View available markets.
                   </p>
                   <strong>
                     Explore markets <Icon name="arrow" size={17} />
@@ -794,10 +790,10 @@ function FinanceShell({ page, auth }: { page: string; auth?: Auth }) {
                   <span className="feature-icon green">
                     <Icon name="earn" />
                   </span>
-                  <span className="status-pill">Blend lending</span>
+                  <span className="status-pill">Earn</span>
                   <h3>Understand what you supply.</h3>
                   <p>
-                    View Blend Testnet pools.
+                    View earning options.
                   </p>
                   <strong>
                     Explore Earn <Icon name="arrow" size={17} />
@@ -807,9 +803,9 @@ function FinanceShell({ page, auth }: { page: string; auth?: Auth }) {
               {session && capability("capital.wallets")?.execution_status !== "testnet_verified" && (
                 <section className="proof-card">
                   <div>
-                    <strong>Verify Testnet signing</strong>
+                    <strong>Enable transfers</strong>
                     <p>
-                      Approve a 0.1 XLM Testnet payment to connect transfer actions.
+                      Review a 0.1 XLM payment to enable transfers.
                     </p>
                   </div>
                   <button
@@ -827,14 +823,14 @@ function FinanceShell({ page, auth }: { page: string; auth?: Auth }) {
           )}
           {fundingPage === "fund" && <>
             <section className="section" aria-label="Current wallet balances">
-              <div className="section-heading"><h2>Your wallet balances</h2><span className="muted small">Stellar Testnet</span></div>
+              <div className="section-heading"><h2>Your wallet balances</h2></div>
               <BalanceTable balances={balances} connected={!!session} />
             </section>
           </>}
           {(fundingPage === "fund" || fundingPage === "return") && (
             <div className="form-layout">
               <section className="card transaction-form" id={fundingPage === "fund" ? "treasury-funding" : undefined}>
-                <div className="tabs funds-tabs" role="tablist" aria-label="Testnet funds action">
+                <div className="tabs funds-tabs" role="tablist" aria-label="Funds action">
                   <button role="tab" aria-selected={fundingPage === "fund"} className={fundingPage === "fund" ? "selected" : ""} disabled={busy}
                     onClick={() => { setFundsDirection("fund"); setError(""); }}>Get funds</button>
                   <button role="tab" aria-selected={fundingPage === "return"} className={fundingPage === "return" ? "selected" : ""} disabled={busy}
@@ -845,8 +841,8 @@ function FinanceShell({ page, auth }: { page: string; auth?: Auth }) {
                 </span>
                 <h2>
                   {fundingPage === "fund"
-                    ? "Get Testnet funds"
-                    : "Return Testnet funds"}
+                    ? "Get funds"
+                    : "Return funds"}
                 </h2>
 
                 <label htmlFor="asset">Asset</label>
@@ -858,13 +854,12 @@ function FinanceShell({ page, auth }: { page: string; auth?: Auth }) {
                   {assets.length ? (
                     assets.map((a) => (
                       <option key={a.asset_id} value={a.asset_id}>
-                        {a.asset?.code ?? a.code ?? assetCode(a.asset_id)} ·{" "}
-                        {a.asset?.kind ?? "Testnet"}
+                        {a.asset?.code ?? a.code ?? assetCode(a.asset_id)}
                       </option>
                     ))
                   ) : (
                     <option value="stellar-testnet:native:XLM">
-                      XLM · native Stellar Testnet
+                      XLM
                     </option>
                   )}
                 </select>
@@ -882,10 +877,7 @@ function FinanceShell({ page, auth }: { page: string; auth?: Auth }) {
                       "XLM"}
                   </span>
                 </div>
-                <div className="detail-row">
-                  <span>Network</span>
-                  <strong>Stellar Testnet</strong>
-                </div>
+
                 <div className="detail-row">
                   <span>
                     {fundingPage === "fund" ? "Treasury inventory" : "Authorization"}
@@ -913,7 +905,7 @@ function FinanceShell({ page, auth }: { page: string; auth?: Auth }) {
                   {busy
                     ? "Preparing…"
                     : fundingPage === "fund"
-                      ? "Request Testnet Funds"
+                      ? "Get funds"
                       : "Review return transaction"}
                   <Icon name="arrow" size={17} />
                 </button>
@@ -925,12 +917,7 @@ function FinanceShell({ page, auth }: { page: string; auth?: Auth }) {
           {(page === "markets" || page === "trade") && (
             <>
               <div className="tabs">
-                {[
-                  ["crypto_spot", "Crypto spot"],
-                  ["stocks", "Stocks"],
-                  ["perps", "Perpetuals"],
-                  ["commodities", "Commodities"],
-                ].map(([id, label]) => (
+                {enabledTradeCategories.map(([id, label]) => (
                   <button
                     className={category === id ? "selected" : ""}
                     key={id}
@@ -949,12 +936,9 @@ function FinanceShell({ page, auth }: { page: string; auth?: Auth }) {
               </div>
               <div className="card">
                 <div className="section-heading">
-                  <h2>Testnet markets</h2>
+                  <h2>Markets</h2>
                   <span className="status-pill">
-                    {capability(
-                      "trade." +
-                        (category === "crypto_spot" ? "spot" : category),
-                    )?.execution_status.replaceAll("_", " ") ?? "Unavailable"}
+                    {category === "crypto_spot" && markets.some(entry => entry.preparation_available || entry.executable) ? "Available" : "Unavailable"}
                   </span>
                 </div>
                 {markets.length ? (
@@ -970,10 +954,10 @@ function FinanceShell({ page, auth }: { page: string; auth?: Auth }) {
                         disabled={busy}
                         onClick={() => { setMarket(m.market_id ?? m.id); setAsset(m.asset_in_id); setQuote(null); }}
                       >
-                        <span className="market-pair-icons"><img src="/assets/xlm.svg" alt="XLM" width={28} height={28} /><img src="/assets/usdc.svg" alt="USDC" width={28} height={28} /></span>
-                        <strong>XLM → USDC</strong>
+                        <span className="market-pair-icons"><img src={m.asset_in_id === XLM_ASSET ? "/assets/xlm.svg" : "/assets/usdc.svg"} alt={assetCode(m.asset_in_id)} width={28} height={28} /><img src={m.asset_out_id === XLM_ASSET ? "/assets/xlm.svg" : "/assets/usdc.svg"} alt={assetCode(m.asset_out_id)} width={28} height={28} /></span>
+                        <strong>{assetCode(m.asset_in_id)} → {assetCode(m.asset_out_id)}</strong>
                         <span>
-                          {m.executable ? "Testnet verified" : m.preparation_available ? "Quote and transaction review available" : "Currently unavailable"}
+                          {m.executable || m.preparation_available ? "Available" : "Currently unavailable"}
                         </span>
                       </button>
                     ))}
@@ -995,17 +979,23 @@ function FinanceShell({ page, auth }: { page: string; auth?: Auth }) {
               </div>
               {market && (
                 <section className="card compact-form">
-                  <h3>Swap XLM for Testnet USDC</h3>
-                  <p className="small muted">You choose the XLM input. Review the quoted USDC minimum before approving a transaction.</p>
+                  <h3>Swap {spotInputCode} for {spotOutputCode}</h3>
+                  <label>Swap direction
+                    <select value={market} disabled={busy} onChange={(event) => {
+                      const next = markets.find(entry => (entry.market_id ?? entry.id) === event.target.value);
+                      if (!next || !supportedSpotPair(next.asset_in_id, next.asset_out_id)) return;
+                      setMarket(event.target.value); setAsset(next.asset_in_id); setQuote(null);
+                    }}>{markets.map(entry => <option key={entry.market_id ?? entry.id} value={entry.market_id ?? entry.id}>{assetCode(entry.asset_in_id)} → {assetCode(entry.asset_out_id)}</option>)}</select>
+                  </label>
                   {usdcStatusError && <p className="inline-note" role="alert">{customerMessage(usdcStatusError)} <button className="text-button" onClick={() => action(refreshUsdcStatus)} disabled={busy}>Retry wallet check</button></p>}
                   {!usdcStatus && !usdcStatusError && <p className="small muted" role="status">Checking USDC wallet setup…</p>}
                   {usdcStatus?.enabled === false && <div className="spot-setup">
-                    <p>Enable Testnet USDC in your wallet to receive this swap.</p>
+                    <p>Enable USDC in your wallet to continue.</p>
                     <button className="button outline" disabled={busy || !canPrepareSpot}
                       onClick={() => { setQuote(null); void action(() => start("usdc-trustline", {limit:"1000"})); }}>Enable USDC</button>
                   </div>}
-                  {usdcStatus?.enabled && <p className="small muted">USDC available in wallet: {formatTokenAmount(usdcStatus.spendable)}{usdcStatus.as_of ? ` · observed ${new Date(usdcStatus.as_of).toLocaleTimeString()}` : ""}</p>}
-                  <label>XLM amount
+                  {usdcStatus?.enabled && <p className="small muted">Available {spotInputCode}: {formatTokenAmount(spotInputBalance)}</p>}
+                  <label>{spotInputCode} amount
                     <input value={amount} disabled={busy} onChange={(e) => { setAmount(e.target.value); setQuote(null); }} inputMode="decimal" />
                   </label>
                   <label>Maximum slippage
@@ -1017,23 +1007,25 @@ function FinanceShell({ page, auth }: { page: string; auth?: Auth }) {
                     onClick={() => action(async () => {
                       setQuote(null);
                       const customerId = session?.customer_id;
-                      const next = await api("grapnel/quote", {market_id:market,asset_id:asset,amount,slippage_bps:slippageBps});
+                      const expectedMarket = market, expectedInput = selectedSpotMarket.asset_in_id, expectedOutput = selectedSpotMarket.asset_out_id;
+                      const next = await api("grapnel/quote", {market_id:expectedMarket,asset_id:expectedInput,amount,slippage_bps:slippageBps});
                       if (spotCustomer.current !== customerId) return;
-                      if (next.market_id !== market || next.asset_in_id !== XLM_ASSET || next.asset_out_id !== USDC_ASSET || !next.quote_id || !Number.isFinite(Date.parse(next.expires_at))) throw Error("The returned quote does not match this XLM to USDC market.");
+                      if (next.market_id !== expectedMarket || next.asset_in_id !== expectedInput || next.asset_out_id !== expectedOutput || !next.quote_id || !Number.isFinite(Date.parse(next.expires_at))) throw Error("The returned quote does not match your selected assets.");
                       setQuoteClock(Date.now()); setQuote(next);
                     })}>Get quote</button>
                   {quote && <>
                     <div className="quote-summary" aria-label="Swap quote review">
-                      <div className="detail-row"><span>Input amount</span><strong>{quote.amount_in} XLM</strong></div>
-                      <div className="detail-row"><span>Expected receive</span><strong>{quote.expected_out} USDC</strong></div>
-                      <div className="detail-row"><span>Minimum receive</span><strong>{quote.min_receive} USDC</strong></div>
+                      <div className="detail-row"><span>Input amount</span><strong>{quote.amount_in} {assetCode(quote.asset_in_id)}</strong></div>
+                      <div className="detail-row"><span>Expected receive</span><strong>{quote.expected_out} {assetCode(quote.asset_out_id)}</strong></div>
+                      <div className="detail-row"><span>Minimum receive</span><strong>{quote.min_receive} {assetCode(quote.asset_out_id)}</strong></div>
                       <div className="detail-row"><span>Maximum slippage</span><strong>{(quote.slippage_bps ?? slippageBps) / 100}%</strong></div>
                       <div className="detail-row"><span>Quote expires</span><strong>{new Date(quote.expires_at).toLocaleTimeString()}</strong></div>
-                      <div className="detail-row"><span>Network fee</span><strong>Shown in transaction review</strong></div>
-                      {quoteExpired ? <p className="inline-note" role="alert">This quote expired. Request a new quote before reviewing an order.</p> : <p className="small muted">A quote is an estimate. The swap completes only after chain confirmation and verified balance changes.</p>}
+                      <div className="detail-row"><span>Transaction fee</span><strong>Shown in transaction review</strong></div>
+                      {quoteExpired ? <p className="inline-note" role="alert">This quote expired. Request a new quote before reviewing an order.</p> : null}
                     </div>
-                    <button className="button" disabled={busy || quoteExpired || !canPrepareSpot || usdcStatus?.enabled !== true}
+                    <button className="button" disabled={busy || quoteExpired || !quoteMatchesMarket || !canPrepareSpot || usdcStatus?.enabled !== true}
                       onClick={() => action(async () => {
+                        if (!quoteMatchesMarket) throw Error("Request a new quote for the selected assets.");
                         if (Date.parse(quote.expires_at) <= Date.now()) { setQuoteClock(Date.now()); throw Error("This quote expired. Request a fresh quote."); }
                         await start("order", {quote_id:quote.quote_id}); setQuote(null);
                       })}>Review order</button>
@@ -1053,12 +1045,9 @@ function FinanceShell({ page, auth }: { page: string; auth?: Auth }) {
 
               <section className="card">
                 <div className="section-heading">
-                  <h2>Blend Testnet pools</h2>
+                  <h2>Earn</h2>
                   <span className="status-pill">
-                    {capability("capital.lending")?.execution_status.replaceAll(
-                      "_",
-                      " ",
-                    ) ?? "Awaiting connection"}
+                    {canPrepareBlendAction() ? "Available" : "Unavailable"}
                   </span>
                 </div>
                 {lending.length ? (
@@ -1078,7 +1067,7 @@ function FinanceShell({ page, auth }: { page: string; auth?: Auth }) {
                         <h3>
                           {m.asset?.code ?? m.code ?? m.symbol ?? "Reserve"}
                         </h3>
-                        <p className="small muted">Estimated variable supply APY · Testnet pool</p>
+                        <p className="small muted">Estimated variable APY</p>
                         <strong className="apy">
                           {m.supply_apy_variable == null
                             ? "Unavailable"
@@ -1098,7 +1087,7 @@ function FinanceShell({ page, auth }: { page: string; auth?: Auth }) {
                         {earnBalancesError && <p className="small earn-balance-error" role="alert">{customerMessage(earnBalancesError)}</p>}
                         {needsTrustline ? (
                           <div className="earn-setup">
-                            <p className="small">Enable Testnet USDC in your wallet before supplying it.</p>
+                            <p className="small">Enable USDC in your wallet before supplying it.</p>
                             <button className="button outline" disabled={busy || !session || !canPrepareBlendAction()}
                               onClick={() => action(() => start("usdc-trustline", {limit: "1000"}))}>Enable USDC</button>
                           </div>
@@ -1128,7 +1117,7 @@ function FinanceShell({ page, auth }: { page: string; auth?: Auth }) {
                     title={
                       session
                         ? "No pool data available."
-                        : "Connect to explore Blend."
+                        : "Connect your wallet to view earning options."
                     }
                     text="Try refreshing to load available pools."
                   />
@@ -1194,12 +1183,7 @@ function FinanceShell({ page, auth }: { page: string; auth?: Auth }) {
               )}
             </section>
           )}
-          <footer>
-            <span className="footer-credit">
-              Built with <GrapnelMark /> APIs on Stellar Testnet.
-            </span>
 
-          </footer>
         </main>
       </div>
       {active && (
@@ -1220,12 +1204,12 @@ function FinanceShell({ page, auth }: { page: string; auth?: Auth }) {
             <span className="feature-icon blue">
               <Icon name="shield" />
             </span>
-            <p className="eyebrow">STELLAR TESTNET OPERATION</p>
+            <p className="eyebrow">WALLET ACTION</p>
             <h2 id="operation-title">
               {active.type === "spot.swap" && active.status === "awaiting_customer_authorization"
-                ? "Review your XLM → USDC swap"
+                ? `Review your ${assetCode(active.prepared_action?.summary.fromAssetId)} → ${assetCode(active.prepared_action?.summary.toAssetId)} swap`
                 : active.type === "wallet.usdc_trustline"
-                ? active.status === "completed" ? "Testnet USDC enabled." : "Enable Testnet USDC"
+                ? active.status === "completed" ? "USDC enabled." : "Enable USDC"
                 : active.status === "awaiting_customer_authorization"
                 ? "Review before you approve."
                 : active.status === "completed"
@@ -1249,26 +1233,26 @@ function FinanceShell({ page, auth }: { page: string; auth?: Auth }) {
             </span>
             {active.prepared_action && active.type === "wallet.usdc_trustline" ? (
               <div className="approval-summary">
-                <div><span>Trust limit</span><code>{active.prepared_action.summary.amount === "1000" ? "1,000" : active.prepared_action.summary.amount ?? "Unavailable"} Testnet USDC</code></div>
+                <div><span>Trust limit</span><code>{active.prepared_action.summary.amount === "1000" ? "1,000" : active.prepared_action.summary.amount ?? "Unavailable"} USDC</code></div>
                 <div><span>Additional XLM account reserve</span><code>0.5 XLM</code></div>
-                <div><span>Maximum network fee</span><code>{active.prepared_action.summary.maxFeeStroops} stroops</code></div>
+                <div><span>Maximum fee</span><code>{active.prepared_action.summary.maxFeeStroops} stroops</code></div>
                 <div><span>Expires</span><code>{new Date(active.prepared_action.summary.expiresAt).toLocaleString()}</code></div>
-                <p className="small muted">This enables the exact Testnet USDC asset in your wallet. It does not transfer or supply USDC. The trust limit is the maximum amount your wallet can hold.</p>
+                <p className="small muted">This enables USDC in your wallet. The limit is the maximum amount you can hold; no USDC is transferred.</p>
               </div>
-            ) : active.prepared_action?.summary.action === "spot.swap" && active.prepared_action.summary.fromAssetId === XLM_ASSET && active.prepared_action.summary.toAssetId === USDC_ASSET ? (
+            ) : active.prepared_action?.summary.action === "spot.swap" && supportedSpotPair(active.prepared_action.summary.fromAssetId, active.prepared_action.summary.toAssetId) ? (
               <div className="approval-summary">
-                <div><span>You send</span><code>{active.prepared_action.summary.amount} XLM</code></div>
-                <div><span>You receive at least</span><code>{active.prepared_action.summary.minReceive} USDC</code></div>
-                <div><span>Maximum network fee</span><code>{active.prepared_action.summary.maxFeeStroops} stroops</code></div>
+                <div><span>You send</span><code>{active.prepared_action.summary.amount} {assetCode(active.prepared_action.summary.fromAssetId)}</code></div>
+                <div><span>You receive at least</span><code>{active.prepared_action.summary.minReceive} {assetCode(active.prepared_action.summary.toAssetId)}</code></div>
+                <div><span>Maximum fee</span><code>{active.prepared_action.summary.maxFeeStroops} stroops</code></div>
                 <div><span>Expires</span><code>{new Date(active.prepared_action.summary.expiresAt).toLocaleString()}</code></div>
               </div>
             ) : active.prepared_action && (
               <div className="approval-summary">
                 <div><span>Asset</span><code>{assetCode(active.prepared_action.summary.fromAssetId)}</code></div>
-                {["blend.supply", "blend.withdraw", "testnet.fund", "testnet.return", "wallet.test_payment"].includes(active.type) && <div><span>Destination</span><code>{active.type === "blend.supply" ? "Your Earn balance" : active.type === "testnet.return" || active.type === "wallet.test_payment" ? "Testnet treasury" : "Your wallet"}</code></div>}
+                {["blend.supply", "blend.withdraw", "testnet.fund", "testnet.return", "wallet.test_payment"].includes(active.type) && <div><span>Destination</span><code>{active.type === "blend.supply" ? "Your Earn balance" : active.type === "testnet.return" || active.type === "wallet.test_payment" ? "Funds account" : "Your wallet"}</code></div>}
                 {active.prepared_action.summary.amount && <div><span>Amount</span><code>{active.prepared_action.summary.amount}</code></div>}
                 {active.prepared_action.summary.minReceive && <div><span>Minimum receive</span><code>{active.prepared_action.summary.minReceive} {assetCode(active.prepared_action.summary.toAssetId)}</code></div>}
-                <div><span>Maximum network fee</span><code>{active.prepared_action.summary.maxFeeStroops} stroops</code></div>
+                <div><span>Maximum fee</span><code>{active.prepared_action.summary.maxFeeStroops} stroops</code></div>
                 <div><span>Expires</span><code>{new Date(active.prepared_action.summary.expiresAt).toLocaleString()}</code></div>
               </div>
             )}
@@ -1286,7 +1270,7 @@ function FinanceShell({ page, auth }: { page: string; auth?: Auth }) {
                 target="_blank"
                 rel="noreferrer"
               >
-                View transaction on Stellar Expert ↗
+                View transaction ↗
               </a>
             )}
             {active.status === "expired" && !active.tx_hash && (
@@ -1303,15 +1287,15 @@ function FinanceShell({ page, auth }: { page: string; auth?: Auth }) {
                 <button className="button outline" disabled={busy} onClick={() => action(() => resumeOperation(active.operation_id))}>Check action status</button>
                 <p className="small muted">
                   {active.type === "wallet.usdc_trustline"
-                    ? "Review the trust limit, additional reserve, network fee and expiry. Privy signs this exact Testnet wallet setup transaction."
-                    : "Approve only if the asset, amount, recipient, fee ceiling, and expiry match your intent. Privy signs this exact Testnet transaction."}
+                    ? "Review the limit, additional reserve, fee and expiry before approving."
+                    : "Review the assets, amount, destination, fee and expiry before approving."}
                 </p>
                 <button
                   className="button wide"
                   disabled={busy || !auth || approvalExpired}
                   onClick={() => action(approve)}
                 >
-                  {busy ? "Waiting for approval…" : "Approve with Privy"}
+                  {busy ? "Waiting for approval…" : "Approve transaction"}
                   <Icon name="arrow" size={16} />
                 </button>
               </>
@@ -1377,7 +1361,7 @@ function BalanceTable({
                 <div>
                   <strong>
                     {b.asset_id.includes("native:XLM")
-                      ? "Stellar Lumens · XLM"
+                      ? "XLM"
                       : b.asset_id === USDC_ASSET ? "USD Coin · USDC" : "Asset"}
                   </strong>
 
@@ -1403,13 +1387,5 @@ function BalanceTable({
       }
       text="Refresh to check your current balances."
     />
-  );
-}
-
-function GrapnelMark() {
-  return (
-    <span className="grapnel-wordmark">
-      <img src="/brand/logo-name-white.png" alt="Grapnel" />
-    </span>
   );
 }

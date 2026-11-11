@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { api, clearOperationRequest, operationRequestKey } from './client';
+import { api, clearOperationRequest, operationRequestKey, consumerErrorMessage } from './client';
 afterEach(()=>vi.unstubAllGlobals());
 describe('ambiguous financial request recovery',()=>{
  it('keeps the same key until a known accepted response is received',async()=>{
@@ -23,4 +23,11 @@ it('preserves pending-operation recovery details',async()=>{
 it('rejects malformed error details as a recovery object',async()=>{
  vi.stubGlobal('fetch',vi.fn().mockResolvedValue({ok:false,status:409,json:async()=>({error:{code:'WALLET_OPERATION_PENDING',message:'Pending',details:['not-an-object']}})}));
  await expect(api('grapnel/usdc-trustline',{limit:'1000'})).rejects.toMatchObject({details:{}});
+});
+
+it('shows customer error copy while preserving structured diagnostic codes',async()=>{
+ vi.stubGlobal('fetch',vi.fn().mockResolvedValue({ok:false,status:409,json:async()=>({error:{code:'EXECUTION_UNAVAILABLE',message:'Soroswap GATE_1_SIGNING_PROOF_REQUIRED',details:{}}})}));
+ await expect(api('grapnel/quote',{})).rejects.toMatchObject({code:'EXECUTION_UNAVAILABLE',message:'This action is unavailable right now.'});
+ expect(consumerErrorMessage('INSUFFICIENT_POSITION','technical pool position')).toBe('You do not have enough in Earn to withdraw this amount.');
+ expect(consumerErrorMessage('VALIDATION_ERROR','Enter a positive amount.')).toBe('Enter a positive amount.');
 });
