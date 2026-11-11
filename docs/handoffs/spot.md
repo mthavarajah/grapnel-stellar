@@ -73,3 +73,9 @@ Tests are explicit mocked interface tests, not chain proof. They cover network m
 **Actual transaction hash / contract deployment:** none.
 
 **Blocked acceptance:** Soroswap API credential, live Testnet registry/liquidity, validated transaction inspector, Gate 1 customer signing proof, actual swap and balance deltas.
+
+## Authenticated follow-up — 2026-11-11 UTC
+
+Provider access now works. See `apps/api/src/adapters/soroswap/research/README.md` and actual sanitized responses. Testnet protocols and an exact native-XLM/Blend-USDC route/quote are confirmed through authenticated reads. The generic asset list is mainnet and remains rejected. Build returns428 requiring an exact classic USDC customer trustline; no swap XDR/signature/broadcast exists. Gates remain pending.
+
+Lead approved adapter-only change: request provider slippage one basis point tighter (bounded at zero), validate against the original strict approved ceiling bound. Actual provider request49/approved50 quote passes; zero-slippage and one-atomic-bound regressions pass. Seventeen unit checks and API typecheck pass. No shared contract changes or market activation.

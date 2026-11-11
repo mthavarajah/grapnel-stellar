@@ -92,7 +92,11 @@ export class SoroswapSpotAdapter {
     if(!Number.isInteger(input.slippageBps)||input.slippageBps<0||input.slippageBps>500)throw new GrapnelError(422,'INVALID_SLIPPAGE','Slippage must be between zero and 500 basis points');
     const protocols=await this.protocols();
     if(market.protocols.some(p=>!protocols.includes(p)))return unavailable('TESTNET_PROTOCOL_UNAVAILABLE');
-    const response=record(await this.request('/quote?network=testnet',{assetIn:market.asset_in.contractId,assetOut:market.asset_out.contractId,amount:amount.toString(),tradeType:'EXACT_IN',protocols:market.protocols,slippageBps:input.slippageBps}));
+    // Soroswap floors its minimum to an atomic unit. Request a tighter
+    // provider tolerance so that its rounded minimum can still satisfy the
+    // customer's original strict (ceiling) bound; validation below is unchanged.
+    const providerSlippageBps=Math.max(0,input.slippageBps-1);
+    const response=record(await this.request('/quote?network=testnet',{assetIn:market.asset_in.contractId,assetOut:market.asset_out.contractId,amount:amount.toString(),tradeType:'EXACT_IN',protocols:market.protocols,slippageBps:providerSlippageBps}));
     if(response.tradeType!=='EXACT_IN'||response.assetIn!==market.asset_in.contractId||response.assetOut!==market.asset_out.contractId||atomic(response.amountIn)!==amount)return invalid('Quote input asset, amount, or trade type mismatch');
     const out=atomic(response.amountOut),minimum=atomic(response.otherAmountThreshold);
     if(out<=0n||minimum<=0n||minimum>out||minimum<(out*BigInt(10000-input.slippageBps)+9999n)/10000n)return invalid('Quote output violates approved slippage');
