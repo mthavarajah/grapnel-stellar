@@ -25,6 +25,7 @@ import {STANDALONE_NATIVE_ROUTES,APPROVED_TOKEN_WASM} from './adapters/soroswap/
 import {SorobanTokenBalanceReader} from './adapters/stellar/token-balances.js';
 import {MarketDataService} from './modules/market-data/index.js';
 import {registerMarketHistoryRoutes} from './modules/market-data/routes.js';
+import {MarketOverviewService,createYahooReferencePriceReader} from './modules/market-overview/index.js';
 import {createSpotReservation,inspectSpotDeltas,SpotBaselineSchema,SPOT_USDC_ID} from './modules/spot/reservations.js';
 import {SpotProofReadiness} from './modules/spot/proof.js';
 import { SpotService } from './modules/spot/service.js';
@@ -81,6 +82,7 @@ export async function createRuntime(pool?:Pool) {
  const soroban=new BlendSorobanPreparer({network:config.network,passphrase:NETWORK_PASSPHRASE,rpcUrl:process.env.STELLAR_RPC_URL,gate1Passed});
  const blend=new BlendAdapter({network:config.network,passphrase:NETWORK_PASSPHRASE,rpcUrl:process.env.STELLAR_RPC_URL,gate1Passed},{prepareAndSimulate:input=>soroban.prepare(input)});
  const earningsReader=new LendingEarningsReader({pool:db,positions:customer=>blend.positions(customer)});
+ const marketOverview=new MarketOverviewService({referencePrice:createYahooReferencePriceReader(),perps:()=>perps.markets(),lending:()=>blend.markets()});
  const marketProfile=async(id:string)=>{
   if(id.startsWith('stellar-testnet:noether:')){
    const market=(await perps.markets()).find(entry=>entry.market_id===id);
@@ -144,6 +146,12 @@ export async function createRuntime(pool?:Pool) {
    'capital.testnet_funding':readFundingReadiness
   },
   registerAdapters:async app=>{
+   app.get('/v1/market-overview',async request=>{
+    const business=await requireBusiness(request,'capital.wallets');
+    z.object({}).strict().parse(request.query);
+    const modules=(await db.query('SELECT module_code FROM business_modules WHERE business_id=$1 AND enabled=true',[business.businessId])).rows.map(row=>row.module_code as string);
+    return success(request,await marketOverview.read(modules));
+   });
    await registerMarketHistoryRoutes(app,{requireBusiness,success,
     perps:(id,range)=>perps.history(id,range),
     stocks:(id,range)=>stocks.history(id,range),
