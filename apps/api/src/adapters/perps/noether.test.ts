@@ -234,4 +234,53 @@ describe("Noether public-only Testnet discovery", () => {
     });
     expect(fetcher).toHaveBeenCalledTimes(1);
   });
+  it("exposes public Testnet utilization in exact atomic strings without promoting execution", async () => {
+    const stats = {
+      stats: [{ asset: "BTC", openInterestLong: "828444000000", openInterestShort: "1212600000000",
+        openInterestNet: "-384156000000", openPositions: 9, volume24h: "0",
+        capacity: { headroomLong: "1000000000000", headroomShort: "1000000000000", bindingLong: "maxPosition", bindingShort: "maxPosition", maxPositionSize: null } }],
+      pool: { stale: false, asOfLedger: 5679549 }, custody: { stale: false, ageMs: 53268, deficit: "0" },
+    };
+    const fetcher = vi.fn<typeof fetch>().mockImplementation(async url => {
+      const path = new URL(String(url)).pathname;
+      if (path.endsWith('/health')) return response({ status: 'ok', network: 'testnet', indexer: { ledgerAgeSeconds: 2 } });
+      if (path.endsWith('/markets/stats')) return response(stats);
+      return response(fixture);
+    });
+    const adapter = new NoetherPublicAdapter({ network: 'testnet', networkPassphrase: NETWORK_PASSPHRASE }, { fetcher, now: () => now });
+    const result = await adapter.marketStats();
+    expect(result).toMatchObject({
+      markets: [{ asset: 'BTC', open_interest_long_atomic: '828444000000', open_interest_short_atomic: '1212600000000',
+        open_interest_net_atomic: '-384156000000', open_positions: 9, volume_24h_atomic: '0',
+        capacity: { headroom_long_atomic: '1000000000000', headroom_short_atomic: '1000000000000', binding_long: 'maxPosition' } }],
+      indexer_ledger_age_seconds: 2, pool: { stale: false, as_of_ledger: 5679549 },
+      custody: { stale: false, age_ms: 53268, deficit_atomic: '0' },
+      execution_status: 'discovery_only', executable: false, reason: 'REGION_RESTRICTED',
+    });
+    expect(fetcher.mock.calls.map(([url]) => String(url))).toEqual([NOETHER_TESTNET_API + '/v1/health', NOETHER_TESTNET_API + '/v1/markets/stats']);
+    expect(fetcher.mock.calls.every(([, init]) => init?.method === 'GET' && init.redirect === 'error')).toBe(true);
+    expect(() => adapter.prepare()).toThrow(expect.objectContaining({ code: 'EXECUTION_UNAVAILABLE' }));
+  });
+
+  it('leaves missing market-capacity evidence null and rejects float or duplicate stats', async () => {
+    const stats = { stats: [{ asset: 'BTC', openInterestLong: '0', openInterestShort: '0', openInterestNet: '0', openPositions: 0, volume24h: '0' }] };
+    const make = (body: unknown) => {
+      const fetcher = vi.fn<typeof fetch>().mockImplementation(async url => String(url).endsWith('/health')
+        ? response({ status: 'ok', network: 'testnet' }) : response(body));
+      return new NoetherPublicAdapter({ network: 'testnet', networkPassphrase: NETWORK_PASSPHRASE }, { fetcher, now: () => now });
+    };
+    await expect(make(stats).marketStats()).resolves.toMatchObject({ markets: [{ capacity: null }], pool: null, custody: null, indexer_ledger_age_seconds: null });
+    await expect(make({ stats: [{ ...stats.stats[0], openInterestLong: 1.5 }] }).marketStats()).rejects.toMatchObject({ code: 'PROVIDER_INVALID_RESPONSE' });
+    await expect(make({ stats: [stats.stats[0], stats.stats[0]] }).marketStats()).rejects.toMatchObject({ code: 'PROVIDER_INVALID_RESPONSE' });
+  });
+
+  it('latches an official regional denial from a public stats read without further provider calls', async () => {
+    const fetcher = vi.fn<typeof fetch>().mockImplementation(async url => String(url).endsWith('/health')
+      ? response({ status: 'ok', network: 'testnet' }) : response({ error: 'region_restricted' }, 451));
+    const adapter = new NoetherPublicAdapter({ network: 'testnet', networkPassphrase: NETWORK_PASSPHRASE }, { fetcher, now: () => now });
+    await expect(adapter.marketStats()).rejects.toMatchObject({ code: 'EXECUTION_UNAVAILABLE', details: { reason: 'REGION_RESTRICTED' } });
+    await expect(adapter.marketStats()).rejects.toMatchObject({ code: 'EXECUTION_UNAVAILABLE' });
+    expect(fetcher).toHaveBeenCalledTimes(2);
+    expect((await adapter.capabilities()).status).toBe('blocked');
+  });
 });

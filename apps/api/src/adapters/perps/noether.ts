@@ -34,6 +34,27 @@ const marketSchema = z.object({
     )
     .max(100),
 });
+const nonnegativeAtomicSchema = z.string().regex(/^(0|[1-9]\d{0,77})$/);
+const signedAtomicSchema = z.string().regex(/^-?(0|[1-9]\d{0,77})$/);
+const marketStatsSchema = z.object({
+  stats: z.array(z.object({
+    asset: z.string().regex(/^[A-Z0-9]{1,12}$/),
+    openInterestLong: nonnegativeAtomicSchema,
+    openInterestShort: nonnegativeAtomicSchema,
+    openInterestNet: signedAtomicSchema,
+    openPositions: z.number().int().nonnegative(),
+    volume24h: nonnegativeAtomicSchema,
+    capacity: z.object({
+      headroomLong: nonnegativeAtomicSchema.nullable().optional(),
+      headroomShort: nonnegativeAtomicSchema.nullable().optional(),
+      bindingLong: z.string().nullable().optional(),
+      bindingShort: z.string().nullable().optional(),
+      maxPositionSize: nonnegativeAtomicSchema.nullable().optional(),
+    }).optional(),
+  })).max(100),
+  pool: z.object({ stale: z.boolean().optional(), asOfLedger: z.number().int().positive().optional() }).nullable().optional(),
+  custody: z.object({ stale: z.boolean().optional(), ageMs: z.number().nonnegative().optional(), deficit: nonnegativeAtomicSchema.optional() }).nullable().optional(),
+});
 export interface NoetherPublicMarket {
   market_id: string;
   label: string;
@@ -61,6 +82,26 @@ export interface NoetherBetaStatus {
   observed_at: string;
   source_url: string;
 }
+export interface NoetherPublicMarketStats {
+  asset: string;
+  open_interest_long_atomic: string;
+  open_interest_short_atomic: string;
+  open_interest_net_atomic: string;
+  open_positions: number;
+  volume_24h_atomic: string;
+  capacity: { headroom_long_atomic: string | null; headroom_short_atomic: string | null; binding_long: string | null; binding_short: string | null; max_position_size_atomic: string | null } | null;
+}
+export interface NoetherPublicStatsSnapshot {
+  markets: NoetherPublicMarketStats[];
+  observed_at: string;
+  source_url: string;
+  indexer_ledger_age_seconds: number | null;
+  pool: { stale: boolean | null; as_of_ledger: number | null } | null;
+  custody: { stale: boolean | null; age_ms: number | null; deficit_atomic: string | null } | null;
+  execution_status: 'discovery_only';
+  executable: false;
+  reason: 'REGION_RESTRICTED';
+}
 export interface NoetherPublicDependencies {
   fetcher?: typeof fetch;
   now?: () => number;
@@ -71,7 +112,10 @@ export class NoetherPublicAdapter {
   private readonly fetcher: typeof fetch;
   private readonly now: () => number;
   private healthExpires = 0;
+  private indexerLedgerAgeSeconds: number | null = null;
   private snapshot?: { expires: number; markets: NoetherPublicMarket[] };
+  private statsSnapshot?: { expires: number; value: NoetherPublicStatsSnapshot };
+  private loadingStats?: Promise<NoetherPublicStatsSnapshot>;
   private loading?: Promise<NoetherPublicMarket[]>;
   private denied?:
     | "REGION_RESTRICTED"
@@ -147,7 +191,7 @@ export class NoetherPublicAdapter {
       );
   }
   private async read(
-    path: "/v1/health" | "/v1/markets" | "/v1/keys/beta-status",
+    path: "/v1/health" | "/v1/markets" | "/v1/markets/stats" | "/v1/keys/beta-status",
   ): Promise<unknown> {
     this.assertReadAllowed();
     let response: Response;
@@ -214,7 +258,7 @@ export class NoetherPublicAdapter {
   private async verifyNetwork(): Promise<void> {
     if (this.healthExpires > this.now()) return;
     const parsed = z
-      .object({ status: z.literal("ok"), network: z.literal("testnet") })
+      .object({ status: z.literal("ok"), network: z.literal("testnet"), indexer: z.object({ ledgerAgeSeconds: z.number().nonnegative() }).optional() })
       .safeParse(await this.read("/v1/health"));
     if (!parsed.success)
       throw new GrapnelError(
@@ -222,6 +266,7 @@ export class NoetherPublicAdapter {
         "NETWORK_MISMATCH",
         "Noether gateway did not confirm a healthy Testnet deployment",
       );
+    this.indexerLedgerAgeSeconds = parsed.data.indexer?.ledgerAgeSeconds ?? null;
     this.healthExpires = this.now() + 60000;
   }
   private freshness(markets: NoetherPublicMarket[]): NoetherPublicMarket[] {
@@ -340,5 +385,46 @@ export class NoetherPublicAdapter {
       observed_at: new Date(this.now()).toISOString(),
       source_url: NOETHER_TESTNET_API + "/v1/keys/beta-status",
     };
+  }
+
+  /** Public read-only utilization data. Missing chain capacity stays null; no execution readiness is inferred. */
+  async marketStats(): Promise<NoetherPublicStatsSnapshot> {
+    this.assertReadAllowed();
+    if (this.statsSnapshot && this.statsSnapshot.expires > this.now()) return this.statsSnapshot.value;
+    if (this.loadingStats) return this.loadingStats;
+    this.loadingStats = (async () => {
+      await this.verifyNetwork();
+      const parsed = marketStatsSchema.safeParse(await this.read('/v1/markets/stats'));
+      if (!parsed.success) throw new GrapnelError(502, 'PROVIDER_INVALID_RESPONSE', 'Noether market utilization statistics are invalid');
+      const seen = new Set<string>();
+      const markets = parsed.data.stats.map(stat => {
+        if (seen.has(stat.asset)) throw new GrapnelError(502, 'PROVIDER_INVALID_RESPONSE', 'Noether returned duplicate market utilization identities');
+        seen.add(stat.asset);
+        return {
+          asset: stat.asset, open_interest_long_atomic: stat.openInterestLong,
+          open_interest_short_atomic: stat.openInterestShort, open_interest_net_atomic: stat.openInterestNet,
+          open_positions: stat.openPositions, volume_24h_atomic: stat.volume24h,
+          capacity: stat.capacity ? {
+            headroom_long_atomic: stat.capacity.headroomLong ?? null,
+            headroom_short_atomic: stat.capacity.headroomShort ?? null,
+            binding_long: stat.capacity.bindingLong ?? null,
+            binding_short: stat.capacity.bindingShort ?? null,
+            max_position_size_atomic: stat.capacity.maxPositionSize ?? null,
+          } : null,
+        };
+      });
+      const value: NoetherPublicStatsSnapshot = {
+        markets, observed_at: new Date(this.now()).toISOString(),
+        source_url: NOETHER_TESTNET_API + '/v1/markets/stats',
+        indexer_ledger_age_seconds: this.indexerLedgerAgeSeconds,
+        pool: parsed.data.pool ? { stale: parsed.data.pool.stale ?? null, as_of_ledger: parsed.data.pool.asOfLedger ?? null } : null,
+        custody: parsed.data.custody ? { stale: parsed.data.custody.stale ?? null, age_ms: parsed.data.custody.ageMs ?? null, deficit_atomic: parsed.data.custody.deficit ?? null } : null,
+        execution_status: 'discovery_only', executable: false, reason: 'REGION_RESTRICTED',
+      };
+      this.statsSnapshot = { expires: this.now() + 5000, value };
+      return value;
+    })();
+    try { return await this.loadingStats; }
+    finally { this.loadingStats = undefined; }
   }
 }
