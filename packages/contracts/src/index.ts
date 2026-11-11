@@ -30,7 +30,7 @@ export function formatTokenAmount(value:string|null|undefined,significantDigits=
  const [integer,decimal='']=fromAtomic(atomic,fraction.length).split('.');
  const tail=decimal.replace(/0+$/,'');return integer!.replace(/\B(?=(\d{3})+(?!\d))/g,',')+(tail?'.'+tail:'');
 }
-export const AssetIdentitySchema = z.object({id:z.string(),network:z.literal(NETWORK),kind:z.enum(['native','classic','soroban']),code:z.string(),issuer:z.string().optional(),contractId:z.string().optional(),decimals:z.number().int().min(0).max(38),verified:z.boolean(),sourceUrl:z.string().url()});
+export const AssetIdentitySchema = z.object({id:z.string(),network:z.literal(NETWORK),kind:z.enum(['native','classic','soroban']),code:z.string(),name:z.string().optional(),issuer:z.string().optional(),contractId:z.string().optional(),decimals:z.number().int().min(0).max(38),verified:z.boolean(),sourceUrl:z.string().url()});
 export type AssetIdentity = z.infer<typeof AssetIdentitySchema>;
 /** Additive metadata for asset selectors; identifiers stay authoritative. */
 export const SpotMarketAssetsSchema=z.object({asset_in_id:z.string(),asset_out_id:z.string(),asset_in:AssetIdentitySchema.optional(),asset_out:AssetIdentitySchema.optional()}).superRefine((market,context)=>{
