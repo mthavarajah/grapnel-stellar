@@ -1,0 +1,3 @@
+import{readFileSync}from'node:fs';import{xdr}from'@stellar/stellar-sdk';
+const body=JSON.parse(readFileSync(new URL('../../research/chain-discovery.json',import.meta.url),'utf8'));
+for(const row of body.rows){if(!['margin','mock_usdt_vault'].includes(row.role))continue;for(const raw of row.abi??[]){const e=xdr.ScSpecEntry.fromXDR(raw,'base64'),kind=e.switch().name;if(kind==='scSpecEntryUdtStructV0'){const v=e.udtStructV0();console.log(row.role,'struct',v.name().toString(),v.fields().map(f=>({name:f.name().toString(),type:f.type().switch().name,xdr:f.type().toXDR('base64')})));}if(kind==='scSpecEntryUdtUnionV0'){const v=e.udtUnionV0();console.log(row.role,'union',v.name().toString(),v.cases().map(c=>({type:c.switch().name,case:c.toXDR('base64')})));}}}
