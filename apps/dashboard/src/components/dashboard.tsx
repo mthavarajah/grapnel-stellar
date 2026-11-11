@@ -1,6 +1,7 @@
 "use client";
 import Link from "next/link";
 import Customers from "./customers";
+import { ModuleAvailability, type ModuleCapability } from "./module-availability";
 import {
   useCallback,
   useEffect,
@@ -8,16 +9,7 @@ import {
   type FormEvent,
   type ReactNode,
 } from "react";
-type Module = {
-  module: string;
-  name: string;
-  provider: string;
-  description: string;
-  enabled: boolean;
-  execution_status: string;
-  reason: string | null;
-  actions: string[];
-};
+type Module = ModuleCapability;
 type ApiKey = {
   id: string;
   name: string;
@@ -152,24 +144,6 @@ function Brand() {
   );
 }
 
-function Badge({ status }: { status: string }) {
-  return (
-    <span
-      className={`badge ${status === "testnet_verified" ? "verified" : status === "blocked" ? "blocked" : "discovery"}`}
-    >
-      <i />
-      {status === "testnet_verified"
-        ? "Testnet verified"
-        : status === "discovery_only"
-          ? "Discovery only"
-          : status === "simulation"
-            ? "Simulation"
-            : status === "blocked"
-              ? "Blocked"
-              : status}
-    </span>
-  );
-}
 function Empty({
   title,
   children,
@@ -325,7 +299,7 @@ export default function Dashboard({ section }: { section: string }) {
           .map((m: Module) => m.module),
       );
       setNotice(
-        "Module settings saved. Existing API keys use your new module settings automatically.",
+        "Business access saved. Existing API keys use these settings immediately; provider readiness is unchanged.",
       );
     });
   }
@@ -559,7 +533,7 @@ export default function Dashboard({ section }: { section: string }) {
               <h1>{titles[section] ?? "Overview"}</h1>
               <p>
                 {section === "modules"
-                  ? "Your infrastructure, one module at a time."
+                  ? "Manage business access and review provider readiness."
                   : section === "customers"
                     ? "Review live customer wallet balances and lending positions."
                     : section === "api-keys"
@@ -604,9 +578,7 @@ export default function Dashboard({ section }: { section: string }) {
                   <div className="info-strip">
                     <span className="info-symbol">i</span>
                     <p>
-                      Entitlements and execution readiness are separate. An
-                      enabled module can remain blocked until its Testnet flow
-                      is verified.
+                      Enable API access for your business. Execution remains subject to the provider’s Testnet readiness.
                     </p>
                   </div>
                   {["capital", "trade"].map((group) => (
@@ -655,7 +627,7 @@ export default function Dashboard({ section }: { section: string }) {
                                 </span>
                                 <label className="switch">
                                   <input
-                                    aria-label={`Enable ${m.name}`}
+                                    aria-label={`Allow business access to ${m.name}`}
                                     type="checkbox"
                                     checked={selected.includes(m.module)}
                                     onChange={() => toggle(m.module)}
@@ -666,13 +638,8 @@ export default function Dashboard({ section }: { section: string }) {
                               <h3>{m.name}</h3>
                               <code className="module-code">{m.module}</code>
                               <p>{m.description}</p>
-                              <div className="module-footer">
-                                <span>{m.provider}</span>
-                                <Badge status={m.execution_status} />
-                              </div>
-                              {m.reason && (
-                                <div className="module-reason">{m.reason}</div>
-                              )}
+                              <div className="module-provider">Provider · {m.provider}</div>
+                              <ModuleAvailability capability={m} selected={selected.includes(m.module)} />
                             </article>
                           ))}
                       </div>
@@ -680,8 +647,8 @@ export default function Dashboard({ section }: { section: string }) {
                   ))}
                   <div className="save-bar">
                     <div>
-                      <strong>{selected.length} modules selected</strong>
-                      <p>Existing API keys inherit changes immediately.</p>
+                      <strong>{selected.length} modules selected{dirty ? " · unsaved" : ""}</strong>
+                      <p>Saved access changes apply immediately to existing API keys. No rotation needed.</p>
                     </div>
                     <span className="revision">Revision {revision}</span>
                     <button

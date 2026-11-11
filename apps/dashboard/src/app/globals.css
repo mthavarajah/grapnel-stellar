@@ -2736,3 +2736,33 @@ td strong {
     color: #666666;
   }
 }
+
+/* Access is the saved tenant permission; execution is the independent provider state. */
+.module-provider {
+  margin: 16px 0 12px;
+  color: #666;
+  font-size: 11px;
+  text-transform: capitalize;
+}
+.module-availability dl { margin: 0 0 16px; }
+.module-availability dl > div {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-top: 10px;
+  font-size: 11px;
+}
+.module-availability dt { color: #666; }
+.module-availability dd { margin: 0; text-align: right; font-weight: 500; }
+.module-availability .badge { font-size: 10px; color: #333; }
+.access-enabled { color: #111; }
+.access-disabled { color: #666; }
+.module-pending { font-size: 11px; color: #333; margin: -3px 0 14px; }
+.module-availability .module-reason { font-size: 11px; color: #555; min-height: 0; line-height: 1.6; }
+.module-reason p { margin: 0; }
+.module-reason details { margin-top: 8px; }
+.module-reason summary { cursor: pointer; font-size: 10px; color: #666; }
+.module-reason details code { display: block; margin-top: 6px; font-size: 10px; overflow-wrap: anywhere; }
+@media (min-width: 901px) { .module-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.module-availability .badge.verified { color: #fff; }
