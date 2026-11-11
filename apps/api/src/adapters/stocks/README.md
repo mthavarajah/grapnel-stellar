@@ -1,0 +1,29 @@
+# Stock catalog and underlying reference history
+
+Exports from `index.ts`:
+
+- `StocksTestnetDiscovery.catalog(): Promise<StockCatalogMarket[]>`
+- `StocksTestnetDiscovery.history(marketId, range): Promise<StockHistoryDTO>`; `range` is `live | 1d | 1w | 1m | 1y | all`.
+- Standalone `readStockCatalog(options?)` and `projectStockCatalog(discovery)` helpers.
+
+Catalog uses actual live SODAX config and token responses, validates code/issuer/SAC against the stated network, and projects 42 reviewed provider code/name pairs from the dated official registry. GLD/SLV/USO commodity funds and SGOV Treasury fund are excluded. SPY/QQQ remain equity-fund references; all rows retain `classification: provider_rwa`. Unknown or renamed products are omitted for review. Names indicate the provider's reference exposure, not a claim of underlying share ownership. IDs are `sodax:catalog:mainnet:<contract>` or separately verified `sodax:catalog:testnet:<contract>`. Network remains explicit. No catalog item is an eligible Testnet execution route.
+
+Catalog prices/stats remain null. `history()` first resolves the exact current catalog ID; arbitrary tickers, foreign IDs and symbol/issuer/network substitutions cannot select an upstream instrument. Catalog is cached for 60 seconds, concurrent refreshes share one read. History is cached per exact ID/range for 15 seconds (bounded to 256 entries). Returned cache values are cloned. `probe().markets` remains empty, and `prepare()` remains blocked. No financial provider operation is added.
+
+## Actual underlying stock source
+
+History is a public read from Yahoo Finance's first-party `https://query1.finance.yahoo.com/v8/finance/chart/<reviewed symbol>`. It supplies the **underlying stock** reference price, not the SODAX token's price or an executable quote. `price_basis: underlying_stock`, exact source URL, retrieval `observed_at` and market `as_of` timestamps must remain visible to consumers. Do not present these values as guaranteed real time or as a token conversion rate.
+
+The DTO includes frozen history fields, `base_asset_id = market_id`, `base_symbol`, `price_basis`, `source_url`, `observed_at`, actual `interval`, real nullable OHLCV candles, and `metrics` containing day high/low/volume, 52-week high/low, previous close and market time. `previous_close` uses only the explicit daily previousClose field; chartPreviousClose is not substituted because it refers to the selected range's starting reference. Missing metrics remain null. No market cap, P/E, dividend yield or other unsupplied metric is invented.
+
+Ranges use actual provider intervals: live/1d = 1 day at 1 minute; 1w = 5 trading days at 15 minutes; 1m = 1 month daily; 1y = 1 year daily; all = maximum provider history at 3 months. Yahoo returned 3-month bars when asked for max/1mo; the adapter now requests/reports 3mo explicitly. It does not imply an exhaustive exchange archive. At most 1000 actual observations are deterministically sampled, retaining first/latest; there is no interpolation, invented weekend data or forward-filled gap. Change values are bigint decimal calculations between first/last returned actual closes, not a daily-change claim. Provider JSON price numbers are serialized as decimal strings preserving the supplied value; they never participate in token amount math.
+
+HTTP refusal, malformed data, symbol/currency/interval mismatch and inaccessible instruments produce sanitized 503 `PROVIDER_UNAVAILABLE`, without retries, alternate hosts or access bypass. A catalog listing does not promise Yahoo coverage of that instrument. The chart endpoint is publicly accessible but is not established here as a supported partner API or licensed redistribution service. No credentials were needed. Yahoo Help's exchange/provider page and Yahoo terms fetches returned 429/999 through the research browser; no access workaround was attempted. Review the source's access/display terms for any production use; no such rights or service guarantee are claimed by this prototype.
+
+Primary references: [Yahoo AAPL historical page](https://finance.yahoo.com/quote/AAPL/history/), [Yahoo exchange/data-provider information](https://help.yahoo.com/kb/SLN2310.html), [direct first-party chart endpoint](https://query1.finance.yahoo.com/v8/finance/chart/AAPL?range=1mo&interval=1d), [SODAX live config](https://api.sodax.com/v1/be/config/all), [SODAX live tokens](https://api.sodax.com/v1/swaps/tokens).
+
+## Verification, November 11 2026
+
+30 stock adapter tests passed; API strict typecheck passed. `research/yahoo-aapl-chart.json` is an actual source response captured during this task; tests replay it offline without claiming new live evidence. `evidence/underlying-history-probes.json` records actual class catalog/history reads for all six ranges. The live catalog returned 42 rows. AAPL returned 256 minute observations, 122 15-minute observations, 23 monthly-range daily observations, 252 yearly-range daily observations and 169 maximum-range quarterly observations. All were obtained from the first-party endpoint with plain GET, no credentials/redirects or signing.
+
+Integration lead owns authorization, route composition and `history_available: true` advertisement once history route is wired. The adapter adds no entitlements or browser/provider credentials. Stock token execution remains blocked; no stock transaction or customer position is claimed.
