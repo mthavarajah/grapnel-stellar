@@ -142,7 +142,15 @@ function customerMessage(message: string): string {
   return message;
 }
 const assetCode = (id?: string): string => id === XLM_ASSET ? "XLM" : id === USDC_ASSET ? "USDC" : "Asset";
-type SwapAsset = {id:string;code:string;decimals?:number};
+type SwapAsset = {id:string;code:string;name?:string;decimals?:number};
+function displayAssetIdentity(item: SwapAsset, identities: SwapAsset[]): string {
+  const matchingCode=identities.filter(other=>other.code===item.code);
+  if(matchingCode.length<2)return item.code;
+  const idLabel=identities.some(other=>other.id!==item.id&&short(other.id)===short(item.id))?item.id:short(item.id);
+  if(!item.name)return `${item.code} — ${idLabel}`;
+  const sameName=matchingCode.filter(other=>other.name===item.name).length>1;
+  return `${item.code} — ${item.name}${sameName?` (${idLabel})`:""}`;
+}
 function quoteUnitRate(quote: any, input?: SwapAsset, output?: SwapAsset): string | null {
   if (!input || !output || !Number.isInteger(input.decimals) || !Number.isInteger(output.decimals)) return null;
   try {
@@ -347,7 +355,8 @@ function FinanceShell({ page, auth }: { page: string; auth?: Auth }) {
       if (typeof id !== "string" || !id) continue;
       const metadata = entry[`asset_${side}`];
       const sameIdentity = metadata?.id === id;
-      swapAssetMap.set(id, {id, code: sameIdentity && typeof metadata.code === "string" && metadata.code ? metadata.code : id === XLM_ASSET ? "XLM" : id === USDC_ASSET ? "USDC" : "Token",
+      const prior = swapAssetMap.get(id);
+      swapAssetMap.set(id, {id, name: sameIdentity && metadata.verified === true && typeof metadata.name === "string" && metadata.name.trim() ? metadata.name.trim() : prior?.name, code: sameIdentity && typeof metadata.code === "string" && metadata.code ? metadata.code : id === XLM_ASSET ? "XLM" : id === USDC_ASSET ? "USDC" : "Token",
         decimals: sameIdentity && Number.isInteger(metadata.decimals) ? metadata.decimals : id === XLM_ASSET || id === USDC_ASSET ? 7 : undefined});
     }
   }
@@ -355,6 +364,8 @@ function FinanceShell({ page, auth }: { page: string; auth?: Auth }) {
   const sellAssets = swapAssets.filter(item => markets.some(entry => entry.asset_in_id === item.id));
   const buyAssets = swapAssets.filter(item => markets.some(entry => entry.asset_in_id === selectedSpotMarket?.asset_in_id && entry.asset_out_id === item.id));
   const swapCode = (id?: string) => swapAssetMap.get(id ?? "")?.code ?? assetCode(id);
+  const swapAssetLabel = (item: SwapAsset) => displayAssetIdentity(item,swapAssets);
+  const swapIdentity = (id?: string) => { const item=swapAssetMap.get(id ?? ""); return item ? swapAssetLabel(item) : assetCode(id); };
   const swapLogo = (id?: string) => id === XLM_ASSET ? "/assets/xlm.svg" : id === USDC_ASSET ? "/assets/usdc.svg" : null;
   const swapBalance = (id: string | undefined, available = true) => {
     const observed = balances.find(entry => entry.asset_id === id);
@@ -983,10 +994,10 @@ function FinanceShell({ page, auth }: { page: string; auth?: Auth }) {
                         onChange={event => { setSwapAmount(event.target.value); setQuote(null); }} />
                       <div className="swap-token-pill">
                         {swapLogo(selectedSpotMarket.asset_in_id) ? <img src={swapLogo(selectedSpotMarket.asset_in_id)!} alt="" width={28} height={28} /> : <span className="swap-token-fallback" aria-hidden="true">{spotInputCode.slice(0,1)}</span>}
-                        <select aria-label="Sell asset" value={selectedSpotMarket.asset_in_id} disabled={busy} onChange={event => {
+                        <select aria-label="Sell asset" title={swapIdentity(selectedSpotMarket.asset_in_id)} value={selectedSpotMarket.asset_in_id} disabled={busy} onChange={event => {
                           const options = markets.filter(entry => entry.asset_in_id === event.target.value);
                           chooseSpotMarket(options.find(entry => entry.asset_out_id === selectedSpotMarket.asset_out_id) ?? options.find(entry => entry.preparation_available || entry.executable) ?? options[0]);
-                        }}>{sellAssets.map(item => <option value={item.id} key={item.id}>{item.code}</option>)}</select>
+                        }}>{sellAssets.map(item => <option value={item.id} key={item.id}>{swapAssetLabel(item)}</option>)}</select>
                       </div>
                     </div>
                     <div className="swap-panel-balance">Available: <strong>{formatTokenAmount(swapBalance(selectedSpotMarket.asset_in_id))} {spotInputCode}</strong></div>
@@ -999,9 +1010,9 @@ function FinanceShell({ page, auth }: { page: string; auth?: Auth }) {
                       <output className="swap-output" aria-label="Estimated buy amount">{quoteMatchesMarket && !quoteExpired ? formatTokenAmount(quote.expected_out) : "—"}</output>
                       <div className="swap-token-pill">
                         {swapLogo(selectedSpotMarket.asset_out_id) ? <img src={swapLogo(selectedSpotMarket.asset_out_id)!} alt="" width={28} height={28} /> : <span className="swap-token-fallback" aria-hidden="true">{spotOutputCode.slice(0,1)}</span>}
-                        <select aria-label="Buy asset" value={selectedSpotMarket.asset_out_id} disabled={busy} onChange={event => {
+                        <select aria-label="Buy asset" title={swapIdentity(selectedSpotMarket.asset_out_id)} value={selectedSpotMarket.asset_out_id} disabled={busy} onChange={event => {
                           chooseSpotMarket(markets.find(entry => entry.asset_in_id === selectedSpotMarket.asset_in_id && entry.asset_out_id === event.target.value),false);
-                        }}>{buyAssets.map(item => <option value={item.id} key={item.id}>{item.code}</option>)}</select>
+                        }}>{buyAssets.map(item => <option value={item.id} key={item.id}>{swapAssetLabel(item)}</option>)}</select>
                       </div>
                     </div>
                     <div className="swap-panel-balance">Balance: <strong>{formatTokenAmount(swapBalance(selectedSpotMarket.asset_out_id,false))} {spotOutputCode}</strong></div>
@@ -1208,7 +1219,7 @@ function FinanceShell({ page, auth }: { page: string; auth?: Auth }) {
             <p className="eyebrow">WALLET ACTION</p>
             <h2 id="operation-title">
               {active.type === "spot.swap" && active.status === "awaiting_customer_authorization"
-                ? `Review your ${swapCode(active.prepared_action?.summary.fromAssetId)} → ${swapCode(active.prepared_action?.summary.toAssetId)} swap`
+                ? `Review your ${swapIdentity(active.prepared_action?.summary.fromAssetId)} → ${swapIdentity(active.prepared_action?.summary.toAssetId)} swap`
                 : active.type === "wallet.usdc_trustline"
                 ? active.status === "completed" ? "USDC enabled." : "Enable USDC"
                 : active.status === "awaiting_customer_authorization"
@@ -1242,8 +1253,8 @@ function FinanceShell({ page, auth }: { page: string; auth?: Auth }) {
               </div>
             ) : active.prepared_action?.summary.action === "spot.swap" ? (
               <div className="approval-summary">
-                <div><span>You send</span><code>{active.prepared_action.summary.amount} {swapCode(active.prepared_action.summary.fromAssetId)}</code></div>
-                <div><span>{active.prepared_action.summary.toAssetId === XLM_ASSET ? "You receive at least before fee" : "You receive at least"}</span><code>{active.prepared_action.summary.minReceive} {swapCode(active.prepared_action.summary.toAssetId)}</code></div>
+                <div><span>You send</span><code>{active.prepared_action.summary.amount} {swapIdentity(active.prepared_action.summary.fromAssetId)}</code></div>
+                <div><span>{active.prepared_action.summary.toAssetId === XLM_ASSET ? "You receive at least before fee" : "You receive at least"}</span><code>{active.prepared_action.summary.minReceive} {swapIdentity(active.prepared_action.summary.toAssetId)}</code></div>
                 <div><span>Maximum fee</span><code>{approvalFee(active.prepared_action.summary.maxFeeStroops)}</code></div>
                 <div><span>Expires</span><code>{new Date(active.prepared_action.summary.expiresAt).toLocaleString()}</code></div>
               </div>
@@ -1252,7 +1263,7 @@ function FinanceShell({ page, auth }: { page: string; auth?: Auth }) {
                 <div><span>Asset</span><code>{assetCode(active.prepared_action.summary.fromAssetId)}</code></div>
                 {["blend.supply", "blend.withdraw", "testnet.fund", "testnet.return", "wallet.test_payment"].includes(active.type) && <div><span>Destination</span><code>{active.type === "blend.supply" ? "Your Earn balance" : active.type === "testnet.return" || active.type === "wallet.test_payment" ? "Funds account" : "Your wallet"}</code></div>}
                 {active.prepared_action.summary.amount && <div><span>Amount</span><code>{active.prepared_action.summary.amount}</code></div>}
-                {active.prepared_action.summary.minReceive && <div><span>Minimum receive</span><code>{active.prepared_action.summary.minReceive} {swapCode(active.prepared_action.summary.toAssetId)}</code></div>}
+                {active.prepared_action.summary.minReceive && <div><span>Minimum receive</span><code>{active.prepared_action.summary.minReceive} {swapIdentity(active.prepared_action.summary.toAssetId)}</code></div>}
                 <div><span>Maximum fee</span><code>{approvalFee(active.prepared_action.summary.maxFeeStroops)}</code></div>
                 <div><span>Expires</span><code>{new Date(active.prepared_action.summary.expiresAt).toLocaleString()}</code></div>
               </div>
@@ -1341,7 +1352,16 @@ function BalanceTable({
   balances: any[];
   connected: boolean;
 }) {
-  return balances.length ? (
+  const identities: SwapAsset[] = balances.map(balance => {
+    const metadata=balance.asset?.id===balance.asset_id?balance.asset:null;
+    return {id:balance.asset_id,code:typeof metadata?.code==="string"&&metadata.code?metadata.code:assetCode(balance.asset_id),name:metadata?.verified===true&&typeof metadata.name==="string"&&metadata.name.trim()?metadata.name.trim():undefined};
+  });
+  const zero=(value:unknown)=>typeof value==="string"&&/^0+(?:\.0+)?$/.test(value);
+  const visibleBalances=balances.filter(balance=>{
+    const standalone=balance.asset?.id===balance.asset_id&&balance.asset.kind==="soroban"||typeof balance.asset_id==="string"&&balance.asset_id.startsWith("stellar-testnet:soroban:");
+    return !(standalone&&zero(balance.wallet_amount)&&(!balance.reserved||zero(balance.reserved))&&(!balance.spendable||zero(balance.spendable)));
+  });
+  return visibleBalances.length ? (
     <div className="table-wrap">
       <table>
         <thead>
@@ -1353,18 +1373,18 @@ function BalanceTable({
           </tr>
         </thead>
         <tbody>
-          {balances.map((b) => (
-            <tr key={b.asset_id}>
+          {visibleBalances.map((b) => {
+            const identity=identities.find(item=>item.id===b.asset_id)!;
+            const label=displayAssetIdentity(identity,identities);
+            const logo=b.asset_id===XLM_ASSET?"/assets/xlm.svg":b.asset_id===USDC_ASSET?"/assets/usdc.svg":null;
+            return <tr key={b.asset_id}>
               <td>
                 <span className="asset-mark">
-                  {b.asset_id.includes("native:XLM") ? "✦" : "◈"}
+                  {logo?<img src={logo} alt="" width={26} height={26}/>:identity.code.slice(0,1)}
                 </span>
                 <div>
-                  <strong>
-                    {b.asset_id.includes("native:XLM")
-                      ? "XLM"
-                      : b.asset_id === USDC_ASSET ? "USD Coin · USDC" : "Asset"}
-                  </strong>
+                  <strong>{label}</strong>
+                  {identity.name&&identity.name!==identity.code&&!label.includes(identity.name)&&<small>{identity.name}</small>}
 
                 </div>
               </td>
@@ -1373,8 +1393,8 @@ function BalanceTable({
               <td>
                 <strong>{formatTokenAmount(b.spendable)}</strong>
               </td>
-            </tr>
-          ))}
+            </tr>;
+          })}
         </tbody>
       </table>
     </div>
@@ -1383,7 +1403,7 @@ function BalanceTable({
       icon="wallet"
       title={
         connected
-          ? "Waiting for a live balance read."
+          ? balances.length ? "No assets with a balance." : "Waiting for a live balance read."
           : "Connect to see your assets."
       }
       text="Refresh to check your current balances."

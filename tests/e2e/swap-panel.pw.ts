@@ -6,30 +6,43 @@ const XLM = 'stellar-testnet:native:XLM';
 const USDC = 'stellar-testnet:classic:USDC:GATALTGTWIOT6BUDBCZM3Q4OQ4BO2COLOAZ7IYSKPLC2PMSOPPGF5V56';
 const EURC = 'stellar-testnet:soroban:fixture-eurc';
 const id = '00000000-0000-4000-8000-000000000003';
-const identity = (assetId:string,code:string,decimals:number) => ({id:assetId,code,decimals});
+const identity = (assetId:string,code:string,decimals:number,name?:string) => ({id:assetId,code,decimals,name,verified:true});
 const markets = [
-  {market_id:'xlm-usdc',asset_in_id:XLM,asset_out_id:USDC,asset_in:identity(XLM,'XLM',7),asset_out:identity(USDC,'USDC',7),preparation_available:true},
-  {market_id:'usdc-xlm',asset_in_id:USDC,asset_out_id:XLM,asset_in:identity(USDC,'USDC',7),asset_out:identity(XLM,'XLM',7),preparation_available:true},
-  {market_id:'eurc-usdc',asset_in_id:EURC,asset_out_id:USDC,asset_in:identity(EURC,'EURC',6),asset_out:identity(USDC,'USDC',7),preparation_available:true},
+  {market_id:'xlm-usdc',asset_in_id:XLM,asset_out_id:USDC,asset_in:identity(XLM,'XLM',7),asset_out:identity(USDC,'USDC',7,'USD Coin'),preparation_available:true},
+  {market_id:'usdc-xlm',asset_in_id:USDC,asset_out_id:XLM,asset_in:identity(USDC,'USDC',7,'USD Coin'),asset_out:identity(XLM,'XLM',7),preparation_available:true},
+  {market_id:'eurc-usdc',asset_in_id:EURC,asset_out_id:USDC,asset_in:identity(EURC,'EURC',6),asset_out:identity(USDC,'USDC',7,'USD Coin'),preparation_available:true},
 ];
-async function fixture(page:Page,{expired=false,blockExtra=false}={}) {
+async function fixture(page:Page,{expired=false,blockExtra=false,duplicateUsdc=false,portfolioAssets=false}={}) {
   const calls:{quote:any[];order:any[];sign:number}={quote:[],order:[],sign:0};
   let operation:any;
+  const alternate='stellar-testnet:soroban:standalone-usdc-fixture-a1b2c3d';
+  const unnamed='stellar-testnet:soroban:unnamed-usdc-fixture-e4f5g6h';
+  const availableMarkets=duplicateUsdc?[...markets,
+    {market_id:'xlm-standalone',asset_in_id:XLM,asset_out_id:alternate,asset_in:identity(XLM,'XLM',7),asset_out:identity(alternate,'USDC',7,'USDCoin'),preparation_available:true},
+    {market_id:'xlm-unnamed',asset_in_id:XLM,asset_out_id:unnamed,asset_in:identity(XLM,'XLM',7),asset_out:identity(unnamed,'USDC',7),preparation_available:true},
+  ]:markets;
+
   await page.route(origin+'/api/**', async route => {
     const path=new URL(route.request().url()).pathname;
     let data:unknown={};
     if(path.endsWith('/session'))data={customer_id:'customer',wallet_id:'wallet',stellar_address:'fixture-address'};
     else if(path.endsWith('/capabilities'))data={capabilities:[{module:'capital.wallets',enabled:true,execution_status:'testnet_verified'},{module:'trade.spot',enabled:true,execution_status:'blocked'},{module:'trade.stocks',enabled:false},{module:'trade.perps',enabled:false},{module:'trade.commodities',enabled:false}]};
-    else if(path.endsWith('/markets'))data=markets.map(item=>blockExtra&&item.market_id==='eurc-usdc'?{...item,preparation_available:false}:item);
+    else if(path.endsWith('/markets'))data=availableMarkets.map(item=>blockExtra&&item.market_id==='eurc-usdc'?{...item,preparation_available:false}:item);
     else if(path.endsWith('/usdc-status'))data={enabled:true,spendable:'12.3456789',wallet_amount:'12.3456789'};
-    else if(path.endsWith('/balances'))data=[{asset_id:XLM,spendable:'123.456789',wallet_amount:'124.456789'},{asset_id:USDC,spendable:'12.3456789',wallet_amount:'12.3456789'},{asset_id:EURC,spendable:'20.123456',wallet_amount:'20.123456'}];
+    else if(path.endsWith('/balances'))data=portfolioAssets?[
+      {asset_id:XLM,asset:{...identity(XLM,'XLM',7),kind:'native'},spendable:'0',wallet_amount:'0',reserved:'0'},
+      {asset_id:USDC,asset:{...identity(USDC,'USDC',7,'USD Coin'),kind:'classic'},spendable:'0',wallet_amount:'0',reserved:'0'},
+      {asset_id:'stellar-testnet:soroban:btc-fixture',asset:{...identity('stellar-testnet:soroban:btc-fixture','BTC',7,'Bitcoin'),kind:'soroban'},spendable:'0.123456789',wallet_amount:'0.123456789',reserved:'0'},
+      {asset_id:'stellar-testnet:soroban:xrp-fixture',asset:{...identity('stellar-testnet:soroban:xrp-fixture','XRP',7,'XRP'),kind:'soroban'},spendable:'0.0000000',wallet_amount:'0.0000000',reserved:'0'},
+      {asset_id:alternate,asset:{...identity(alternate,'USDC',7,'USDCoin'),kind:'soroban'},spendable:'1',wallet_amount:'1',reserved:'0'},
+    ]:[{asset_id:XLM,spendable:'123.456789',wallet_amount:'124.456789'},{asset_id:USDC,spendable:'12.3456789',wallet_amount:'12.3456789'},{asset_id:EURC,spendable:'20.123456',wallet_amount:'20.123456'}];
     else if(path.endsWith('/operations'))data={operations:[]};
     else if(path.endsWith('/quote')){
       const input=route.request().postDataJSON();calls.quote.push(input);
-      const market=markets.find(item=>item.market_id===input.market_id)!;
+      const market=availableMarkets.find(item=>item.market_id===input.market_id)!;
       data={quote_id:id,market_id:market.market_id,asset_in_id:market.asset_in_id,asset_out_id:market.asset_out_id,amount_in:input.amount,expected_out:'0.2500000',min_receive:'0.2487500',slippage_bps:input.slippage_bps,expires_at:new Date(Date.now()+(expired?-1000:60000)).toISOString()};
     }else if(path.endsWith('/order')){
-      calls.order.push(route.request().postDataJSON());const last=calls.quote.at(-1),market=markets.find(item=>item.market_id===last.market_id)!;
+      calls.order.push(route.request().postDataJSON());const last=calls.quote.at(-1),market=availableMarkets.find(item=>item.market_id===last.market_id)!;
       operation={operation_id:id,customer_id:'customer',wallet_id:'wallet',type:'spot.swap',status:'awaiting_customer_authorization',tx_hash:null,prepared_action:{summary:{action:'spot.swap',amount:last.amount,fromAssetId:market.asset_in_id,toAssetId:market.asset_out_id,minReceive:'0.2487500',maxFeeStroops:'50000',expiresAt:new Date(Date.now()+60000).toISOString()}},customer_action_token:'fixture'};data=operation;
     }else if(path.includes('/operations/'))data=operation;
     else if(path.endsWith('/status'))data={grapnel_configured:true,privy_configured:true,session_configured:true};
@@ -105,4 +118,31 @@ test('published assets without a preparation path stay visible without a quote a
   await expect(page.getByRole('button',{name:'Get quote',exact:true})).toBeDisabled();
   await expect(page.getByText('This pair is currently unavailable.',{exact:true})).toBeVisible();
   expect(calls.quote).toHaveLength(0);expect(calls.order).toHaveLength(0);
+});
+
+test('same-code assets use verified names or exact-ID suffixes in dropdowns and approval',async({page})=>{
+  const calls=await fixture(page,{duplicateUsdc:true});
+  const buy=page.getByRole('combobox',{name:'Buy asset',exact:true});
+  await expect(buy.locator('option',{hasText:'USDC — USD Coin'})).toHaveCount(1);
+  await expect(buy.locator('option',{hasText:'USDC — USDCoin'})).toHaveCount(1);
+  await expect(buy.locator('option',{hasText:'e4f5g6h'})).toHaveCount(1);
+  const exact='stellar-testnet:soroban:standalone-usdc-fixture-a1b2c3d';
+  await buy.selectOption(exact);await expect(buy).toHaveValue(exact);
+  await expect(buy).toHaveAttribute('title','USDC — USDCoin');
+  await page.getByRole('textbox',{name:'Sell amount',exact:true}).fill('2');
+  await page.getByRole('button',{name:'Get quote',exact:true}).click();
+  expect(calls.quote.at(-1).market_id).toBe('xlm-standalone');
+  await page.getByRole('button',{name:'Review swap',exact:true}).click();
+  await expect(page.getByRole('dialog').getByText('0.2487500 USDC — USDCoin',{exact:true})).toBeVisible();
+});
+
+test('portfolio uses asset metadata, keeps native/classic zero balances, and hides zero standalone rows',async({page})=>{
+  await fixture(page,{portfolioAssets:true});await page.goto(origin+'/home');
+  await expect(page.getByRole('cell').filter({has:page.getByText('Bitcoin',{exact:true})})).toBeVisible();
+  await expect(page.getByRole('cell',{name:'USDC — USD Coin',exact:true})).toBeVisible();
+  await expect(page.getByRole('cell').filter({has:page.getByText('USDC — USDCoin',{exact:true})})).toBeVisible();
+  await expect(page.getByRole('cell',{name:'XLM',exact:true})).toBeVisible();
+  await expect(page.getByText('XRP',{exact:true})).toHaveCount(0);
+  await expect(page.locator('tbody tr')).toHaveCount(4);
+  await expect(page.getByRole('cell',{name:'0.123456',exact:true})).toHaveCount(2);
 });
