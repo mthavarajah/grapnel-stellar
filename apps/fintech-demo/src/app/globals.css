@@ -1632,3 +1632,9 @@ footer strong {
 .public-market-stats dd { margin: 0; font-size: 13px; color: var(--ink); font-weight: 600; overflow-wrap: anywhere; }
 @media(max-width: 1100px) { .public-market-options { grid-template-columns: repeat(3,minmax(0,1fr)); } .market-detail-layout .market-order-card { width: min(100%,560px); justify-self: center; } }
 @media(max-width: 600px) { .public-market-options { grid-template-columns: repeat(2,minmax(0,1fr)); max-height: 270px; } .public-market-options button { padding: 12px; } .market-order-card { padding: 20px; border-radius: 20px; } }
+
+.public-market-search-row { display: flex; align-items: end; gap: 14px; }
+.public-market-search-row .market-search-label { flex: 1; max-width: none; margin-bottom: 0; }
+.public-market-search-row > .button { margin-bottom: 0; white-space: nowrap; }
+.public-market-browser .public-market-options { margin-top: 18px; max-height: 210px; }
+@media(max-width: 600px) { .public-market-search-row { align-items: stretch; flex-direction: column; gap: 10px; } .public-market-search-row > .button { justify-content: center; } }

@@ -149,11 +149,19 @@ type MarketHistory = {
   latest_price:string|null; as_of:string|null;
   points:{timestamp:string;price:string}[];
   change_absolute:string|null; change_percent:string|null;
+  price_basis?:string; source_url?:string; interval?:string;
+  metrics?:{day_high?:string|null;day_low?:string|null;day_volume?:string|null;fifty_two_week_high?:string|null;fifty_two_week_low?:string|null;previous_close?:string|null;market_time?:string|null};
 };
 type HistoryRange = "live"|"1d"|"1w"|"1m"|"1y"|"all";
 function displayPublicNotional(value:unknown):string {
-  if(typeof value!=="string"||!/^\d+$/.test(value))return "—";
-  try{return `${formatTokenAmount(fromAtomic(BigInt(value),7))} USDC`;}catch{return "—";}
+  if(typeof value!=="string"||!/^[-]?\d+$/.test(value))return "—";
+  try{const amount=BigInt(value);return `${amount<0n?"-":""}${formatTokenAmount(fromAtomic(amount<0n?-amount:amount,7))} USDC`;}catch{return "—";}
+}
+function marketDate(value:string|number,includeTime=false):string {
+  const date=new Date(value);if(!Number.isFinite(date.getTime()))return "Date unavailable";
+  const parts=new Intl.DateTimeFormat("en-US",{month:"short",day:"2-digit",year:"numeric"}).formatToParts(date);
+  const part=(type:string)=>parts.find(item=>item.type===type)?.value??"";
+  return `${part("month")}. ${part("day")}, ${part("year")}${includeTime?` · ${date.toLocaleTimeString(undefined,{hour:"numeric",minute:"2-digit"})}`:""}`;
 }
 function displayChange(value:string|null|undefined):string {
   if(typeof value!=="string"||!/^[-+]?\d+(?:\.\d+)?$/.test(value))return "—";
@@ -177,7 +185,7 @@ function PriceChart({history,loading}:{history:MarketHistory|null;loading:boolea
       {coordinates.length>1&&<polyline points={coordinates.map(p=>`${p.x},${p.y}`).join(" ")} className="market-chart-line" />}
       <circle cx={coordinates.at(-1)!.x} cy={coordinates.at(-1)!.y} r="4" className="market-chart-dot" />
     </svg>
-    {points.length===1?<p className="market-chart-caption">One price observation. More history is not available yet.</p>:<div className="market-chart-dates"><span>{new Date(first).toLocaleString()}</span><span>{new Date(last).toLocaleString()}</span></div>}
+    {points.length===1?<p className="market-chart-caption">One price observation. More history is not available yet.</p>:<div className="market-chart-dates"><span>{marketDate(first,true)}</span><span>{marketDate(last,true)}</span></div>}
   </div>;
 }
 type SwapAsset = {id:string;code:string;name?:string;decimals?:number};
@@ -296,10 +304,12 @@ function FinanceShell({ page, auth }: { page: string; auth?: Auth }) {
   const [markets, setMarkets] = useState<any[]>([]);
   const [marketsLoading, setMarketsLoading] = useState(false);
   const [marketSearch, setMarketSearch] = useState("");
+  const [marketResultsOpen, setMarketResultsOpen] = useState(false);
 
   const [lending, setLending] = useState<any[]>([]);
   const [historyRange,setHistoryRange] = useState<HistoryRange>("live");
   const [marketHistory,setMarketHistory] = useState<MarketHistory|null>(null);
+  const [historyScope,setHistoryScope] = useState("");
   const [historyLoading,setHistoryLoading] = useState(false);
   const [earnBalances, setEarnBalances] = useState<EarnBalance[]>([]);
   const [earnBalancesLoading, setEarnBalancesLoading] = useState(false);
@@ -423,24 +433,26 @@ function FinanceShell({ page, auth }: { page: string; auth?: Auth }) {
     document.addEventListener("visibilitychange",visible);
     return()=>{alive=false;clearInterval(timer);document.removeEventListener("visibilitychange",visible);};
   },[session?.customer_id,category,page,caps]);
-  useEffect(() => { setMarketSearch(""); }, [category]);
+  useEffect(() => { setMarketSearch(""); setMarketResultsOpen(false); }, [category]);
   useEffect(() => {
     if (category === "crypto_spot" || !markets.length || selectedSpotMarket) return;
     setMarket(markets[0].market_id ?? markets[0].id);
   }, [markets, category, market]);
+  const activePublicHistory = marketHistory?.market_id===(selectedSpotMarket?.market_id??selectedSpotMarket?.id)&&historyScope===`${selectedSpotMarket?.market_id??selectedSpotMarket?.id}:${historyRange}`?marketHistory:null;
   const visiblePublicMarkets = markets.filter(entry => `${entry.underlying?.symbol ?? ""} ${entry.underlying?.name ?? ""} ${entry.label ?? ""}`.toLowerCase().includes(marketSearch.trim().toLowerCase()));
   useEffect(()=>{
     setMarketHistory(null);
+    if((selectedSpotMarket?.network==="stellar-mainnet"||String(selectedSpotMarket?.market_id??"").startsWith("sodax:catalog:"))&&selectedSpotMarket?.history_available!==true){setHistoryLoading(false);return;}
     if(!session||!selectedSpotMarket||!(page==="markets"||page==="trade")||!capability("trade."+(category==="crypto_spot"?"spot":category))?.enabled){setHistoryLoading(false);return;}
     let alive=true,inFlight=false;setHistoryLoading(true);
     const expectedMarket=selectedSpotMarket.market_id??selectedSpotMarket.id;
     const refreshHistory=async()=>{if(inFlight)return;inFlight=true;await api(`grapnel/market-history?market_id=${encodeURIComponent(expectedMarket)}&range=${historyRange}`).then(result=>{
-      if(alive&&result?.market_id===expectedMarket&&typeof result.base_asset_id==="string"&&typeof result.base_symbol==="string"&&typeof result.quote_symbol==="string"&&Array.isArray(result.points))setMarketHistory(result);
+      if(alive&&result?.market_id===expectedMarket&&typeof result.base_asset_id==="string"&&typeof result.base_symbol==="string"&&typeof result.quote_symbol==="string"&&Array.isArray(result.points)){setMarketHistory(result);setHistoryScope(`${expectedMarket}:${historyRange}`);}
     }).catch(()=>{}).finally(()=>{inFlight=false;if(alive)setHistoryLoading(false);});};
     void refreshHistory();
     const timer=historyRange==='live'?setInterval(()=>{if(document.visibilityState==='visible')void refreshHistory();},15000):undefined;
     return()=>{alive=false;if(timer)clearInterval(timer);};
-  },[session?.customer_id,selectedSpotMarket?.market_id,selectedSpotMarket?.id,category,page,historyRange,caps]);
+  },[session?.customer_id,selectedSpotMarket?.market_id,selectedSpotMarket?.id,selectedSpotMarket?.history_available,category,page,historyRange,caps]);
   const swapAssetMap = new Map<string, SwapAsset>();
   for (const entry of markets) {
     for (const side of ["in", "out"] as const) {
@@ -1096,41 +1108,48 @@ function FinanceShell({ page, auth }: { page: string; auth?: Auth }) {
               </div>
               {category !== "crypto_spot" && category !== "unavailable" && (
                 <section className="card public-market-browser" aria-label="Available markets" data-testid="market-list">
-                  <div className="section-heading"><h2>{enabledTradeCategories.find(([id])=>id===category)?.[1]??"Markets"}</h2><span className="small muted">{markets.length} markets</span></div>
-                  <label className="market-search-label">Search markets<input type="search" aria-label="Search markets" data-testid="market-search" value={marketSearch} onChange={event=>setMarketSearch(event.target.value)} placeholder="Search by name or symbol" /></label>
-                  {marketsLoading ? <p className="small muted" role="status">Loading markets…</p> : visiblePublicMarkets.length ? <div className="public-market-options">
-                    {visiblePublicMarkets.map(entry=><button type="button" key={entry.market_id??entry.id} data-testid={`market-option-${entry.underlying?.symbol??entry.market_id}`} aria-label={`${entry.underlying?.symbol??entry.label} perpetual`} aria-pressed={(entry.market_id??entry.id)===market}
-                      onClick={()=>setMarket(entry.market_id??entry.id)}><span className="public-market-symbol">{entry.underlying?.symbol??entry.label}</span><span className="public-market-name">{entry.underlying?.name??entry.label}</span><strong>{entry.reference_price==null?"—":formatTokenAmount(entry.reference_price)}{entry.reference_price!=null&&<small> USD</small>}</strong>{entry.price_status==="stale"&&<span className="public-market-delay">Delayed</span>}</button>)}
-                  </div> : <p className="small muted" role="status">{markets.length?"No matching markets.":"No markets available."}</p>}
+                  <div className="section-heading"><h2>Find a market</h2><span className="small muted">{markets.length} markets</span></div>
+                  <div className="public-market-search-row"><label className="market-search-label">Search markets<input type="search" aria-label="Search markets" data-testid="market-search" value={marketSearch} onFocus={()=>setMarketResultsOpen(true)} onChange={event=>{setMarketSearch(event.target.value);setMarketResultsOpen(true);}} placeholder="Search by name or symbol" /></label><button type="button" className="button outline" data-testid="market-browse-toggle" aria-expanded={marketResultsOpen} aria-controls="public-market-options" onClick={()=>setMarketResultsOpen(current=>!current)}>Browse markets</button></div>
+                  {marketsLoading ? <p className="small muted" role="status">Loading markets…</p> : marketResultsOpen && visiblePublicMarkets.length ? <div className="public-market-options" id="public-market-options">
+                    {visiblePublicMarkets.map(entry=><button type="button" key={entry.market_id??entry.id} data-testid={`market-option-${entry.underlying?.symbol??entry.market_id}`} aria-label={`${entry.underlying?.symbol??entry.label} ${category==="perps"?"perpetual":"stock"}`} aria-pressed={(entry.market_id??entry.id)===market}
+                      onClick={()=>{setMarket(entry.market_id??entry.id);setMarketResultsOpen(false);}}><span className="public-market-symbol">{entry.underlying?.symbol??entry.label}</span><span className="public-market-name">{entry.underlying?.name??entry.label}</span><strong>{entry.reference_price==null?"—":formatTokenAmount(entry.reference_price)}{entry.reference_price!=null&&<small> USD</small>}</strong>{entry.price_status==="stale"&&<span className="public-market-delay">Delayed</span>}</button>)}
+                  </div> : (!markets.length||marketResultsOpen) ? <p className="small muted" role="status">{markets.length?"No matching markets.":"No markets available."}</p> : null}
                 </section>
               )}
-              {category === "perps" && selectedSpotMarket ? (
+              {(category === "perps" || category === "stocks") && selectedSpotMarket ? (
                 <>
                   <nav className="market-breadcrumb" aria-label="Breadcrumb"><Link href="/home">Home</Link><span>/</span><Link href="/markets">Markets</Link><span>/</span><strong>{selectedSpotMarket.underlying?.symbol??selectedSpotMarket.label}</strong></nav>
                   <div className="market-detail-layout">
-                    <section className="market-price-card" aria-label="Asset price" data-testid="perps-market-detail">
-                      <div className="market-asset-heading"><span className="market-asset-fallback" aria-hidden="true">{(selectedSpotMarket.underlying?.symbol??"·").slice(0,1)}</span><div><h2>{selectedSpotMarket.underlying?.name??selectedSpotMarket.label}</h2><span>{selectedSpotMarket.underlying?.symbol} perpetual</span></div></div>
-                      <div className="market-price-heading"><strong>{selectedSpotMarket.reference_price==null?"—":formatTokenAmount(selectedSpotMarket.reference_price)}</strong><span>USD per {selectedSpotMarket.underlying?.symbol}</span></div>
-                      <div className={`public-market-freshness ${selectedSpotMarket.price_status==="stale"?"delayed":""}`} data-testid="market-price-freshness">{selectedSpotMarket.price_status==="current"?"Current price":selectedSpotMarket.price_status==="stale"?"Price delayed":"Price unavailable"}{selectedSpotMarket.oracle_timestamp&&<time dateTime={selectedSpotMarket.oracle_timestamp}>{new Date(selectedSpotMarket.oracle_timestamp).toLocaleString()}</time>}</div>
-                      <div className="market-price-change" aria-label="Price change"><strong>{marketHistory&&marketHistory.points.length>1?displayChange(marketHistory.change_absolute):"—"}</strong><span>{marketHistory&&marketHistory.points.length>1?`USD (${displayChange(marketHistory.change_percent)}%)`: "(—)"}</span></div>
-                      <PriceChart history={marketHistory} loading={historyLoading} />
+                    <section className="market-price-card" aria-label="Asset price" data-testid={category==="perps"?"perps-market-detail":"stocks-market-detail"}>
+                      <div className="market-asset-heading"><span className="market-asset-fallback" aria-hidden="true">{(selectedSpotMarket.underlying?.symbol??"·").slice(0,1)}</span><div><h2>{selectedSpotMarket.underlying?.name??selectedSpotMarket.label}</h2><span>{selectedSpotMarket.underlying?.symbol} {category==="perps"?"perpetual":"stock"}</span></div></div>
+                      <div className="market-price-heading"><strong>{category==="stocks" ? (activePublicHistory?.latest_price==null?"—":formatTokenAmount(activePublicHistory.latest_price)) : selectedSpotMarket.reference_price==null?"—":formatTokenAmount(selectedSpotMarket.reference_price)}</strong><span>{activePublicHistory?.quote_symbol??"USD"} per {selectedSpotMarket.underlying?.symbol}</span></div>
+                      <div className={`public-market-freshness ${selectedSpotMarket.price_status==="stale"?"delayed":""}`} data-testid="market-price-freshness">{category==="stocks" ? (activePublicHistory?.latest_price?"Stock reference price":"Price unavailable") : selectedSpotMarket.price_status==="current"?"Current price":selectedSpotMarket.price_status==="stale"?"Price delayed":"Price unavailable"}{(category==="stocks"?activePublicHistory?.metrics?.market_time:selectedSpotMarket.oracle_timestamp)&&<time dateTime={category==="stocks"?activePublicHistory?.metrics?.market_time??undefined:selectedSpotMarket.oracle_timestamp}>{marketDate(category==="stocks"?activePublicHistory!.metrics!.market_time!:selectedSpotMarket.oracle_timestamp,true)}</time>}</div>
+                      <div className="market-price-change" aria-label="Price change"><strong>{activePublicHistory&&activePublicHistory.points.length>1?displayChange(activePublicHistory.change_absolute):"—"}</strong><span>{activePublicHistory&&activePublicHistory.points.length>1?`USD (${displayChange(activePublicHistory.change_percent)}%)`: "(—)"}</span></div>
+                      {category==="stocks"&&selectedSpotMarket.history_available!==true ? <div className="market-chart-empty" role="status">Price data unavailable</div> : <PriceChart history={activePublicHistory} loading={historyLoading} />}
                       <div className="market-periods" role="group" aria-label="Price timeframe">{(["live","1d","1w","1m","1y","all"] as const).map(period=><button type="button" key={period} aria-pressed={historyRange===period} onClick={()=>setHistoryRange(period)}>{period.toUpperCase()}</button>)}</div>
-                      {(marketHistory?.as_of??selectedSpotMarket.observed_at)&&<p className="market-price-observed">Updated {new Date(marketHistory?.as_of??selectedSpotMarket.observed_at).toLocaleString()}</p>}
+                      {(activePublicHistory?.as_of??selectedSpotMarket.observed_at)&&<p className="market-price-observed">Updated {marketDate(activePublicHistory?.as_of??selectedSpotMarket.observed_at,true)}</p>}
+                      {category==="stocks"&&activePublicHistory?.metrics&&<dl className="public-market-stats" data-testid="stock-market-metrics">
+                        {([["day_high","Day high"],["day_low","Day low"],["previous_close","Previous close"],["fifty_two_week_high","52-week high"],["fifty_two_week_low","52-week low"],["day_volume","Day volume"]] as const).map(([field,label])=><div key={field}><dt>{label}</dt><dd>{activePublicHistory.metrics?.[field]==null?"—":`${formatTokenAmount(activePublicHistory.metrics[field])} ${field==="day_volume"?"shares":activePublicHistory.quote_symbol}`}</dd></div>)}
+                      </dl>}
                       {selectedSpotMarket.stats&&<>
                         <dl className="public-market-stats" data-testid="market-stats">
                           <div><dt>24h volume</dt><dd>{displayPublicNotional(selectedSpotMarket.stats.volume_24h_atomic)}</dd></div>
                           <div><dt>Open positions</dt><dd>{selectedSpotMarket.stats.open_positions??"—"}</dd></div>
                           <div><dt>Long open interest</dt><dd>{displayPublicNotional(selectedSpotMarket.stats.open_interest_long_atomic)}</dd></div>
                           <div><dt>Short open interest</dt><dd>{displayPublicNotional(selectedSpotMarket.stats.open_interest_short_atomic)}</dd></div>
+                          <div><dt>Net open interest</dt><dd>{displayPublicNotional(selectedSpotMarket.stats.open_interest_net_atomic)}</dd></div>
+                          <div><dt>Maximum position</dt><dd>{displayPublicNotional(selectedSpotMarket.stats.capacity?.max_position_size_atomic)}</dd></div>
+                          <div><dt>Long capacity available</dt><dd>{displayPublicNotional(selectedSpotMarket.stats.capacity?.headroom_long_atomic)}</dd></div>
+                          <div><dt>Short capacity available</dt><dd>{displayPublicNotional(selectedSpotMarket.stats.capacity?.headroom_short_atomic)}</dd></div>
                         </dl>
                         {(selectedSpotMarket.stats.pool?.stale===true||selectedSpotMarket.stats.custody?.stale===true)&&<p className="small muted">Market activity delayed</p>}
                       </>}
                     </section>
                     <section className="market-order-card" aria-label="Trade market" data-testid="market-order-card">
                       <h2>Trade {selectedSpotMarket.underlying?.symbol}</h2>
-                      <div className="public-order-direction" role="group" aria-label="Position direction"><button type="button" disabled>Long</button><button type="button" disabled>Short</button></div>
+                      <div className="public-order-direction" role="group" aria-label={category==="perps"?"Position direction":"Order direction"}><button type="button" disabled>{category==="perps"?"Long":"Buy"}</button><button type="button" disabled>{category==="perps"?"Short":"Sell"}</button></div>
                       <label>Amount<input aria-label="Order amount" placeholder="0.00" inputMode="decimal" disabled /></label>
-                      <div className="detail-row"><span>Market price</span><strong>{selectedSpotMarket.reference_price==null?"Unavailable":`${formatTokenAmount(selectedSpotMarket.reference_price)} USD`}</strong></div>
+                      <div className="detail-row"><span>Market price</span><strong>{category==="stocks" ? (activePublicHistory?.latest_price==null?"—":`${formatTokenAmount(activePublicHistory.latest_price)} ${activePublicHistory.quote_symbol}`) : selectedSpotMarket.reference_price==null?"—":`${formatTokenAmount(selectedSpotMarket.reference_price)} USD`}</strong></div>
                       <button className="button wide" disabled>Trading unavailable</button>
                     </section>
                   </div>
@@ -1148,7 +1167,7 @@ function FinanceShell({ page, auth }: { page: string; auth?: Auth }) {
                     <div className="market-price-change" aria-label="Price change"><strong>{marketHistory&&marketHistory.points.length>1?displayChange(marketHistory.change_absolute):"—"}</strong>{marketHistory?.change_absolute&&marketHistory.points.length>1&&<span>{marketHistory.quote_symbol}</span>}<span>({marketHistory&&marketHistory.points.length>1?displayChange(marketHistory.change_percent):"—"}{marketHistory?.change_percent&&marketHistory.points.length>1?"%":""})</span></div>
                     <PriceChart history={marketHistory} loading={historyLoading} />
                     <div className="market-periods" role="group" aria-label="Price timeframe">{(["live","1d","1w","1m","1y","all"] as const).map(period => <button type="button" key={period} aria-pressed={historyRange===period} onClick={()=>setHistoryRange(period)}>{period.toUpperCase()}</button>)}</div>
-                    {marketHistory?.as_of&&<p className="market-price-observed">Updated {new Date(marketHistory.as_of).toLocaleString()}</p>}
+                    {marketHistory?.as_of&&<p className="market-price-observed">Updated {marketDate(marketHistory.as_of,true)}</p>}
                   </section>
                 <section className="swap-card" aria-label="Swap assets">
                   <h2 className="swap-card-title">Swap</h2>
