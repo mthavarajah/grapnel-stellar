@@ -11,6 +11,9 @@ import { createPrivyClient, PrivyIdentityVerifier, PrivyWalletSigner } from './a
 import { parseTestnetTransaction, StellarTestnetExecutor, verifySignedAction } from './adapters/stellar/index.js';
 import { TestnetFundingAdapter } from './adapters/testnet-funding/index.js';
 import { BlendSorobanPreparer } from './adapters/stellar/blend-soroban.js';
+import {BlendBorrowSorobanPreparer} from './adapters/stellar/blend-borrow-preparer.js';
+import {BlendBorrowAdapter} from './adapters/blend/borrow.js';
+import {BORROW_POOL_ID,BorrowBaselineSchema,extractBorrowTransactionEvidence,inspectBorrowingDeltas,type BorrowingAction,type BorrowingAdapter} from './modules/lending/borrowing.js';
 import { BlendAdapter, type BlendPosition } from './adapters/blend/index.js';
 import { inspectBlendWithdrawDeltas } from './adapters/blend/withdraw-inspector.js';
 import { BLEND_USDC_ASSET_ID, inspectBlendUsdcDeltas } from './adapters/blend/usdc-inspector.js';
@@ -81,6 +84,8 @@ export async function createRuntime(pool?:Pool) {
  const spotReadiness=new SpotProofReadiness(db,spot,spotInspector,chain.server);
  const soroban=new BlendSorobanPreparer({network:config.network,passphrase:NETWORK_PASSPHRASE,rpcUrl:process.env.STELLAR_RPC_URL,gate1Passed});
  const blend=new BlendAdapter({network:config.network,passphrase:NETWORK_PASSPHRASE,rpcUrl:process.env.STELLAR_RPC_URL,gate1Passed},{prepareAndSimulate:input=>soroban.prepare(input)});
+ const borrowPreparer=new BlendBorrowSorobanPreparer({network:config.network,passphrase:NETWORK_PASSPHRASE,rpcUrl:process.env.STELLAR_RPC_URL,gate1Passed});
+ const borrowing=new BlendBorrowAdapter({network:config.network,passphrase:NETWORK_PASSPHRASE,rpcUrl:process.env.STELLAR_RPC_URL,gate1Passed},{prepareAndSimulate:input=>borrowPreparer.prepare(input)});
  const earningsReader=new LendingEarningsReader({pool:db,positions:customer=>blend.positions(customer)});
  const marketOverview=new MarketOverviewService({referencePrice:createYahooReferencePriceReader(),perps:()=>perps.markets(),lending:()=>blend.markets()});
  const marketProfile=async(id:string)=>{
@@ -126,7 +131,7 @@ export async function createRuntime(pool?:Pool) {
   return blendReadiness;
  };
  const app=await buildApp({pool:db,config,identityVerifier:identity,
-  verifySignedAction:async(action,signed)=>{if(action.summary.action==='wallet.usdc_trustline')verifyPreparedUsdcTrustline(action,signed);else if(action.summary.action==='spot.swap')await spotInspector.verifyForSubmission(action,signed);else if(action.summary.action==='blend.supply'||action.summary.action==='blend.withdraw')await soroban.verifyForSubmission(action,signed);else verifySignedAction(action,signed);return {txHash:parseTestnetTransaction(signed).hash().toString('hex')};},
+  verifySignedAction:async(action,signed)=>{if(action.summary.action==='wallet.usdc_trustline')verifyPreparedUsdcTrustline(action,signed);else if(action.summary.action==='spot.swap')await spotInspector.verifyForSubmission(action,signed);else if(borrowingAction(action.summary.action))await borrowPreparer.verifyForSubmission(action,signed);else if(action.summary.action==='blend.supply'||action.summary.action==='blend.withdraw')await soroban.verifyForSubmission(action,signed);else verifySignedAction(action,signed);return {txHash:parseTestnetTransaction(signed).hash().toString('hex')};},
   balanceReader:address=>chain.getClassicBalances(address),
   dashboardCustomerBalances:(businessId,walletId)=>wallets.balances(businessId,walletId),
   dashboardCustomerPositions:async customer=>{
@@ -194,7 +199,7 @@ export async function createRuntime(pool?:Pool) {
     });
     return reply.code(202).send(success(request,result.operation));
    });
-   await registerLendingRoutes(app,{adapter:blend,operations,balanceReader:address=>chain.getClassicBalances(address)});
+   await registerLendingRoutes(app,{adapter:blend,borrowing,operations,balanceReader:address=>chain.getClassicBalances(address)});
    await registerSpotRoutes(app,{service:new SpotService(spot,db,operations,createSpotReservation(operations,readSpotBalances)),refreshReadiness:()=>spotReadiness.refresh(),requireBusiness,requireCustomer,success,
     readDiscoveryMarkets:async category=>category==='perps'?perps.marketDetails():category==='commodities'?commodities.markets():(await stocks.catalog()).map(market=>({...market,underlying:{symbol:market.symbol,name:market.name}})),
     readPositions:async customer=>({wallet_holdings:await wallets.balances(customer.businessId,customer.walletId),venue_positions:[]})});
@@ -202,7 +207,7 @@ export async function createRuntime(pool?:Pool) {
   }
  });
  app.addHook('onClose',async()=>{if(!pool)await db.end();});
- const workerChain=createRuntimeWorkerChain({pool:db,chain,blend,soroban,gate1Passed,verifyGate1:()=>hasGate1Proof(chain),spot:spotInspector,readSpotBalances});
+ const workerChain=createRuntimeWorkerChain({pool:db,chain,blend,soroban,borrowing,borrowPreparer,gate1Passed,verifyGate1:()=>hasGate1Proof(chain),spot:spotInspector,readSpotBalances});
  return {app,config,pool:db,chain,wallets,operations,funding,gate1Passed,worker:new OperationWorker(db,workerChain)};
 }
 
@@ -240,7 +245,27 @@ async function storedSpotAction(pool:Pool,operation:Record<string,any>):Promise<
  if(!quote||quote.provider!=='soroswap'||quote.exact_in_asset_id!==baseline.asset_in_id||quote.market_id!==baseline.market_id||quote.amount_in_atomic!==baseline.amount_in_atomic||quote.min_out_atomic!==baseline.min_out_atomic||action.operationId!==operation.id||action.customerId!==operation.customer_id||action.walletAddress!==operation.stellar_address||baseline.wallet_address!==operation.stellar_address||action.signingHashHex!==baseline.signing_hash_hex||action.summary.action!=='spot.swap'||action.summary.fromAssetId!==baseline.asset_in_id||action.summary.toAssetId!==baseline.asset_out_id||toAtomic(action.summary.amount??'',7)!==BigInt(baseline.amount_in_atomic)||toAtomic(action.summary.minReceive??'',7)!==BigInt(baseline.min_out_atomic)||action.summary.maxFeeStroops!==baseline.max_fee_stroops)throw new GrapnelError(403,'INTENT_MISMATCH','Durable quote/order, observed baseline and exact customer swap approval differ');
  return action;
 }
-export interface RuntimeWorkerDependencies {pool:Pool;chain:StellarTestnetExecutor;blend:Pick<BlendAdapter,'positions'>;soroban:Pick<BlendSorobanPreparer,'verifyForSubmission'>;gate1Passed:boolean;verifyGate1?:()=>Promise<boolean>;spot?:Pick<SoroswapDirectInspector,'verifyForSubmission'>;readSpotBalances?:(address:string)=>Promise<WalletBalance[]>;}
+const borrowingActions:Readonly<Record<string,BorrowingAction>>={
+ 'blend.borrow':'borrow','blend.repay':'repay',
+ 'blend.borrow_collateral_supply':'collateral_supply','blend.borrow_collateral_withdraw':'collateral_withdraw'
+};
+function borrowingAction(type:string):BorrowingAction|undefined{return Object.hasOwn(borrowingActions,type)?borrowingActions[type]:undefined;}
+/** Bind the exact signed borrowing envelope to its durable tenant/customer intent and pre-sign baseline. */
+function storedBorrowingAction(operation:Record<string,any>,hash:string):PreparedAction{
+ const action=PreparedActionSchema.parse(operation.prepared_action),baseline=BorrowBaselineSchema.parse(operation.result_json?.blend_borrowing_baseline);
+ const request=operation.request_json;
+ if(!borrowingAction(operation.type)||operation.module_code!=='capital.lending'||operation.provider!=='blend'||typeof operation.privy_user_id!=='string'||!operation.privy_user_id.startsWith('did:privy:')
+  ||!['preparing','submitted','confirming','recovery_required'].includes(operation.state)
+  ||!request||request.customer_id!==operation.customer_id||request.wallet_id!==operation.wallet_id
+  ||action.operationId!==operation.id||action.customerId!==operation.customer_id||action.walletAddress!==operation.stellar_address
+  ||action.signingHashHex!==hash||operation.tx_hash!==hash||action.summary.action!==operation.type
+  ||action.summary.contractId!==BORROW_POOL_ID||action.summary.recipient!==operation.stellar_address
+  ||action.summary.fromAssetId!==request.asset_id||baseline.asset_id!==request.asset_id||baseline.market_id!==request.market_id||baseline.wallet_address!==operation.stellar_address
+  ||![XLM.id,BLEND_USDC_ASSET_ID].includes(request.asset_id)||typeof request.amount!=='string'||zeroAtomic(action.summary.amount??'')!==toAtomic(request.amount,7))
+  throw new GrapnelError(403,'INTENT_MISMATCH','Durable borrowing request, customer approval and position baseline differ');
+ return action;
+}
+export interface RuntimeWorkerDependencies {borrowing?:Pick<BorrowingAdapter,'positions'>;borrowPreparer?:Pick<BlendBorrowSorobanPreparer,'verifyForSubmission'>;pool:Pool;chain:StellarTestnetExecutor;blend:Pick<BlendAdapter,'positions'>;soroban:Pick<BlendSorobanPreparer,'verifyForSubmission'>;gate1Passed:boolean;verifyGate1?:()=>Promise<boolean>;spot?:Pick<SoroswapDirectInspector,'verifyForSubmission'>;readSpotBalances?:(address:string)=>Promise<WalletBalance[]>;}
 /** No network send exists outside the durable worker's recorded hash/envelope path. */
 export function createRuntimeWorkerChain(deps:RuntimeWorkerDependencies):WorkerChain {
  const {pool,chain,blend,soroban,gate1Passed}=deps;
@@ -270,6 +295,20 @@ export function createRuntimeWorkerChain(deps:RuntimeWorkerDependencies):WorkerC
     if(sent.status==='ERROR')throw new GrapnelError(409,'CHAIN_REJECTED','Stellar rejected trustline creation');
     if(!['PENDING','DUPLICATE'].includes(sent.status))throw new GrapnelError(503,'SUBMISSION_UNCERTAIN','Reconcile stored trustline hash before retry',true,{tx_hash:hash});
     return {txHash:hash};
+   }
+   if(borrowingAction(operation.type)){
+    if(!deps.borrowing||!deps.borrowPreparer)throw new GrapnelError(409,'EXECUTION_UNAVAILABLE','No reviewed borrowing submission path is configured');
+    if(operation.state!=='submitted')throw new GrapnelError(409,'OPERATION_STATE_INVALID',"Only the durable worker's recorded first borrowing send may broadcast");
+    const action=storedBorrowingAction(operation,hash);
+    await deps.borrowPreparer.verifyForSubmission(action,envelope);
+    await chain.verifyLiveNetwork();
+    try{
+     const sent=await chain.server.sendTransaction(parsed);
+     if(sent.hash!==hash)throw new GrapnelError(502,'PROVIDER_INVALID','RPC transaction hash mismatch');
+     if(sent.status==='ERROR')throw new GrapnelError(409,'CHAIN_REJECTED','Stellar rejected the inspected borrowing transaction');
+     if(!['PENDING','DUPLICATE'].includes(sent.status))throw new GrapnelError(503,'SUBMISSION_UNCERTAIN','Reconcile the persisted borrowing hash before any retry',true,{tx_hash:hash});
+     return {txHash:hash};
+    }catch(error){if(error instanceof GrapnelError)throw error;throw new GrapnelError(503,'SUBMISSION_UNCERTAIN','Reconcile the persisted borrowing hash before any retry',true,{tx_hash:hash});}
    }
    if(operation.type==='blend.supply'||operation.type==='blend.withdraw'){
     if(operation.module_code!=='capital.lending'||operation.provider!=='blend'||typeof operation.privy_user_id!=='string'||!operation.privy_user_id.startsWith('did:privy:'))throw new GrapnelError(403,'INTENT_MISMATCH','Stored operation is not an approved Blend supply');
@@ -312,6 +351,27 @@ export function createRuntimeWorkerChain(deps:RuntimeWorkerDependencies):WorkerC
     const effects=await chain.horizon.effects().forTransaction(hash).limit(100).call();
     const created=effects.records.some(e=>e.type==='trustline_created'&&e.account===op.stellar_address&&'asset_code'in e&&e.asset_code==='USDC'&&e.asset_issuer===TESTNET_USDC_ISSUER);
     return {verified:created,result:{usdc_trustline_verification:{verified:created,issuer:TESTNET_USDC_ISSUER,limit:trust.limit,ledger:tx.ledger_attr,observed_at:new Date().toISOString()}}};
+   }
+   const borrowingType=borrowingAction(op.type);
+   if(borrowingType){
+    const unavailable=():DeltaVerification=>({verified:false,result:{blend_borrowing_verification:{verified:false,reason:'LIVE_BORROWING_RECONCILIATION_UNAVAILABLE'}}});
+    if(!deps.borrowing)return unavailable();
+    try{
+     const action=storedBorrowingAction(op,hash),parsed=parseTestnetTransaction(op.signed_xdr);
+     if(parsed.hash().toString('hex')!==hash||parsed.source!==action.walletAddress)return unavailable();
+     const confirmed=await chain.server.getTransaction(hash);
+     if(confirmed.status!=='SUCCESS')return unavailable();
+     const tx=await chain.horizon.transactions().transaction(hash).call();
+     if(!tx.successful||tx.hash!==hash||tx.source_account!==op.stellar_address||tx.ledger_attr!==confirmed.ledger)return unavailable();
+     const meta=typeof confirmed.resultMetaXdr==='string'?xdr.TransactionMeta.fromXDR(confirmed.resultMetaXdr,'base64'):confirmed.resultMetaXdr;
+     if(!meta)return unavailable();
+     const baseline=op.result_json?.blend_borrowing_baseline;
+     const evidence=extractBorrowTransactionEvidence({meta,txHash:hash,confirmedLedger:confirmed.ledger,baseline,action:borrowingType});
+     if(!evidence)return unavailable();
+     const customer:CustomerContext={businessId:op.business_id,customerId:op.customer_id,walletId:op.wallet_id,walletAddress:op.stellar_address,privyUserId:op.privy_user_id};
+     const [positions,balances]=await Promise.all([deps.borrowing.positions(customer),chain.getClassicBalances(customer.walletAddress)]);
+     return inspectBorrowingDeltas({action:borrowingType,baseline,request:op.request_json,walletAddress:customer.walletAddress,positions,balances,confirmedLedger:confirmed.ledger,txHash:hash,feeStroops:String(tx.fee_charged),transactionEvidence:evidence});
+    }catch{return unavailable();}
    }
    if(op.type==='blend.supply'||op.type==='blend.withdraw'){
     if(op.module_code!=='capital.lending'||op.provider!=='blend'||typeof op.privy_user_id!=='string'||!op.privy_user_id.startsWith('did:privy:'))return false;
