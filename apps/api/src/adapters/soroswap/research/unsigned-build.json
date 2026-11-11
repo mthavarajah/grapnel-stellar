@@ -1,0 +1,111 @@
+{
+  "observed_at": "2026-11-11T15:42:37.488Z",
+  "network": "testnet",
+  "broadcast": false,
+  "requests": [
+    {
+      "path": "/quote?network=testnet",
+      "request_body": {
+        "assetIn": "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC",
+        "assetOut": "CAQCFVLOBK5GIULPNZRGATJJMIZL5BSP7X5YJVMGCPTUEPFM4AVSRCJU",
+        "amount": "10000000",
+        "tradeType": "EXACT_IN",
+        "protocols": [
+          "soroswap"
+        ],
+        "slippageBps": 49
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/quote/build?network=testnet",
+      "source": "GA237QIWQI6TUI3DTTWQELRHCGNMB3WWMSKY7LLXW3B4FBQJN3TN6IP4",
+      "quote": {
+        "assetIn": "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC",
+        "assetOut": "CAQCFVLOBK5GIULPNZRGATJJMIZL5BSP7X5YJVMGCPTUEPFM4AVSRCJU",
+        "tradeType": "EXACT_IN",
+        "amountIn": "10000000",
+        "amountOut": "1494807",
+        "otherAmountThreshold": "1487482",
+        "priceImpactPct": "0.00",
+        "platform": "router",
+        "routePlan": [
+          {
+            "swapInfo": {
+              "protocol": "soroswap",
+              "path": [
+                "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC",
+                "CAQCFVLOBK5GIULPNZRGATJJMIZL5BSP7X5YJVMGCPTUEPFM4AVSRCJU"
+              ]
+            },
+            "percent": "100.00"
+          }
+        ],
+        "rawTrade": {
+          "amountIn": "10000000",
+          "amountOutMin": "1487482",
+          "distribution": [
+            {
+              "protocol_id": "soroswap",
+              "path": [
+                "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC",
+                "CAQCFVLOBK5GIULPNZRGATJJMIZL5BSP7X5YJVMGCPTUEPFM4AVSRCJU"
+              ],
+              "parts": 10,
+              "is_exact_in": true
+            }
+          ]
+        }
+      },
+      "status": 201,
+      "body": {
+        "xdr": "AAAAAgAAAAA1v8EWgj06I2Oc7QIuJxGawO7WZJWPrXe2w8KGCW7m3wAB3KQANeJcAAAABgAAAAEAAAAAAAAAAAAAAABq9I2hAAAAAAAAAAEAAAAAAAAAGAAAAAAAAAABk0H3oDet04EdXGrVAJ2w39ubIaDl2zZoqOn3a9ymck8AAAAcc3dhcF9leGFjdF90b2tlbnNfZm9yX3Rva2VucwAAAAUAAAAKAAAAAAAAAAAAAAAAAJiWgAAAAAoAAAAAAAAAAAAAAAAAFrJ6AAAAEAAAAAEAAAACAAAAEgAAAAHXkotywnA8z+r365/0701QSlWouXn8m0UOoshCtNHOYQAAABIAAAABICLVbgq6ZFFvbmJgTSliMr6GT/37hNWGE+dCPKzgKygAAAASAAAAAAAAAAA1v8EWgj06I2Oc7QIuJxGawO7WZJWPrXe2w8KGCW7m3wAAAAUAAAAAavSa/QAAAAEAAAAAAAAAAAAAAAGTQfegN63TgR1catUAnbDf25shoOXbNmio6fdr3KZyTwAAABxzd2FwX2V4YWN0X3Rva2Vuc19mb3JfdG9rZW5zAAAABQAAAAoAAAAAAAAAAAAAAAAAmJaAAAAACgAAAAAAAAAAAAAAAAAWsnoAAAAQAAAAAQAAAAIAAAASAAAAAdeSi3LCcDzP6vfrn/TvTVBKVai5efybRQ6iyEK00c5hAAAAEgAAAAEgItVuCrpkUW9uYmBNKWIyvoZP/fuE1YYT50I8rOArKAAAABIAAAAAAAAAADW/wRaCPTojY5ztAi4nEZrA7tZklY+td7bDwoYJbubfAAAABQAAAABq9Jr9AAAAAQAAAAAAAAAB15KLcsJwPM/q9+uf9O9NUEpVqLl5/JtFDqLIQrTRzmEAAAAIdHJhbnNmZXIAAAADAAAAEgAAAAAAAAAANb/BFoI9OiNjnO0CLicRmsDu1mSVj613tsPChglu5t8AAAASAAAAAWP/WZPyf72IVQv1tmiL7Az+nut5CtLk2foD6B3JAd/8AAAACgAAAAAAAAAAAAAAAACYloAAAAAAAAAAAQAAAAAAAAAFAAAABgAAAAEgItVuCrpkUW9uYmBNKWIyvoZP/fuE1YYT50I8rOArKAAAABQAAAABAAAABgAAAAGTQfegN63TgR1catUAnbDf25shoOXbNmio6fdr3KZyTwAAABQAAAABAAAABgAAAAHXkotywnA8z+r365/0701QSlWouXn8m0UOoshCtNHOYQAAABQAAAABAAAAB0uVu/nK7CxuAMeG9TxfOSwvzbhDWsCoYqteBkXrZYJMAAAAB4RHUl7dYvcv+vUhNjWANGV+oFEaj+wc0OveZJ+GzKRkAAAABQAAAAAAAAAANb/BFoI9OiNjnO0CLicRmsDu1mSVj613tsPChglu5t8AAAABAAAAADW/wRaCPTojY5ztAi4nEZrA7tZklY+td7bDwoYJbubfAAAAAVVTREMAAAAAJgXM07IdPwaDCLLNw46HAu0Jy3Az9GJKesWnsk57zF4AAAAGAAAAASAi1W4KumRRb25iYE0pYjK+hk/9+4TVhhPnQjys4CsoAAAAEAAAAAEAAAACAAAADwAAAAdCYWxhbmNlAAAAABIAAAABY/9Zk/J/vYhVC/W2aIvsDP6e63kK0uTZ+gPoHckB3/wAAAABAAAABgAAAAFj/1mT8n+9iFUL9bZoi+wM/p7reQrS5Nn6A+gdyQHf/AAAABQAAAABAAAABgAAAAHXkotywnA8z+r365/0701QSlWouXn8m0UOoshCtNHOYQAAABAAAAABAAAAAgAAAA8AAAAHQmFsYW5jZQAAAAASAAAAAWP/WZPyf72IVQv1tmiL7Az+nut5CtLk2foD6B3JAd/8AAAAAQAlz5AAAAEEAAAExAAAAAAAAFQHAAAAAA==",
+        "action": "SIGN_TRANSACTION",
+        "description": "Sign the transaction with the user wallet and send the signed XDR to /send endpoint or your own rpc"
+      },
+      "purpose": "unsigned inspection only; no customer approval, signature or broadcast"
+    }
+  ],
+  "inspected_read_only": {
+    "original": {
+      "instructions": 2477968,
+      "read_bytes": 260,
+      "write_bytes": 1220,
+      "resource_fee": "21511",
+      "total_fee": "122020",
+      "maxTime": "1794411937"
+    },
+    "canonical": {
+      "instructions": 2740212,
+      "read_bytes": 260,
+      "write_bytes": 1220,
+      "resource_fee": "24667",
+      "total_fee": "122020",
+      "maxTime": "1794411788"
+    },
+    "simulations": [
+      {
+        "ledger": 5677622,
+        "minResourceFee": "21515",
+        "instructions": 2491101,
+        "success": true
+      },
+      {
+        "ledger": 5677623,
+        "minResourceFee": "21515",
+        "instructions": 2491101,
+        "success": true
+      }
+    ],
+    "observed_at": "2026-11-11T15:42:38.725Z",
+    "enforce_simulation": "passed",
+    "broadcast": false,
+    "signable": false,
+    "source": "GA237QIWQI6TUI3DTTWQELRHCGNMB3WWMSKY7LLXW3B4FBQJN3TN6IP4",
+    "fee_stroops": "122020",
+    "expires_at": "2026-11-11T15:43:08.000Z",
+    "operationId": null,
+    "customerId": null,
+    "tx_hash": null
+  }
+}

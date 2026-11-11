@@ -1,3 +1,4 @@
+import { assertCanonicalSwapTransformation,USDC_ISSUER,USDC_SAC } from './inspector.js';
 import { StrKey } from '@stellar/stellar-sdk';
 import { GrapnelError, NETWORK, NETWORK_PASSPHRASE, PreparedActionSchema, fromAtomic, toAtomic, type AssetIdentity, type CustomerContext, type PreparedAction } from '@grapnel/contracts';
 
@@ -56,7 +57,7 @@ export class SoroswapSpotAdapter {
     return {module:'trade.spot' as const,provider:'soroswap',execution_status:'blocked' as const,reason,actions:[] as string[]};
   }
   markets() {
-    return [...this.registry.values()].map(m=>({market_id:m.id,provider:'soroswap',network:NETWORK,asset_class:'crypto_spot',asset_in_id:m.asset_in.id,asset_out_id:m.asset_out.id,executable:Boolean(this.config.apiKey&&this.config.gate1Passed&&this.inspect&&m.execution_verified_at),execution_status:m.execution_verified_at?'testnet_verified':'discovery_only',reason:m.execution_verified_at?null:this.capability().reason,as_of:m.route_verified_at}));
+    return [...this.registry.values()].map(m=>({market_id:m.id,provider:'soroswap',network:NETWORK,asset_class:'crypto_spot',asset_in_id:m.asset_in.id,asset_out_id:m.asset_out.id,preparation_available:Boolean(this.config.apiKey&&this.config.gate1Passed&&this.inspect&&m.route_verified_at),executable:Boolean(this.config.apiKey&&this.config.gate1Passed&&this.inspect&&m.execution_verified_at),execution_status:m.execution_verified_at?'testnet_verified':'discovery_only',reason:m.execution_verified_at?null:this.capability().reason,as_of:m.route_verified_at}));
   }
   market(id:string):SpotMarket {
     const found=this.registry.get(id);if(!found)throw new GrapnelError(404,'NOT_FOUND','Verified spot market not found');return found;
@@ -67,6 +68,13 @@ export class SoroswapSpotAdapter {
     try {response=await this.fetcher(`${this.baseUrl}${path}`,{method:body===undefined?'GET':'POST',headers:{Authorization:`Bearer ${this.config.apiKey}`,'Content-Type':'application/json'},...(body===undefined?{}:{body:JSON.stringify(body)}),signal:AbortSignal.timeout(12000)});}
     catch {throw new GrapnelError(503,'PROVIDER_UNAVAILABLE','Soroswap request timed out or failed',true);}
     if(response.status===401||response.status===403)return unavailable('PROVIDER_ACCESS_REQUIRED');
+    if(response.status===428){
+      let prerequisite:Record<string,unknown>={};try{prerequisite=await response.json() as Record<string,unknown>;}catch{/* never expose an opaque provider payload */}
+      const data=prerequisite.actionData as Record<string,unknown>|undefined;
+      const requested=body as {from?:unknown;quote?:{assetOut?:unknown}}|undefined;
+      if(path==='/quote/build?network=testnet'&&prerequisite.action==='CREATE_TRUSTLINE'&&prerequisite.errorCode===13&&data?.assetCode==='USDC'&&data.assetIssuer===USDC_ISSUER&&data.signer===requested?.from&&requested?.quote?.assetOut===USDC_SAC)return unavailable('USDC_TRUSTLINE_REQUIRED');
+      return unavailable('UNINSPECTED_PROVIDER_PREREQUISITE');
+    }
     if(response.status===429)throw new GrapnelError(429,'PROVIDER_RATE_LIMITED','Soroswap rate limit reached',true);
     if([400,404,409,422].includes(response.status))return unavailable('NO_TESTNET_LIQUIDITY_OR_ROUTE');
     if(!response.ok)throw new GrapnelError(503,'PROVIDER_UNAVAILABLE','Soroswap request failed',true);
@@ -118,7 +126,8 @@ export class SoroswapSpotAdapter {
     const response=record(await this.request('/quote/build?network=testnet',{quote:quote.provider_quote,from:customer.walletAddress,to:customer.walletAddress}));
     if(typeof response.xdr!=='string'||!response.xdr.length)return invalid('Soroswap returned no transaction');
     const action=PreparedActionSchema.parse(await this.inspect({unsignedXdr:response.xdr,quote,market,customer,operationId}));
-    if(action.unsignedXdr!==response.xdr||action.customerId!==customer.customerId||action.walletAddress!==customer.walletAddress||action.operationId!==operationId||action.network!==NETWORK||action.summary.fromAssetId!==quote.asset_in_id||action.summary.toAssetId!==quote.asset_out_id||action.summary.amount!==quote.amount_in||action.summary.minReceive!==quote.min_receive||Date.parse(action.summary.expiresAt)>Date.parse(quote.expires_at))throw new GrapnelError(403,'PREPARED_ACTION_MISMATCH','Inspected action does not match immutable quote');
+    assertCanonicalSwapTransformation(response.xdr,action);
+    if(action.customerId!==customer.customerId||action.walletAddress!==customer.walletAddress||action.operationId!==operationId||action.network!==NETWORK||action.summary.fromAssetId!==quote.asset_in_id||action.summary.toAssetId!==quote.asset_out_id||action.summary.amount!==quote.amount_in||action.summary.minReceive!==quote.min_receive||Date.parse(action.summary.expiresAt)>Date.parse(quote.expires_at))throw new GrapnelError(403,'PREPARED_ACTION_MISMATCH','Inspected action does not match immutable quote');
     return action;
   }
 }
