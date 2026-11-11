@@ -174,5 +174,7 @@
       }
     }
   ],
-  "last_error": "The QA vault deposit exceeds its exact reviewed Testnet scope"
+  "last_error": "Node ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING while closing debugger; no deposit signed or submitted",
+  "runner_status": "terminated_after_debugger_close_error_memory_only_keys_unrecoverable",
+  "qa_custody_note": "Own ephemeral QA funds only. No customer or treasury funds. Existing account cannot authorize further writes."
 }
