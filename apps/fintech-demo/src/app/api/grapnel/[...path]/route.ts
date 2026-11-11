@@ -44,6 +44,10 @@ export async function GET(
       await requireModule("capital.wallets",s);
       return json(await grapnel("/market-overview",s));
     }
+    if(key==="wallet-valuation"){
+      await requireModule("capital.wallets",s);
+      return json(await grapnel(`/capital/wallets/${s.walletId}/valuation?customer_id=${s.customerId}`,s));
+    }
     if (key === "wallet")
       return json(await grapnel(`/capital/wallets/${s.walletId}`, s));
     if (key === "balances")

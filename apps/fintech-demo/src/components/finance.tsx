@@ -26,6 +26,7 @@ type Session = {
   wallet_id: string;
   stellar_address: string;
 };
+type WalletValuation = {wallet_id:string;total_usd:string|null;priced_subtotal_usd:string;unpriced_asset_count:number;as_of:string};
 type BorrowAsset = {
   market_id:string;asset:AssetIdentity;borrow_apr:string|null;borrow_apy:string|null;
   available_liquidity:string|null;borrowed:string;repayable:string;
@@ -348,6 +349,41 @@ function FinanceShell({ page, auth, initialCategory }: { page: string; auth?: Au
   }, [sessionChecked, auth?.ready]);
   const [status, setStatus] = useState<any>(null);
   const [session, setSession] = useState<Session | null>(null);
+  const [profileOpen,setProfileOpen]=useState(false);
+  const [walletValuation,setWalletValuation]=useState<WalletValuation|null>(null);
+  const [valuationLoading,setValuationLoading]=useState(false);
+  const [valuationUnavailable,setValuationUnavailable]=useState(false);
+  const profileContainer=useRef<HTMLDivElement|null>(null),profilePanel=useRef<HTMLElement|null>(null),profileTrigger=useRef<HTMLButtonElement|null>(null);
+  const valuationFlight=useRef<{owner:string;promise:Promise<WalletValuation>}|null>(null);
+  const valuationOwner=useRef("");valuationOwner.current=`${session?.customer_id??""}:${session?.wallet_id??""}`;
+  useEffect(()=>{setProfileOpen(false);setWalletValuation(null);setValuationUnavailable(false);},[session?.customer_id,session?.wallet_id]);
+  useEffect(()=>{
+    if(!profileOpen||!session)return;
+    let alive=true;const owner=`${session.customer_id}:${session.wallet_id}`,walletId=session.wallet_id;
+    setValuationLoading(true);setWalletValuation(null);setValuationUnavailable(false);
+    let pending=valuationFlight.current?.owner===owner?valuationFlight.current.promise:null;
+    if(!pending){
+      pending=api("grapnel/wallet-valuation").then(value=>{
+        const money=(amount:unknown)=>typeof amount==="string"&&/^\d+(?:\.\d+)?$/.test(amount)&&formatTokenAmount(amount)!=="Unavailable";
+        if(value?.wallet_id!==walletId||!Number.isInteger(value.unpriced_asset_count)||value.unpriced_asset_count<0||!Number.isFinite(Date.parse(value.as_of))||!(value.total_usd===null||money(value.total_usd))||!money(value.priced_subtotal_usd))throw Error("Wallet value is unavailable.");
+        return value as WalletValuation;
+      });
+      const flight={owner,promise:pending};valuationFlight.current=flight;
+      void pending.then(()=>{if(valuationFlight.current===flight)valuationFlight.current=null;},()=>{if(valuationFlight.current===flight)valuationFlight.current=null;});
+    }
+    void pending.then(value=>{if(alive&&valuationOwner.current===owner)setWalletValuation(value);}).catch(()=>{if(alive&&valuationOwner.current===owner)setValuationUnavailable(true);}).finally(()=>{if(alive&&valuationOwner.current===owner)setValuationLoading(false);});
+    return()=>{alive=false;};
+  },[profileOpen,session?.customer_id,session?.wallet_id]);
+  useEffect(()=>{
+    if(!profileOpen)return;
+    profilePanel.current?.focus();
+    const outside=(event:PointerEvent)=>{if(event.target instanceof Node&&!profileContainer.current?.contains(event.target))setProfileOpen(false);};
+    const escape=(event:KeyboardEvent)=>{if(event.key==="Escape"){event.preventDefault();setProfileOpen(false);profileTrigger.current?.focus();}};
+    document.addEventListener("pointerdown",outside,true);document.addEventListener("keydown",escape);
+    return()=>{document.removeEventListener("pointerdown",outside,true);document.removeEventListener("keydown",escape);};
+  },[profileOpen]);
+
+  const profileValue=walletValuation ? (walletValuation.unpriced_asset_count>0?walletValuation.priced_subtotal_usd:walletValuation.total_usd) : null;
   const [caps, setCaps] = useState<Capability[]>([]);
   const [overviewSections,setOverviewSections] = useState<OverviewSection[]>([]);
   const [overviewLoading,setOverviewLoading] = useState(false);
@@ -876,26 +912,25 @@ function FinanceShell({ page, auth, initialCategory }: { page: string; auth?: Au
           <div className="top-actions">
 
             {session ? (
-              <button
-                className="avatar"
-                onClick={() =>
-                  action(async () => {
-                    if (auth) await auth.logout();
-                    else await api("session", undefined, "DELETE");
-                    setSession(null);
-                    setBalances([]);
-                    setOperations([]);
-                    setAssets([]);
-                    setMarkets([]);
-                    setLending([]);
-                    setEarnBalances([]);
-                    setActive(null);
-                  })
-                }
-                title="Sign out"
-              >
-                LF
-              </button>
+              <div className="profile-container" ref={profileContainer} onBlur={event=>{if(event.relatedTarget instanceof Node&&!event.currentTarget.contains(event.relatedTarget))setProfileOpen(false);}}>
+                <button className="avatar" ref={profileTrigger} type="button" aria-label="Open account menu" aria-expanded={profileOpen} aria-controls="account-profile-menu" aria-haspopup="dialog" data-testid="profile-button" onClick={()=>setProfileOpen(current=>!current)}>LF</button>
+                {profileOpen&&<section className="profile-panel" id="account-profile-menu" ref={profilePanel} tabIndex={-1} role="dialog" aria-label="Your account" data-testid="account-menu">
+                  <div className="profile-panel-heading"><strong>Your account</strong><span className="profile-connected"><span aria-hidden="true"/>Wallet connected</span></div>
+                  <div className="profile-valuation" aria-live="polite" aria-busy={valuationLoading}>
+                    <span>Wallet value (estimated)</span>
+                    {valuationLoading?<p className="small muted" role="status">Loading wallet value…</p>:valuationUnavailable||!walletValuation?<><strong>—</strong><p className="small muted" role="status">Value unavailable</p></>:<>
+                      {walletValuation.unpriced_asset_count>0&&<small>Priced assets</small>}
+                      <strong data-testid="profile-wallet-value">{profileValue==null?"—":formatTokenAmount(profileValue)}{profileValue!=null?" USD":""}</strong>
+                      {walletValuation.unpriced_asset_count>0&&<p className="small muted">{walletValuation.unpriced_asset_count} {walletValuation.unpriced_asset_count===1?"asset":"assets"} not priced</p>}
+                      <time dateTime={walletValuation.as_of}>Updated {marketDate(walletValuation.as_of,true)}</time>
+                    </>}
+                  </div>
+                  <button className="profile-logout" type="button" disabled={busy} onClick={()=>action(async()=>{
+                    if(auth)await auth.logout();else await api("session",undefined,"DELETE");
+                    setProfileOpen(false);setWalletValuation(null);setSession(null);setBalances([]);setOperations([]);setAssets([]);setMarkets([]);setLending([]);setEarnBalances([]);setActive(null);
+                  })}>Logout</button>
+                </section>}
+              </div>
             ) : (
               <button
                 className="button small-button"

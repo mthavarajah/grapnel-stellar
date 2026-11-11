@@ -258,3 +258,16 @@ describe('borrowing pool customer boundaries',()=>{
   vi.mocked(server.requireModule).mockRejectedValueOnce(new server.BffError(403,'MODULE_NOT_ENABLED','Disabled'));const upstream=vi.spyOn(server,'grapnel');expect((await POST(request('lending/borrow',{market_id:'new-pool-xlm',amount:'1'}),context(['lending','borrow']))).status).toBe(403);expect(upstream).not.toHaveBeenCalled();
  });
 });
+
+it('reads only the session wallet valuation with wallet entitlement',async()=>{
+ const upstream=vi.spyOn(server,'grapnel').mockResolvedValue({wallet_id:session.walletId,total_usd:'12.3456',priced_subtotal_usd:'12.3456',unpriced_asset_count:0,as_of:new Date().toISOString()});
+ expect((await GET(request('wallet-valuation?customer_id=foreign&wallet_id=foreign'),context(['wallet-valuation']))).status).toBe(200);
+ expect(server.requireModule).toHaveBeenCalledWith('capital.wallets',session);
+ expect(upstream).toHaveBeenCalledWith(`/capital/wallets/${session.walletId}/valuation?customer_id=${session.customerId}`,session);
+});
+it('refuses unauthenticated valuation and disabled wallets before any upstream request',async()=>{
+ const upstream=vi.spyOn(server,'grapnel');vi.mocked(server.requireSession).mockRejectedValueOnce(new server.BffError(401,'SESSION_REQUIRED','Sign in'));
+ expect((await GET(request('wallet-valuation'),context(['wallet-valuation']))).status).toBe(401);expect(upstream).not.toHaveBeenCalled();
+ vi.mocked(server.requireModule).mockRejectedValueOnce(new server.BffError(403,'MODULE_NOT_ENABLED','Disabled'));
+ expect((await GET(request('wallet-valuation'),context(['wallet-valuation']))).status).toBe(403);expect(upstream).not.toHaveBeenCalled();
+});

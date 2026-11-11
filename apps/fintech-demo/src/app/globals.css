@@ -1694,3 +1694,19 @@ footer strong {
 
 .loan-action-toggle { grid-template-columns: repeat(2,minmax(0,1fr)); }
 .loan-action-toggle button { font-size: 11px; padding-inline: 6px; }
+
+.profile-container { position: relative; }
+.profile-panel { position: absolute; z-index: 15; top: calc(100% + 14px); right: 0; width: 300px; max-width: calc(100vw - 88px); padding: 20px; border: 1px solid var(--line); border-radius: 15px; background: var(--paper); box-shadow: 0 14px 45px #192d421a; outline-offset: 3px; }
+.profile-panel-heading { display: grid; gap: 10px; padding-bottom: 18px; border-bottom: 1px solid var(--line); }
+.profile-panel-heading > strong { font-size: 14px; }
+.profile-connected { display: inline-flex; align-items: center; gap: 6px; font-size: 10px; color: #47745b; }
+.profile-connected > span { display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: #56986c; }
+.profile-valuation { display: grid; gap: 7px; padding: 20px 0; }
+.profile-valuation > span { color: var(--muted); font-size: 11px; }
+.profile-valuation > strong { font-size: 25px; font-weight: 600; line-height: 1.4; overflow-wrap: anywhere; }
+.profile-valuation > small { font-size: 10px; color: var(--muted); margin-top: 5px; }
+.profile-valuation p { margin: 0; font-size: 10px; }
+.profile-valuation time { font-size: 9px; line-height: 1.6; color: var(--muted); }
+.profile-logout { border: 0; border-top: 1px solid var(--line); background: transparent; color: #a5403a; padding: 15px 0 0; width: 100%; text-align: left; font: inherit; font-size: 12px; cursor: pointer; }
+.profile-logout:hover { color: #7b2721; }
+@media(max-width: 600px) { .profile-panel { padding: 17px; } .profile-valuation > strong { font-size: 23px; } }
