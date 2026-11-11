@@ -2,7 +2,7 @@ import { readFile } from 'node:fs/promises';
 import type { Pool } from 'pg';
 import { z } from 'zod';
 import {xdr,scValToNative} from '@stellar/stellar-sdk';
-import { GrapnelError, NETWORK, NETWORK_PASSPHRASE, WalletInputSchema, AmountSchema, XLM, toAtomic, fromAtomic, PreparedActionSchema, type CustomerContext, type PreparedAction, type WalletBalance } from '@grapnel/contracts';
+import { GrapnelError, NETWORK, NETWORK_PASSPHRASE, WalletInputSchema, AmountSchema, XLM, toAtomic, fromAtomic, PreparedActionSchema, type CustomerContext, type PreparedAction, type WalletBalance, type AssetIdentity } from '@grapnel/contracts';
 import { buildApp } from './app.js';
 import { createPool } from './db/index.js';
 import { loadConfig } from './lib/config.js';
@@ -20,6 +20,9 @@ import { registerLendingRoutes } from './modules/lending/routes.js';
 import {LendingEarningsReader} from './modules/lending/earnings.js';
 import { SoroswapSpotAdapter } from './adapters/soroswap/index.js';
 import {SoroswapDirectInspector,NATIVE_SAC} from './adapters/soroswap/inspector.js';
+import {SoroswapConfiguredInspector} from './adapters/soroswap/configured-inspector.js';
+import {STANDALONE_NATIVE_ROUTES,APPROVED_TOKEN_WASM} from './adapters/soroswap/direct-assets.js';
+import {SorobanTokenBalanceReader} from './adapters/stellar/token-balances.js';
 import {MarketDataService} from './modules/market-data/index.js';
 import {createSpotReservation,inspectSpotDeltas,SpotBaselineSchema,SPOT_USDC_ID} from './modules/spot/reservations.js';
 import {SpotProofReadiness} from './modules/spot/proof.js';
@@ -52,7 +55,11 @@ export async function createRuntime(pool?:Pool) {
  const privy=createPrivyClient();
  const identity=new PrivyIdentityVerifier(privy);
  const signer=new PrivyWalletSigner(privy,async(customerId,userId)=>!!(await db.query('SELECT 1 FROM customers WHERE id=$1 AND privy_user_id=$2',[customerId,userId])).rowCount);
- const wallets=new WalletService(db,identity,chain,signer);
+ let standaloneMarketAssets:()=>AssetIdentity[]=()=>[];
+ const tokenBalances=new SorobanTokenBalanceReader('https://soroban-testnet.stellar.org',Object.fromEntries(STANDALONE_NATIVE_ROUTES.map(route=>[route.contract,APPROVED_TOKEN_WASM])));
+ const readStandaloneBalances=(address:string)=>{const assets=standaloneMarketAssets();return assets.length?tokenBalances.getBalances(address,assets):Promise.resolve([]);};
+ const readSpotBalances=async(address:string)=>{const [classic,tokens]=await Promise.all([chain.getClassicBalances(address),readStandaloneBalances(address)]);return [...classic,...tokens];};
+ const wallets=new WalletService(db,identity,chain,signer,readStandaloneBalances);
  const operations=new OperationService(db);
  const stocks=new StocksTestnetDiscovery({network:config.network,networkPassphrase:NETWORK_PASSPHRASE});
  const commodities=new CommodityAdapter({network:config.network,passphrase:NETWORK_PASSPHRASE});
@@ -64,10 +71,11 @@ export async function createRuntime(pool?:Pool) {
  };
  const gate1Passed=await hasGate1Proof(chain);
  const funding=new TestnetFundingAdapter({network:config.network,networkPassphrase:NETWORK_PASSPHRASE,treasurySecret:process.env.DEMO_TREASURY_SECRET,enabled:process.env.TESTNET_FUNDING_ENABLED==='true',gate1Passed,maxPerCustomerAtomic:BigInt(process.env.TESTNET_FUNDING_MAX_PER_CUSTOMER_ATOMIC??'250000000'),maxPerTenantAtomic:BigInt(process.env.TESTNET_FUNDING_MAX_PER_TENANT_ATOMIC??'1000000000'),maxGlobalAtomic:BigInt(process.env.TESTNET_FUNDING_MAX_GLOBAL_ATOMIC??'2000000000')});
- const spotInspector=new SoroswapDirectInspector('CBR76WMT6J733CCVBP23M2EL5QGP5HXLPEFNFZGZ7IB6QHOJAHP7YM3V');
- let spotMarkets:Awaited<ReturnType<SoroswapDirectInspector['market']>>[]=[];
+ const spotInspector=new SoroswapConfiguredInspector();
+ let spotMarkets:Awaited<ReturnType<SoroswapConfiguredInspector['markets']>>=[];
  if(process.env.SOROSWAP_API_KEY){try{spotMarkets=await spotInspector.markets();}catch{/* Discovery failure leaves an empty market registry; never promote a guessed route. */}}
  const spot=new SoroswapSpotAdapter({network:config.network,networkPassphrase:NETWORK_PASSPHRASE,apiKey:process.env.SOROSWAP_API_KEY,gate1Passed,markets:spotMarkets},undefined,spotInspector.inspect);
+ standaloneMarketAssets=()=>[...new Map(spot.markets().flatMap(market=>[market.asset_in,market.asset_out]).filter(asset=>asset.kind==='soroban').map(asset=>[asset.id,asset])).values()];
  const spotReadiness=new SpotProofReadiness(db,spot,spotInspector,chain.server);
  const soroban=new BlendSorobanPreparer({network:config.network,passphrase:NETWORK_PASSPHRASE,rpcUrl:process.env.STELLAR_RPC_URL,gate1Passed});
  const blend=new BlendAdapter({network:config.network,passphrase:NETWORK_PASSPHRASE,rpcUrl:process.env.STELLAR_RPC_URL,gate1Passed},{prepareAndSimulate:input=>soroban.prepare(input)});
@@ -88,7 +96,7 @@ export async function createRuntime(pool?:Pool) {
    if(profile.reference.price_status!=='current'||!profile.reference.reference_price||!profile.reference.oracle_timestamp)throw new GrapnelError(503,'PRICE_UNAVAILABLE','Current price is unavailable');
    return {market_id:id,price:profile.reference.reference_price,quote_symbol:'USD',observed_at:profile.reference.oracle_timestamp,source:profile.reference.source_url};
   }
-  const reg=await spotInspector.registry();
+  const reg=await spotInspector.registryForMarket(id);
   const entry=await chain.server.getContractData(reg.pair,xdr.ScVal.scvLedgerKeyContractInstance());
   const storage=entry.val.contractData().val().instance().storage()??[];
   const field=(key:number)=>{const value=storage.find(item=>scValToNative(item.key())===key);return value?scValToNative(value.val()):undefined;};
@@ -177,14 +185,14 @@ export async function createRuntime(pool?:Pool) {
     return reply.code(202).send(success(request,result.operation));
    });
    await registerLendingRoutes(app,{adapter:blend,operations,balanceReader:address=>chain.getClassicBalances(address)});
-   await registerSpotRoutes(app,{service:new SpotService(spot,db,operations,createSpotReservation(operations,address=>chain.getClassicBalances(address))),refreshReadiness:()=>spotReadiness.refresh(),requireBusiness,requireCustomer,success,
+   await registerSpotRoutes(app,{service:new SpotService(spot,db,operations,createSpotReservation(operations,readSpotBalances)),refreshReadiness:()=>spotReadiness.refresh(),requireBusiness,requireCustomer,success,
     readDiscoveryMarkets:async category=>category==='perps'?perps.markets():category==='commodities'?commodities.markets():(await stocks.probe()).markets,
     readPositions:async customer=>({wallet_holdings:await wallets.balances(customer.businessId,customer.walletId),venue_positions:[]})});
    await registerFundingRoutes(app,{service:new FundingService(funding,operations),requireBusiness,requireCustomer,success});
   }
  });
  app.addHook('onClose',async()=>{if(!pool)await db.end();});
- const workerChain=createRuntimeWorkerChain({pool:db,chain,blend,soroban,gate1Passed,verifyGate1:()=>hasGate1Proof(chain),spot:spotInspector});
+ const workerChain=createRuntimeWorkerChain({pool:db,chain,blend,soroban,gate1Passed,verifyGate1:()=>hasGate1Proof(chain),spot:spotInspector,readSpotBalances});
  return {app,config,pool:db,chain,wallets,operations,funding,gate1Passed,worker:new OperationWorker(db,workerChain)};
 }
 
@@ -222,7 +230,7 @@ async function storedSpotAction(pool:Pool,operation:Record<string,any>):Promise<
  if(!quote||quote.provider!=='soroswap'||quote.exact_in_asset_id!==baseline.asset_in_id||quote.market_id!==baseline.market_id||quote.amount_in_atomic!==baseline.amount_in_atomic||quote.min_out_atomic!==baseline.min_out_atomic||action.operationId!==operation.id||action.customerId!==operation.customer_id||action.walletAddress!==operation.stellar_address||baseline.wallet_address!==operation.stellar_address||action.signingHashHex!==baseline.signing_hash_hex||action.summary.action!=='spot.swap'||action.summary.fromAssetId!==baseline.asset_in_id||action.summary.toAssetId!==baseline.asset_out_id||toAtomic(action.summary.amount??'',7)!==BigInt(baseline.amount_in_atomic)||toAtomic(action.summary.minReceive??'',7)!==BigInt(baseline.min_out_atomic)||action.summary.maxFeeStroops!==baseline.max_fee_stroops)throw new GrapnelError(403,'INTENT_MISMATCH','Durable quote/order, observed baseline and exact customer swap approval differ');
  return action;
 }
-export interface RuntimeWorkerDependencies {pool:Pool;chain:StellarTestnetExecutor;blend:Pick<BlendAdapter,'positions'>;soroban:Pick<BlendSorobanPreparer,'verifyForSubmission'>;gate1Passed:boolean;verifyGate1?:()=>Promise<boolean>;spot?:Pick<SoroswapDirectInspector,'verifyForSubmission'>;}
+export interface RuntimeWorkerDependencies {pool:Pool;chain:StellarTestnetExecutor;blend:Pick<BlendAdapter,'positions'>;soroban:Pick<BlendSorobanPreparer,'verifyForSubmission'>;gate1Passed:boolean;verifyGate1?:()=>Promise<boolean>;spot?:Pick<SoroswapDirectInspector,'verifyForSubmission'>;readSpotBalances?:(address:string)=>Promise<WalletBalance[]>;}
 /** No network send exists outside the durable worker's recorded hash/envelope path. */
 export function createRuntimeWorkerChain(deps:RuntimeWorkerDependencies):WorkerChain {
  const {pool,chain,blend,soroban,gate1Passed}=deps;
@@ -280,7 +288,7 @@ export function createRuntimeWorkerChain(deps:RuntimeWorkerDependencies):WorkerC
      const action=await storedSpotAction(pool,op),parsed=parseTestnetTransaction(op.signed_xdr);if(parsed.hash().toString('hex')!==hash||action.signingHashHex!==hash)return false;
      const confirmed=await chain.server.getTransaction(hash);if(confirmed.status!=='SUCCESS')return false;
      const tx=await chain.horizon.transactions().transaction(hash).call();if(!tx.successful||tx.hash!==hash||tx.source_account!==op.stellar_address||tx.ledger_attr!==confirmed.ledger)return false;
-     const result=inspectSpotDeltas({baseline:op.result_json?.spot_swap_baseline,walletAddress:op.stellar_address,signingHash:hash,balances:await chain.getClassicBalances(op.stellar_address),feeStroops:String(tx.fee_charged),confirmedLedger:confirmed.ledger});
+     const result=inspectSpotDeltas({baseline:op.result_json?.spot_swap_baseline,walletAddress:op.stellar_address,signingHash:hash,balances:await (deps.readSpotBalances?.(op.stellar_address)??chain.getClassicBalances(op.stellar_address)),feeStroops:String(tx.fee_charged),confirmedLedger:confirmed.ledger});
      if(result.verified){const observation=result.result.spot_swap_verification as {actual_in_atomic:string;actual_out_atomic:string};await pool.query("UPDATE orders SET actual_in_atomic=$3,actual_out_atomic=$4,status='confirming' WHERE business_id=$1 AND operation_id=$2",[op.business_id,op.id,observation.actual_in_atomic,observation.actual_out_atomic]);}
      return result;
     }catch{return {verified:false,result:{spot_swap_verification:{verified:false,reason:'LIVE_SWAP_RECONCILIATION_UNAVAILABLE'}}};}
