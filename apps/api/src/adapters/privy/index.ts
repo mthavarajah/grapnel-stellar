@@ -9,7 +9,10 @@ export function createPrivyClient(env:NodeJS.ProcessEnv=process.env):PrivyClient
 }
 export function validateStellarPublicKey(address:string,publicKey?:string):string {
   if(!StrKey.isValidEd25519PublicKey(address)) throw new GrapnelError(502,'PROVIDER_INVALID','Privy returned an invalid Stellar address');
-  const raw=publicKey?.replace(/^0x/,'');
+  let raw=publicKey?.replace(/^0x/i,'');
+  // Current Privy Stellar responses encode Ed25519 as 00 + the 32-byte key.
+  // Accept only that exact prefix/length; still compare every key byte to G-address.
+  if(raw && /^00[a-fA-F0-9]{64}$/.test(raw))raw=raw.slice(2);
   if(raw && (!/^[a-fA-F0-9]{64}$/.test(raw) || StrKey.encodeEd25519PublicKey(Buffer.from(raw,'hex'))!==address)) {
     if(publicKey!==address) throw new GrapnelError(502,'PROVIDER_INVALID','Privy Stellar public key and address do not match');
   }
