@@ -396,6 +396,33 @@ function FinanceShell({ page, auth }: { page: string; auth?: Auth }) {
   // discovery_only until the first grant and customer return are chain-verified.
   const fundingCanStart = capability("capital.testnet_funding")?.enabled && assets.some((entry: any) => entry.available === true);
   const selectedSpotMarket = markets.find(entry => (entry.market_id ?? entry.id) === market);
+  const publicMarketOwner = useRef("");
+  publicMarketOwner.current = `${session?.customer_id??""}:${category}:${page}`;
+  useEffect(() => {
+    if (!session || category !== "perps" || !(page === "markets" || page === "trade") || !capability("trade.perps")?.enabled) return;
+    const owner = `${session.customer_id}:${category}:${page}`;
+    let alive=true,inFlight=false,firstLoad=true;
+    const isCurrent=()=>alive&&publicMarketOwner.current===owner;
+    const refreshPublicMarkets=async()=>{
+      if(inFlight||document.visibilityState!=="visible"||!isCurrent())return;
+      inFlight=true;if(firstLoad)setMarketsLoading(true);
+      try {
+        const result=await api("grapnel/markets?asset_class=perps");
+        const rows=Array.isArray(result)?result:result?.markets;
+        if(!Array.isArray(rows))throw Error("Market data is unavailable.");
+        if(isCurrent())setMarkets(rows.filter((entry:any)=>typeof (entry.market_id??entry.id)==="string"&&entry.asset_class==="perps"));
+      } catch {
+        if(isCurrent())setMarkets(current=>current.map(entry=>({...entry,price_status:"unavailable",reference_price:null,reference_price_atomic:null,stats:null})));
+      } finally {
+        inFlight=false;firstLoad=false;if(isCurrent())setMarketsLoading(false);
+      }
+    };
+    void refreshPublicMarkets();
+    const timer=setInterval(()=>{void refreshPublicMarkets();},15000);
+    const visible=()=>{if(document.visibilityState==="visible")void refreshPublicMarkets();};
+    document.addEventListener("visibilitychange",visible);
+    return()=>{alive=false;clearInterval(timer);document.removeEventListener("visibilitychange",visible);};
+  },[session?.customer_id,category,page,caps]);
   useEffect(() => { setMarketSearch(""); }, [category]);
   useEffect(() => {
     if (category === "crypto_spot" || !markets.length || selectedSpotMarket) return;
@@ -516,7 +543,9 @@ function FinanceShell({ page, auth }: { page: string; auth?: Auth }) {
         }
         if (page === "markets" || page === "trade") {
           const selected = caps.find(c => c.module === "trade." + (category === "crypto_spot" ? "spot" : category));
-          if (selected?.enabled) {
+          if (category === "perps") {
+            // Dedicated guarded polling above owns this read-only category.
+          } else if (selected?.enabled) {
             if (alive) setMarketsLoading(true);
             try {
               const m = await api("grapnel/markets?asset_class=" + category);
@@ -1053,6 +1082,7 @@ function FinanceShell({ page, auth }: { page: string; auth?: Auth }) {
                     key={id}
                     disabled={busy}
                     onClick={() => {
+                      if(category===id)return;
                       setCategory(id!);
                       setError("");
                       setMarket("");
@@ -1080,7 +1110,7 @@ function FinanceShell({ page, auth }: { page: string; auth?: Auth }) {
                   <div className="market-detail-layout">
                     <section className="market-price-card" aria-label="Asset price" data-testid="perps-market-detail">
                       <div className="market-asset-heading"><span className="market-asset-fallback" aria-hidden="true">{(selectedSpotMarket.underlying?.symbol??"·").slice(0,1)}</span><div><h2>{selectedSpotMarket.underlying?.name??selectedSpotMarket.label}</h2><span>{selectedSpotMarket.underlying?.symbol} perpetual</span></div></div>
-                      <div className="market-price-heading"><strong>{formatTokenAmount(marketHistory?.latest_price??selectedSpotMarket.reference_price)}</strong><span>USD per {selectedSpotMarket.underlying?.symbol}</span></div>
+                      <div className="market-price-heading"><strong>{selectedSpotMarket.reference_price==null?"—":formatTokenAmount(selectedSpotMarket.reference_price)}</strong><span>USD per {selectedSpotMarket.underlying?.symbol}</span></div>
                       <div className={`public-market-freshness ${selectedSpotMarket.price_status==="stale"?"delayed":""}`} data-testid="market-price-freshness">{selectedSpotMarket.price_status==="current"?"Current price":selectedSpotMarket.price_status==="stale"?"Price delayed":"Price unavailable"}{selectedSpotMarket.oracle_timestamp&&<time dateTime={selectedSpotMarket.oracle_timestamp}>{new Date(selectedSpotMarket.oracle_timestamp).toLocaleString()}</time>}</div>
                       <div className="market-price-change" aria-label="Price change"><strong>{marketHistory&&marketHistory.points.length>1?displayChange(marketHistory.change_absolute):"—"}</strong><span>{marketHistory&&marketHistory.points.length>1?`USD (${displayChange(marketHistory.change_percent)}%)`: "(—)"}</span></div>
                       <PriceChart history={marketHistory} loading={historyLoading} />
