@@ -38,9 +38,7 @@ export class SorobanTokenBalanceReader {
       this.validateAsset(asset);
       unique.set(asset.id, asset);
     }
-    const results: WalletBalance[] = [];
-    for (const asset of unique.values()) results.push(await this.getBalance(walletG, asset));
-    return results;
+    return Promise.all([...unique.values()].map(asset=>this.getBalance(walletG,asset)));
   }
 
   private async verifyNetwork(): Promise<void> {
@@ -93,7 +91,7 @@ export class SorobanTokenBalanceReader {
       const balance = fromAtomic(value, 7);
       return {
         asset_id: asset.id, wallet_amount: balance, reserved: '0.0000000', spendable: balance,
-        as_of: this.now(), source: 'stellar_rpc_testnet',
+        as_of: this.now(), source: 'stellar_rpc_testnet', asset,
       };
     } catch (error) {
       if (error instanceof GrapnelError) throw error;

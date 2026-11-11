@@ -76,4 +76,4 @@ export class GrapnelError extends Error {
 }
 export interface VerifiedIdentity {userId:string;wallets:{id:string;address:string;publicKey:string}[];}
 export interface IdentityVerifier {verify(token:string):Promise<VerifiedIdentity>;}
-export interface WalletBalance {asset_id:string;wallet_amount:string;reserved:string;spendable:string;as_of:string;source:string;}
+export interface WalletBalance {asset_id:string;wallet_amount:string;reserved:string;spendable:string;as_of:string;source:string;asset?:AssetIdentity;}

@@ -45,16 +45,31 @@ function inspectBlendApproval(action: PreparedAction, operation: Transaction['op
       || values.length!==3 || values[0]!==action.walletAddress || values[1]!==pool || values[2]!==amount)throw Error();
   }catch{throw Error('This Earn transaction differs from your reviewed intent');}
 }
+/** Exact factory-verified direct XLM pools; no arbitrary provider contract is signable. */
+export const SPOT_STANDALONE_POOLS:Readonly<Record<string,string>>={
+ 'CCZGLAUBDKJSQK72QOZHVU7CUWKW45OZWYWCLL27AEK74U2OIBK6LXF2':'CDH4NEG6TAII2AXGJY52WSMMOGCPMFIQBBH245ATW2TIZ7MBYM23YOAR',
+ 'CB3TLW74NBIOT3BUWOZ3TUM6RFDF6A4GVIRUQRQZABG5KPOUL4JJOV2F':'CDVAIOYHCD4RUSLQNVFI7RIZBFT2JZMJWM4RTOLQZQXL4QAVXU5RFKDB',
+ 'CDDIA6HYANLPMDKBVQRIIXY3NA6S3TMHZFJUNPMBEJGZ5JSHN3E2TAUI':'CBCRYX4VG5GCKQ5KUIHV3AUOIEKEJKXDOXO5DWFYNRPK547N6MNVGEOZ',
+ 'CB7ICEHVRIRMF3CF6SIP2C2R3Z4E7WRPATT552QSVLIXZ5RSN6KLUDAE':'CDZL65OIXMVK63DCIWKJ7ULKVHZ7V4B4OM3XQHRNHR4OCFADIUV4FL64',
+ 'CBQDUWBOHS7P4TZIJ3KUPUZQOWMKJC6CQPPFEONSV3BH4X27YVEXWNOT':'CDRKRVJLWZNKB4W5GCJU27R6LVT2GD2WNYVUPBB2J3MXBEOHMB74WOX5',
+};
 function inspectSpotApproval(action:PreparedAction,operation:Transaction['operations'][number]):void {
   try {
     const issuer='GATALTGTWIOT6BUDBCZM3Q4OQ4BO2COLOAZ7IYSKPLC2PMSOPPGF5V56';
     const router='CCJUD55AG6W5HAI5LRVNKAE5WDP5XGZBUDS5WNTIVDU7O264UZZE7BRD';
-    const pair='CBR76WMT6J733CCVBP23M2EL5QGP5HXLPEFNFZGZ7IB6QHOJAHP7YM3V';
+    let pair='CBR76WMT6J733CCVBP23M2EL5QGP5HXLPEFNFZGZ7IB6QHOJAHP7YM3V';
     const native=Asset.native().contractId(NETWORK_PASSPHRASE),usdc=new Asset('USDC',issuer).contractId(NETWORK_PASSPHRASE);
     const xlmId=`${NETWORK}:native:XLM`,usdcId=`${NETWORK}:classic:USDC:${issuer}`;
-    const reverse=action.summary.fromAssetId===usdcId&&action.summary.toAssetId===xlmId;
-    const forward=action.summary.fromAssetId===xlmId&&action.summary.toAssetId===usdcId;
-    const inputContract=reverse?usdc:native,outputContract=reverse?native:usdc;
+    const otherId=action.summary.fromAssetId===xlmId?action.summary.toAssetId:action.summary.fromAssetId;
+    let token=usdc;
+    if(otherId!==usdcId){
+      if(!otherId?.startsWith(`${NETWORK}:soroban:`))throw Error();
+      token=otherId.slice(`${NETWORK}:soroban:`.length);const approvedPair=SPOT_STANDALONE_POOLS[token];
+      if(!approvedPair)throw Error();pair=approvedPair;
+    }
+    const reverse=action.summary.fromAssetId===otherId&&action.summary.toAssetId===xlmId;
+    const forward=action.summary.fromAssetId===xlmId&&action.summary.toAssetId===otherId;
+    const inputContract=reverse?token:native,outputContract=reverse?native:token;
     if(operation.type!=='invokeHostFunction'||operation.source||operation.func.switch().name!=='hostFunctionTypeInvokeContract'||action.summary.action!=='spot.swap'||action.summary.contractId!==router||(!forward&&!reverse)||action.summary.recipient!==action.walletAddress||!action.summary.amount||!action.summary.minReceive||BigInt(action.summary.maxFeeStroops??'0')>10000000n)throw Error();
     const fn=operation.func.invokeContract(),values=fn.args().map(scValToNative);
     const amount=toAtomic(action.summary.amount,7),minimum=toAtomic(action.summary.minReceive,7);

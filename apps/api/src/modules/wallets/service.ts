@@ -1,10 +1,10 @@
 import type { Pool } from 'pg';
-import { GrapnelError, fromAtomic, toAtomic, type IdentityVerifier } from '@grapnel/contracts';
+import { GrapnelError, fromAtomic, toAtomic, type IdentityVerifier, type WalletBalance } from '@grapnel/contracts';
 import { PrivyWalletSigner } from '../../adapters/privy/index.js';
 import { StellarTestnetExecutor } from '../../adapters/stellar/index.js';
 
 export class WalletService {
-  constructor(readonly pool:Pool,readonly identityVerifier:IdentityVerifier,readonly chain:StellarTestnetExecutor,readonly signer:PrivyWalletSigner) {}
+  constructor(readonly pool:Pool,readonly identityVerifier:IdentityVerifier,readonly chain:StellarTestnetExecutor,readonly signer:PrivyWalletSigner,readonly additionalBalances?:(address:string)=>Promise<WalletBalance[]>) {}
   async provision(businessId:string,customerId:string,identityProof:string) {
     const identity=await this.identityVerifier.verify(identityProof);
     const client=await this.pool.connect();
@@ -41,7 +41,9 @@ export class WalletService {
   }
   async balances(businessId:string,walletId:string) {
     const wallet=await this.get(businessId,walletId);
-    const balances=await this.chain.getClassicBalances(wallet.stellar_address);
+    const [classic,additional]=await Promise.all([this.chain.getClassicBalances(wallet.stellar_address),this.additionalBalances?.(wallet.stellar_address)??Promise.resolve([])]);
+    const balances=[...classic,...additional];
+    if(new Set(balances.map(balance=>balance.asset_id)).size!==balances.length)throw new GrapnelError(503,'ASSET_REGISTRY_INVALID','Balance readers returned a duplicate asset identity');
     const reservations=await this.pool.query("SELECT asset_id,SUM(amount_atomic)::text AS amount FROM balance_reservations WHERE business_id=$1 AND wallet_id=$2 AND state='active' GROUP BY asset_id",[businessId,walletId]);
     return balances.map(balance=>{
       const reserved=BigInt(reservations.rows.find(r=>r.asset_id===balance.asset_id)?.amount??'0');
