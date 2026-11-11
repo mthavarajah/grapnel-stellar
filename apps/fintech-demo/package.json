@@ -20,7 +20,6 @@
     "@stellar/stellar-sdk": "14.3.0",
     "buffer": "6.0.3",
     "next": "16.4.6",
-    "qrcode.react": "4.2.0",
     "react": "19.3.1",
     "react-dom": "19.3.1",
     "server-only": "0.0.1",

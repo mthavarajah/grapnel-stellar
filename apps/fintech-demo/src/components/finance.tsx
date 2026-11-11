@@ -10,7 +10,6 @@ import {
 import { useSignRawHash } from "@privy-io/react-auth/extended-chains";
 import type { PreparedAction } from "@grapnel/contracts";
 import { api, ClientError, operationRequestKey, clearOperationRequest } from "@/lib/client";
-import { ReceiveFunds } from "@/components/receive-funds";
 import { signPreparedAction } from "@/lib/privy-signer";
 type Capability = {
   module: string;
@@ -118,7 +117,7 @@ function Icon({ name, size = 20 }: { name: string; size?: number }) {
 }
 const nav = [
   ["home", "Overview"],
-  ["fund", "Receive funds"],
+  ["fund", "Get Testnet funds"],
   ["markets", "Markets"],
   ["earn", "Earn"],
   ["return", "Return Funds"],
@@ -134,7 +133,7 @@ const short = (v: string) =>
 const title: Record<string, string> = {
   home: "A clearer view of your assets.",
   login: "Your wallet. Your approval.",
-  fund: "Receive Testnet funds",
+  fund: "Get Testnet funds",
   return: "Return Testnet Funds",
   markets: "Explore available markets.",
   trade: "Explore available markets.",
@@ -547,7 +546,6 @@ function FinanceShell({ page, auth }: { page: string; auth?: Auth }) {
                   <div className="wallet-address">
                     {session ? (
                       <>
-                        <span>{short(session.stellar_address)}</span>
                         <a
                           href={
                             "https://stellar.expert/explorer/testnet/account/" +
@@ -567,7 +565,7 @@ function FinanceShell({ page, auth }: { page: string; auth?: Auth }) {
                     {session ? (
                       <>
                         <Link className="button light" href="/fund">
-                          <Icon name="fund" size={17} /> Receive funds
+                          <Icon name="fund" size={17} /> Get Testnet funds
                         </Link>
                         <Link className="button ghost" href="/return">
                           Return funds <Icon name="arrow" size={16} />
@@ -659,7 +657,6 @@ function FinanceShell({ page, auth }: { page: string; auth?: Auth }) {
             </>
           )}
           {page === "fund" && <>
-            <ReceiveFunds address={session?.stellar_address} busy={busy} onConnect={connect} onRefresh={() => void action(refresh)} />
             <section className="section" aria-label="Current wallet balances">
               <div className="section-heading"><h2>Your wallet balances</h2><span className="muted small">Stellar Testnet</span></div>
               <BalanceTable balances={balances} connected={!!session} />

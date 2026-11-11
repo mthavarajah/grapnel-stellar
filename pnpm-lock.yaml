@@ -124,9 +124,6 @@ importers:
       next:
         specifier: 16.4.6
         version: 16.4.6(@playwright/test@1.56.1)(@types/node@22.19.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
-      qrcode.react:
-        specifier: 4.2.0
-        version: 4.2.0(react@19.3.1)
       react:
         specifier: 19.3.1
         version: 19.3.1
@@ -3750,11 +3747,6 @@ packages:
 
   pump@3.0.4:
     resolution: {integrity: sha512-VS7sjc6KR7e1ukRFhQSY5LM2uBWAUPiOPa/A3mkKmiMwSmRFUITt0xuj+/lesgnCv+dPIEYlkzrcyXgquIHMcA==}
-
-  qrcode.react@4.2.0:
-    resolution: {integrity: sha512-QpgqWi8rD9DsS9EP3z7BT+5lY5SFhsqGjpgW5DY/i3mK4M9DTBNz3ErMi8BWYEfI3L0d8GIbGmcdFAS1uIRGjA==}
-    peerDependencies:
-      react: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
 
   qrcode@1.5.3:
     resolution: {integrity: sha512-puyri6ApkEHYiVl4CFzo1tDkAZ+ATcnbJrJ6RiBM1Fhctdn/ix9MTE3hRph33omisEbC/2fcfemsseiKgBPKZg==}
@@ -9707,10 +9699,6 @@ snapshots:
     dependencies:
       end-of-stream: 1.4.5
       once: 1.4.0
-
-  qrcode.react@4.2.0(react@19.3.1):
-    dependencies:
-      react: 19.3.1
 
   qrcode@1.5.3:
     dependencies:

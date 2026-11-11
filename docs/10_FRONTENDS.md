@@ -69,6 +69,4 @@ Caller derives session customer and passes an `Idempotency-Key` on financial act
 - Refresh browser, operations remain persisted; no vanishing fake balances.
 - Test on mobile view for demo; don't optimize full accessibility/theme before P0 backend works.
 
-
-### Customer receive portal
-The sample fintech exposes the connected customer's own Stellar G-address through a locally rendered address QR and a copy control. The receive panel explicitly selects native XLM on Stellar Testnet, instructs the sender to select Testnet, and does not advertise mainnet, other networks or unconfigured token trustlines. The address comes exclusively from the verified customer session. No external QR service receives the address. Copy/QR display never creates an operation or credits a balance; the customer refreshes confirmed balances through Grapnel after sending. This self-funded route remains visible independently of the treasury module entitlement/readiness. The separate capped treasury request retains all existing business entitlement, Gate 1 and chain-proof checks. No provider execution gate is passed by displaying a receive address.
+The customer funding page shows confirmed wallet balances and the gated Testnet treasury request. The QR/address deposit portal was removed at the user’s request. Wallet addresses remain internal for account binding, execution checks, transaction approval and explorer links.
