@@ -1017,8 +1017,8 @@ function FinanceShell({ page, auth }: { page: string; auth?: Auth }) {
                   {quote && <>
                     <div className="quote-summary" aria-label="Swap quote review">
                       <div className="detail-row"><span>Input amount</span><strong>{quote.amount_in} {assetCode(quote.asset_in_id)}</strong></div>
-                      <div className="detail-row"><span>Expected receive</span><strong>{quote.expected_out} {assetCode(quote.asset_out_id)}</strong></div>
-                      <div className="detail-row"><span>Minimum receive</span><strong>{quote.min_receive} {assetCode(quote.asset_out_id)}</strong></div>
+                      <div className="detail-row"><span>{quote.asset_out_id === XLM_ASSET ? "Expected receive before fee" : "Expected receive"}</span><strong>{quote.expected_out} {assetCode(quote.asset_out_id)}</strong></div>
+                      <div className="detail-row"><span>{quote.asset_out_id === XLM_ASSET ? "Minimum receive before fee" : "Minimum receive"}</span><strong>{quote.min_receive} {assetCode(quote.asset_out_id)}</strong></div>
                       <div className="detail-row"><span>Maximum slippage</span><strong>{(quote.slippage_bps ?? slippageBps) / 100}%</strong></div>
                       <div className="detail-row"><span>Quote expires</span><strong>{new Date(quote.expires_at).toLocaleTimeString()}</strong></div>
                       <div className="detail-row"><span>Transaction fee</span><strong>Shown in transaction review</strong></div>
@@ -1243,7 +1243,7 @@ function FinanceShell({ page, auth }: { page: string; auth?: Auth }) {
             ) : active.prepared_action?.summary.action === "spot.swap" && supportedSpotPair(active.prepared_action.summary.fromAssetId, active.prepared_action.summary.toAssetId) ? (
               <div className="approval-summary">
                 <div><span>You send</span><code>{active.prepared_action.summary.amount} {assetCode(active.prepared_action.summary.fromAssetId)}</code></div>
-                <div><span>You receive at least</span><code>{active.prepared_action.summary.minReceive} {assetCode(active.prepared_action.summary.toAssetId)}</code></div>
+                <div><span>{active.prepared_action.summary.toAssetId === XLM_ASSET ? "You receive at least before fee" : "You receive at least"}</span><code>{active.prepared_action.summary.minReceive} {assetCode(active.prepared_action.summary.toAssetId)}</code></div>
                 <div><span>Maximum fee</span><code>{approvalFee(active.prepared_action.summary.maxFeeStroops)}</code></div>
                 <div><span>Expires</span><code>{new Date(active.prepared_action.summary.expiresAt).toLocaleString()}</code></div>
               </div>
