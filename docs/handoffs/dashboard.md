@@ -35,3 +35,13 @@ Dashboard server env: `GRAPNEL_API_URL`, optionally exact `DASHBOARD_ORIGIN`. AP
 Added own manifest dependencies: next 16.4.6, react/react-dom 19.3.1, @types/react/@types/react-dom 19.2.2, TypeScript 5.9.3, @types/node 22.19.0. Lead must update root pnpm-lock.yaml after cherry-pick. No shared contract/root/migration changes.
 
 **Blockers:** Public hosting not connected; Testnet signing gate and protocol proofs are owned by integration/provider roles. This dashboard cannot independently pass Gate 3. Verify deployed cookie/Origin configuration in browser and rerun same-key effect through fintech BFF before claiming acceptance.
+
+## Customer holdings UI update — 2026-11-11
+
+Added a dedicated owner-session Customers view with independent live wallet balance and Blend position reads. Wallet columns show balance/reserved/spendable; protocol columns show total supplied, the collateral portion, and borrowed assets. The UI never combines protocol-held positions with wallet spending availability. All amounts use shared `formatTokenAmount(value, 6)` without floating-point conversion. Unknown amounts display Unavailable; failed reads never become zero balances.
+
+Customer selection ignores late responses from previous selections; both reads have independent loading/error states and explicit refresh. No raw UUID, Privy ID, market/asset contract ID or wallet address appears in labels. Customers use readable local labels, while asset/wallet inspection links retain exact public explorer references. Workspace/request UUID text was also removed. Mobile tables become labeled amount cards so spendable and collateral values fit a 390px screen.
+
+Validation: production build and strict typecheck passed; three table-format/identity-display tests and six proxy security tests passed. Actual Chrome browser verified unauthenticated login screen, authenticated owner cookie access, live wallet balance plus four current Blend reserve rows, zero read errors, zero page errors, no opaque IDs in rendered text, and no horizontal document overflow at 390px. Screenshots inspected at `/tmp/grapnel-dashboard-holdings-desktop.png` and `/tmp/grapnel-dashboard-holdings-mobile.png`. This was read-only verification, not a new chain execution or acceptance hash.
+
+Lead-owned integration dependency: GET `/v1/dashboard/customers/:id/balances` and the dashboard proxy allowlist are supplied by the root agent. Their identical local allowlist patch was used for verification but deliberately excluded from this UI commit. No API/BFF/shared-contract changes or new dependencies included. Temporary local dashboard port 3013 was stopped after verification.

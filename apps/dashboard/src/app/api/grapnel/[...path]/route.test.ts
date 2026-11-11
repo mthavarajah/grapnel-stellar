@@ -35,14 +35,12 @@ describe("owner proxy security boundary", () => {
   it("forwards only owner session and CSRF; empty DELETE has no JSON content type", async () => {
     vi.stubEnv("DASHBOARD_ORIGIN", "https://console.example");
     vi.stubEnv("GRAPNEL_API_URL", "https://api.example");
-    const fetcher = vi
-      .fn()
-      .mockResolvedValue(
-        new Response('{"data":{"status":"revoked"}}', {
-          status: 200,
-          headers: { "Content-Type": "application/json" },
-        }),
-      );
+    const fetcher = vi.fn().mockResolvedValue(
+      new Response('{"data":{"status":"revoked"}}', {
+        status: 200,
+        headers: { "Content-Type": "application/json" },
+      }),
+    );
     vi.stubGlobal("fetch", fetcher);
     const id = "00000000-0000-4000-8000-000000000001";
     const request = new NextRequest(
@@ -84,4 +82,36 @@ describe("owner proxy security boundary", () => {
     expect(body.error.code).toBe("API_UNAVAILABLE");
     expect(JSON.stringify(body)).not.toContain("secret underlying error");
   });
+  it.each(["balances", "lending-positions"])(
+    "keeps customer %s reads on the owner session boundary",
+    async (endpoint) => {
+      vi.stubEnv("GRAPNEL_API_URL", "https://api.example");
+      const fetcher = vi
+        .fn()
+        .mockResolvedValue(new Response('{"data":{}}', { status: 200 }));
+      vi.stubGlobal("fetch", fetcher);
+      const id = "00000000-0000-4000-8000-000000000001";
+      const response = await GET(
+        new NextRequest(
+          `https://console.example/api/grapnel/dashboard/customers/${id}/${endpoint}`,
+          {
+            headers: {
+              Cookie:
+                "fintech_session=must-not-forward; grapnel_owner=owner-session",
+              Authorization: "Bearer must-not-forward",
+            },
+          },
+        ),
+        context("dashboard", "customers", id, endpoint),
+      );
+      expect(response.status).toBe(200);
+      expect(fetcher.mock.calls[0][0]).toBe(
+        `https://api.example/v1/dashboard/customers/${id}/${endpoint}`,
+      );
+      expect(fetcher.mock.calls[0][1].headers).toEqual({
+        Origin: "https://console.example",
+        Cookie: "grapnel_owner=owner-session",
+      });
+    },
+  );
 });
