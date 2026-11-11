@@ -25,6 +25,16 @@ type Session = {
   wallet_id: string;
   stellar_address: string;
 };
+type EarnBalance = {
+  asset_id: string;
+  wallet_amount?: string | null;
+  spendable?: string | null;
+  in_earn?: string | null;
+  as_of?: string | null;
+  trustline_required: boolean;
+};
+const XLM_ASSET = "stellar-testnet:native:XLM";
+const USDC_ASSET = "stellar-testnet:classic:USDC:GATALTGTWIOT6BUDBCZM3Q4OQ4BO2COLOAZ7IYSKPLC2PMSOPPGF5V56";
 type Operation = {
   operation_id: string;
   customer_id: string;
@@ -206,6 +216,29 @@ function FinanceShell({ page, auth }: { page: string; auth?: Auth }) {
   const [fundingError, setFundingError] = useState("");
   const [markets, setMarkets] = useState<any[]>([]);
   const [lending, setLending] = useState<any[]>([]);
+  const [earnBalances, setEarnBalances] = useState<EarnBalance[]>([]);
+  const [earnBalancesLoading, setEarnBalancesLoading] = useState(false);
+  const [earnBalancesError, setEarnBalancesError] = useState("");
+  const [earnAmounts, setEarnAmounts] = useState<Record<string, string>>({});
+  const earnBalanceOwner = useRef<string | null>(null);
+  earnBalanceOwner.current = session?.customer_id ?? null;
+  useEffect(() => { setEarnBalances([]); setEarnAmounts({}); setEarnBalancesError(""); }, [session?.customer_id]);
+  const refreshEarnBalances = useCallback(async () => {
+    const customerId = session?.customer_id;
+    if (!customerId) return;
+    setEarnBalancesLoading(true);
+    setEarnBalancesError("");
+    try {
+      const result = await api("grapnel/earn-balances");
+      if (earnBalanceOwner.current !== customerId) return;
+      if (!Array.isArray(result.balances)) throw Error("Earn balances are unavailable.");
+      setEarnBalances(result.balances);
+    } catch (cause) {
+      if (earnBalanceOwner.current !== customerId) return;
+      setEarnBalances([]);
+      setEarnBalancesError(cause instanceof Error ? cause.message : "Earn balances are unavailable.");
+    } finally { if (earnBalanceOwner.current === customerId) setEarnBalancesLoading(false); }
+  }, [session?.customer_id]);
   const [operations, setOperations] = useState<Operation[]>([]);
   const [active, setActive] = useState<Operation | null>(null);
   const [error, setError] = useState("");
@@ -239,7 +272,7 @@ function FinanceShell({ page, auth }: { page: string; auth?: Auth }) {
       setSession(identity);
     } catch (error) {
       setSession(null);
-      setBalances([]); setOperations([]); setAssets([]); setMarkets([]); setLending([]); setActive(null);
+      setBalances([]); setOperations([]); setAssets([]); setMarkets([]); setLending([]); setEarnBalances([]); setActive(null);
       if (!(error instanceof ClientError && error.status === 401))
         setError(error instanceof Error ? error.message : "Session check failed. Please retry.");
     } finally {
@@ -293,6 +326,7 @@ function FinanceShell({ page, auth }: { page: string; auth?: Auth }) {
           } else if (alive) setMarkets([]);
         }
         if (page === "earn") {
+          void refreshEarnBalances();
           const m = await api("grapnel/lending-markets");
           if (alive) setLending((Array.isArray(m) ? m : (m.markets ?? [])).filter((market: {asset_id:string}) => [
             "stellar-testnet:native:XLM",
@@ -306,7 +340,10 @@ function FinanceShell({ page, auth }: { page: string; auth?: Auth }) {
     return () => {
       alive = false;
     };
-  }, [page, session, category, caps]);
+  }, [page, session, category, caps, refreshEarnBalances]);
+  useEffect(() => {
+    if (page === "earn" && session && active?.status === "completed") void refreshEarnBalances();
+  }, [page, session, active?.status, active?.operation_id, refreshEarnBalances]);
   useEffect(() => {
     if (
       !active ||
@@ -503,6 +540,7 @@ function FinanceShell({ page, auth }: { page: string; auth?: Auth }) {
                     setAssets([]);
                     setMarkets([]);
                     setLending([]);
+                    setEarnBalances([]);
                     setActive(null);
                   })
                 }
@@ -1011,8 +1049,14 @@ function FinanceShell({ page, auth }: { page: string; auth?: Auth }) {
                 </div>
                 {lending.length ? (
                   <div className="pool-grid">
-                    {lending.map((m) => (
-                      <div className="pool" key={m.market_id ?? m.id}>
+                    {lending.map((m) => {
+                      const balance = earnBalances.find(entry => entry.asset_id === m.asset_id);
+                      const isUsdc = m.asset_id === USDC_ASSET;
+                      const needsTrustline = isUsdc && balance?.trustline_required === true;
+                      const canPrepare = canPrepareBlendAction() &&
+                        (m.asset_id === XLM_ASSET || (isUsdc && balance?.trustline_required === false));
+                      const shown = (value: string | null | undefined) => earnBalancesLoading ? "Loading…" : typeof value === "string" ? value : "Unavailable";
+                      return <div className="pool" key={m.market_id ?? m.id}>
                         <img className="asset-logo"
                           src={m.asset_id === "stellar-testnet:native:XLM" ? "/assets/xlm.svg" : "/assets/usdc.svg"}
                           alt={m.asset_id === "stellar-testnet:native:XLM" ? "XLM logo" : "USDC logo"}
@@ -1034,43 +1078,37 @@ function FinanceShell({ page, auth }: { page: string; auth?: Auth }) {
                         <p className="small">
                           {customerMessage(m.reason ?? m.readiness ?? "Live read; execution requires separate proof")}
                         </p>
-                        <label>
-                          Amount
-                          <input
-                            inputMode="decimal"
-                            value={amount}
-                            onChange={(e) => setAmount(e.target.value)}
-                          />
-                        </label>
-                        <div className="button-row">
-                          {["supply", "withdraw"].map((a) => (
-                            <button
-                              className="button outline"
-                              key={a}
-                              disabled={
-                                busy ||
-                                !session ||
-                                !canPrepareBlendAction() ||
-                                m.asset_id !== "stellar-testnet:native:XLM"
-                              }
-                              onClick={() =>
-                                action(() =>
-                                  start("lending/" + a, {
-                                    market_id: m.market_id ?? m.id,
-                                    asset_id: m.asset_id,
-                                    amount,
-                                  }),
-                                )
-                              }
-                            >
-                              {!executable("capital.lending")
-                                ? `Prepare ${a}`
-                                : a}
-                            </button>
-                          ))}
-                        </div>
-                      </div>
-                    ))}
+                        <dl className="earn-balances" aria-label={`${m.asset?.code ?? "Asset"} balances`}>
+                          <div><dt>Available to supply</dt><dd>{shown(balance?.spendable)}</dd></div>
+                          <div><dt>In Earn</dt><dd>{shown(balance?.in_earn)}</dd></div>
+                        </dl>
+                        {balance?.as_of && !earnBalancesLoading && <p className="small muted">Balance observed {new Date(balance.as_of).toLocaleString()}.</p>}
+                        {earnBalancesError && <p className="small earn-balance-error" role="alert">{customerMessage(earnBalancesError)}</p>}
+                        {needsTrustline ? (
+                          <div className="earn-setup">
+                            <p className="small">Enable Testnet USDC in your wallet before supplying it.</p>
+                            <button className="button outline" disabled={busy || !session || !canPrepareBlendAction()}
+                              onClick={() => action(() => start("usdc-trustline", {limit: "1000"}))}>Enable USDC</button>
+                          </div>
+                        ) : (
+                          <div className="earn-actions">
+                            {["supply", "withdraw"].map((a) => {
+                              const key = `${m.asset_id}:${a}`;
+                              return <div className="earn-action" key={a}>
+                                <label>{a === "supply" ? "Supply amount" : "Withdraw amount"}
+                                  <input inputMode="decimal" value={earnAmounts[key] ?? ""} placeholder="0.00"
+                                    onChange={(e) => setEarnAmounts(current => ({...current, [key]: e.target.value}))} />
+                                </label>
+                                <button className="button outline" disabled={busy || !session || !canPrepare || !earnAmounts[key]}
+                                  onClick={() => action(() => start("lending/" + a, {
+                                    market_id: m.market_id ?? m.id, asset_id: m.asset_id, amount: earnAmounts[key],
+                                  }))}>{`Prepare ${a}`}</button>
+                              </div>;
+                            })}
+                          </div>
+                        )}
+                      </div>;
+                    })}
                   </div>
                 ) : (
                   <Empty
@@ -1176,7 +1214,9 @@ function FinanceShell({ page, auth }: { page: string; auth?: Auth }) {
             </span>
             <p className="eyebrow">STELLAR TESTNET OPERATION</p>
             <h2 id="operation-title">
-              {active.status === "awaiting_customer_authorization"
+              {active.type === "wallet.usdc_trustline"
+                ? active.status === "completed" ? "Testnet USDC enabled." : "Enable Testnet USDC"
+                : active.status === "awaiting_customer_authorization"
                 ? "Review before you approve."
                 : active.status === "completed"
                   ? "Confirmed on Testnet."
@@ -1197,7 +1237,15 @@ function FinanceShell({ page, auth }: { page: string; auth?: Auth }) {
             >
               {active.status.replaceAll("_", " ")}
             </span>
-            {active.prepared_action && (
+            {active.prepared_action && active.type === "wallet.usdc_trustline" ? (
+              <div className="approval-summary">
+                <div><span>Trust limit</span><code>{active.prepared_action.summary.amount === "1000" ? "1,000" : active.prepared_action.summary.amount ?? "Unavailable"} Testnet USDC</code></div>
+                <div><span>Additional XLM account reserve</span><code>0.5 XLM</code></div>
+                <div><span>Maximum network fee</span><code>{active.prepared_action.summary.maxFeeStroops} stroops</code></div>
+                <div><span>Expires</span><code>{new Date(active.prepared_action.summary.expiresAt).toLocaleString()}</code></div>
+                <p className="small muted">This enables the exact Testnet USDC asset in your wallet. It does not transfer or supply USDC. The trust limit is the maximum amount your wallet can hold.</p>
+              </div>
+            ) : active.prepared_action && (
               <div className="approval-summary">
                 {Object.entries(active.prepared_action.summary)
                   .filter(([, v]) => v !== undefined)
@@ -1229,9 +1277,9 @@ function FinanceShell({ page, auth }: { page: string; auth?: Auth }) {
             {active.status === "awaiting_customer_authorization" && (
               <>
                 <p className="small muted">
-                  Approve only if the asset, amount, recipient, fee ceiling, and
-                  expiry match your intent. Privy signs this exact Testnet
-                  transaction.
+                  {active.type === "wallet.usdc_trustline"
+                    ? "Review the trust limit, additional reserve, network fee and expiry. Privy signs this exact Testnet wallet setup transaction."
+                    : "Approve only if the asset, amount, recipient, fee ceiling, and expiry match your intent. Privy signs this exact Testnet transaction."}
                 </p>
                 <button
                   className="button wide"
