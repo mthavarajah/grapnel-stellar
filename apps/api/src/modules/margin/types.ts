@@ -64,3 +64,6 @@ export interface MarginAdapter {
  /** Must verify exact stored transaction hash and baseline; current aggregate state alone is insufficient. */
  readConfirmedEvidence(context:MarginStepContext & {baseline:Record<string,unknown>;txHash:string},customer:CustomerContext):Promise<MarginEvidence>;
 }
+export interface MarginExecutionAdapter extends MarginAdapter {
+ verifyStepForSubmission(context:MarginStepContext & {baseline:Record<string,unknown>;prepared:PreparedAction},signedXdr:string,customer:CustomerContext):Promise<void>;
+}

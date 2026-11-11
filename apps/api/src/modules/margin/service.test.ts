@@ -88,4 +88,8 @@ describe.skipIf(!databaseUrl)('Margin coordinator disposable Postgres integratio
  it('does not overwrite a parent revision changed during external chain verification',async()=>{
   const {workflow,result}=await completedFixture();adapter.readConfirmedEvidence=async()=>{await pool.query('UPDATE margin_workflows SET revision=revision+1 WHERE id=$1',[workflow.id]);return evidence;};await expect(service.reconcile(customer,workflow.id)).rejects.toMatchObject({code:'MARGIN_WORKFLOW_CONFLICT'});const w=await service.get(customer,workflow.id);expect(w.phase).toBe('awaiting_collateral');expect(w.activeOperationId).toBe(result.operation.operation_id);expect((await pool.query('SELECT evidence_json FROM margin_workflow_steps WHERE operation_id=$1',[result.operation.operation_id])).rows[0].evidence_json).toBeNull();
  });
+ it('lists at most20 scoped wallet workflows with active recovery first',async()=>{
+  for(let i=0;i<21;i++){const w=await service.create(customer,terms,`${customer.customerId}-${i}`);await pool.query("UPDATE margin_workflows SET phase='recovered' WHERE id=$1",[w.id]);}
+  const active=await service.create(customer,terms,`${customer.customerId}-active`),listed=await service.list(customer);expect(listed).toHaveLength(20);expect(listed[0].id).toBe(active.id);expect(listed.every(w=>w.customerId===customer.customerId&&w.walletId===customer.walletId&&w.businessId===customer.businessId)).toBe(true);await expect(service.list({...customer,walletAddress:Keypair.random().publicKey()})).rejects.toMatchObject({code:'NOT_FOUND'});
+ });
 });
