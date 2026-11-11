@@ -29,7 +29,18 @@
       "margin": "Peridot Testnet reads integrated; own-QA deposit and margin transfer confirmed; open/close and customer durable workflow in progress",
       "commodities": "No qualifying Testnet issuer/liquid route verified"
     },
-    "public_deployment": "deferred_by_user_until_local_finalized"
+    "public_deployment": "deferred_by_user_until_local_finalized",
+    "integration_suite": {
+      "passed": 99,
+      "failed": 0,
+      "skipped": 0,
+      "scope": "Eight suites on explicit disposable _test Postgres databases; no production database or provider broadcasts."
+    },
+    "live_api": {
+      "capabilities": "200; trade.perps provider peridot/read_markets/discovery_only",
+      "margin_markets": "200; one pinned XLM/MockUSDT Testnet market; executable false",
+      "overview": "200; spot3, margin1, stocks3, commodities3, lending2 source-backed rows"
+    }
   },
   "observed_at": "2026-11-10T21:05:06.893501+00:00",
   "scope": "local_credential_free_implementation",
