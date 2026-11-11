@@ -92,6 +92,28 @@
     "reconciled": true,
     "independent_horizon_effects_verified": true
   },
+  "soroswap_btc": {
+    "observed_at": "2026-11-11T18:10:46.813Z",
+    "network": "stellar-testnet",
+    "operation_id": "6bea7d1b-6b6c-4b56-a9df-0c07148d9829",
+    "tx_hash": "6a0c570c4f6dad878b5581ff20cb7cd0134550698a81c3a9818a5a32c174e791",
+    "explorer_url": "https://stellar.expert/explorer/testnet/tx/6a0c570c4f6dad878b5581ff20cb7cd0134550698a81c3a9818a5a32c174e791",
+    "successful": true,
+    "ledger": 5679400,
+    "asset_in_id": "stellar-testnet:native:XLM",
+    "asset_out_id": "stellar-testnet:soroban:CB7ICEHVRIRMF3CF6SIP2C2R3Z4E7WRPATT552QSVLIXZ5RSN6KLUDAE",
+    "amount_in": "1.0000000",
+    "amount_out": "0.0000390",
+    "min_receive": "0.0000389",
+    "fee_stroops": "481623",
+    "wallet_in_before": "9906.2168972",
+    "wallet_in_after": "9905.1687349",
+    "wallet_out_before": "0.0000000",
+    "wallet_out_after": "0.0000390",
+    "automatic_restoration": {"operations":1,"archived_indices":[2,3,4,5],"targets":"persistent contractData only","read_only_keys":5,"read_write_keys":6},
+    "reconciled": true,
+    "independent_horizon_transaction_and_rpc_balance_verified": true
+  },
   "blend_supply": {
     "observed_at": "2026-11-11T04:30:26.961Z",
     "network": "stellar-testnet",
