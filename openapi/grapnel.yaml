@@ -2,7 +2,7 @@
   "openapi": "3.1.0",
   "info": {
     "title": "Grapnel Testnet API",
-    "version": "0.2.0",
+    "version": "0.2.1",
     "description": "Stellar Testnet only. See docs/03_API.md and packages/contracts for frozen payload schemas."
   },
   "servers": [
@@ -3393,6 +3393,360 @@
           }
         }
       }
+    },
+    "/v1/trade/margin/workflows": {
+      "get": {
+        "operationId": "list_customer_margin_workflows",
+        "security": [
+          {
+            "businessKey": []
+          }
+        ],
+        "description": "Customer-bound durable workflow recovery, at most20 newest workflows. No private policy or chain baseline is exposed.",
+        "parameters": [
+          {
+            "name": "customer_id",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "wallet_id",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "JSON data envelope; workflow state is not chain success. Step operations require exact customer authorization and polling."
+          },
+          "401": {
+            "description": "Business/customer identity required"
+          },
+          "403": {
+            "description": "Margin module disabled or authorization mismatch"
+          },
+          "404": {
+            "description": "Exact customer/wallet workflow not found"
+          },
+          "409": {
+            "description": "Execution unavailable, pending or phase/policy conflict"
+          }
+        }
+      },
+      "post": {
+        "operationId": "create_customer_margin_workflow",
+        "security": [
+          {
+            "businessKey": []
+          }
+        ],
+        "description": "Records immutable intent using server-owned provider policy. Does not sign, broadcast or imply executable provider readiness.",
+        "parameters": [
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 200
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "JSON data envelope; workflow state is not chain success. Step operations require exact customer authorization and polling."
+          },
+          "401": {
+            "description": "Business/customer identity required"
+          },
+          "403": {
+            "description": "Margin module disabled or authorization mismatch"
+          },
+          "404": {
+            "description": "Exact customer/wallet workflow not found"
+          },
+          "409": {
+            "description": "Execution unavailable, pending or phase/policy conflict"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MarginWorkflowInput"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/trade/margin/workflows/{id}": {
+      "get": {
+        "operationId": "get_customer_margin_workflow",
+        "security": [
+          {
+            "businessKey": []
+          }
+        ],
+        "description": "Customer-bound current workflow and server-verified executable next steps. Defaults blocked without reviewed provider binding.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "customer_id",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "wallet_id",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "JSON data envelope; workflow state is not chain success. Step operations require exact customer authorization and polling."
+          },
+          "401": {
+            "description": "Business/customer identity required"
+          },
+          "403": {
+            "description": "Margin module disabled or authorization mismatch"
+          },
+          "404": {
+            "description": "Exact customer/wallet workflow not found"
+          },
+          "409": {
+            "description": "Execution unavailable, pending or phase/policy conflict"
+          }
+        }
+      }
+    },
+    "/v1/trade/margin/workflows/{id}/reconcile": {
+      "post": {
+        "operationId": "reconcile_customer_margin_workflow",
+        "security": [
+          {
+            "businessKey": []
+          }
+        ],
+        "description": "Advances only after matching completed signed child hash and independent exact chain evidence. Request never supplies evidence.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "JSON data envelope; workflow state is not chain success. Step operations require exact customer authorization and polling."
+          },
+          "401": {
+            "description": "Business/customer identity required"
+          },
+          "403": {
+            "description": "Margin module disabled or authorization mismatch"
+          },
+          "404": {
+            "description": "Exact customer/wallet workflow not found"
+          },
+          "409": {
+            "description": "Execution unavailable, pending or phase/policy conflict"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MarginCustomerBinding"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/trade/margin/workflows/{id}/steps/{step}/quote": {
+      "post": {
+        "operationId": "quote_customer_margin_step",
+        "security": [
+          {
+            "businessKey": []
+          }
+        ],
+        "description": "Trusted fresh step amount bounds, revision and expiry. No operation, signature or submission is created. Unproven steps remain unavailable.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "step",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "vault_deposit",
+                "margin_transfer",
+                "open_begin",
+                "open_swap",
+                "open_activate",
+                "open_cancel",
+                "close_prepare",
+                "close_swap",
+                "close_short_swap",
+                "close_finish",
+                "close_cancel",
+                "margin_return",
+                "vault_withdraw"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "JSON data envelope; workflow state is not chain success. Step operations require exact customer authorization and polling."
+          },
+          "401": {
+            "description": "Business/customer identity required"
+          },
+          "403": {
+            "description": "Margin module disabled or authorization mismatch"
+          },
+          "404": {
+            "description": "Exact customer/wallet workflow not found"
+          },
+          "409": {
+            "description": "Execution unavailable, pending or phase/policy conflict"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MarginCustomerBinding"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/trade/margin/workflows/{id}/steps/{step}": {
+      "post": {
+        "operationId": "prepare_customer_margin_step",
+        "security": [
+          {
+            "businessKey": []
+          }
+        ],
+        "description": "Creates one durable exact approval for the permitted next step. Fresh provider quote/oracle/pins/phase guards are mandatory.202 is not execution success.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "step",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "vault_deposit",
+                "margin_transfer",
+                "open_begin",
+                "open_swap",
+                "open_activate",
+                "open_cancel",
+                "close_prepare",
+                "close_swap",
+                "close_short_swap",
+                "close_finish",
+                "close_cancel",
+                "margin_return",
+                "vault_withdraw"
+              ]
+            }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 200
+            }
+          }
+        ],
+        "responses": {
+          "202": {
+            "description": "JSON data envelope; workflow state is not chain success. Step operations require exact customer authorization and polling."
+          },
+          "401": {
+            "description": "Business/customer identity required"
+          },
+          "403": {
+            "description": "Margin module disabled or authorization mismatch"
+          },
+          "404": {
+            "description": "Exact customer/wallet workflow not found"
+          },
+          "409": {
+            "description": "Execution unavailable, pending or phase/policy conflict"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MarginStepInput"
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
@@ -3789,6 +4143,114 @@
           "tx_hash"
         ],
         "additionalProperties": false
+      },
+      "MarginCustomerBinding": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "customer_id"
+        ],
+        "properties": {
+          "customer_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "wallet_id": {
+            "type": "string",
+            "format": "uuid"
+          }
+        }
+      },
+      "MarginWorkflowInput": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "customer_id",
+          "market_id",
+          "direction",
+          "leverage",
+          "amount",
+          "slippage_bps"
+        ],
+        "properties": {
+          "customer_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "wallet_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "market_id": {
+            "type": "string",
+            "maxLength": 200
+          },
+          "direction": {
+            "type": "string",
+            "enum": [
+              "long",
+              "short"
+            ]
+          },
+          "leverage": {
+            "type": "integer",
+            "enum": [
+              2,
+              3,
+              4,
+              5
+            ]
+          },
+          "amount": {
+            "type": "string",
+            "pattern": "^(0|[1-9][0-9]*)(\\.[0-9]{1,7})?$",
+            "description": "Must be positive; exact seven-decimal amount conversion."
+          },
+          "slippage_bps": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 50
+          }
+        }
+      },
+      "MarginStepTerms": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "minimumOutputAtomic": {
+            "type": "string",
+            "pattern": "^[1-9][0-9]{0,37}$"
+          },
+          "maximumInputAtomic": {
+            "type": "string",
+            "pattern": "^[1-9][0-9]{0,37}$"
+          },
+          "minimumDebtOutputAtomic": {
+            "type": "string",
+            "pattern": "^[1-9][0-9]{0,37}$"
+          }
+        }
+      },
+      "MarginStepInput": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "customer_id",
+          "terms"
+        ],
+        "properties": {
+          "customer_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "wallet_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "terms": {
+            "$ref": "#/components/schemas/MarginStepTerms"
+          }
+        }
       }
     }
   }

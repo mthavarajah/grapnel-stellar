@@ -1,5 +1,5 @@
 import { z } from 'zod';
-export const CONTRACT_VERSION = '0.2.0' as const;
+export const CONTRACT_VERSION = '0.2.1' as const;
 export const NETWORK = 'stellar-testnet' as const;
 export const NETWORK_PASSPHRASE = 'Test SDF Network ; September 2015' as const;
 export const MODULE_IDS = ['capital.wallets','capital.testnet_funding','capital.lending','trade.spot','trade.stocks','trade.perps','trade.commodities'] as const;
@@ -49,6 +49,20 @@ export const ModulesInputSchema = z.object({modules:z.array(ModuleIdSchema).max(
 export const WalletInputSchema = z.object({customer_id:z.string().uuid(),privy_identity_proof:z.string().min(1)}).strict();
 export const FundingInputSchema = z.object({customer_id:z.string().uuid(),wallet_id:z.string().uuid(),asset_id:z.string(),amount:AmountSchema}).strict();
 export const LendingInputSchema = FundingInputSchema.extend({market_id:z.string()});
+export const MARGIN_STEP_IDS=['vault_deposit','margin_transfer','open_begin','open_swap','open_activate','open_cancel','close_prepare','close_swap','close_short_swap','close_finish','close_cancel','margin_return','vault_withdraw'] as const;
+export const MarginStepSchema=z.enum(MARGIN_STEP_IDS);
+export const MarginPhaseSchema=z.enum(['awaiting_collateral','awaiting_margin_transfer','awaiting_open_begin','opening_pending','opening_swapped','open','closing_prepared','closing_swapped','closed','awaiting_vault_withdraw','recovered']);
+const MarginAtomicSchema=z.string().regex(/^(0|[1-9]\d{0,37})$/);
+const MarginPositiveAtomicSchema=z.string().regex(/^[1-9]\d{0,37}$/);
+export const MarginCustomerBindingSchema=z.object({customer_id:z.string().uuid(),wallet_id:z.string().uuid().optional()}).strict();
+export const MarginWorkflowInputSchema=MarginCustomerBindingSchema.extend({market_id:z.string().min(1).max(200),direction:z.enum(['long','short']),leverage:z.union([z.literal(2),z.literal(3),z.literal(4),z.literal(5)]),amount:AmountSchema.refine(value=>{try{toAtomic(value,7);return true;}catch{return false;}},'A positive amount with at most seven decimals is required'),slippage_bps:z.number().int().min(0).max(50)}).strict();
+/** Only exact step output/input bounds are public; server policy, pins and chain baselines stay private. */
+export const MarginStepTermsSchema=z.object({minimumOutputAtomic:MarginPositiveAtomicSchema.optional(),maximumInputAtomic:MarginPositiveAtomicSchema.optional(),minimumDebtOutputAtomic:MarginPositiveAtomicSchema.optional()}).strict();
+export const MarginStepInputSchema=MarginCustomerBindingSchema.extend({terms:MarginStepTermsSchema}).strict();
+export const MarginWorkflowPublicSchema=z.object({workflow_id:z.string().uuid(),customer_id:z.string().uuid(),wallet_id:z.string().uuid(),market_id:z.string(),direction:z.enum(['long','short']),leverage:z.union([z.literal(2),z.literal(3),z.literal(4),z.literal(5)]),amount_atomic:MarginPositiveAtomicSchema,asset_id:z.string(),phase:MarginPhaseSchema,revision:z.number().int().nonnegative(),position_id:MarginAtomicSchema.nullable(),active_operation_id:z.string().uuid().nullable(),receipt_atomic:MarginAtomicSchema.nullable().optional(),created_at:z.string().datetime(),updated_at:z.string().datetime(),next_steps:z.array(MarginStepSchema),execution_status:ExecutionStatusSchema,preparation_available:z.boolean()}).strict();
+export const MarginStepQuoteSchema=z.object({workflow_id:z.string().uuid(),step:MarginStepSchema,revision:z.number().int().nonnegative(),terms:MarginStepTermsSchema,expires_at:z.string().datetime()}).strict();
+export type MarginWorkflowPublic=z.infer<typeof MarginWorkflowPublicSchema>;
+export type MarginStepQuote=z.infer<typeof MarginStepQuoteSchema>;
 export const QuoteInputSchema = z.object({customer_id:z.string().uuid(),market_id:z.string(),exact_in:z.object({asset_id:z.string(),amount:AmountSchema}).strict(),slippage_bps:z.number().int().min(0).max(500)}).strict();
 export const OrderInputSchema = z.object({customer_id:z.string().uuid(),quote_id:z.string().uuid(),wallet_id:z.string().uuid()}).strict();
 export const AuthorizeInputSchema = z.object({customer_action_token:z.string(),signed_xdr:z.string(),privy_identity_proof:z.string()}).strict();
