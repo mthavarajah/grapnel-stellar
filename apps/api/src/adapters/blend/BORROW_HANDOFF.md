@@ -70,3 +70,22 @@ Classic `changeTrust` is not supported by Soroban simulation; the lead explicitl
 Fee semantics were verified independently using an existing public Testnet transaction, solely as a read reference: transaction `1ad63c4281c7fd6a730a914c6f182beb60b6a9872103882b4a9506caa572a09a` declared71912 stroops, but actual CAP0067 native fee-event sum, RPC result `feeCharged` and Horizon `fee_charged` all equal59910. Resource components are11829 nonrefundable +47981 refundable +100 inclusion, including46467 rent. The production worker's use of Horizon's actual fee is correct. See `borrow-live-qa-fee-proof.json`, [CAP0067](https://github.com/stellar/stellar-protocol/blob/master/core/cap-0067.md) and [Stellar ledger XDR](https://github.com/stellar/stellar-xdr/blob/main/Stellar-ledger.x).
 
 Eight actual transactions have been consumed across the three accounts. The original cumulative 10 XLM collateral /2 XLM swap allocations are consumed. Further real writes require a revised explicit lead scope; the QA script now requires an explicit command flag and checks cumulative/global budgets before activating another account. No automated retry or production-auth bypass is present. A failed/partial report remains `complete:false` and does not count as actual borrow/repay acceptance.
+
+## Completed isolated protocol QA — 2026-11-11, ledgers 5681679–5681689
+
+Exact requested pool `CB3447A446DY3USGWPIDXTNQHF5EX24XDQA2EN6TAZP62JTPBTNOA52Q`, own QA account `GCWFA4FRYPQZDIG3WVEDCUQ2EJP67AF2HDNHV3YK6YW3AP3D3WRB2JY2`. Signer label: `ephemeral_qa_ed25519_NOT_Privy_customer_flow`. No customer/treasury key, DB operation, or Privy identity was used; private key remained process memory only and was discarded after successful completion. This proves actual protocol preparation/execution and exact balance/position deltas, **not customer Privy end-to-end acceptance**.
+
+| Operation | Amount | Actual transaction hash |
+|---|---:|---|
+| Collateral supply XLM | 0.5 | `a58bff0b38ae6e005e596ba38e4f388090a5adbfd3ac0d914997b790d617d959` |
+| Borrow USDC | 0.01 | `aab07dd4eea9a543b3811795f268c45212131ddb59e30b6ccfcc66f29d55df3d` |
+| Borrow XLM | 0.1 | `d23120eb1a354464d39ce88869890c6c4713bafc33235987b72fd418c7ff5514` |
+| Repay USDC | 0.0100001 | `0fa137e039c6929a9001522c478626a4dc4101a7b3d6f691c39e98760eda2574` |
+| Repay XLM | 0.1000002 | `e5dbd2c338564fba1fb5b2ea756cd1414b7116a7cf2acf61810a58787ae7535a` |
+| Collateral withdrawal XLM | 0.5 | `f6c4903a42db7ae9171928502fd390c690a53635ec4e3060eb8a2cf8633f8c56` |
+
+Both reserves ended at **zero dTokens**, no dust repayment required. Native collateral after withdrawing original principal is 11 bTokens (0.0000011 XLM observed), representing accrued supply interest. Fresh wallet final balances: 9999.6920639 XLM, 0.0301742 USDC. USDC interest buffer came only from the authorized 0.2 QA-owned XLM Soroswap trade, hash `008b506e26a145b4d798f4886141d39d3b826ff8b7f57fa4b4390bf9d9cb711f`.
+
+`research/borrow-live-qa-attempt4.json` preserves raw result XDR, metadata XDR, exact pool mutations and before/after public chain observations. `borrow-live-qa-metadata-proof.ts/json` independently asserts selected bToken/dToken rounding using the execution ResData rates, before/after observations matching transaction Positions, all unrelated positions unchanged, actual wallet principal deltas, and CAP0067 fee-event sum equal to RPC result `feeCharged` and Horizon `fee_charged`. All six exact token calculations passed. Record/enforce, pinned WASM, auth, footprint and fee guards remained active. Trustline uses the previously approved exact classic exception; it is not mislabeled as Soroban simulation.
+
+Budget: prior 8 + this run 9 = 17 transactions, within revised cap 19. Cumulative collateral 10.5 XLM; cumulative setup swaps 2.2 XLM; actual borrowing 0.1 XLM and 0.01 USDC; every transaction below 1 XLM fee cap. No additional chain writes are needed for this isolated QA result.
