@@ -2,7 +2,7 @@
   "openapi": "3.1.0",
   "info": {
     "title": "Grapnel Testnet API",
-    "version": "0.1.9",
+    "version": "0.2.0",
     "description": "Stellar Testnet only. See docs/03_API.md and packages/contracts for frozen payload schemas."
   },
   "servers": [
@@ -966,12 +966,32 @@
     "/v1/dashboard/customers/{id}/balances": {
       "get": {
         "operationId": "get_v1_dashboard_customer_balances",
-        "security": [{"ownerSession": []}],
-        "parameters": [{"name":"id","in":"path","required":true,"schema":{"type":"string","format":"uuid"}}],
+        "security": [
+          {
+            "ownerSession": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
         "responses": {
-          "200": {"description":"Live tenant-scoped wallet balances with wallet_amount, reserved, spendable and as_of; no protocol position substitution"},
-          "401": {"description":"Owner session required"},
-          "404": {"description":"Customer not found in this tenant"}
+          "200": {
+            "description": "Live tenant-scoped wallet balances with wallet_amount, reserved, spendable and as_of; no protocol position substitution"
+          },
+          "401": {
+            "description": "Owner session required"
+          },
+          "404": {
+            "description": "Customer not found in this tenant"
+          }
         }
       }
     },
@@ -1980,24 +2000,212 @@
         }
       }
     },
+    "/v1/capital/wallets/{id}/valuation": {
+      "get": {
+        "operationId": "get_customer_wallet_valuation",
+        "security": [
+          {
+            "businessKey": []
+          }
+        ],
+        "description": "Requires capital.wallets and verified customer binding to the exact wallet. Wallet holdings only; estimated source-priced USD amounts. No fixed dollar peg is assumed.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "customer_id",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Envelope data: wallet_id, total_usd nullable, priced_subtotal_usd, unpriced_asset_count, as_of. Positive unpriced assets make total_usd null."
+          },
+          "401": {
+            "description": "Business/customer authentication required"
+          },
+          "403": {
+            "description": "Wallet module disabled"
+          },
+          "404": {
+            "description": "Wallet/customer binding not found"
+          }
+        }
+      }
+    },
+    "/v1/portfolio/valuation": {
+      "get": {
+        "operationId": "get_customer_account_valuation",
+        "security": [
+          {
+            "businessKey": []
+          }
+        ],
+        "description": "Requires capital.wallets and verified customer/wallet binding. Gross supported account assets include wallet holdings plus verified Earn and borrowing-pool supplied positions, with collateral counted once. Liabilities and net equity are separate. Missing sources or prices never imply a complete total.",
+        "parameters": [
+          {
+            "name": "customer_id",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "wallet_id",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Envelope data: wallet_id, total_usd nullable, priced_subtotal_usd, unpriced_asset_count, unknown_source_count, liabilities_usd nullable, net_equity_usd nullable, as_of."
+          },
+          "401": {
+            "description": "Business/customer authentication required"
+          },
+          "403": {
+            "description": "Wallet module disabled"
+          },
+          "404": {
+            "description": "Wallet/customer binding not found"
+          }
+        }
+      }
+    },
+    "/v1/capital/lending/borrowing": {
+      "get": {
+        "operationId": "get_customer_borrowing_capacity",
+        "security": [
+          {
+            "businessKey": []
+          }
+        ],
+        "description": "Customer-scoped state in the separately pinned Testnet v2.1 pool. Rates are ratios; capacity uses the fresh protocol oracle and conservative health buffer. Existing Earn collateral is not moved or counted in this pool.",
+        "parameters": [
+          {
+            "name": "customer_id",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "wallet_id",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Envelope data: pool_id, as_of, assets with actual debt/collateral, APR/APY ratios, nullable health/capacity and preparation flags."
+          },
+          "401": {
+            "description": "Customer authentication required"
+          },
+          "403": {
+            "description": "Lending module disabled"
+          }
+        }
+      }
+    },
     "/v1/market-overview": {
       "get": {
-        "operationId":"get_market_overview",
-        "security":[{"businessKey":[]}],
-        "description":"Requires capital.wallets. Only enabled trade.spot, trade.perps, trade.stocks, trade.commodities and capital.lending sections are included. Read-only source reference prices and supply rates; no executable quote or holdings are implied.",
-        "responses":{"200":{"description":"Envelope data: as_of, sections[{id,label,available,items[{symbol,name,value,unit,as_of}]}]. Maximum three source-backed items per section. USD reference prices or percentage-point supply APY strings; unavailable items omitted, never zero-filled."},"401":{"description":"Business key required"},"403":{"description":"Wallet module disabled"}}
+        "operationId": "get_market_overview",
+        "security": [
+          {
+            "businessKey": []
+          }
+        ],
+        "description": "Requires capital.wallets. Only enabled trade.spot, trade.perps, trade.stocks, trade.commodities and capital.lending sections are included. Read-only source reference prices and supply rates; no executable quote or holdings are implied.",
+        "responses": {
+          "200": {
+            "description": "Envelope data: as_of, sections[{id,label,available,items[{symbol,name,value,unit,as_of}]}]. Maximum three source-backed items per section. USD reference prices or percentage-point supply APY strings; unavailable items omitted, never zero-filled."
+          },
+          "401": {
+            "description": "Business key required"
+          },
+          "403": {
+            "description": "Wallet module disabled"
+          }
+        }
       }
     },
     "/v1/trade/markets/{id}/history": {
       "get": {
-        "operationId":"get_market_observed_history",
-        "security":[{"businessKey":[]}],
-        "description":"Entitled public market observations and source historical candles. Noether history requires trade.perps; informational sodax:catalog identifiers require trade.stocks and resolve an exact verified catalog identity. Stock history is the underlying stock reference price, never a token execution quote. Prices use the explicit quote_symbol; no invented historical candles or USD peg is implied. Optional source_url, interval, price_basis, observed_at, metrics and real candles preserve source provenance.",
-        "parameters":[
-          {"name":"id","in":"path","required":true,"schema":{"type":"string","maxLength":200}},
-          {"name":"range","in":"query","schema":{"type":"string","enum":["live","1d","1w","1m","1y","all"],"default":"live"}}
+        "operationId": "get_market_observed_history",
+        "security": [
+          {
+            "businessKey": []
+          }
         ],
-        "responses":{"200":{"description":"Envelope data: market_id, base_asset_id, base_symbol, quote_symbol, latest_price, as_of, points[{timestamp,price}], change_absolute and change_percent. Missing prices/changes are null; all amounts are decimal strings."},"401":{"description":"Business key required"},"403":{"description":"Market module disabled"},"404":{"description":"Unknown verified market"},"503":{"description":"Current price cannot be verified"}}
+        "description": "Entitled public market observations and source historical candles. Peridot Testnet history requires trade.perps; informational sodax:catalog identifiers require trade.stocks and resolve an exact verified catalog identity. Stock history is the underlying stock reference price, never a token execution quote. Prices use the explicit quote_symbol; no invented historical candles or USD peg is implied. Optional source_url, interval, price_basis, observed_at, metrics and real candles preserve source provenance.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "maxLength": 200
+            }
+          },
+          {
+            "name": "range",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "live",
+                "1d",
+                "1w",
+                "1m",
+                "1y",
+                "all"
+              ],
+              "default": "live"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Envelope data: market_id, base_asset_id, base_symbol, quote_symbol, latest_price, as_of, points[{timestamp,price}], change_absolute and change_percent. Missing prices/changes are null; all amounts are decimal strings."
+          },
+          "401": {
+            "description": "Business key required"
+          },
+          "403": {
+            "description": "Market module disabled"
+          },
+          "404": {
+            "description": "Unknown verified market"
+          },
+          "503": {
+            "description": "Current price cannot be verified"
+          }
+        }
       }
     },
     "/v1/trade/markets/{id}": {
@@ -2388,14 +2596,46 @@
     },
     "/v1/capital/lending/earnings": {
       "get": {
-        "operationId":"get_customer_verified_earnings",
-        "security":[{"businessKey":[]}],
-        "description":"Requires verified customer identity and capital.lending entitlement. Realized plus unrealized token interest from verified principal flows and current positions. Incomplete proof/history returns null, never projected APY.",
-        "parameters":[
-          {"name":"customer_id","in":"query","required":true,"schema":{"type":"string","format":"uuid"}},
-          {"name":"wallet_id","in":"query","schema":{"type":"string","format":"uuid"}}
+        "operationId": "get_customer_verified_earnings",
+        "security": [
+          {
+            "businessKey": []
+          }
         ],
-        "responses":{"200":{"description":"Envelope data: earnings[{asset_id,earned:string|null,earned_since:string|null}], as_of"},"401":{"description":"Business key required"},"403":{"description":"Customer identity or lending entitlement required"},"404":{"description":"Customer wallet not found in tenant"}}
+        "description": "Requires verified customer identity and capital.lending entitlement. Realized plus unrealized token interest from verified principal flows and current positions. Incomplete proof/history returns null, never projected APY.",
+        "parameters": [
+          {
+            "name": "customer_id",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "wallet_id",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Envelope data: earnings[{asset_id,earned:string|null,earned_since:string|null}], as_of"
+          },
+          "401": {
+            "description": "Business key required"
+          },
+          "403": {
+            "description": "Customer identity or lending entitlement required"
+          },
+          "404": {
+            "description": "Customer wallet not found in tenant"
+          }
+        }
       }
     },
     "/v1/capital/lending/markets": {
@@ -3066,6 +3306,90 @@
           },
           "409": {
             "description": "Gate, trustline or reserve preflight unavailable"
+          }
+        }
+      }
+    },
+    "/v1/capital/lending/borrowing/collateral/supply": {
+      "post": {
+        "operationId": "prepare_borrowing_collateral_supply",
+        "security": [
+          {
+            "businessKey": []
+          }
+        ],
+        "description": "Prepare exact customer-authorized supply in the separately pinned borrowing pool. Requires capital.lending, verified customer/wallet binding and Idempotency-Key. Existing Earn collateral is separate. A 202 is not chain success.",
+        "parameters": [
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LendingInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "202": {
+            "description": "Durable operation requiring customer authorization and confirmed chain reconciliation"
+          },
+          "403": {
+            "description": "Module disabled or customer authorization mismatch"
+          },
+          "409": {
+            "description": "Unavailable preparation, insufficient capacity or pending lending operation"
+          }
+        }
+      }
+    },
+    "/v1/capital/lending/borrowing/collateral/withdraw": {
+      "post": {
+        "operationId": "prepare_borrowing_collateral_withdraw",
+        "security": [
+          {
+            "businessKey": []
+          }
+        ],
+        "description": "Prepare exact customer-authorized withdraw in the separately pinned borrowing pool. Requires capital.lending, verified customer/wallet binding and Idempotency-Key. Existing Earn collateral is separate. A 202 is not chain success.",
+        "parameters": [
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LendingInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "202": {
+            "description": "Durable operation requiring customer authorization and confirmed chain reconciliation"
+          },
+          "403": {
+            "description": "Module disabled or customer authorization mismatch"
+          },
+          "409": {
+            "description": "Unavailable preparation, insufficient capacity or pending lending operation"
           }
         }
       }
