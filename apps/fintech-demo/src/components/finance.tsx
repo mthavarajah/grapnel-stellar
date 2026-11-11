@@ -188,7 +188,6 @@ function FinanceShell({ page, auth }: { page: string; auth?: Auth }) {
   const [fundingError, setFundingError] = useState("");
   const [markets, setMarkets] = useState<any[]>([]);
   const [lending, setLending] = useState<any[]>([]);
-  const [positions, setPositions] = useState<any[]>([]);
   const [operations, setOperations] = useState<Operation[]>([]);
   const [active, setActive] = useState<Operation | null>(null);
   const [error, setError] = useState("");
@@ -203,10 +202,10 @@ function FinanceShell({ page, auth }: { page: string; auth?: Auth }) {
   const executable = (module: string) =>
     capability(module)?.enabled &&
     capability(module)?.execution_status === "testnet_verified";
-  // Blend supply needs a first real customer operation to earn testnet_verified.
-  // Allow only the preparation attempt after the separate customer-signing gate;
-  // the API rechecks Gate 1 and fresh simulation before returning anything signable.
-  const canPrepareBlendSupply = () =>
+  // First-time Blend writes need a customer-preflight path before the module can
+  // become testnet_verified. The API rechecks Gate 1 and live simulation before
+  // returning any signable action.
+  const canPrepareBlendAction = () =>
     capability("capital.lending")?.enabled &&
     ["discovery_only", "testnet_verified"].includes(
       capability("capital.lending")?.execution_status ?? "",
@@ -239,7 +238,6 @@ function FinanceShell({ page, auth }: { page: string; auth?: Auth }) {
       setSession(null);
       setBalances([]);
       setOperations([]);
-      setPositions([]);
       setAssets([]);
       setMarkets([]);
       setLending([]);
@@ -273,8 +271,6 @@ function FinanceShell({ page, auth }: { page: string; auth?: Auth }) {
         if (page === "earn") {
           const m = await api("grapnel/lending-markets");
           if (alive) setLending(Array.isArray(m) ? m : (m.markets ?? []));
-          const p = await api("grapnel/lending-positions");
-          if (alive) setPositions(Array.isArray(p) ? p : (p.positions ?? []));
         }
       } catch (e) {
         if (alive) setError(e instanceof Error ? e.message : "Request failed");
@@ -456,7 +452,6 @@ function FinanceShell({ page, auth }: { page: string; auth?: Auth }) {
                     setSession(null);
                     setBalances([]);
                     setOperations([]);
-                    setPositions([]);
                     setAssets([]);
                     setMarkets([]);
                     setLending([]);
@@ -487,7 +482,7 @@ function FinanceShell({ page, auth }: { page: string; auth?: Auth }) {
                 {page === "home"
                   ? "One place for your wallet, Testnet transfers, and available opportunities."
                   : page === "earn"
-                    ? "Explore Blend pools. Variable rates, transparent positions, customer-approved actions."
+                    ? "Explore Blend Testnet pools and customer-approved supply actions."
                     : page === "activity"
                       ? "Durable operation states from Grapnel, confirmed against Stellar Testnet."
                       : "Customer-owned assets. Every financial action goes through Grapnel."}
@@ -640,7 +635,7 @@ function FinanceShell({ page, auth }: { page: string; auth?: Auth }) {
                   <span className="status-pill">Blend lending</span>
                   <h3>Understand what you supply.</h3>
                   <p>
-                    View Blend pools and your positions.
+                    View Blend Testnet pools.
                   </p>
                   <strong>
                     Explore Earn <Icon name="arrow" size={17} />
@@ -1006,9 +1001,8 @@ function FinanceShell({ page, auth }: { page: string; auth?: Auth }) {
                               disabled={
                                 busy ||
                                 !session ||
-                                (a === "supply"
-                                  ? !canPrepareBlendSupply() || m.asset_id !== "stellar-testnet:native:XLM"
-                                  : !executable("capital.lending"))
+                                !canPrepareBlendAction() ||
+                                m.asset_id !== "stellar-testnet:native:XLM"
                               }
                               onClick={() =>
                                 action(() =>
@@ -1020,8 +1014,8 @@ function FinanceShell({ page, auth }: { page: string; auth?: Auth }) {
                                 )
                               }
                             >
-                              {a === "supply" && !executable("capital.lending")
-                                ? "Prepare supply"
+                              {!executable("capital.lending")
+                                ? `Prepare ${a}`
                                 : a}
                             </button>
                           ))}
@@ -1038,29 +1032,6 @@ function FinanceShell({ page, auth }: { page: string; auth?: Auth }) {
                         : "Connect to explore Blend."
                     }
                     text="Current rates and reserve identities are read through Grapnel. No estimated or invented yield is shown."
-                  />
-                )}
-              </section>
-              <section className="section">
-                <div className="section-heading">
-                  <h2>Your protocol positions</h2>
-                  <span className="muted small">Separate from your wallet</span>
-                </div>
-                {positions.length ? (
-                  <div className="card">
-                    {positions.map((p, i) => (
-                      <div className="position" key={i}>
-                        <code>{p.asset_id ?? p.reserve_contract_id}</code>
-                        <span>Supplied: {p.supplied ?? "Unavailable"}</span>
-                        <span>Borrowed: {p.borrowed ?? "Unavailable"}</span>
-                      </div>
-                    ))}
-                  </div>
-                ) : (
-                  <Empty
-                    icon="wallet"
-                    title="No verified positions to display."
-                    text="Positions are loaded from the real pool for your connected wallet."
                   />
                 )}
               </section>

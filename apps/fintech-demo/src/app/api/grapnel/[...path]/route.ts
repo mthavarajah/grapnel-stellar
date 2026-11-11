@@ -183,10 +183,10 @@ export async function POST(
         .object({ market_id: z.string(), asset_id: z.string(), amount: money })
         .strict()
         .parse(raw);
-      if (path[1] === "supply") {
-        // Allow the first customer-authorized Blend supply to establish
-        // execution proof. The API still rechecks Gate 1 and performs a fresh
-        // exact-asset simulation before exposing a signable operation.
+      if (path[1] === "supply" || path[1] === "withdraw") {
+        // Allow a customer-specific Blend preflight before module-level proof
+        // exists. The API must validate actual position/liquidity and perform a
+        // fresh exact-asset simulation before exposing a signable operation.
         await requireModule("capital.lending", s);
         await requireModule("capital.wallets", s, true);
         if (body.asset_id !== "stellar-testnet:native:XLM")
