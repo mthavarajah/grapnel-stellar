@@ -1,0 +1,38 @@
+{
+  "observed_at": "2026-11-11T17:28:24.656Z",
+  "network": "testnet",
+  "mode": "read_only_unsigned_diagnostic",
+  "broadcast": false,
+  "rows": [
+    {
+      "direction": "BTC-XRP",
+      "assetIn": "CB7ICEHVRIRMF3CF6SIP2C2R3Z4E7WRPATT552QSVLIXZ5RSN6KLUDAE",
+      "assetOut": "CDDIA6HYANLPMDKBVQRIIXY3NA6S3TMHZFJUNPMBEJGZ5JSHN3E2TAUI",
+      "amount": "1000",
+      "source": "GC53JCXZHW3SVNRE4CT6XFP46WX4ACFQU32P4PR3CU43OB7AKKMFXZ6Y",
+      "request": {
+        "assetIn": "CB7ICEHVRIRMF3CF6SIP2C2R3Z4E7WRPATT552QSVLIXZ5RSN6KLUDAE",
+        "assetOut": "CDDIA6HYANLPMDKBVQRIIXY3NA6S3TMHZFJUNPMBEJGZ5JSHN3E2TAUI",
+        "amount": "1000",
+        "tradeType": "EXACT_IN",
+        "protocols": [
+          "soroswap"
+        ],
+        "slippageBps": 49,
+        "maxHops": 3
+      },
+      "quote_status": 400,
+      "quote": {
+        "title": "No path found",
+        "detail": "No path found",
+        "extra": {},
+        "error": "Quote Failed"
+      },
+      "requested_intermediate": null
+    }
+  ],
+  "endpoint": "POST https://api.soroswap.finance/quote?network=testnet",
+  "tx_hash": null,
+  "operation_id": null,
+  "customer_id": null
+}

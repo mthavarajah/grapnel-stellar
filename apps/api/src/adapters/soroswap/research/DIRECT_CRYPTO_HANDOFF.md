@@ -49,3 +49,11 @@ Only the finite verified token-contract environment values are accepted. Other r
 - https://github.com/soroswap/core/blob/main/contracts/factory/src/storage.rs (exact pair mapping layout)
 - https://github.com/stellar/stellar-xdr/blob/main/Stellar-transaction.x (resource extension and archived RW indices)
 - https://github.com/stellar/stellar-core/blob/master/src/transactions/TransactionFrame.cpp (Protocol23 validation)
+
+## Bounded cross-token routing probe
+
+The current official SDK [quote request type](https://github.com/soroswap/sdk/blob/main/src/types/quote.ts) explicitly supports optional `maxHops:number`, and its [README quote example](https://github.com/soroswap/sdk#get-quote) uses `maxHops:2`. Neither source establishes the server default; no default is assumed.
+
+Two authenticated read-only requests to `POST /quote?network=testnet` requested exactly1000atomic standalone BTC into standalone XRP, `EXACT_IN`, `protocols:["soroswap"]`,49bps. The initial request omitted `maxHops`; the single lead-approved retry supplied `maxHops:3`. Both returnedHTTP400 with `No path found` / `Quote Failed`, most recently2026-11-11T17:28:24Z. Exact sanitized bodies/responses are in `multihop-btc-xrp-build.json` and `multihop-btc-xrp-maxhops3.json`.
+
+The route is unavailable from the API for these current requests. This is not proof of absent liquidity at every size or of absent paths globally. The request does not prescribe XLM or any intermediate. No build was called, so there is no provider path, authorization tree, or footprint to inspect. No manual router path, guessed protocol, additional probing, signing, broadcasting or synthetic cross-token execution was added. The supported prepared routes remain the12 independently inspected native-XLM directions; nonnative-to-nonnative selection must stay unavailable. A future implementation requires an actual provider quote/build and exact independently reviewed multi-pair auth/footprint before the inspector or signer can expand.
