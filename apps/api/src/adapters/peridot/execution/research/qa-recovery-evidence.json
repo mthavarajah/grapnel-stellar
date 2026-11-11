@@ -32,6 +32,17 @@
       "send_status": "PENDING",
       "ledger": 5681865,
       "return_value": null
+    },
+    {
+      "label": "qa_one_mock_usdt_margin_transfer",
+      "hash": "08f66fe5aae7d5370211b17cad157dc82826bc14385a6359769498c41814ec60",
+      "sequence": "24403398585483267",
+      "max_fee_stroops": "567680",
+      "status": "SUCCESS",
+      "explorer": "https://stellar.expert/explorer/testnet/tx/08f66fe5aae7d5370211b17cad157dc82826bc14385a6359769498c41814ec60",
+      "send_status": "PENDING",
+      "ledger": 5681928,
+      "return_value": null
     }
   ],
   "snapshots": [
@@ -156,6 +167,27 @@
         "vault_receipt_atomic": "9999780",
         "margin_receipt_atomic": "0"
       }
+    },
+    {
+      "phase": "qa_margin_transfer",
+      "intent": {
+        "step": "margin_transfer",
+        "walletAddress": "GAJZ5PEECGFB46QXKFW2QTWRXHYL4SOBS5VE2JDGJ4TDUIAUWEAHKV34",
+        "receiptAtomic": "9999780"
+      },
+      "before": {
+        "native": "9985.1151098",
+        "mock_usdt_atomic": "5300316",
+        "vault_receipt_atomic": "9999780",
+        "margin_receipt_atomic": "0"
+      },
+      "after": {
+        "native": "9985.0701390",
+        "mock_usdt_atomic": "5300316",
+        "vault_receipt_atomic": "0",
+        "margin_receipt_atomic": "9999780"
+      }
     }
-  ]
+  ],
+  "last_error": "Exact unallocated deposited receipt required"
 }

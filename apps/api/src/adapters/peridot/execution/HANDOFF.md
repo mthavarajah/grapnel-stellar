@@ -69,3 +69,11 @@ Shared runtime/contracts are untouched. Root should map provider step intents in
 - **Margin return/vault withdraw**: exact verified unreserved recovered receipts, no open/pending debt using them; separately approved canonical calls. Confirm margin→wallet receipt movement, then receipt burn and actual underlying return. Only delete private QA recovery key once position/debt/margin recovery is verified.
 
 No open/swap/activate/close execution proof or production durable customer Margin integration is claimed by this handoff.
+
+## Exact begin guard review boundary (not submitted)
+
+Transfer SUCCESS `08f66fe5aae7d5370211b17cad157dc82826bc14385a6359769498c41814ec60`, ledger5681928, receipt wallet9999780→0/controller margin0→9999780, actualfee449708stroops independently verified by lead. Global10/19actions.
+
+`begin.ts` + `begin-scope.json` freeze the actual own-QA v3 record scope atledger5681933:118RO,16RW including ONLY approved native-vault INSTANCE archive index11; warm native instance movesRO/ext0. Owner and exact next-counter-position key IDs are the only variable substitutions. Single auth root has no children; no token/debt transfer is silently authorized by begin. Full Testnet/code-byte pins,≤1MockUSDT collateral/2xLong cap, owned margin receipts/rate, strict current5% oracle band, full immutable scope/signature/sequence/fee≤1XLM checks precede any write. Record and enforce must return exact PendingOpen state changes: new owner-matching position ID, zero collateral/debt before swap, exact reserved receipt debit, matching pending assets/vaults/pool/side/minimum,≤1MockUSDT margin, positive borrowed amount≤margin, exact30min expiry. Fresh actual pending margin+borrow input is re-quoted onchain and approved minimum must cover ceil99.5% of quote AND the stricter5% oracle output bound. Missing state changes or altered/created prior position fails closed.
+
+97focused tests/typecheck pass. Live unsigned record→canonical→enforce preparation succeeds maxfee0.2830439XLM. Root must review this guard and the committed decoded `qa-begin-readonly.json` before the runner `begin` command signs/submits. It is still a pending workflow reservation, never an open/fill claim.
