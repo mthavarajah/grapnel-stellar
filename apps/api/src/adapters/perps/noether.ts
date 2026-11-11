@@ -84,6 +84,7 @@ export interface NoetherBetaStatus {
 }
 export interface NoetherPublicMarketStats {
   asset: string;
+  /** All amount fields below are 7-decimal USDC notional, per Noether's public API docs. */
   open_interest_long_atomic: string;
   open_interest_short_atomic: string;
   open_interest_net_atomic: string;
@@ -101,6 +102,11 @@ export interface NoetherPublicStatsSnapshot {
   execution_status: 'discovery_only';
   executable: false;
   reason: 'REGION_RESTRICTED';
+}
+export interface NoetherPublicMarketDetails extends NoetherPublicMarket {
+  /** Null when data is unavailable or any freshness source is stale/unknown. */
+  stats: (NoetherPublicMarketStats & Pick<NoetherPublicStatsSnapshot,
+    'observed_at' | 'source_url' | 'indexer_ledger_age_seconds' | 'pool' | 'custody'>) | null;
 }
 export interface NoetherPublicDependencies {
   fetcher?: typeof fetch;
@@ -426,5 +432,43 @@ export class NoetherPublicAdapter {
     })();
     try { return await this.loadingStats; }
     finally { this.loadingStats = undefined; }
+  }
+
+  /**
+   * Enrich public oracle markets with utilization only when its current health
+   * evidence is complete and fresh. Oracle price reads remain independently
+   * usable if the stats endpoint is unavailable or stale.
+   */
+  async marketDetails(): Promise<NoetherPublicMarketDetails[]> {
+    const markets = await this.markets();
+    let snapshot: NoetherPublicStatsSnapshot;
+    try {
+      snapshot = await this.marketStats();
+    } catch {
+      return markets.map(market => ({ ...market, stats: null }));
+    }
+    const observedAge = this.now() - Date.parse(snapshot.observed_at);
+    const fresh = Number.isFinite(observedAge) && observedAge >= -5000 && observedAge <= 60000
+      && snapshot.indexer_ledger_age_seconds !== null
+      && snapshot.indexer_ledger_age_seconds <= 60
+      && snapshot.pool?.stale === false
+      && snapshot.custody?.stale === false;
+    if (!fresh) return markets.map(market => ({ ...market, stats: null }));
+
+    const byAsset = new Map(snapshot.markets.map(stat => [stat.asset, stat]));
+    return markets.map(market => {
+      const stat = byAsset.get(market.underlying.symbol) ?? null;
+      return {
+        ...market,
+        stats: stat ? {
+          ...stat,
+          observed_at: snapshot.observed_at,
+          source_url: snapshot.source_url,
+          indexer_ledger_age_seconds: snapshot.indexer_ledger_age_seconds,
+          pool: snapshot.pool,
+          custody: snapshot.custody,
+        } : null,
+      };
+    });
   }
 }

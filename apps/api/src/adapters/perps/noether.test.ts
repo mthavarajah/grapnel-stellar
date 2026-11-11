@@ -283,4 +283,61 @@ describe("Noether public-only Testnet discovery", () => {
     expect(fetcher).toHaveBeenCalledTimes(2);
     expect((await adapter.capabilities()).status).toBe('blocked');
   });
+
+  it('joins fresh utilization by exact underlying symbol and attaches source freshness', async () => {
+    const stats = { stats: [
+      { asset: 'BTC', openInterestLong: '10', openInterestShort: '20', openInterestNet: '-10', openPositions: 2, volume24h: '30', capacity: { headroomLong: '40', headroomShort: '50' } },
+      { asset: 'ETH', openInterestLong: '900', openInterestShort: '0', openInterestNet: '900', openPositions: 1, volume24h: '0' },
+    ], pool: { stale: false, asOfLedger: 55 }, custody: { stale: false, ageMs: 400, deficit: '0' } };
+    const fetcher = vi.fn<typeof fetch>().mockImplementation(async url => {
+      const path = new URL(String(url)).pathname;
+      if (path.endsWith('/health')) return response({ status: 'ok', network: 'testnet', indexer: { ledgerAgeSeconds: 3 } });
+      if (path.endsWith('/markets/stats')) return response(stats);
+      return response({ markets: [
+        fixture.markets[0],
+        { asset: { symbol: 'ETH', name: 'Ethereum', decimals: 8 }, oracle: null },
+      ] });
+    });
+    const adapter = new NoetherPublicAdapter({ network: 'testnet', networkPassphrase: NETWORK_PASSPHRASE }, { fetcher, now: () => now });
+    const result = await adapter.marketDetails();
+    expect(result[0]).toMatchObject({ underlying: { symbol: 'BTC' }, stats: {
+      asset: 'BTC', open_interest_long_atomic: '10', open_interest_net_atomic: '-10',
+      volume_24h_atomic: '30', observed_at: new Date(now).toISOString(),
+      source_url: NOETHER_TESTNET_API + '/v1/markets/stats', indexer_ledger_age_seconds: 3,
+      pool: { stale: false, as_of_ledger: 55 }, custody: { stale: false, age_ms: 400, deficit_atomic: '0' },
+    } });
+    expect(result[1]).toMatchObject({ underlying: { symbol: 'ETH' }, stats: { asset: 'ETH', open_interest_long_atomic: '900' } });
+    expect(result.every(market => market.execution_status === 'discovery_only' && market.executable === false)).toBe(true);
+  });
+
+  it.each([
+    ['indexer older than one minute', { indexer: { ledgerAgeSeconds: 61 }, pool: { stale: false }, custody: { stale: false } }],
+    ['stale pool', { indexer: { ledgerAgeSeconds: 1 }, pool: { stale: true }, custody: { stale: false } }],
+    ['stale custody', { indexer: { ledgerAgeSeconds: 1 }, pool: { stale: false }, custody: { stale: true } }],
+    ['unknown health evidence', { indexer: undefined, pool: undefined, custody: undefined }],
+  ])('keeps price markets but omits stats when %s', async (_label, health) => {
+    const fetcher = vi.fn<typeof fetch>().mockImplementation(async url => {
+      const path = new URL(String(url)).pathname;
+      if (path.endsWith('/health')) return response({ status: 'ok', network: 'testnet', ...health });
+      if (path.endsWith('/markets/stats')) return response({ stats: [{ asset: 'BTC', openInterestLong: '10', openInterestShort: '20', openInterestNet: '-10', openPositions: 2, volume24h: '30' }], pool: health.pool, custody: health.custody });
+      return response(fixture);
+    });
+    const adapter = new NoetherPublicAdapter({ network: 'testnet', networkPassphrase: NETWORK_PASSPHRASE }, { fetcher, now: () => now });
+    const [market] = await adapter.marketDetails();
+    expect(market?.reference_price).toBe('74260.3233333');
+    expect(market?.stats).toBeNull();
+  });
+
+  it('falls back to price-only results if public stats are unavailable', async () => {
+    const fetcher = vi.fn<typeof fetch>().mockImplementation(async url => {
+      const path = new URL(String(url)).pathname;
+      if (path.endsWith('/health')) return response({ status: 'ok', network: 'testnet', indexer: { ledgerAgeSeconds: 1 } });
+      if (path.endsWith('/markets/stats')) return response({ error: 'unavailable' }, 503);
+      return response(fixture);
+    });
+    const adapter = new NoetherPublicAdapter({ network: 'testnet', networkPassphrase: NETWORK_PASSPHRASE }, { fetcher, now: () => now });
+    const [market] = await adapter.marketDetails();
+    expect(market?.reference_price).toBe('74260.3233333');
+    expect(market?.stats).toBeNull();
+  });
 });
