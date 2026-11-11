@@ -1,0 +1,716 @@
+[
+  {
+    "provider_symbol": "AAPL",
+    "provider_name": "Apple",
+    "source_url": "https://query1.finance.yahoo.com/v8/finance/chart/AAPL?range=1d&interval=1d",
+    "observed_at": "2026-11-11T18:50:09.260Z",
+    "http_status": 200,
+    "source_error": null,
+    "meta": {
+      "symbol": "AAPL",
+      "longName": "Apple Inc.",
+      "shortName": "Apple Inc.",
+      "instrumentType": "EQUITY",
+      "exchangeName": "NMS",
+      "fullExchangeName": "NasdaqGS",
+      "currency": "USD"
+    }
+  },
+  {
+    "provider_symbol": "AMC",
+    "provider_name": "AMC Entertainment",
+    "source_url": "https://query1.finance.yahoo.com/v8/finance/chart/AMC?range=1d&interval=1d",
+    "observed_at": "2026-11-11T18:50:11.841Z",
+    "http_status": 200,
+    "source_error": null,
+    "meta": {
+      "symbol": "AMC",
+      "longName": "AMC Entertainment Holdings, Inc.",
+      "shortName": "AMC Entertainment Holdings, Inc",
+      "instrumentType": "EQUITY",
+      "exchangeName": "NYQ",
+      "fullExchangeName": "NYSE",
+      "currency": "USD"
+    }
+  },
+  {
+    "provider_symbol": "AMD",
+    "provider_name": "AMD",
+    "source_url": "https://query1.finance.yahoo.com/v8/finance/chart/AMD?range=1d&interval=1d",
+    "observed_at": "2026-11-11T18:50:11.482Z",
+    "http_status": 200,
+    "source_error": null,
+    "meta": {
+      "symbol": "AMD",
+      "longName": "Advanced Micro Devices, Inc.",
+      "shortName": "Advanced Micro Devices, Inc.",
+      "instrumentType": "EQUITY",
+      "exchangeName": "NMS",
+      "fullExchangeName": "NasdaqGS",
+      "currency": "USD"
+    }
+  },
+  {
+    "provider_symbol": "AMZN",
+    "provider_name": "Amazon",
+    "source_url": "https://query1.finance.yahoo.com/v8/finance/chart/AMZN?range=1d&interval=1d",
+    "observed_at": "2026-11-11T18:50:10.230Z",
+    "http_status": 200,
+    "source_error": null,
+    "meta": {
+      "symbol": "AMZN",
+      "longName": "Amazon.com, Inc.",
+      "shortName": "Amazon.com, Inc.",
+      "instrumentType": "EQUITY",
+      "exchangeName": "NMS",
+      "fullExchangeName": "NasdaqGS",
+      "currency": "USD"
+    }
+  },
+  {
+    "provider_symbol": "BABA",
+    "provider_name": "Alibaba",
+    "source_url": "https://query1.finance.yahoo.com/v8/finance/chart/BABA?range=1d&interval=1d",
+    "observed_at": "2026-11-11T18:50:11.832Z",
+    "http_status": 200,
+    "source_error": null,
+    "meta": {
+      "symbol": "BABA",
+      "longName": "Alibaba Group Holding Limited",
+      "shortName": "Alibaba Group Holding Limited",
+      "instrumentType": "EQUITY",
+      "exchangeName": "NYQ",
+      "fullExchangeName": "NYSE",
+      "currency": "USD"
+    }
+  },
+  {
+    "provider_symbol": "BULL",
+    "provider_name": "Webull",
+    "source_url": "https://query1.finance.yahoo.com/v8/finance/chart/BULL?range=1d&interval=1d",
+    "observed_at": "2026-11-11T18:50:14.168Z",
+    "http_status": 200,
+    "source_error": null,
+    "meta": {
+      "symbol": "BULL",
+      "longName": "Webull Corporation",
+      "shortName": "Webull Corporation",
+      "instrumentType": "EQUITY",
+      "exchangeName": "NCM",
+      "fullExchangeName": "NasdaqCM",
+      "currency": "USD"
+    }
+  },
+  {
+    "provider_symbol": "COIN",
+    "provider_name": "Coinbase",
+    "source_url": "https://query1.finance.yahoo.com/v8/finance/chart/COIN?range=1d&interval=1d",
+    "observed_at": "2026-11-11T18:50:10.869Z",
+    "http_status": 200,
+    "source_error": null,
+    "meta": {
+      "symbol": "COIN",
+      "longName": "Coinbase Global, Inc.",
+      "shortName": "Coinbase Global, Inc.",
+      "instrumentType": "EQUITY",
+      "exchangeName": "NMS",
+      "fullExchangeName": "NasdaqGS",
+      "currency": "USD"
+    }
+  },
+  {
+    "provider_symbol": "COST",
+    "provider_name": "Costco",
+    "source_url": "https://query1.finance.yahoo.com/v8/finance/chart/COST?range=1d&interval=1d",
+    "observed_at": "2026-11-11T18:50:12.569Z",
+    "http_status": 200,
+    "source_error": null,
+    "meta": {
+      "symbol": "COST",
+      "longName": "Costco Wholesale Corporation",
+      "shortName": "Costco Wholesale Corporation",
+      "instrumentType": "EQUITY",
+      "exchangeName": "NMS",
+      "fullExchangeName": "NasdaqGS",
+      "currency": "USD"
+    }
+  },
+  {
+    "provider_symbol": "CRCL",
+    "provider_name": "Circle",
+    "source_url": "https://query1.finance.yahoo.com/v8/finance/chart/CRCL?range=1d&interval=1d",
+    "observed_at": "2026-11-11T18:50:10.884Z",
+    "http_status": 200,
+    "source_error": null,
+    "meta": {
+      "symbol": "CRCL",
+      "longName": "Circle Internet Group",
+      "shortName": "Circle Internet Group, Inc.",
+      "instrumentType": "EQUITY",
+      "exchangeName": "NYQ",
+      "fullExchangeName": "NYSE",
+      "currency": "USD"
+    }
+  },
+  {
+    "provider_symbol": "DJT",
+    "provider_name": "Trump Media & Technology Group",
+    "source_url": "https://query1.finance.yahoo.com/v8/finance/chart/DJT?range=1d&interval=1d",
+    "observed_at": "2026-11-11T18:50:15.150Z",
+    "http_status": 200,
+    "source_error": null,
+    "meta": {
+      "symbol": "DJT",
+      "longName": "Trump Media & Technology Group Corp.",
+      "shortName": "Trump Media & Technology Group ",
+      "instrumentType": "EQUITY",
+      "exchangeName": "NGM",
+      "fullExchangeName": "NasdaqGM",
+      "currency": "USD"
+    }
+  },
+  {
+    "provider_symbol": "GME",
+    "provider_name": "GameStop",
+    "source_url": "https://query1.finance.yahoo.com/v8/finance/chart/GME?range=1d&interval=1d",
+    "observed_at": "2026-11-11T18:50:08.863Z",
+    "http_status": 200,
+    "source_error": null,
+    "meta": {
+      "symbol": "GME",
+      "longName": "GameStop Corp.",
+      "shortName": "GameStop Corporation",
+      "instrumentType": "EQUITY",
+      "exchangeName": "NYQ",
+      "fullExchangeName": "NYSE",
+      "currency": "USD"
+    }
+  },
+  {
+    "provider_symbol": "GOOGL",
+    "provider_name": "Alphabet Class A",
+    "source_url": "https://query1.finance.yahoo.com/v8/finance/chart/GOOGL?range=1d&interval=1d",
+    "observed_at": "2026-11-11T18:50:10.188Z",
+    "http_status": 200,
+    "source_error": null,
+    "meta": {
+      "symbol": "GOOGL",
+      "longName": "Alphabet Inc.",
+      "shortName": "Alphabet Inc.",
+      "instrumentType": "EQUITY",
+      "exchangeName": "NMS",
+      "fullExchangeName": "NasdaqGS",
+      "currency": "USD"
+    }
+  },
+  {
+    "provider_symbol": "HIMS",
+    "provider_name": "Hims & Hers Health",
+    "source_url": "https://query1.finance.yahoo.com/v8/finance/chart/HIMS?range=1d&interval=1d",
+    "observed_at": "2026-11-11T18:50:12.151Z",
+    "http_status": 200,
+    "source_error": null,
+    "meta": {
+      "symbol": "HIMS",
+      "longName": "Hims & Hers Health, Inc.",
+      "shortName": "Hims & Hers Health, Inc.",
+      "instrumentType": "EQUITY",
+      "exchangeName": "NYQ",
+      "fullExchangeName": "NYSE",
+      "currency": "USD"
+    }
+  },
+  {
+    "provider_symbol": "IBM",
+    "provider_name": "IBM",
+    "source_url": "https://query1.finance.yahoo.com/v8/finance/chart/IBM?range=1d&interval=1d",
+    "observed_at": "2026-11-11T18:50:12.933Z",
+    "http_status": 200,
+    "source_error": null,
+    "meta": {
+      "symbol": "IBM",
+      "longName": "International Business Machines Corporation",
+      "shortName": "International Business Machines",
+      "instrumentType": "EQUITY",
+      "exchangeName": "NYQ",
+      "fullExchangeName": "NYSE",
+      "currency": "USD"
+    }
+  },
+  {
+    "provider_symbol": "INTC",
+    "provider_name": "Intel",
+    "source_url": "https://query1.finance.yahoo.com/v8/finance/chart/INTC?range=1d&interval=1d",
+    "observed_at": "2026-11-11T18:50:11.522Z",
+    "http_status": 200,
+    "source_error": null,
+    "meta": {
+      "symbol": "INTC",
+      "longName": "Intel Corporation",
+      "shortName": "Intel Corporation",
+      "instrumentType": "EQUITY",
+      "exchangeName": "NMS",
+      "fullExchangeName": "NasdaqGS",
+      "currency": "USD"
+    }
+  },
+  {
+    "provider_symbol": "JNJ",
+    "provider_name": "Johnson & Johnson",
+    "source_url": "https://query1.finance.yahoo.com/v8/finance/chart/JNJ?range=1d&interval=1d",
+    "observed_at": "2026-11-11T18:50:14.880Z",
+    "http_status": 200,
+    "source_error": null,
+    "meta": {
+      "symbol": "JNJ",
+      "longName": "Johnson & Johnson",
+      "shortName": "Johnson & Johnson",
+      "instrumentType": "EQUITY",
+      "exchangeName": "NYQ",
+      "fullExchangeName": "NYSE",
+      "currency": "USD"
+    }
+  },
+  {
+    "provider_symbol": "LLY",
+    "provider_name": "Eli Lilly",
+    "source_url": "https://query1.finance.yahoo.com/v8/finance/chart/LLY?range=1d&interval=1d",
+    "observed_at": "2026-11-11T18:50:12.194Z",
+    "http_status": 200,
+    "source_error": null,
+    "meta": {
+      "symbol": "LLY",
+      "longName": "Eli Lilly and Company",
+      "shortName": "Eli Lilly and Company",
+      "instrumentType": "EQUITY",
+      "exchangeName": "NYQ",
+      "fullExchangeName": "NYSE",
+      "currency": "USD"
+    }
+  },
+  {
+    "provider_symbol": "LULU",
+    "provider_name": "Lululemon",
+    "source_url": "https://query1.finance.yahoo.com/v8/finance/chart/LULU?range=1d&interval=1d",
+    "observed_at": "2026-11-11T18:50:13.248Z",
+    "http_status": 200,
+    "source_error": null,
+    "meta": {
+      "symbol": "LULU",
+      "longName": "lululemon athletica inc.",
+      "shortName": "lululemon athletica inc.",
+      "instrumentType": "EQUITY",
+      "exchangeName": "NMS",
+      "fullExchangeName": "NasdaqGS",
+      "currency": "USD"
+    }
+  },
+  {
+    "provider_symbol": "META",
+    "provider_name": "Meta",
+    "source_url": "https://query1.finance.yahoo.com/v8/finance/chart/META?range=1d&interval=1d",
+    "observed_at": "2026-11-11T18:50:10.552Z",
+    "http_status": 200,
+    "source_error": null,
+    "meta": {
+      "symbol": "META",
+      "longName": "Meta Platforms, Inc.",
+      "shortName": "Meta Platforms, Inc.",
+      "instrumentType": "EQUITY",
+      "exchangeName": "NMS",
+      "fullExchangeName": "NasdaqGS",
+      "currency": "USD"
+    }
+  },
+  {
+    "provider_symbol": "MRNA",
+    "provider_name": "Moderna",
+    "source_url": "https://query1.finance.yahoo.com/v8/finance/chart/MRNA?range=1d&interval=1d",
+    "observed_at": "2026-11-11T18:50:13.207Z",
+    "http_status": 200,
+    "source_error": null,
+    "meta": {
+      "symbol": "MRNA",
+      "longName": "Moderna, Inc.",
+      "shortName": "Moderna, Inc.",
+      "instrumentType": "EQUITY",
+      "exchangeName": "NMS",
+      "fullExchangeName": "NasdaqGS",
+      "currency": "USD"
+    }
+  },
+  {
+    "provider_symbol": "MSFT",
+    "provider_name": "Microsoft",
+    "source_url": "https://query1.finance.yahoo.com/v8/finance/chart/MSFT?range=1d&interval=1d",
+    "observed_at": "2026-11-11T18:50:10.538Z",
+    "http_status": 200,
+    "source_error": null,
+    "meta": {
+      "symbol": "MSFT",
+      "longName": "Microsoft Corporation",
+      "shortName": "Microsoft Corporation",
+      "instrumentType": "EQUITY",
+      "exchangeName": "NMS",
+      "fullExchangeName": "NasdaqGS",
+      "currency": "USD"
+    }
+  },
+  {
+    "provider_symbol": "MSTR",
+    "provider_name": "Strategy",
+    "source_url": "https://query1.finance.yahoo.com/v8/finance/chart/MSTR?range=1d&interval=1d",
+    "observed_at": "2026-11-11T18:50:08.893Z",
+    "http_status": 200,
+    "source_error": null,
+    "meta": {
+      "symbol": "MSTR",
+      "longName": "Strategy Inc",
+      "shortName": "Strategy Inc",
+      "instrumentType": "EQUITY",
+      "exchangeName": "NMS",
+      "fullExchangeName": "NasdaqGS",
+      "currency": "USD"
+    }
+  },
+  {
+    "provider_symbol": "MU",
+    "provider_name": "Micron",
+    "source_url": "https://query1.finance.yahoo.com/v8/finance/chart/MU?range=1d&interval=1d",
+    "observed_at": "2026-11-11T18:50:09.528Z",
+    "http_status": 200,
+    "source_error": null,
+    "meta": {
+      "symbol": "MU",
+      "longName": "Micron Technology, Inc.",
+      "shortName": "Micron Technology, Inc.",
+      "instrumentType": "EQUITY",
+      "exchangeName": "NMS",
+      "fullExchangeName": "NasdaqGS",
+      "currency": "USD"
+    }
+  },
+  {
+    "provider_symbol": "NET",
+    "provider_name": "Cloudflare, Inc. Class A common stock",
+    "source_url": "https://query1.finance.yahoo.com/v8/finance/chart/NET?range=1d&interval=1d",
+    "observed_at": "2026-11-11T18:50:14.491Z",
+    "http_status": 200,
+    "source_error": null,
+    "meta": {
+      "symbol": "NET",
+      "longName": "Cloudflare, Inc.",
+      "shortName": "Cloudflare, Inc.",
+      "instrumentType": "EQUITY",
+      "exchangeName": "NYQ",
+      "fullExchangeName": "NYSE",
+      "currency": "USD"
+    }
+  },
+  {
+    "provider_symbol": "NFLX",
+    "provider_name": "Netflix",
+    "source_url": "https://query1.finance.yahoo.com/v8/finance/chart/NFLX?range=1d&interval=1d",
+    "observed_at": "2026-11-11T18:50:13.844Z",
+    "http_status": 200,
+    "source_error": null,
+    "meta": {
+      "symbol": "NFLX",
+      "longName": "Netflix, Inc.",
+      "shortName": "Netflix, Inc.",
+      "instrumentType": "EQUITY",
+      "exchangeName": "NMS",
+      "fullExchangeName": "NasdaqGS",
+      "currency": "USD"
+    }
+  },
+  {
+    "provider_symbol": "NVDA",
+    "provider_name": "NVIDIA",
+    "source_url": "https://query1.finance.yahoo.com/v8/finance/chart/NVDA?range=1d&interval=1d",
+    "observed_at": "2026-11-11T18:50:08.570Z",
+    "http_status": 200,
+    "source_error": null,
+    "meta": {
+      "symbol": "NVDA",
+      "longName": "NVIDIA Corporation",
+      "shortName": "NVIDIA Corporation",
+      "instrumentType": "EQUITY",
+      "exchangeName": "NMS",
+      "fullExchangeName": "NasdaqGS",
+      "currency": "USD"
+    }
+  },
+  {
+    "provider_symbol": "PLTR",
+    "provider_name": "Palantir",
+    "source_url": "https://query1.finance.yahoo.com/v8/finance/chart/PLTR?range=1d&interval=1d",
+    "observed_at": "2026-11-11T18:50:11.168Z",
+    "http_status": 200,
+    "source_error": null,
+    "meta": {
+      "symbol": "PLTR",
+      "longName": "Palantir Technologies Inc.",
+      "shortName": "Palantir Technologies Inc.",
+      "instrumentType": "EQUITY",
+      "exchangeName": "NMS",
+      "fullExchangeName": "NasdaqGS",
+      "currency": "USD"
+    }
+  },
+  {
+    "provider_symbol": "QQQ",
+    "provider_name": "Invesco QQQ Trust",
+    "source_url": "https://query1.finance.yahoo.com/v8/finance/chart/QQQ?range=1d&interval=1d",
+    "observed_at": "2026-11-11T18:50:09.954Z",
+    "http_status": 200,
+    "source_error": null,
+    "meta": {
+      "symbol": "QQQ",
+      "longName": "Invesco QQQ Trust",
+      "shortName": "Invesco QQQ Trust, Series 1",
+      "instrumentType": "ETF",
+      "exchangeName": "NGM",
+      "fullExchangeName": "NasdaqGM",
+      "currency": "USD"
+    }
+  },
+  {
+    "provider_symbol": "QUBT",
+    "provider_name": "Quantum Computing",
+    "source_url": "https://query1.finance.yahoo.com/v8/finance/chart/QUBT?range=1d&interval=1d",
+    "observed_at": "2026-11-11T18:50:14.166Z",
+    "http_status": 200,
+    "source_error": null,
+    "meta": {
+      "symbol": "QUBT",
+      "longName": "Quantum Computing Inc.",
+      "shortName": "Quantum Computing Inc.",
+      "instrumentType": "EQUITY",
+      "exchangeName": "NCM",
+      "fullExchangeName": "NasdaqCM",
+      "currency": "USD"
+    }
+  },
+  {
+    "provider_symbol": "RBLX",
+    "provider_name": "Roblox",
+    "source_url": "https://query1.finance.yahoo.com/v8/finance/chart/RBLX?range=1d&interval=1d",
+    "observed_at": "2026-11-11T18:50:12.887Z",
+    "http_status": 200,
+    "source_error": null,
+    "meta": {
+      "symbol": "RBLX",
+      "longName": "Roblox Corporation",
+      "shortName": "Roblox Corporation",
+      "instrumentType": "EQUITY",
+      "exchangeName": "NYQ",
+      "fullExchangeName": "NYSE",
+      "currency": "USD"
+    }
+  },
+  {
+    "provider_symbol": "RDDT",
+    "provider_name": "Reddit",
+    "source_url": "https://query1.finance.yahoo.com/v8/finance/chart/RDDT?range=1d&interval=1d",
+    "observed_at": "2026-11-11T18:50:15.160Z",
+    "http_status": 200,
+    "source_error": null,
+    "meta": {
+      "symbol": "RDDT",
+      "longName": "Reddit, Inc.",
+      "shortName": "Reddit, Inc.",
+      "instrumentType": "EQUITY",
+      "exchangeName": "NYQ",
+      "fullExchangeName": "NYSE",
+      "currency": "USD"
+    }
+  },
+  {
+    "provider_symbol": "RIVN",
+    "provider_name": "Rivian Automotive",
+    "source_url": "https://query1.finance.yahoo.com/v8/finance/chart/RIVN?range=1d&interval=1d",
+    "observed_at": "2026-11-11T18:50:13.853Z",
+    "http_status": 200,
+    "source_error": null,
+    "meta": {
+      "symbol": "RIVN",
+      "longName": "Rivian Automotive, Inc.",
+      "shortName": "Rivian Automotive, Inc.",
+      "instrumentType": "EQUITY",
+      "exchangeName": "NMS",
+      "fullExchangeName": "NasdaqGS",
+      "currency": "USD"
+    }
+  },
+  {
+    "provider_symbol": "SKHY",
+    "provider_name": "SK hynix Inc. American Depositary Shares",
+    "source_url": "https://query1.finance.yahoo.com/v8/finance/chart/SKHY?range=1d&interval=1d",
+    "observed_at": "2026-11-11T18:50:14.490Z",
+    "http_status": 200,
+    "source_error": null,
+    "meta": {
+      "symbol": "SKHY",
+      "longName": "SK hynix Inc.",
+      "shortName": "SK hynix Inc.",
+      "instrumentType": "EQUITY",
+      "exchangeName": "NMS",
+      "fullExchangeName": "NasdaqGS",
+      "currency": "USD"
+    }
+  },
+  {
+    "provider_symbol": "SNAP",
+    "provider_name": "Snap",
+    "source_url": "https://query1.finance.yahoo.com/v8/finance/chart/SNAP?range=1d&interval=1d",
+    "observed_at": "2026-11-11T18:50:13.539Z",
+    "http_status": 200,
+    "source_error": null,
+    "meta": {
+      "symbol": "SNAP",
+      "longName": "Snap Inc.",
+      "shortName": "Snap Inc.",
+      "instrumentType": "EQUITY",
+      "exchangeName": "NYQ",
+      "fullExchangeName": "NYSE",
+      "currency": "USD"
+    }
+  },
+  {
+    "provider_symbol": "SNDK",
+    "provider_name": "SanDisk",
+    "source_url": "https://query1.finance.yahoo.com/v8/finance/chart/SNDK?range=1d&interval=1d",
+    "observed_at": "2026-11-11T18:50:09.581Z",
+    "http_status": 200,
+    "source_error": null,
+    "meta": {
+      "symbol": "SNDK",
+      "longName": "Sandisk Corporation",
+      "shortName": "Sandisk Corporation",
+      "instrumentType": "EQUITY",
+      "exchangeName": "NMS",
+      "fullExchangeName": "NasdaqGS",
+      "currency": "USD"
+    }
+  },
+  {
+    "provider_symbol": "SPCX",
+    "provider_name": "SpaceX Class A",
+    "source_url": "https://query1.finance.yahoo.com/v8/finance/chart/SPCX?range=1d&interval=1d",
+    "observed_at": "2026-11-11T18:50:08.540Z",
+    "http_status": 200,
+    "source_error": null,
+    "meta": {
+      "symbol": "SPCX",
+      "longName": "Space Exploration Technologies Corp.",
+      "shortName": "Space Exploration Technologies ",
+      "instrumentType": "EQUITY",
+      "exchangeName": "NMS",
+      "fullExchangeName": "NasdaqGS",
+      "currency": "USD"
+    }
+  },
+  {
+    "provider_symbol": "SPY",
+    "provider_name": "SPDR S&P 500 ETF Trust",
+    "source_url": "https://query1.finance.yahoo.com/v8/finance/chart/SPY?range=1d&interval=1d",
+    "observed_at": "2026-11-11T18:50:09.870Z",
+    "http_status": 200,
+    "source_error": null,
+    "meta": {
+      "symbol": "SPY",
+      "longName": "State Street SPDR S&P 500 ETF Trust",
+      "shortName": "State Street SPDR S&P 500 ETF T",
+      "instrumentType": "ETF",
+      "exchangeName": "PCX",
+      "fullExchangeName": "NYSEArca",
+      "currency": "USD"
+    }
+  },
+  {
+    "provider_symbol": "TSLA",
+    "provider_name": "Tesla",
+    "source_url": "https://query1.finance.yahoo.com/v8/finance/chart/TSLA?range=1d&interval=1d",
+    "observed_at": "2026-11-11T18:50:09.188Z",
+    "http_status": 200,
+    "source_error": null,
+    "meta": {
+      "symbol": "TSLA",
+      "longName": "Tesla, Inc.",
+      "shortName": "Tesla, Inc.",
+      "instrumentType": "EQUITY",
+      "exchangeName": "NMS",
+      "fullExchangeName": "NasdaqGS",
+      "currency": "USD"
+    }
+  },
+  {
+    "provider_symbol": "TSM",
+    "provider_name": "Taiwan Semiconductor",
+    "source_url": "https://query1.finance.yahoo.com/v8/finance/chart/TSM?range=1d&interval=1d",
+    "observed_at": "2026-11-11T18:50:11.159Z",
+    "http_status": 200,
+    "source_error": null,
+    "meta": {
+      "symbol": "TSM",
+      "longName": "Taiwan Semiconductor Manufacturing Company Limited",
+      "shortName": "Taiwan Semiconductor Manufactur",
+      "instrumentType": "EQUITY",
+      "exchangeName": "NYQ",
+      "fullExchangeName": "NYSE",
+      "currency": "USD"
+    }
+  },
+  {
+    "provider_symbol": "TTWO",
+    "provider_name": "Take-Two Interactive Software",
+    "source_url": "https://query1.finance.yahoo.com/v8/finance/chart/TTWO?range=1d&interval=1d",
+    "observed_at": "2026-11-11T18:50:12.570Z",
+    "http_status": 200,
+    "source_error": null,
+    "meta": {
+      "symbol": "TTWO",
+      "longName": "Take-Two Interactive Software, Inc.",
+      "shortName": "Take-Two Interactive Software, ",
+      "instrumentType": "EQUITY",
+      "exchangeName": "NMS",
+      "fullExchangeName": "NasdaqGS",
+      "currency": "USD"
+    }
+  },
+  {
+    "provider_symbol": "UPS",
+    "provider_name": "UPS",
+    "source_url": "https://query1.finance.yahoo.com/v8/finance/chart/UPS?range=1d&interval=1d",
+    "observed_at": "2026-11-11T18:50:14.830Z",
+    "http_status": 200,
+    "source_error": null,
+    "meta": {
+      "symbol": "UPS",
+      "longName": "United Parcel Service, Inc.",
+      "shortName": "United Parcel Service, Inc.",
+      "instrumentType": "EQUITY",
+      "exchangeName": "NYQ",
+      "fullExchangeName": "NYSE",
+      "currency": "USD"
+    }
+  },
+  {
+    "provider_symbol": "WYFI",
+    "provider_name": "WhiteFiber, Inc.",
+    "source_url": "https://query1.finance.yahoo.com/v8/finance/chart/WYFI?range=1d&interval=1d",
+    "observed_at": "2026-11-11T18:50:13.568Z",
+    "http_status": 200,
+    "source_error": null,
+    "meta": {
+      "symbol": "WYFI",
+      "longName": "WhiteFiber, Inc.",
+      "shortName": "WhiteFiber, Inc.",
+      "instrumentType": "EQUITY",
+      "exchangeName": "NCM",
+      "fullExchangeName": "NasdaqCM",
+      "currency": "USD"
+    }
+  }
+]

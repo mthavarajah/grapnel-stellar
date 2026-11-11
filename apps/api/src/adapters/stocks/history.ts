@@ -1,3 +1,4 @@
+import { matchesUnderlyingIdentity, reviewedUnderlyingIdentity } from './underlying-identity.js';
 import { z } from 'zod';
 import { GrapnelError } from '@grapnel/contracts';
 import type { StockCatalogMarket } from './catalog.js';
@@ -11,6 +12,7 @@ const numeric = z.number().finite().nullable();
 const epoch = z.number().int().positive().max(253402300799);
 const chartSchema = z.object({ chart: z.object({ error: z.unknown().nullable(), result: z.array(z.object({
   meta: z.object({ symbol: z.string(), currency: z.string(), instrumentType: z.enum(['EQUITY','ETF']),
+    longName: z.string().max(200), shortName: z.string().max(200), exchangeName: z.string().max(50), fullExchangeName: z.string().max(100),
     regularMarketTime: epoch.optional(), regularMarketPrice: numeric.optional(),
     regularMarketDayHigh: numeric.optional(), regularMarketDayLow: numeric.optional(),
     regularMarketVolume: numeric.optional(), fiftyTwoWeekHigh: numeric.optional(), fiftyTwoWeekLow: numeric.optional(),
@@ -35,6 +37,7 @@ export interface StockHistoryDTO {
   source_url: string;
   observed_at: string;
   interval: string;
+  underlying_identity: { symbol: string; long_name: string; short_name: string; instrument_type: string; exchange: string; exchange_name: string; currency: string };
   metrics: { day_high: string | null; day_low: string | null; day_volume: string | null;
     fifty_two_week_high: string | null; fifty_two_week_low: string | null;
     previous_close: string | null; market_time: string | null };
@@ -63,6 +66,7 @@ const unavailable = () => new GrapnelError(503,'PROVIDER_UNAVAILABLE','Underlyin
 export async function readUnderlyingStockHistory(candidate: StockCatalogMarket, range: StockHistoryRange,
   options: { fetch?: typeof fetch; now?: () => Date } = {}): Promise<StockHistoryDTO> {
   const selection=requests[range];
+  if(!reviewedUnderlyingIdentity(candidate.symbol,candidate.name))throw new GrapnelError(503,'PROVIDER_UNAVAILABLE','Underlying stock identity has not been verified',false,{provider:'yahoo_finance',reason:'UNDERLYING_IDENTITY_UNVERIFIED'});
   if (!selection || !/^[A-Z][A-Z0-9]{0,11}$/.test(candidate.symbol)
     || candidate.market_id!==`sodax:catalog:${candidate.network==='stellar-mainnet'?'mainnet':'testnet'}:${candidate.contract_id}`)
     throw new GrapnelError(422,'VALIDATION_ERROR','Invalid stock catalog or history range');
@@ -72,7 +76,7 @@ export async function readUnderlyingStockHistory(candidate: StockCatalogMarket, 
     if(!response.ok)throw unavailable();
     const body=await response.text();if(body.length>4_000_000)throw unavailable();
     const parsed=chartSchema.parse(JSON.parse(body)); const row=parsed.chart.result?.[0];
-    if(parsed.chart.error!==null||!row||row.meta.symbol!==candidate.symbol||row.meta.currency!=='USD'||row.meta.dataGranularity!==selection.interval)throw unavailable();
+    if(parsed.chart.error!==null||!row||row.meta.symbol!==candidate.symbol||row.meta.currency!=='USD'||row.meta.dataGranularity!==selection.interval||!matchesUnderlyingIdentity(candidate.symbol,candidate.name,row.meta))throw unavailable();
     const timestamps=row.timestamp??[], quote=row.indicators.quote[0];
     if(!quote||timestamps.length!==quote.close.length)throw unavailable();
     if([quote.open,quote.high,quote.low,quote.volume].some(values=>values!==undefined&&values.length!==timestamps.length))throw unavailable();
@@ -97,6 +101,7 @@ export async function readUnderlyingStockHistory(candidate: StockCatalogMarket, 
       latest_price:validMarketTime&&latest!==null?latest:points.at(-1)?.price??null,
       as_of:validMarketTime&&latest!==null?validMarketTime:points.at(-1)?.timestamp??null,
       points,...change,price_basis:'underlying_stock',source_url:url,observed_at:now.toISOString(),interval:selection.interval,
+      underlying_identity:{symbol:row.meta.symbol,long_name:row.meta.longName,short_name:row.meta.shortName,instrument_type:row.meta.instrumentType,exchange:row.meta.exchangeName,exchange_name:row.meta.fullExchangeName,currency:row.meta.currency},
       metrics:{day_high:decimal(row.meta.regularMarketDayHigh),day_low:decimal(row.meta.regularMarketDayLow),day_volume:decimal(row.meta.regularMarketVolume),
         fifty_two_week_high:decimal(row.meta.fiftyTwoWeekHigh),fifty_two_week_low:decimal(row.meta.fiftyTwoWeekLow),
         previous_close:decimal(row.meta.previousClose),market_time:validMarketTime},candles:sampled};

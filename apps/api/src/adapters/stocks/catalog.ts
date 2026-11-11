@@ -1,3 +1,4 @@
+import { reviewedUnderlyingIdentity } from './underlying-identity.js';
 import { Asset, Networks } from '@stellar/stellar-sdk';
 import { readStockDiscovery, SODAX_CONFIG_URL, SODAX_TOKENS_URL, type StockDiscovery } from './discovery.js';
 
@@ -62,6 +63,9 @@ export interface StockCatalogMarket {
   name: string;
   underlying_symbol: string;
   underlying_name: string;
+  price_supported: boolean;
+  history_available: boolean;
+  underlying_identity_status: 'reviewed' | 'unverified';
   contract_id: string;
   issuer: string;
   decimals: number;
@@ -93,9 +97,11 @@ export function projectStockCatalog(discovery: StockDiscovery): StockCatalogMark
     if (seen.has(market_id)) throw new Error('Duplicate stock catalog identity');
     seen.add(market_id);
     if (stockCatalogNames[candidate.symbol] !== candidate.name) return [];
+    const identity = reviewedUnderlyingIdentity(candidate.symbol, candidate.name);
     return [{ market_id, provider: 'sodax', asset_class: 'stocks', classification: 'provider_rwa',
       network: candidate.network === 'mainnet' ? 'stellar-mainnet' : 'stellar-testnet',
       symbol: candidate.symbol, name: candidate.name, underlying_symbol: candidate.symbol, underlying_name: candidate.name,
+      price_supported: !!identity, history_available: !!identity, underlying_identity_status: identity ? 'reviewed' : 'unverified',
       contract_id: candidate.contract_id, issuer: candidate.issuer, decimals: candidate.decimals,
       reference_price: null, latest_price: null, price_status: 'unavailable', stats: null,
       executable: false, preparation_available: false, execution_status: 'discovery_only',
