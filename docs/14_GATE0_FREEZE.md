@@ -1,5 +1,8 @@
 # Gate 0 freeze — contract v0.1.0
 
+## Lead-approved additive revision 0.1.4 — 2026-11-11
+Spot market responses may include `asset_in` and `asset_out`, each using the existing `AssetIdentity` format. Existing `asset_in_id` / `asset_out_id` remain unchanged and authoritative; metadata IDs must match them. Codes and decimals come from verified registry/chain reads, never a guessed ticker. This supports asset selectors without changing quotes, orders, customer authorization or network restrictions. No mainnet asset is admitted by this additive metadata change.
+
 Lead owns packages/contracts, openapi, root tooling/lockfile, migration numbering, .env.example and integration composition. All agents must read this and the required role docs before implementation. Changes require lead approval and versioned note here.
 
 ## Serialized conventions

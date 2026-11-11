@@ -1,5 +1,5 @@
 import { z } from 'zod';
-export const CONTRACT_VERSION = '0.1.3' as const;
+export const CONTRACT_VERSION = '0.1.4' as const;
 export const NETWORK = 'stellar-testnet' as const;
 export const NETWORK_PASSPHRASE = 'Test SDF Network ; September 2015' as const;
 export const MODULE_IDS = ['capital.wallets','capital.testnet_funding','capital.lending','trade.spot','trade.stocks','trade.perps','trade.commodities'] as const;
@@ -32,6 +32,10 @@ export function formatTokenAmount(value:string|null|undefined,significantDigits=
 }
 export const AssetIdentitySchema = z.object({id:z.string(),network:z.literal(NETWORK),kind:z.enum(['native','classic','soroban']),code:z.string(),issuer:z.string().optional(),contractId:z.string().optional(),decimals:z.number().int().min(0).max(38),verified:z.boolean(),sourceUrl:z.string().url()});
 export type AssetIdentity = z.infer<typeof AssetIdentitySchema>;
+/** Additive metadata for asset selectors; identifiers stay authoritative. */
+export const SpotMarketAssetsSchema=z.object({asset_in_id:z.string(),asset_out_id:z.string(),asset_in:AssetIdentitySchema.optional(),asset_out:AssetIdentitySchema.optional()}).superRefine((market,context)=>{
+ for(const side of ['in','out'] as const){const asset=market[`asset_${side}`];if(asset&&asset.id!==market[`asset_${side}_id`])context.addIssue({code:z.ZodIssueCode.custom,path:[`asset_${side}`],message:'Asset metadata must match the exact market identity'});}
+});
 export const CapabilitySchema = z.object({module:ModuleIdSchema,enabled:z.boolean(),provider:z.string(),execution_status:ExecutionStatusSchema,reason:z.string().nullable(),actions:z.array(z.string())});
 export type Capability = z.infer<typeof CapabilitySchema>;
 export const OperationStatusSchema = z.enum(['accepted','validating','preparing','awaiting_customer_authorization','submitted','confirming','completed','rejected','expired','failed','recovery_required']);
