@@ -2,7 +2,7 @@
   "openapi": "3.1.0",
   "info": {
     "title": "Grapnel Testnet API",
-    "version": "0.1.1",
+    "version": "0.1.2",
     "description": "Stellar Testnet only. See docs/03_API.md and packages/contracts for frozen payload schemas."
   },
   "servers": [
@@ -929,6 +929,29 @@
             }
           }
         ]
+      }
+    },
+    "/v1/dashboard/customers": {
+      "get": {
+        "operationId": "get_v1_dashboard_customers",
+        "security": [{"ownerSession": []}],
+        "responses": {
+          "200": {"description": "Tenant-scoped customer and wallet metadata", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/Envelope"}}}},
+          "401": {"description": "Owner session required", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/Error"}}}}
+        }
+      }
+    },
+    "/v1/dashboard/customers/{id}/lending-positions": {
+      "get": {
+        "operationId": "get_v1_dashboard_customer_lending_positions",
+        "security": [{"ownerSession": []}],
+        "parameters": [{"name": "id", "in": "path", "required": true, "schema": {"type": "string", "format": "uuid"}}],
+        "responses": {
+          "200": {"description": "Fresh Testnet Blend position for the tenant customer wallet", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/Envelope"}}}},
+          "401": {"description": "Owner session required", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/Error"}}}},
+          "404": {"description": "Customer does not belong to this tenant", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/Error"}}}},
+          "503": {"description": "Live Blend read unavailable", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/Error"}}}}
+        }
       }
     },
     "/v1/dashboard/requests": {

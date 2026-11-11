@@ -6,6 +6,7 @@ const routes: Record<string, string[]> = {
   "dashboard/session": ["GET"],
   "dashboard/business": ["GET"],
   "dashboard/businesses": ["POST"],
+  "dashboard/customers": ["GET"],
   "dashboard/modules": ["GET", "PATCH"],
   "dashboard/api-keys": ["GET", "POST"],
   "dashboard/requests": ["GET"],
@@ -18,7 +19,11 @@ async function proxy(
   const route = path.join("/");
   const allowed =
     routes[route] ??
-    (/^dashboard\/api-keys\/[0-9a-f-]{36}$/.test(route) ? ["DELETE"] : []);
+    (/^dashboard\/customers\/[0-9a-f-]{36}\/lending-positions$/.test(route)
+      ? ["GET"]
+      : /^dashboard\/api-keys\/[0-9a-f-]{36}$/.test(route)
+        ? ["DELETE"]
+        : []);
   if (!allowed.includes(request.method))
     return NextResponse.json(
       { error: { code: "NOT_FOUND", message: "Route not found" } },

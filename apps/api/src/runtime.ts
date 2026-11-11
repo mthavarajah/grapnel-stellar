@@ -1,7 +1,7 @@
 import { readFile } from 'node:fs/promises';
 import type { Pool } from 'pg';
 import { z } from 'zod';
-import { GrapnelError, NETWORK_PASSPHRASE, WalletInputSchema, AmountSchema, XLM, toAtomic, fromAtomic, PreparedActionSchema, type CustomerContext, type PreparedAction, type WalletBalance } from '@grapnel/contracts';
+import { GrapnelError, NETWORK, NETWORK_PASSPHRASE, WalletInputSchema, AmountSchema, XLM, toAtomic, fromAtomic, PreparedActionSchema, type CustomerContext, type PreparedAction, type WalletBalance } from '@grapnel/contracts';
 import { buildApp } from './app.js';
 import { createPool } from './db/index.js';
 import { loadConfig } from './lib/config.js';
@@ -66,6 +66,10 @@ export async function createRuntime(pool?:Pool) {
  const app=await buildApp({pool:db,config,identityVerifier:identity,
   verifySignedAction:async(action,signed)=>{if(action.summary.action==='blend.supply')await soroban.verifyForSubmission(action,signed);else verifySignedAction(action,signed);return {txHash:parseTestnetTransaction(signed).hash().toString('hex')};},
   balanceReader:address=>chain.getClassicBalances(address),
+  dashboardCustomerPositions:async customer=>{
+   const [positions,markets]=await Promise.all([blend.positions(customer),blend.markets()]);
+   return positions.map(position=>({provider:'blend',network:NETWORK,asset:markets.find(market=>market.market_id===position.market_id)?.asset??null,...position}));
+  },
   capabilities:{
    'capital.lending':readBlendReadiness,
    'trade.spot':async()=>spot.capability(),

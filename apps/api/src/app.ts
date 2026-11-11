@@ -6,7 +6,7 @@ import { randomUUID } from 'node:crypto';
 import { readFile } from 'node:fs/promises';
 import { z, ZodError } from 'zod';
 import type { Pool } from 'pg';
-import { AuthorizeInputSchema, CustomerInputSchema, GrapnelError, MODULE_IDS, ModulesInputSchema, NETWORK, type Capability, type IdentityVerifier, type ModuleId, type PreparedAction, type WalletBalance } from '@grapnel/contracts';
+import { AuthorizeInputSchema, CustomerInputSchema, GrapnelError, MODULE_IDS, ModulesInputSchema, NETWORK, type Capability, type CustomerContext, type IdentityVerifier, type ModuleId, type PreparedAction, type WalletBalance } from '@grapnel/contracts';
 import { createPool, transaction } from './db/index.js';
 import { loadConfig, type ApiConfig } from './lib/config.js';
 import { constantEqual, csrfToken, digest, secretToken } from './lib/crypto.js';
@@ -16,6 +16,7 @@ export interface AppOptions {
  pool?:Pool;config?:ApiConfig;identityVerifier?:IdentityVerifier;
  verifySignedAction?:(action:PreparedAction,signedXdr:string,customerIdentity:string)=>Promise<{txHash:string}>;
  balanceReader?:(address:string)=>Promise<WalletBalance[]>;
+ dashboardCustomerPositions?:(customer:CustomerContext)=>Promise<unknown[]>;
  capabilities?:Partial<Record<ModuleId,()=>Promise<Pick<Capability,'execution_status'|'reason'|'actions'>>>>;
  registerAdapters?:(app:FastifyInstance)=>Promise<void>;
 }
@@ -70,6 +71,29 @@ export async function buildApp(options:AppOptions={}):Promise<FastifyInstance>{
  app.get('/v1/dashboard/session',async request=>{const owner=await requireOwner(request);return success(request,{business_id:owner.businessId,csrf_token:owner.csrfToken});});
  app.post('/v1/dashboard/logout',async(request,reply)=>{const owner=await requireOwner(request,true);await pool.query('DELETE FROM owner_sessions WHERE token_hash=$1',[digest(owner.token)]);reply.clearCookie('grapnel_owner',{path:'/'});return success(request,{logged_out:true});});
  app.get('/v1/dashboard/business',async request=>{const owner=await requireOwner(request);return success(request,(await pool.query('SELECT id,name,environment,revision,created_at FROM businesses WHERE id=$1',[owner.businessId])).rows[0]);});
+ app.get('/v1/dashboard/customers',async request=>{
+  const owner=await requireOwner(request);
+  const rows=(await pool.query(`SELECT c.id AS customer_id,c.external_customer_id,c.created_at,
+   w.id AS wallet_id,w.stellar_address AS wallet_address,w.status AS wallet_status
+   FROM customers c LEFT JOIN LATERAL (SELECT id,stellar_address,status FROM wallets
+    WHERE business_id=c.business_id AND customer_id=c.id ORDER BY (status='active') DESC,created_at DESC LIMIT 1) w ON true
+   WHERE c.business_id=$1 ORDER BY c.created_at DESC LIMIT 250`,[owner.businessId])).rows;
+  return success(request,{customers:rows.map(row=>({customer_id:row.customer_id,external_customer_id:row.external_customer_id,created_at:row.created_at,wallet:row.wallet_id?{wallet_id:row.wallet_id,address:row.wallet_address,status:row.wallet_status}:null}))});
+ });
+ app.get('/v1/dashboard/customers/:id/lending-positions',async request=>{
+  const owner=await requireOwner(request);
+  const {id}=z.object({id:z.string().uuid()}).parse(request.params);
+  const row=(await pool.query(`SELECT c.id AS customer_id,c.privy_user_id,w.id AS wallet_id,w.stellar_address AS wallet_address
+   FROM customers c LEFT JOIN LATERAL (SELECT id,stellar_address FROM wallets
+    WHERE business_id=c.business_id AND customer_id=c.id AND status='active' ORDER BY created_at DESC LIMIT 1) w ON true
+   WHERE c.business_id=$1 AND c.id=$2`,[owner.businessId,id])).rows[0];
+  if(!row)throw new GrapnelError(404,'NOT_FOUND','Customer not found');
+  if(!row.wallet_id)return success(request,{customer_id:id,positions:[],as_of:new Date().toISOString()});
+  if(!options.dashboardCustomerPositions)throw new GrapnelError(503,'BLEND_UNAVAILABLE','Live Blend position reads are unavailable',true);
+  const customer:CustomerContext={businessId:owner.businessId,customerId:row.customer_id,walletId:row.wallet_id,walletAddress:row.wallet_address,privyUserId:row.privy_user_id??''};
+  const positions=await options.dashboardCustomerPositions(customer);
+  return success(request,{customer_id:id,positions,as_of:new Date().toISOString()});
+ });
  app.post('/v1/dashboard/businesses',async request=>{
   const owner=await requireOwner(request,true);const {name}=z.object({name:z.string().trim().min(1).max(120)}).strict().parse(request.body);
   const business=await transaction(pool,async client=>{
