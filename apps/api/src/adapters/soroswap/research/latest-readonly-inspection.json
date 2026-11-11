@@ -1,5 +1,5 @@
 {
-  "observed_at": "2026-11-11T15:45:27.021Z",
+  "observed_at": "2026-11-11T16:02:23.098Z",
   "network": "stellar-testnet",
   "mode": "read_only_inspection",
   "broadcast": false,
@@ -8,16 +8,16 @@
   "source_owned_by_grapnel": false,
   "quote": {
     "amount_in": "1.0000000",
-    "expected_out": "0.1510205",
-    "min_receive": "0.1502804"
+    "expected_out": "0.1505526",
+    "min_receive": "0.1498148"
   },
   "original": {
     "instructions": 2477968,
     "read_bytes": 260,
     "write_bytes": 1220,
     "resource_fee": "21511",
-    "total_fee": "123633",
-    "expires_at": "2026-11-11T15:48:26.000Z",
+    "total_fee": "83782",
+    "expires_at": "2026-11-11T16:05:22.000Z",
     "read_only_keys": 5,
     "read_write_keys": 5,
     "signatures": 0
@@ -27,21 +27,21 @@
     "read_bytes": 260,
     "write_bytes": 1220,
     "resource_fee": "24667",
-    "total_fee": "123633",
-    "expires_at": "2026-11-11T15:45:56.000Z",
+    "total_fee": "83782",
+    "expires_at": "2026-11-11T16:02:51.000Z",
     "read_only_keys": 5,
     "read_write_keys": 5,
     "signatures": 0
   },
   "simulations": [
     {
-      "ledger": 5677656,
+      "ledger": 5677859,
       "success": true,
       "minimum_resource_fee": "21515",
       "instructions": 2491101
     },
     {
-      "ledger": 5677656,
+      "ledger": 5677859,
       "success": true,
       "minimum_resource_fee": "21515",
       "instructions": 2491101
