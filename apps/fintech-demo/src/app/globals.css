@@ -1497,3 +1497,34 @@ footer strong {
 .quote-summary .small {
   margin-top: 18px;
 }
+
+.receive-panel { margin-bottom: 24px; scroll-margin-top: 28px; }
+.receive-heading { display: flex; align-items: flex-start; justify-content: space-between; gap: 20px; }
+.receive-heading h2 { margin: 7px 0 9px; }
+.receive-heading p:not(.eyebrow) { color: var(--muted); line-height: 1.7; max-width: 540px; }
+.receive-heading .badge { flex-shrink: 0; }
+.receive-choices { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 24px 0; }
+.receive-choice { display: flex; flex-direction: column; gap: 7px; padding: 18px; border: 1px solid var(--line); border-radius: 12px; background: var(--bg); }
+.receive-choice:hover { border-color: var(--blue); background: var(--blue-light); }
+.receive-choice strong { color: var(--blue); font-size: 13px; }
+.receive-choice span { color: var(--muted); font-size: 12px; }
+.receive-details { display: grid; grid-template-columns: 208px minmax(0, 1fr); gap: 28px; align-items: start; padding-top: 8px; scroll-margin-top: 28px; }
+.receive-qr { display: flex; align-items: center; justify-content: center; min-height: 208px; padding: 15px; background: #fff; border: 1px solid var(--line); border-radius: 14px; }
+.receive-qr svg { display: block; width: 176px; height: 176px; }
+.receive-qr-empty { padding: 18px; text-align: center; color: var(--muted); font-size: 12px; line-height: 1.8; }
+.receive-instructions h3 { margin: 0 0 10px; }
+.receive-instructions p { line-height: 1.8; color: var(--muted); }
+.receive-instructions label { display: block; margin: 18px 0 8px; font-size: 12px; font-weight: 650; }
+.receive-address { display: block; width: 100%; min-height: 70px; resize: none; overflow-wrap: anywhere; word-break: break-all; border: 1px solid var(--line); border-radius: 9px; background: var(--bg); padding: 13px; color: var(--ink); font: 12px/1.8 ui-monospace, monospace; user-select: all; }
+.receive-address:focus-visible { outline: 3px solid #8ca2ff; outline-offset: 3px; }
+.receive-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 12px; }
+.receive-copy-status { min-height: 22px; margin-top: 6px; }
+.receive-network-note { padding: 12px 14px; border-radius: 9px; margin: 12px 0; background: #fff7e9; color: #785b29; font-size: 12px; line-height: 1.7; }
+#treasury-funding { scroll-margin-top: 28px; }
+@media (max-width: 760px) {
+  .receive-heading { flex-direction: column; gap: 12px; }
+  .receive-choices { grid-template-columns: 1fr; }
+  .receive-details { grid-template-columns: 1fr; gap: 20px; }
+  .receive-qr { width: 208px; justify-self: center; }
+  .receive-actions .button { flex: 1 1 170px; }
+}

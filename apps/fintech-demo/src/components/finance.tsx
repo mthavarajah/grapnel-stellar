@@ -10,6 +10,7 @@ import {
 import { useSignRawHash } from "@privy-io/react-auth/extended-chains";
 import type { PreparedAction } from "@grapnel/contracts";
 import { api, ClientError, operationRequestKey, clearOperationRequest } from "@/lib/client";
+import { ReceiveFunds } from "@/components/receive-funds";
 import { signPreparedAction } from "@/lib/privy-signer";
 type Capability = {
   module: string;
@@ -117,18 +118,23 @@ function Icon({ name, size = 20 }: { name: string; size?: number }) {
 }
 const nav = [
   ["home", "Overview"],
-  ["fund", "Get Testnet Funds"],
+  ["fund", "Receive funds"],
   ["markets", "Markets"],
   ["earn", "Earn"],
   ["return", "Return Funds"],
   ["activity", "Activity"],
 ];
+function customerMessage(message: string): string {
+  if (message.includes("GATE_1_SIGNING_PROOF_REQUIRED") || /Gate 1.*proof/i.test(message)) return "Complete the wallet signing check on Overview to unlock Testnet execution.";
+  if (message.includes("MODULE_NOT_ENABLED") || /module.*(disabled|not enabled)/i.test(message)) return "This module is not enabled for your business. Its actions are unavailable.";
+  return message;
+}
 const short = (v: string) =>
   v.length > 22 ? v.slice(0, 10) + "…" + v.slice(-7) : v;
 const title: Record<string, string> = {
   home: "A clearer view of your assets.",
   login: "Your wallet. Your approval.",
-  fund: "Get Testnet Funds",
+  fund: "Receive Testnet funds",
   return: "Return Testnet Funds",
   markets: "Explore available markets.",
   trade: "Explore available markets.",
@@ -180,6 +186,7 @@ function FinanceShell({ page, auth }: { page: string; auth?: Auth }) {
   const [caps, setCaps] = useState<Capability[]>([]);
   const [balances, setBalances] = useState<any[]>([]);
   const [assets, setAssets] = useState<any[]>([]);
+  const [fundingError, setFundingError] = useState("");
   const [markets, setMarkets] = useState<any[]>([]);
   const [lending, setLending] = useState<any[]>([]);
   const [positions, setPositions] = useState<any[]>([]);
@@ -237,12 +244,20 @@ function FinanceShell({ page, auth }: { page: string; auth?: Auth }) {
     (async () => {
       try {
         if (page === "fund" || page === "return") {
-          const a = await api("grapnel/funding-assets");
-          if (alive) setAssets(Array.isArray(a) ? a : (a.assets ?? []));
+          try {
+            const a = await api("grapnel/funding-assets");
+            if (alive) { setAssets(Array.isArray(a) ? a : (a.assets ?? [])); setFundingError(""); }
+          } catch (error) {
+            if (page !== "fund") throw error;
+            if (alive) { setAssets([]); setFundingError(error instanceof Error ? error.message : "Treasury funding unavailable"); }
+          }
         }
         if (page === "markets" || page === "trade") {
-          const m = await api("grapnel/markets?asset_class=" + category);
-          if (alive) setMarkets(Array.isArray(m) ? m : (m.markets ?? []));
+          const selected = caps.find(c => c.module === "trade." + (category === "crypto_spot" ? "spot" : category));
+          if (selected?.enabled && category === "crypto_spot") {
+            const m = await api("grapnel/markets?asset_class=" + category);
+            if (alive) setMarkets(Array.isArray(m) ? m : (m.markets ?? []));
+          } else if (alive) setMarkets([]);
         }
         if (page === "earn") {
           const m = await api("grapnel/lending-markets");
@@ -257,7 +272,7 @@ function FinanceShell({ page, auth }: { page: string; auth?: Auth }) {
     return () => {
       alive = false;
     };
-  }, [page, session, category]);
+  }, [page, session, category, caps]);
   useEffect(() => {
     if (
       !active ||
@@ -479,7 +494,7 @@ function FinanceShell({ page, auth }: { page: string; auth?: Auth }) {
           {error && (
             <div className="notice error" role="alert">
               <strong>Request unavailable</strong>
-              <span>{error}</span>
+              <span>{customerMessage(error)}</span>
               <button onClick={() => setError("")} aria-label="Dismiss error">
                 ×
               </button>
@@ -552,7 +567,7 @@ function FinanceShell({ page, auth }: { page: string; auth?: Auth }) {
                     {session ? (
                       <>
                         <Link className="button light" href="/fund">
-                          <Icon name="fund" size={17} /> Get Testnet Funds
+                          <Icon name="fund" size={17} /> Receive funds
                         </Link>
                         <Link className="button ghost" href="/return">
                           Return funds <Icon name="arrow" size={16} />
@@ -669,15 +684,22 @@ function FinanceShell({ page, auth }: { page: string; auth?: Auth }) {
               )}
             </>
           )}
+          {page === "fund" && <>
+            <ReceiveFunds address={session?.stellar_address} busy={busy} onConnect={connect} onRefresh={() => void action(refresh)} />
+            <section className="section" aria-label="Current wallet balances">
+              <div className="section-heading"><h2>Your wallet balances</h2><span className="muted small">Read from Stellar Testnet through Grapnel</span></div>
+              <BalanceTable balances={balances} connected={!!session} />
+            </section>
+          </>}
           {(page === "fund" || page === "return") && (
             <div className="form-layout">
-              <section className="card transaction-form">
+              <section className="card transaction-form" id={page === "fund" ? "treasury-funding" : undefined}>
                 <span className="feature-icon blue">
                   <Icon name={page} />
                 </span>
                 <h2>
                   {page === "fund"
-                    ? "Get assets for testing."
+                    ? "Request treasury funds."
                     : "Return available Testnet assets."}
                 </h2>
                 <p>
@@ -735,8 +757,8 @@ function FinanceShell({ page, auth }: { page: string; auth?: Auth }) {
                   </strong>
                 </div>
                 <div className="inline-note">
-                  {capability("capital.testnet_funding")?.reason ??
-                    "Sign in to view module availability and exact funding limits."}
+                  {customerMessage((page === "fund" ? fundingError : "") || capability("capital.testnet_funding")?.reason ||
+                    (session ? "Requests use available treasury assets and configured grant limits." : "Sign in to view module availability and exact funding limits."))}
                 </div>
                 <button
                   className="button wide"
@@ -795,6 +817,8 @@ function FinanceShell({ page, auth }: { page: string; auth?: Auth }) {
                     key={id}
                     onClick={() => {
                       setCategory(id!);
+                      setError("");
+                      setMarket("");
                       setMarkets([]);
                       setQuote(null);
                     }}
@@ -830,7 +854,7 @@ function FinanceShell({ page, auth }: { page: string; auth?: Auth }) {
                         <span>
                           {m.executable
                             ? "Route available"
-                            : (m.reason ?? "Execution unavailable")}
+                            : customerMessage(m.reason ?? "Execution unavailable")}
                         </span>
                       </button>
                     ))}
@@ -843,13 +867,10 @@ function FinanceShell({ page, auth }: { page: string; auth?: Auth }) {
                         ? "No verified route available."
                         : "Connect your wallet to explore."
                     }
-                    text={
-                      capability(
-                        "trade." +
-                          (category === "crypto_spot" ? "spot" : category),
-                      )?.reason ??
-                      "Markets appear only after Grapnel verifies the provider, exact assets, and current Testnet route."
-                    }
+                    text={category !== "crypto_spot"
+                      ? "This category is discovery only. Execution is unavailable in this Testnet prototype."
+                      : customerMessage(capability("trade.spot")?.reason ?? "Markets appear only after Grapnel verifies the provider, exact assets, and current Testnet route.")}
+
                   />
                 )}
               </div>
@@ -989,9 +1010,7 @@ function FinanceShell({ page, auth }: { page: string; auth?: Auth }) {
                         </strong>
                         <code>{m.asset_id ?? m.reserve_contract_id}</code>
                         <p className="small">
-                          {m.reason ??
-                            m.readiness ??
-                            "Live read; execution requires separate proof"}
+                          {customerMessage(m.reason ?? m.readiness ?? "Live read; execution requires separate proof")}
                         </p>
                         <label>
                           Amount
@@ -1189,9 +1208,9 @@ function FinanceShell({ page, auth }: { page: string; auth?: Auth }) {
               </div>
             )}
             <code className="operation-id">{active.operation_id}</code>
-            {error && <div className="inline-note" role="alert">{error}</div>}
+            {error && <div className="inline-note" role="alert">{customerMessage(error)}</div>}
             {active.error && (
-              <div className="inline-note">{active.error.message}</div>
+              <div className="inline-note">{customerMessage(active.error.message)}</div>
             )}
             {active.tx_hash && (
               <a
