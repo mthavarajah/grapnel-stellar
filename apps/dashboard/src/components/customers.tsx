@@ -37,7 +37,7 @@ const readableTime = (value: string) => {
   const date = new Date(value);
   return Number.isNaN(date.getTime())
     ? "Observation time unavailable"
-    : `Observed ${date.toLocaleString(undefined, { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit", second: "2-digit" })}`;
+    : `As of ${date.toLocaleString(undefined, { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit", second: "2-digit" })}`;
 };
 const assetCode = (assetId: string, code?: string) => {
   if (code && /^[A-Za-z0-9._-]{1,16}$/.test(code)) return code;
@@ -284,14 +284,6 @@ export default function Customers({ api }: { api: OwnerApi }) {
     positions.customerId === selectedId ? positions : null;
   return (
     <>
-      <div className="info-strip">
-        <span className="info-symbol">i</span>
-        <p>
-          Owner view of current Stellar Testnet wallet balances and Blend
-          positions. Protocol-supplied assets remain separate from
-          wallet-spendable funds.
-        </p>
-      </div>
       {listError && (
         <div role="alert" className="message error">
           {listError}
@@ -392,7 +384,6 @@ export default function Customers({ api }: { api: OwnerApi }) {
             ) : (
               <>
                 <div className="customer-read-tools">
-                  <span>Amounts shown to six significant digits.</span>
                   <button
                     className="secondary refresh"
                     disabled={
@@ -430,9 +421,7 @@ export default function Customers({ api }: { api: OwnerApi }) {
                   )}
                   {currentBalances?.data && (
                     <div className="table-footnote">
-                      {readableTime(currentBalances.asOf)}. Spendable excludes
-                      active reservations, native network reserve, and fee
-                      allowance.
+                      {readableTime(currentBalances.asOf)}
                     </div>
                   )}
                 </section>
@@ -466,10 +455,7 @@ export default function Customers({ api }: { api: OwnerApi }) {
                   )}
                   {currentPositions?.data && (
                     <div className="table-footnote">
-                      {readableTime(currentPositions.asOf)}. Total supplied
-                      includes collateral. Protocol-held balances are not
-                      wallet-spendable. Withdrawals require customer approval
-                      and current health and liquidity checks.
+                      {readableTime(currentPositions.asOf)}
                     </div>
                   )}
                 </section>

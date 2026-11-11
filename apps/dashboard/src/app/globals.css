@@ -2220,7 +2220,7 @@ td code {
 .customer-read-tools {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-end;
   gap: 12px;
   color: #98a68e;
   font-size: 9px;
