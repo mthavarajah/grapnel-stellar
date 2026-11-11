@@ -25,6 +25,8 @@ Do not return stack traces, credential data or provider raw secrets to business 
 | `GET` | `/v1/dashboard/business` | admin session | Current tenant details |
 | `GET` | `/v1/dashboard/customers` | admin session | Tenant-scoped customer IDs and linked wallet metadata; never returns signer proofs |
 | `GET` | `/v1/dashboard/customers/:id/lending-positions` | admin session | Fresh onchain Blend position for that tenant customer wallet; position is protocol-held and not spendable |
+| `GET` | `/v1/dashboard/customers/:id/balances` | admin session | Tenant-scoped live wallet balances, active reservations and spendable amounts; independent of protocol positions |
+| `POST` | `/v1/capital/wallets/:id/usdc-trustline` | business key + verified customer | Prepare the exact issuer-pinned Testnet USDC trustline with limit1000; requires customer signature, additional0.5XLM reserve and100stroops fee. Summary amount denotes trust limit, not a transfer. |
 | `GET` | `/v1/dashboard/modules` | admin session | catalog and enabled settings |
 | `PATCH` | `/v1/dashboard/modules` | admin session | `{modules:["capital.wallets","trade.spot",...]}` atomically replace set; revision increments |
 | `POST` | `/v1/dashboard/api-keys` | admin session | `{name}`; reveal full secret ONLY once |

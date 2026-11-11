@@ -963,6 +963,18 @@
         }
       }
     },
+    "/v1/dashboard/customers/{id}/balances": {
+      "get": {
+        "operationId": "get_v1_dashboard_customer_balances",
+        "security": [{"ownerSession": []}],
+        "parameters": [{"name":"id","in":"path","required":true,"schema":{"type":"string","format":"uuid"}}],
+        "responses": {
+          "200": {"description":"Live tenant-scoped wallet balances with wallet_amount, reserved, spendable and as_of; no protocol position substitution"},
+          "401": {"description":"Owner session required"},
+          "404": {"description":"Customer not found in this tenant"}
+        }
+      }
+    },
     "/v1/dashboard/customers/{id}/lending-positions": {
       "get": {
         "operationId": "get_v1_dashboard_customer_lending_positions",
