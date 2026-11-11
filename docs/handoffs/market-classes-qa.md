@@ -21,3 +21,16 @@ The earlier dedicated UI pass additionally verified quote expiry denial, disable
 Focused Vitest run: **28 passed** across BFF routes, encrypted session handling and client idempotency. Added negative boundary checks for quote/order denial when Spot is disabled, missing wallet signing gate, disabled stock/perp/commodity reads, and missing idempotency key on both unified funds actions. Each negative test asserts no upstream call. Existing checks cover tenant/customer binding, foreign operations, origin validation, cookie integrity/expiry, and redirect denial while forwarding credentials.
 
 No production auth or capability rule was weakened. No implementation UI defect was found in the checked states; the live swap capability remains the integration blocker described above.
+
+## Live rerun after Spot runtime integration — 2026-11-11T16:08:23Z
+
+Following runtime integration `08afde1` (lead main `bdf190e`), actual API health and DB remained OK. The crypto markets read now returns HTTP 200 with the exact Testnet XLM→USDC issuer route:
+
+- `preparation_available: true`
+- `executable: false`
+- market `execution_status: discovery_only`
+- reason `SOROSWAP_SWAP_CHAIN_PROOF_REQUIRED`
+- output asset `stellar-testnet:classic:USDC:GATALTGTWIOT6BUDBCZM3Q4OQ4BO2COLOAZ7IYSKPLC2PMSOPPGF5V56`
+- route observed at `2026-11-11T16:08:23.667Z`
+
+The tenant's Spot module is enabled while its module capability remains `blocked` with chain-proof-required and an empty executable action list. The fintech BFF capabilities read mirrors this via HTTP 200; its anonymous markets read remains HTTP 401. This supersedes the earlier missing-inspector blocker. Preparation is available, while a real customer-signed swap and verified balance deltas are still required before execution verification may be advertised. No customer signature, order, or financial POST was made in this rerun.
