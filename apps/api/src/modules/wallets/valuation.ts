@@ -1,4 +1,4 @@
-import {AssetIdentitySchema,GrapnelError,NETWORK,XLM,type WalletBalance} from '@grapnel/contracts';
+import {AssetIdentitySchema,GrapnelError,NETWORK,XLM,type AssetIdentity,type WalletBalance} from '@grapnel/contracts';
 import {StrKey} from '@stellar/stellar-sdk';
 
 export interface WalletUsdPrice {value:string;as_of:string;}
@@ -27,7 +27,7 @@ function classicParts(id:string):{code:string;issuer:string}|null{
  return match&&StrKey.isValidEd25519PublicKey(match[2]!)?{code:match[1]!,issuer:match[2]!}:null;
 }
 /** Identity metadata is authoritative only when it verifies the exact balance identity. */
-function assetDecimals(balance:WalletBalance):number|null{
+function assetDecimals(balance:{asset_id:string;asset?:AssetIdentity}):number|null{
  const classic=classicParts(balance.asset_id);
  if(balance.asset===undefined)return balance.asset_id===XLM.id||classic?7:null;
  const result=AssetIdentitySchema.safeParse(balance.asset);
@@ -50,16 +50,18 @@ function formatUsd(value:bigint):string{
  const whole=value/USD_SCALE,fraction=(value%USD_SCALE).toString().padStart(USD_DECIMALS,'0').replace(/0+$/,'');
  return fraction?`${whole}.${fraction}`:whole.toString();
 }
-/** Wallet holdings only. Missing pricing never silently becomes a zero price or a dollar peg. */
-export async function valueWalletBalances(
- balances:WalletBalance[],priceFor:(assetId:string)=>Promise<WalletUsdPrice|null>,now=Date.now(),
+export interface AssetHolding {asset_id:string;amount:string;asset?:AssetIdentity;}
+/** Exact unique holdings; used by wallet and account totals without conflating their domains. */
+export async function valueAssetHoldings(
+ balances:AssetHolding[],priceFor:(assetId:string)=>Promise<WalletUsdPrice|null>,now?:number,
 ):Promise<WalletValuation>{
- if(!Number.isSafeInteger(now)||!Number.isFinite(new Date(now).getTime()))return invalid();
+ const start=now??Date.now();
+ if(!Number.isSafeInteger(start)||!Number.isFinite(new Date(start).getTime()))return invalid();
  const seen=new Set<string>();
  const entries=balances.map(balance=>{
   if(!balance||typeof balance.asset_id!=='string'||!balance.asset_id||balance.asset_id.length>200||seen.has(balance.asset_id))return invalid();
   seen.add(balance.asset_id);
-  const parsed=parseAmount(balance.wallet_amount),decimals=assetDecimals(balance);
+  const parsed=parseAmount(balance.amount),decimals=assetDecimals(balance);
   let atoms:bigint|null=null;
   if(decimals!==null){
    if(parsed.fraction.length>decimals)return invalid();
@@ -75,12 +77,17 @@ export async function valueWalletBalances(
    if(!entry.positive)continue;
    if(entry.decimals===null||entry.atoms===null){unpriced++;continue;}
    let price:bigint|null=null;
-   try{price=priceAtomic(await priceFor(entry.assetId),now);}catch{/* An unavailable source is unpriced, never zero. */}
+   try{price=priceAtomic(await priceFor(entry.assetId),now??Date.now());}catch{/* An unavailable source is unpriced, never zero. */}
    if(price===null){unpriced++;continue;}
    subtotal+=entry.atoms*price/(10n**BigInt(entry.decimals));
   }
  }
  await Promise.all(Array.from({length:Math.min(8,entries.length)},()=>work()));
  const value=formatUsd(subtotal);
- return {total_usd:unpriced?null:value,priced_subtotal_usd:value,unpriced_asset_count:unpriced,as_of:new Date(now).toISOString()};
+ return {total_usd:unpriced?null:value,priced_subtotal_usd:value,unpriced_asset_count:unpriced,as_of:new Date(now??Date.now()).toISOString()};
+}
+
+/** Wallet-only wrapper: reserved, spendable and protocol position fields never enter the value. */
+export function valueWalletBalances(balances:WalletBalance[],priceFor:(assetId:string)=>Promise<WalletUsdPrice|null>,now?:number):Promise<WalletValuation>{
+ return valueAssetHoldings(balances.map(balance=>({asset_id:balance.asset_id,amount:balance.wallet_amount,asset:balance.asset})),priceFor,now);
 }
