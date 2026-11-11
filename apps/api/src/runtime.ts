@@ -19,6 +19,7 @@ import { registerLendingRoutes } from './modules/lending/routes.js';
 import { SoroswapSpotAdapter } from './adapters/soroswap/index.js';
 import {SoroswapDirectInspector} from './adapters/soroswap/inspector.js';
 import {createSpotReservation,inspectSpotDeltas,SpotBaselineSchema,SPOT_USDC_ID} from './modules/spot/reservations.js';
+import {SpotProofReadiness} from './modules/spot/proof.js';
 import { SpotService } from './modules/spot/service.js';
 import { registerSpotRoutes } from './modules/spot/routes.js';
 import { WalletService } from './modules/wallets/service.js';
@@ -51,8 +52,9 @@ export async function createRuntime(pool?:Pool) {
  const funding=new TestnetFundingAdapter({network:config.network,networkPassphrase:NETWORK_PASSPHRASE,treasurySecret:process.env.DEMO_TREASURY_SECRET,enabled:process.env.TESTNET_FUNDING_ENABLED==='true',gate1Passed,maxPerCustomerAtomic:BigInt(process.env.TESTNET_FUNDING_MAX_PER_CUSTOMER_ATOMIC??'250000000'),maxPerTenantAtomic:BigInt(process.env.TESTNET_FUNDING_MAX_PER_TENANT_ATOMIC??'1000000000'),maxGlobalAtomic:BigInt(process.env.TESTNET_FUNDING_MAX_GLOBAL_ATOMIC??'2000000000')});
  const spotInspector=new SoroswapDirectInspector('CBR76WMT6J733CCVBP23M2EL5QGP5HXLPEFNFZGZ7IB6QHOJAHP7YM3V');
  let spotMarkets:Awaited<ReturnType<SoroswapDirectInspector['market']>>[]=[];
- if(process.env.SOROSWAP_API_KEY){try{spotMarkets=[await spotInspector.market()];}catch{/* Discovery failure leaves an empty market registry; never promote a guessed route. */}}
+ if(process.env.SOROSWAP_API_KEY){try{spotMarkets=await spotInspector.markets();}catch{/* Discovery failure leaves an empty market registry; never promote a guessed route. */}}
  const spot=new SoroswapSpotAdapter({network:config.network,networkPassphrase:NETWORK_PASSPHRASE,apiKey:process.env.SOROSWAP_API_KEY,gate1Passed,markets:spotMarkets},undefined,spotInspector.inspect);
+ const spotReadiness=new SpotProofReadiness(db,spot,spotInspector,chain.server);
  const soroban=new BlendSorobanPreparer({network:config.network,passphrase:NETWORK_PASSPHRASE,rpcUrl:process.env.STELLAR_RPC_URL,gate1Passed});
  const blend=new BlendAdapter({network:config.network,passphrase:NETWORK_PASSPHRASE,rpcUrl:process.env.STELLAR_RPC_URL,gate1Passed},{prepareAndSimulate:input=>soroban.prepare(input)});
  let fundingVerified=false;let fundingProofAt=0;let fundingProofRunning=false;
@@ -82,7 +84,7 @@ export async function createRuntime(pool?:Pool) {
   },
   capabilities:{
    'capital.lending':readBlendReadiness,
-   'trade.spot':async()=>spot.capability(),
+   'trade.spot':()=>spotReadiness.capability(),
    'capital.wallets':async()=>{const current=await hasGate1Proof(chain);return {execution_status:current?'testnet_verified':'blocked',reason:current?null:privy?'Privy-signed Testnet payment proof is pending':'PRIVY_APP_ID and PRIVY_APP_SECRET are required',actions:current?['provision','balances','test_payment']:[]};},
    'capital.testnet_funding':readFundingReadiness
   },
@@ -119,7 +121,7 @@ export async function createRuntime(pool?:Pool) {
     return reply.code(202).send(success(request,result.operation));
    });
    await registerLendingRoutes(app,{adapter:blend,operations,balanceReader:address=>chain.getClassicBalances(address)});
-   await registerSpotRoutes(app,{service:new SpotService(spot,db,operations,createSpotReservation(operations,address=>chain.getClassicBalances(address))),requireBusiness,requireCustomer,success,readPositions:async customer=>({wallet_holdings:await wallets.balances(customer.businessId,customer.walletId),venue_positions:[]})});
+   await registerSpotRoutes(app,{service:new SpotService(spot,db,operations,createSpotReservation(operations,address=>chain.getClassicBalances(address))),refreshReadiness:()=>spotReadiness.refresh(),requireBusiness,requireCustomer,success,readPositions:async customer=>({wallet_holdings:await wallets.balances(customer.businessId,customer.walletId),venue_positions:[]})});
    await registerFundingRoutes(app,{service:new FundingService(funding,operations),requireBusiness,requireCustomer,success});
   }
  });
@@ -159,7 +161,7 @@ export function inspectSupplyDeltas(input:{baseline:unknown;request:{asset_id?:u
 async function storedSpotAction(pool:Pool,operation:Record<string,any>):Promise<PreparedAction>{
  const action=PreparedActionSchema.parse(operation.prepared_action),baseline=SpotBaselineSchema.parse(operation.result_json?.spot_swap_baseline);
  const quote=(await pool.query('SELECT q.* FROM orders o JOIN trade_quotes q ON q.business_id=o.business_id AND q.customer_id=o.customer_id AND q.id=o.quote_id WHERE o.business_id=$1 AND o.customer_id=$2 AND o.operation_id=$3 AND o.quote_id=$4',[operation.business_id,operation.customer_id,operation.id,operation.request_json?.quote_id])).rows[0];
- if(!quote||quote.provider!=='soroswap'||quote.exact_in_asset_id!==XLM.id||quote.market_id!==baseline.market_id||quote.amount_in_atomic!==baseline.amount_in_atomic||quote.min_out_atomic!==baseline.min_out_atomic||action.operationId!==operation.id||action.customerId!==operation.customer_id||action.walletAddress!==operation.stellar_address||baseline.wallet_address!==operation.stellar_address||action.signingHashHex!==baseline.signing_hash_hex||action.summary.action!=='spot.swap'||action.summary.fromAssetId!==XLM.id||action.summary.toAssetId!==SPOT_USDC_ID||toAtomic(action.summary.amount??'',7)!==BigInt(baseline.amount_in_atomic)||toAtomic(action.summary.minReceive??'',7)!==BigInt(baseline.min_out_atomic)||action.summary.maxFeeStroops!==baseline.max_fee_stroops)throw new GrapnelError(403,'INTENT_MISMATCH','Durable quote/order, observed baseline and exact customer swap approval differ');
+ if(!quote||quote.provider!=='soroswap'||quote.exact_in_asset_id!==baseline.asset_in_id||quote.market_id!==baseline.market_id||quote.amount_in_atomic!==baseline.amount_in_atomic||quote.min_out_atomic!==baseline.min_out_atomic||action.operationId!==operation.id||action.customerId!==operation.customer_id||action.walletAddress!==operation.stellar_address||baseline.wallet_address!==operation.stellar_address||action.signingHashHex!==baseline.signing_hash_hex||action.summary.action!=='spot.swap'||action.summary.fromAssetId!==baseline.asset_in_id||action.summary.toAssetId!==baseline.asset_out_id||toAtomic(action.summary.amount??'',7)!==BigInt(baseline.amount_in_atomic)||toAtomic(action.summary.minReceive??'',7)!==BigInt(baseline.min_out_atomic)||action.summary.maxFeeStroops!==baseline.max_fee_stroops)throw new GrapnelError(403,'INTENT_MISMATCH','Durable quote/order, observed baseline and exact customer swap approval differ');
  return action;
 }
 export interface RuntimeWorkerDependencies {pool:Pool;chain:StellarTestnetExecutor;blend:Pick<BlendAdapter,'positions'>;soroban:Pick<BlendSorobanPreparer,'verifyForSubmission'>;gate1Passed:boolean;verifyGate1?:()=>Promise<boolean>;spot?:Pick<SoroswapDirectInspector,'verifyForSubmission'>;}
@@ -233,7 +235,7 @@ export function createRuntimeWorkerChain(deps:RuntimeWorkerDependencies):WorkerC
     if(parsed.hash().toString('hex')!==hash||trust?.type!=='changeTrust'||!('getCode' in trust.line)||trust.line.getCode()!=='USDC'||trust.line.getIssuer()!==TESTNET_USDC_ISSUER||trust.limit!==op.request_json.limit&&toAtomic(trust.limit,7)!==toAtomic(op.request_json.limit,7))return false;
     const effects=await chain.horizon.effects().forTransaction(hash).limit(100).call();
     const created=effects.records.some(e=>e.type==='trustline_created'&&e.account===op.stellar_address&&'asset_code'in e&&e.asset_code==='USDC'&&e.asset_issuer===TESTNET_USDC_ISSUER);
-    return {verified:created,result:{usdc_trustline_verification:{verified:created,issuer:TESTNET_USDC_ISSUER,limit:trust.limit,ledger:tx.ledger,observed_at:new Date().toISOString()}}};
+    return {verified:created,result:{usdc_trustline_verification:{verified:created,issuer:TESTNET_USDC_ISSUER,limit:trust.limit,ledger:tx.ledger_attr,observed_at:new Date().toISOString()}}};
    }
    if(op.type==='blend.supply'||op.type==='blend.withdraw'){
     if(op.module_code!=='capital.lending'||op.provider!=='blend'||typeof op.privy_user_id!=='string'||!op.privy_user_id.startsWith('did:privy:'))return false;

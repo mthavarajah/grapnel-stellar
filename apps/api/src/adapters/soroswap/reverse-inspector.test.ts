@@ -1,0 +1,11 @@
+import {readFileSync} from 'node:fs';import {Transaction,TransactionBuilder,Address} from '@stellar/stellar-sdk';import {beforeEach,afterEach,describe,expect,it,vi} from 'vitest';import{NETWORK_PASSPHRASE}from'@grapnel/contracts';import{inspectSwapTransaction,narrowSwapTimebounds,USDC_SAC,NATIVE_SAC,type SwapIntent}from'./inspector.js';
+const d=JSON.parse(readFileSync(new URL('./research/reverse-unsigned-build.json',import.meta.url),'utf8')),b=d.requests.find((r:{path:string})=>r.path==='/quote/build?network=testnet');
+const tx=()=>TransactionBuilder.fromXDR(b.body.xdr,NETWORK_PASSPHRASE) as Transaction,now=(Number(tx().timeBounds!.maxTime)-179)*1000;
+const reg={router:'CCJUD55AG6W5HAI5LRVNKAE5WDP5XGZBUDS5WNTIVDU7O264UZZE7BRD',factory:'CDP3HMUH6SMS3S7NPGNDJLULCOXXEPSHY4JKUKMBNQMATHDHWXRRJTBY',pair:'CBR76WMT6J733CCVBP23M2EL5QGP5HXLPEFNFZGZ7IB6QHOJAHP7YM3V',routerHash:'4b95bbf9caec2c6e00c786f53c5f392c2fcdb8435ac0a862ab5e0645eb65824c',pairHash:'8447525edd62f72ffaf52136358034657ea0511a8fec1cd0ebde649f86cca464'};
+const intent=():SwapIntent=>({wallet:b.source,amount:BigInt(b.quote.amountIn),minimum:BigInt(b.quote.otherAmountThreshold),expiresAt:new Date(now+30000).toISOString(),assetIn:USDC_SAC,assetOut:NATIVE_SAC});
+describe('Reverse exact USDC->native XLM scope — offline replay of real unsigned diagnostic build',()=>{
+ beforeEach(()=>{vi.useFakeTimers();vi.setSystemTime(now);});afterEach(()=>vi.useRealTimers());
+ it('accepts actual reverse invocation, USDC transfer auth and source trustline/native account footprint',()=>{inspectSwapTransaction(tx(),intent(),reg,true);inspectSwapTransaction(narrowSwapTimebounds(tx(),intent().expiresAt),intent(),reg);});
+ it('rejects interpreting a reverse transaction as forward',()=>{expect(()=>inspectSwapTransaction(tx(),{...intent(),assetIn:NATIVE_SAC,assetOut:USDC_SAC},reg,true)).toThrow();});
+ it('rejects an input authorization token substituted with native SAC',()=>{const e=narrowSwapTimebounds(tx(),intent().expiresAt).toEnvelope();e.v1().tx().operations()[0]!.body().invokeHostFunctionOp().auth()[0]!.rootInvocation().subInvocations()[0]!.function().contractFn().contractAddress(Address.fromString(NATIVE_SAC).toScAddress());expect(()=>inspectSwapTransaction(new Transaction(e,NETWORK_PASSPHRASE),intent(),reg)).toThrow();});
+});

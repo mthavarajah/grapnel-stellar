@@ -31,7 +31,7 @@ describe.skipIf(!url)('Spot HTTP/DB workflow — isolated provider and chain fix
  const marketId='qa-xlmusdc-'+randomUUID();
  const router='CCEBVDYM32YNYCVNRXQKDFFPISJJCV557CDZEIRBEE4NCV4KHPQ44HGF';
  const market:SpotMarket={id:marketId,asset_in:{...XLM,contractId:nativeSac},asset_out:{id:usdcId,network:NETWORK,kind:'classic',code:'USDC',issuer,contractId:usdcSac,decimals:7,verified:true,sourceUrl:'https://example.invalid/qa-fixture'},protocols:['soroswap'],route_verified_at:new Date().toISOString(),execution_verified_at:null};
- let app:Awaited<ReturnType<typeof buildApp>>,operations:OperationService;let badMinimum=false;let providerCalls=0;let inspectorCalls=0;
+ let app:Awaited<ReturnType<typeof buildApp>>,operations:OperationService;let badMinimum=false;let fixtureUsdcBalance='0.0000000';let providerCalls=0;let inspectorCalls=0;
  const auth=(key=keyA,identity='qa-a')=>({authorization:'Bearer '+key,'x-customer-identity':identity});
  const post=(path:string,payload:Record<string,unknown>,headers=auth(),idempotencyKey=randomUUID())=>app.inject({method:'POST',url:path,headers:{...headers,'idempotency-key':idempotencyKey},payload});
  const quoteRequest=()=>({customer_id:customerA,market_id:marketId,exact_in:{asset_id:XLM.id,amount:'1'},slippage_bps:50});
@@ -56,17 +56,17 @@ describe.skipIf(!url)('Spot HTTP/DB workflow — isolated provider and chain fix
     const tx=new TransactionBuilder(new Account(body.from,'1'),{fee:'100',networkPassphrase:NETWORK_PASSPHRASE}).addOperation(new Contract(router).call('qa_fixture_swap')).setTimeout(25).build();
     return new Response(JSON.stringify({xdr:tx.toXDR()}));
    }
-   return new Response(JSON.stringify({tradeType:'EXACT_IN',assetIn:nativeSac,assetOut:usdcSac,amountIn:body.amount,amountOut:'20000000',otherAmountThreshold:badMinimum?'19899999':'19900000',routePlan:[{swapInfo:{protocol:'soroswap',path:[nativeSac,usdcSac]},percent:'100'}]}));
+   return new Response(JSON.stringify({tradeType:'EXACT_IN',assetIn:body.assetIn,assetOut:body.assetOut,amountIn:body.amount,amountOut:'20000000',otherAmountThreshold:badMinimum?'19899999':'19900000',routePlan:[{swapInfo:{protocol:'soroswap',path:[body.assetIn,body.assetOut]},percent:'100'}]}));
   }) as typeof fetch;
-  const adapter=new SoroswapSpotAdapter({network:'testnet',networkPassphrase:NETWORK_PASSPHRASE,apiKey:'offline-fixture-never-real',gate1Passed:true,markets:[market]},fetcher,async input=>{
+  const adapter=new SoroswapSpotAdapter({network:'testnet',networkPassphrase:NETWORK_PASSPHRASE,apiKey:'offline-fixture-never-real',gate1Passed:true,markets:[market,{...market,id:marketId+'-reverse',asset_in:market.asset_out,asset_out:market.asset_in}]},fetcher,async input=>{
    inspectorCalls++;const tx=TransactionBuilder.fromXDR(input.unsignedXdr,NETWORK_PASSPHRASE);
    const expiresAt=new Date(Number(tx.timeBounds.maxTime)*1000).toISOString();
-   return {operationId:input.operationId,customerId:input.customer.customerId,network:NETWORK,walletAddress:input.customer.walletAddress,unsignedXdr:input.unsignedXdr,signingHashHex:tx.hash().toString('hex'),summary:{action:'spot.swap',fromAssetId:XLM.id,toAssetId:usdcId,amount:input.quote.amount_in,minReceive:input.quote.min_receive,contractId:router,recipient:input.customer.walletAddress,maxFeeStroops:tx.fee,expiresAt},authorization:{method:'privy_stellar',expiresAt}};
+   return {operationId:input.operationId,customerId:input.customer.customerId,network:NETWORK,walletAddress:input.customer.walletAddress,unsignedXdr:input.unsignedXdr,signingHashHex:tx.hash().toString('hex'),summary:{action:'spot.swap',fromAssetId:input.quote.asset_in_id,toAssetId:input.quote.asset_out_id,amount:input.quote.amount_in,minReceive:input.quote.min_receive,contractId:router,recipient:input.customer.walletAddress,maxFeeStroops:tx.fee,expiresAt},authorization:{method:'privy_stellar',expiresAt}};
   });
   operations=new OperationService(pool);
   const service=new SpotService(adapter,pool,operations,createSpotReservation(operations,async()=>[
    {asset_id:XLM.id,wallet_amount:'100.0000000',reserved:'0.0000000',spendable:'99.0000000',as_of:new Date().toISOString(),source:'stellar_horizon_testnet'},
-   {asset_id:usdcId,wallet_amount:'0.0000000',reserved:'0.0000000',spendable:'0.0000000',as_of:new Date().toISOString(),source:'stellar_horizon_testnet'}
+   {asset_id:usdcId,wallet_amount:fixtureUsdcBalance,reserved:'0.0000000',spendable:fixtureUsdcBalance,as_of:new Date().toISOString(),source:'stellar_horizon_testnet'}
   ]));
   app=await buildApp({pool,config:{databaseUrl:url!,network:'testnet',networkPassphrase:NETWORK_PASSPHRASE,dashboardOrigin:'http://localhost:3000',fintechOrigin:'http://localhost:3002',adminLoginSecret:'qa-only-owner-secret',sessionSecret:'qa-only-owner-session-secret-32-characters',production:false,port:0,demoBusinessId:tenantA},identityVerifier:{async verify(token){const signer=token==='qa-a'?wallet:token==='qa-b'?otherWallet:null;if(!signer)throw Error('fixture identity mismatch');return {userId:token,wallets:[{id:token+'-wallet',address:signer.publicKey(),publicKey:signer.publicKey()}]};}},verifySignedAction:async(action:PreparedAction,signed:string)=>{
    const tx=TransactionBuilder.fromXDR(signed,NETWORK_PASSPHRASE);const expected=TransactionBuilder.fromXDR(action.unsignedXdr,NETWORK_PASSPHRASE);
@@ -77,7 +77,7 @@ describe.skipIf(!url)('Spot HTTP/DB workflow — isolated provider and chain fix
  afterAll(async()=>{await app?.close();await pool.end();});
  it('exposes only exact XLM/issuer-USDC identities and does not label fixture market verified',async()=>{
   const result=await app.inject({url:'/v1/trade/markets?asset_class=crypto_spot',headers:auth()});
-  expect(result.json().data).toEqual([expect.objectContaining({market_id:marketId,asset_in_id:XLM.id,asset_out_id:usdcId,executable:false,execution_status:'discovery_only'})]);
+  expect(result.json().data).toEqual(expect.arrayContaining([expect.objectContaining({market_id:marketId,asset_in_id:XLM.id,asset_out_id:usdcId,executable:false,execution_status:'discovery_only'})]));
  });
  it('normalizes exact quotes and rejects below-minimum provider output before durable storage',async()=>{
   const q=await quote();expect(q).toMatchObject({amount_in:'1.0000000',expected_out:'2.0000000',min_receive:'1.9900000',asset_out_id:usdcId});
@@ -103,6 +103,7 @@ describe.skipIf(!url)('Spot HTTP/DB workflow — isolated provider and chain fix
   const response=await post('/v1/trade/orders',{customer_id:customerA,wallet_id:walletA,quote_id:q.quote_id});expect(response.statusCode).toBe(409);expect(response.json().error.code).toBe('QUOTE_EXPIRED');expect(inspectorCalls).toBe(before);
   expect((await post('/v1/trade/orders',{customer_id:customerB,wallet_id:walletB,quote_id:q.quote_id},auth(keyB,'qa-b'))).statusCode).toBe(404);
  });
+ it('prepares the reverse route with USDC principal plus a separate native fee reservation',async()=>{fixtureUsdcBalance='10.0000000';try{const qr=await post('/v1/trade/quotes',{...quoteRequest(),market_id:marketId+'-reverse',exact_in:{asset_id:usdcId,amount:'1'}});expect(qr.statusCode).toBe(200);expect(qr.json().data).toMatchObject({asset_in_id:usdcId,asset_out_id:XLM.id});const order=await post('/v1/trade/orders',{customer_id:customerA,wallet_id:walletA,quote_id:qr.json().data.quote_id});expect(order.statusCode).toBe(202);const id=order.json().data.operation_id,held=(await pool.query('SELECT asset_id,amount_atomic FROM balance_reservations WHERE operation_id=$1 ORDER BY asset_id',[id])).rows;expect(held).toEqual(expect.arrayContaining([{asset_id:XLM.id,amount_atomic:'100'},{asset_id:usdcId,amount_atomic:'10000000'}]));await pool.query("UPDATE operations SET state='expired' WHERE id=$1",[id]);await pool.query("UPDATE balance_reservations SET state='released' WHERE operation_id=$1",[id]);}finally{fixtureUsdcBalance='0.0000000';}});
  it('persists one exact prepared order, requires a one-use customer signature, and keeps pending unsettled',async()=>{
   const q=await quote(),body={customer_id:customerA,wallet_id:walletA,quote_id:q.quote_id},key=randomUUID();
   const created=await post('/v1/trade/orders',body,auth(),key);expect(created.statusCode).toBe(202);const id=created.json().data.operation_id;

@@ -7,14 +7,15 @@ import {NETWORK_PASSPHRASE} from '@grapnel/contracts';
 import {SoroswapSpotAdapter} from '../index.js';
 import {SoroswapDirectInspector,USDC_ISSUER} from '../inspector.js';
 const pair='CBR76WMT6J733CCVBP23M2EL5QGP5HXLPEFNFZGZ7IB6QHOJAHP7YM3V';
-const source=process.env.DIAGNOSTIC_STELLAR_ACCOUNT??'GA237QIWQI6TUI3DTTWQELRHCGNMB3WWMSKY7LLXW3B4FBQJN3TN6IP4';
+const reverse=process.env.DIAGNOSTIC_REVERSE==='true';
+const source=process.env.DIAGNOSTIC_STELLAR_ACCOUNT??(reverse?'GA23KVZGO3TOVGAKGFAMTC7EXOSHHWUICHK6WTOV7ZRJZVSINELWVZ7K':'GA237QIWQI6TUI3DTTWQELRHCGNMB3WWMSKY7LLXW3B4FBQJN3TN6IP4');
 if(!StrKey.isValidEd25519PublicKey(source)||!process.env.SOROSWAP_API_KEY)throw Error('Existing diagnostic address and server-only Soroswap credentials required');
 const accountResponse=await fetch(`https://horizon-testnet.stellar.org/accounts/${source}`,{signal:AbortSignal.timeout(12000)});if(!accountResponse.ok)throw Error('Diagnostic source must already exist');
 const account=await accountResponse.json() as {balances:{asset_code?:string;asset_issuer?:string;is_authorized?:boolean}[]};
 if(!account.balances.some(b=>b.asset_code==='USDC'&&b.asset_issuer===USDC_ISSUER&&b.is_authorized===true))throw Error('Diagnostic source must already have the exact authorized USDC trustline');
 const server=new rpc.Server('https://soroban-testnet.stellar.org');const simulations:unknown[]=[];
 const inspector=new SoroswapDirectInspector(pair,{server:{getNetwork:()=>server.getNetwork(),getAccount:a=>server.getAccount(a),getContractData:(...a)=>server.getContractData(...a),simulateTransaction:async(...a)=>{const sim=await server.simulateTransaction(...a);simulations.push({ledger:sim.latestLedger,success:rpc.Api.isSimulationSuccess(sim),...(rpc.Api.isSimulationSuccess(sim)?{minimum_resource_fee:sim.minResourceFee,instructions:sim.transactionData.build().resources().instructions()}:{})});return sim;}}});
-const market=await inspector.market();
+const market=(await inspector.markets())[reverse?1:0]!;
 // Diagnostic quote does not unlock the adapter's gated financial prepare method.
 const adapter=new SoroswapSpotAdapter({network:'testnet',networkPassphrase:NETWORK_PASSPHRASE,apiKey:process.env.SOROSWAP_API_KEY,gate1Passed:false,markets:[market]});
 const quote=await adapter.quote({quoteId:randomUUID(),marketId:market.id,assetId:market.asset_in.id,amount:'1.0000000',slippageBps:50});
@@ -22,5 +23,5 @@ const response=await fetch('https://api.soroswap.finance/quote/build?network=tes
 if(!response.ok)throw Error(`Read-only build unavailable:HTTP${response.status}`);const built=await response.json() as {xdr:string};
 const action=await inspector.inspect({unsignedXdr:built.xdr,quote,market,customer:{businessId:randomUUID(),customerId:randomUUID(),walletId:randomUUID(),walletAddress:source,privyUserId:'diagnostic-no-signing-authority'},operationId:randomUUID()});
 function metrics(xdr:string){const tx=TransactionBuilder.fromXDR(xdr,NETWORK_PASSPHRASE) as Transaction,data=tx.toEnvelope().v1().tx().ext().sorobanData(),r=data.resources();return {instructions:r.instructions(),read_bytes:r.diskReadBytes(),write_bytes:r.writeBytes(),resource_fee:data.resourceFee().toString(),total_fee:tx.fee,expires_at:new Date(Number(tx.timeBounds!.maxTime)*1000).toISOString(),read_only_keys:r.footprint().readOnly().length,read_write_keys:r.footprint().readWrite().length,signatures:tx.signatures.length};}
-const report={observed_at:new Date().toISOString(),network:'stellar-testnet',mode:'read_only_inspection',broadcast:false,signable:false,source,source_owned_by_grapnel:false,quote:{amount_in:quote.amount_in,expected_out:quote.expected_out,min_receive:quote.min_receive},original:metrics(built.xdr),canonical:metrics(action.unsignedXdr),simulations,tx_hash:null,operation_id:null,customer_id:null};
-await writeFile(new URL('./latest-readonly-inspection.json',import.meta.url),JSON.stringify(report,null,2)+'\n');console.log(JSON.stringify(report,null,2));
+const report={observed_at:new Date().toISOString(),network:'stellar-testnet',mode:'read_only_inspection',broadcast:false,signable:false,source,source_owned_by_grapnel:false,quote:{asset_in_id:quote.asset_in_id,asset_out_id:quote.asset_out_id,amount_in:quote.amount_in,expected_out:quote.expected_out,min_receive:quote.min_receive},original:metrics(built.xdr),canonical:metrics(action.unsignedXdr),simulations,tx_hash:null,operation_id:null,customer_id:null};
+await writeFile(new URL(reverse?'./latest-reverse-readonly-inspection.json':'./latest-readonly-inspection.json',import.meta.url),JSON.stringify(report,null,2)+'\n');console.log(JSON.stringify(report,null,2));

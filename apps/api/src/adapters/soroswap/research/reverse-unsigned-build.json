@@ -1,0 +1,194 @@
+{
+  "observed_at": "2026-11-11T16:31:22.521Z",
+  "network": "testnet",
+  "broadcast": false,
+  "requests": [
+    {
+      "path": "/quote?network=testnet",
+      "request_body": {
+        "assetIn": "CAQCFVLOBK5GIULPNZRGATJJMIZL5BSP7X5YJVMGCPTUEPFM4AVSRCJU",
+        "assetOut": "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC",
+        "amount": "10000000",
+        "tradeType": "EXACT_IN",
+        "protocols": [
+          "soroswap"
+        ],
+        "slippageBps": 49
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/quote/build?network=testnet",
+      "source": "GA23KVZGO3TOVGAKGFAMTC7EXOSHHWUICHK6WTOV7ZRJZVSINELWVZ7K",
+      "quote": {
+        "assetIn": "CAQCFVLOBK5GIULPNZRGATJJMIZL5BSP7X5YJVMGCPTUEPFM4AVSRCJU",
+        "assetOut": "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC",
+        "tradeType": "EXACT_IN",
+        "amountIn": "10000000",
+        "amountOut": "66229406",
+        "otherAmountThreshold": "65904881",
+        "priceImpactPct": "0.00",
+        "platform": "router",
+        "routePlan": [
+          {
+            "swapInfo": {
+              "protocol": "soroswap",
+              "path": [
+                "CAQCFVLOBK5GIULPNZRGATJJMIZL5BSP7X5YJVMGCPTUEPFM4AVSRCJU",
+                "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC"
+              ]
+            },
+            "percent": "100.00"
+          }
+        ],
+        "rawTrade": {
+          "amountIn": "10000000",
+          "amountOutMin": "65904881",
+          "distribution": [
+            {
+              "protocol_id": "soroswap",
+              "path": [
+                "CAQCFVLOBK5GIULPNZRGATJJMIZL5BSP7X5YJVMGCPTUEPFM4AVSRCJU",
+                "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC"
+              ],
+              "parts": 10,
+              "is_exact_in": true
+            }
+          ]
+        }
+      },
+      "status": 201,
+      "body": {
+        "xdr": "AAAAAgAAAAA1tVcmdubqmAoxQMmL5Lukc9qIEdXrTdX+YpzWSGkXagAIxPMAMYSfAAAACwAAAAEAAAAAAAAAAAAAAABq9JkOAAAAAAAAAAEAAAAAAAAAGAAAAAAAAAABk0H3oDet04EdXGrVAJ2w39ubIaDl2zZoqOn3a9ymck8AAAAcc3dhcF9leGFjdF90b2tlbnNfZm9yX3Rva2VucwAAAAUAAAAKAAAAAAAAAAAAAAAAAJiWgAAAAAoAAAAAAAAAAAAAAAAD7aDxAAAAEAAAAAEAAAACAAAAEgAAAAEgItVuCrpkUW9uYmBNKWIyvoZP/fuE1YYT50I8rOArKAAAABIAAAAB15KLcsJwPM/q9+uf9O9NUEpVqLl5/JtFDqLIQrTRzmEAAAASAAAAAAAAAAA1tVcmdubqmAoxQMmL5Lukc9qIEdXrTdX+YpzWSGkXagAAAAUAAAAAavSmagAAAAEAAAAAAAAAAAAAAAGTQfegN63TgR1catUAnbDf25shoOXbNmio6fdr3KZyTwAAABxzd2FwX2V4YWN0X3Rva2Vuc19mb3JfdG9rZW5zAAAABQAAAAoAAAAAAAAAAAAAAAAAmJaAAAAACgAAAAAAAAAAAAAAAAPtoPEAAAAQAAAAAQAAAAIAAAASAAAAASAi1W4KumRRb25iYE0pYjK+hk/9+4TVhhPnQjys4CsoAAAAEgAAAAHXkotywnA8z+r365/0701QSlWouXn8m0UOoshCtNHOYQAAABIAAAAAAAAAADW1VyZ25uqYCjFAyYvku6Rz2ogR1etN1f5inNZIaRdqAAAABQAAAABq9KZqAAAAAQAAAAAAAAABICLVbgq6ZFFvbmJgTSliMr6GT/37hNWGE+dCPKzgKygAAAAIdHJhbnNmZXIAAAADAAAAEgAAAAAAAAAANbVXJnbm6pgKMUDJi+S7pHPaiBHV603V/mKc1khpF2oAAAASAAAAAWP/WZPyf72IVQv1tmiL7Az+nut5CtLk2foD6B3JAd/8AAAACgAAAAAAAAAAAAAAAACYloAAAAAAAAAAAQAAAAAAAAAFAAAABgAAAAEgItVuCrpkUW9uYmBNKWIyvoZP/fuE1YYT50I8rOArKAAAABQAAAABAAAABgAAAAGTQfegN63TgR1catUAnbDf25shoOXbNmio6fdr3KZyTwAAABQAAAABAAAABgAAAAHXkotywnA8z+r365/0701QSlWouXn8m0UOoshCtNHOYQAAABQAAAABAAAAB0uVu/nK7CxuAMeG9TxfOSwvzbhDWsCoYqteBkXrZYJMAAAAB4RHUl7dYvcv+vUhNjWANGV+oFEaj+wc0OveZJ+GzKRkAAAABQAAAAAAAAAANbVXJnbm6pgKMUDJi+S7pHPaiBHV603V/mKc1khpF2oAAAABAAAAADW1VyZ25uqYCjFAyYvku6Rz2ogR1etN1f5inNZIaRdqAAAAAVVTREMAAAAAJgXM07IdPwaDCLLNw46HAu0Jy3Az9GJKesWnsk57zF4AAAAGAAAAASAi1W4KumRRb25iYE0pYjK+hk/9+4TVhhPnQjys4CsoAAAAEAAAAAEAAAACAAAADwAAAAdCYWxhbmNlAAAAABIAAAABY/9Zk/J/vYhVC/W2aIvsDP6e63kK0uTZ+gPoHckB3/wAAAABAAAABgAAAAFj/1mT8n+9iFUL9bZoi+wM/p7reQrS5Nn6A+gdyQHf/AAAABQAAAABAAAABgAAAAHXkotywnA8z+r365/0701QSlWouXn8m0UOoshCtNHOYQAAABAAAAABAAAAAgAAAA8AAAAHQmFsYW5jZQAAAAASAAAAAWP/WZPyf72IVQv1tmiL7Az+nut5CtLk2foD6B3JAd/8AAAAAQAl1gYAAAEEAAAExAAAAAAAAFQHAAAAAA==",
+        "action": "SIGN_TRANSACTION",
+        "description": "Sign the transaction with the user wallet and send the signed XDR to /send endpoint or your own rpc"
+      },
+      "purpose": "unsigned inspection only; no customer approval, signature or broadcast"
+    }
+  ],
+  "decoded": {
+    "source": "GA23KVZGO3TOVGAKGFAMTC7EXOSHHWUICHK6WTOV7ZRJZVSINELWVZ7K",
+    "sequence": "13938092293488651",
+    "fee": "574707",
+    "memo": "none",
+    "timebounds": {
+      "minTime": "0",
+      "maxTime": "1794414862"
+    },
+    "signatures": 0,
+    "ops": [
+      {
+        "type": "invokeHostFunction",
+        "invocation": {
+          "contract": "CCJUD55AG6W5HAI5LRVNKAE5WDP5XGZBUDS5WNTIVDU7O264UZZE7BRD",
+          "fn": "swap_exact_tokens_for_tokens",
+          "args": [
+            "10000000",
+            "65904881",
+            [
+              "CAQCFVLOBK5GIULPNZRGATJJMIZL5BSP7X5YJVMGCPTUEPFM4AVSRCJU",
+              "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC"
+            ],
+            "GA23KVZGO3TOVGAKGFAMTC7EXOSHHWUICHK6WTOV7ZRJZVSINELWVZ7K",
+            "1794418282"
+          ]
+        },
+        "auth": [
+          {
+            "credentials": "sorobanCredentialsSourceAccount",
+            "root": {
+              "contract": "CCJUD55AG6W5HAI5LRVNKAE5WDP5XGZBUDS5WNTIVDU7O264UZZE7BRD",
+              "fn": "swap_exact_tokens_for_tokens",
+              "args": [
+                "10000000",
+                "65904881",
+                [
+                  "CAQCFVLOBK5GIULPNZRGATJJMIZL5BSP7X5YJVMGCPTUEPFM4AVSRCJU",
+                  "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC"
+                ],
+                "GA23KVZGO3TOVGAKGFAMTC7EXOSHHWUICHK6WTOV7ZRJZVSINELWVZ7K",
+                "1794418282"
+              ],
+              "children": [
+                {
+                  "contract": "CAQCFVLOBK5GIULPNZRGATJJMIZL5BSP7X5YJVMGCPTUEPFM4AVSRCJU",
+                  "fn": "transfer",
+                  "args": [
+                    "GA23KVZGO3TOVGAKGFAMTC7EXOSHHWUICHK6WTOV7ZRJZVSINELWVZ7K",
+                    "CBR76WMT6J733CCVBP23M2EL5QGP5HXLPEFNFZGZ7IB6QHOJAHP7YM3V",
+                    "10000000"
+                  ],
+                  "children": []
+                }
+              ]
+            }
+          }
+        ]
+      }
+    ],
+    "resources": {
+      "fee": "21511",
+      "instructions": 2479622,
+      "readBytes": 260,
+      "writeBytes": 1220,
+      "ro": [
+        {
+          "type": "contractData",
+          "contract": "CAQCFVLOBK5GIULPNZRGATJJMIZL5BSP7X5YJVMGCPTUEPFM4AVSRCJU",
+          "durability": "persistent"
+        },
+        {
+          "type": "contractData",
+          "contract": "CCJUD55AG6W5HAI5LRVNKAE5WDP5XGZBUDS5WNTIVDU7O264UZZE7BRD",
+          "durability": "persistent"
+        },
+        {
+          "type": "contractData",
+          "contract": "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC",
+          "durability": "persistent"
+        },
+        {
+          "type": "code",
+          "hash": "4b95bbf9caec2c6e00c786f53c5f392c2fcdb8435ac0a862ab5e0645eb65824c"
+        },
+        {
+          "type": "code",
+          "hash": "8447525edd62f72ffaf52136358034657ea0511a8fec1cd0ebde649f86cca464"
+        }
+      ],
+      "rw": [
+        {
+          "type": "account",
+          "xdr": "AAAAAAAAAAA1tVcmdubqmAoxQMmL5Lukc9qIEdXrTdX+YpzWSGkXag=="
+        },
+        {
+          "type": "trustline",
+          "xdr": "AAAAAQAAAAA1tVcmdubqmAoxQMmL5Lukc9qIEdXrTdX+YpzWSGkXagAAAAFVU0RDAAAAACYFzNOyHT8GgwiyzcOOhwLtCctwM/RiSnrFp7JOe8xe"
+        },
+        {
+          "type": "contractData",
+          "contract": "CAQCFVLOBK5GIULPNZRGATJJMIZL5BSP7X5YJVMGCPTUEPFM4AVSRCJU",
+          "key": [
+            "Balance",
+            "CBR76WMT6J733CCVBP23M2EL5QGP5HXLPEFNFZGZ7IB6QHOJAHP7YM3V"
+          ],
+          "durability": "persistent"
+        },
+        {
+          "type": "contractData",
+          "contract": "CBR76WMT6J733CCVBP23M2EL5QGP5HXLPEFNFZGZ7IB6QHOJAHP7YM3V",
+          "durability": "persistent"
+        },
+        {
+          "type": "contractData",
+          "contract": "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC",
+          "key": [
+            "Balance",
+            "CBR76WMT6J733CCVBP23M2EL5QGP5HXLPEFNFZGZ7IB6QHOJAHP7YM3V"
+          ],
+          "durability": "persistent"
+        }
+      ]
+    }
+  }
+}

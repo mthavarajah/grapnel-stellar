@@ -7,7 +7,7 @@ export const USDC_ISSUER='GATALTGTWIOT6BUDBCZM3Q4OQ4BO2COLOAZ7IYSKPLC2PMSOPPGF5V
 export const NATIVE_SAC=Asset.native().contractId(NETWORK_PASSPHRASE);
 export const USDC_SAC=new Asset('USDC',USDC_ISSUER).contractId(NETWORK_PASSPHRASE);
 export interface SwapRegistry {router:string;factory:string;pair:string;routerHash:string;pairHash:string;}
-export interface SwapIntent {wallet:string;amount:bigint;minimum:bigint;expiresAt:string;}
+export interface SwapIntent {wallet:string;amount:bigint;minimum:bigint;expiresAt:string;assetIn?:string;assetOut?:string;}
 const fail=(message:string):never=>{throw new GrapnelError(403,'SOROSWAP_INTENT_MISMATCH',message);};
 const addr=(a:xdr.ScAddress)=>Address.fromScAddress(a).toString();
 const encoded=(a:{toXDR(format:'base64'):string})=>a.toXDR('base64');
@@ -22,6 +22,8 @@ async function bounded<T>(task:Promise<T>):Promise<T>{
 export function inspectSwapTransaction(tx:Transaction,intent:SwapIntent,reg:SwapRegistry,original=false,observedNow=Date.now()):void {
  try {
   const expires=Date.parse(intent.expiresAt),now=observedNow;
+  const assetIn=intent.assetIn??NATIVE_SAC,assetOut=intent.assetOut??USDC_SAC;
+  if(!((assetIn===NATIVE_SAC&&assetOut===USDC_SAC)||(assetIn===USDC_SAC&&assetOut===NATIVE_SAC)))throw Error();
   if(tx.networkPassphrase!==NETWORK_PASSPHRASE||tx.source!==intent.wallet||!StrKey.isValidEd25519PublicKey(intent.wallet)||BigInt(tx.sequence)<=0n||tx.memo.type!=='none'||tx.extraSigners?.length||tx.operations.length!==1||tx.signatures.length)throw Error();
   if(tx.toEnvelope().v1().tx().cond().switch().name!=='precondTime'||!tx.timeBounds||tx.timeBounds.minTime!=='0'||tx.timeBounds.maxTime==='0'||!Number.isFinite(expires)||expires<=now||expires>now+120000)throw Error();
   const end=Number(tx.timeBounds.maxTime)*1000;
@@ -31,12 +33,12 @@ export function inspectSwapTransaction(tx:Transaction,intent:SwapIntent,reg:Swap
   const fn=op.func.invokeContract(),args=fn.args();
   if(addr(fn.contractAddress())!==reg.router||fn.functionName().toString()!=='swap_exact_tokens_for_tokens'||args.length!==5||args[0]!.switch().name!=='scvI128'||args[1]!.switch().name!=='scvI128'||args[2]!.switch().name!=='scvVec'||args[3]!.switch().name!=='scvAddress'||args[4]!.switch().name!=='scvU64')throw Error();
   const [amount,min,path,to,deadline]=args.map(scValToNative);
-  if(amount!==intent.amount||min!==intent.minimum||!Array.isArray(path)||path.length!==2||path[0]!==NATIVE_SAC||path[1]!==USDC_SAC||to!==intent.wallet||typeof deadline!=='bigint'||deadline*1000n<BigInt(end)||deadline*1000n>BigInt(now+3600000))throw Error();
+  if(amount!==intent.amount||min!==intent.minimum||!Array.isArray(path)||path.length!==2||path[0]!==assetIn||path[1]!==assetOut||to!==intent.wallet||typeof deadline!=='bigint'||deadline*1000n<BigInt(end)||deadline*1000n>BigInt(now+3600000))throw Error();
   const auth=op.auth??[];if(auth.length!==1||auth[0]!.credentials().switch().name!=='sorobanCredentialsSourceAccount')throw Error();
   const root=auth[0]!.rootInvocation();if(root.function().switch().name!=='sorobanAuthorizedFunctionTypeContractFn'||encoded(root.function().contractFn())!==encoded(fn)||root.subInvocations().length!==1)throw Error();
   const child=root.subInvocations()[0]!;if(child.function().switch().name!=='sorobanAuthorizedFunctionTypeContractFn'||child.subInvocations().length)throw Error();
   const transfer=child.function().contractFn(),t=transfer.args().map(scValToNative);
-  if(addr(transfer.contractAddress())!==NATIVE_SAC||transfer.functionName().toString()!=='transfer'||t.length!==3||t[0]!==intent.wallet||t[1]!==reg.pair||t[2]!==intent.amount)throw Error();
+  if(addr(transfer.contractAddress())!==assetIn||transfer.functionName().toString()!=='transfer'||t.length!==3||t[0]!==intent.wallet||t[1]!==reg.pair||t[2]!==intent.amount)throw Error();
   const ext=tx.toEnvelope().v1().tx().ext();if(ext.switch()!==1)throw Error();const data=ext.sorobanData(),res=data.resources();
   if(data.ext().switch()!==0||BigInt(data.resourceFee().toString())<=0n||BigInt(tx.fee)<BigInt(data.resourceFee().toString())+100n||res.instructions()<=0||res.instructions()>10000000||res.diskReadBytes()>1048576||res.writeBytes()>131072)throw Error();
   const ro=res.footprint().readOnly(),rw=res.footprint().readWrite();if(ro.length!==5||rw.length!==5||new Set([...ro,...rw].map(encoded)).size!==10)throw Error();
@@ -96,9 +98,9 @@ export function reconstructSwapResources(tx:Transaction,sim:rpc.Api.SimulateTran
 /** Callback for the common exact-envelope signature verifier; never verifies a signature itself. */
 export function inspectApprovedSwapTransaction(action:PreparedAction,tx:Transaction,reg:SwapRegistry,observedNow=Date.now()):void {
  PreparedActionSchema.parse(action);
- if(action.network!==NETWORK||action.authorization.method!=='privy_stellar'||action.summary.action!=='spot.swap'||action.summary.fromAssetId!==XLM.id||action.summary.toAssetId!==`stellar-testnet:classic:USDC:${USDC_ISSUER}`||action.summary.recipient!==action.walletAddress||action.summary.contractId!==reg.router||action.summary.maxFeeStroops!==tx.fee||action.summary.expiresAt!==action.authorization.expiresAt||action.signingHashHex!==tx.hash().toString('hex'))fail('Approved summary differs from exact reviewed swap');
+ if(action.network!==NETWORK||action.authorization.method!=='privy_stellar'||action.summary.action!=='spot.swap'||!((action.summary.fromAssetId===XLM.id&&action.summary.toAssetId===`stellar-testnet:classic:USDC:${USDC_ISSUER}`)||(action.summary.toAssetId===XLM.id&&action.summary.fromAssetId===`stellar-testnet:classic:USDC:${USDC_ISSUER}`))||action.summary.recipient!==action.walletAddress||action.summary.contractId!==reg.router||action.summary.maxFeeStroops!==tx.fee||action.summary.expiresAt!==action.authorization.expiresAt||action.signingHashHex!==tx.hash().toString('hex'))fail('Approved summary differs from exact reviewed swap');
  const envelope=tx.toEnvelope();envelope.v1().signatures([]);
- inspectSwapTransaction(new Transaction(envelope,NETWORK_PASSPHRASE),{wallet:action.walletAddress,amount:toAtomic(action.summary.amount??'',7),minimum:toAtomic(action.summary.minReceive??'',7),expiresAt:action.summary.expiresAt},reg,false,observedNow);
+ inspectSwapTransaction(new Transaction(envelope,NETWORK_PASSPHRASE),{wallet:action.walletAddress,amount:toAtomic(action.summary.amount??'',7),minimum:toAtomic(action.summary.minReceive??'',7),expiresAt:action.summary.expiresAt,assetIn:action.summary.fromAssetId===XLM.id?NATIVE_SAC:USDC_SAC,assetOut:action.summary.toAssetId===XLM.id?NATIVE_SAC:USDC_SAC},reg,false,observedNow);
 }
 export interface InspectorDependencies {server?:Pick<rpc.Server,'getNetwork'|'getAccount'|'getContractData'|'simulateTransaction'>;fetcher?:typeof fetch;}
 /** Preparation and inspection only; contains no signing or broadcasting method. */
@@ -121,6 +123,7 @@ export class SoroswapDirectInspector {
   const reg=await this.registry();
   return {id:`stellar-testnet:soroswap:${reg.pair}:XLM-USDC`,asset_in:{...XLM,contractId:NATIVE_SAC},asset_out:{id:`stellar-testnet:classic:USDC:${USDC_ISSUER}`,network:NETWORK,kind:'classic',code:'USDC',issuer:USDC_ISSUER,contractId:USDC_SAC,decimals:7,verified:true,sourceUrl:'https://raw.githubusercontent.com/blend-capital/blend-utils/main/testnet.contracts.json'},protocols:['soroswap'],route_verified_at:new Date().toISOString(),execution_verified_at:null};
  }
+ async markets():Promise<SpotMarket[]>{const forward=await this.market();return [forward,{...forward,id:forward.id.replace(':XLM-USDC',':USDC-XLM'),asset_in:forward.asset_out,asset_out:forward.asset_in}];}
  /** Revalidate exact customer signature/intent/current contracts and enforce-simulate immutable signed bytes. Root runtime must enforce Gate1 before calling. */
  async verifyForSubmission(action:PreparedAction,signedXdr:string):Promise<void>{
   const reg=await this.registry();verifySignedAction(action,signedXdr,(a,tx)=>inspectApprovedSwapTransaction(a,tx,reg));
@@ -130,8 +133,10 @@ export class SoroswapDirectInspector {
  }
  readonly inspect:SpotXdrInspector=async input=>{
   const {quote,market,customer}=input;
-  if(market.asset_in.id!==XLM.id||market.asset_out.id!==`stellar-testnet:classic:USDC:${USDC_ISSUER}`||market.asset_in.network!==NETWORK||market.asset_out.network!==NETWORK||market.asset_in.kind!=='native'||market.asset_out.kind!=='classic'||market.asset_out.issuer!==USDC_ISSUER||quote.network!==NETWORK||quote.market_id!==market.id||quote.asset_in_id!==market.asset_in.id||quote.asset_out_id!==market.asset_out.id||toAtomic(quote.amount_in,7)!==BigInt(quote.amount_in_atomic)||toAtomic(quote.min_receive,7)!==BigInt(quote.min_out_atomic)||market.asset_in.contractId!==NATIVE_SAC||market.asset_out.contractId!==USDC_SAC||market.asset_in.decimals!==7||market.asset_out.decimals!==7||market.protocols.length!==1||market.protocols[0]!=='soroswap'||quote.provider_quote.platform!=='router')fail('Only the direct native XLM to exact USDC router route is reviewed');
-  const reg=await this.registry();const intent:SwapIntent={wallet:customer.walletAddress,amount:BigInt(quote.amount_in_atomic),minimum:BigInt(quote.min_out_atomic),expiresAt:quote.expires_at};
+  const reverse=market.asset_in.id===`stellar-testnet:classic:USDC:${USDC_ISSUER}`&&market.asset_out.id===XLM.id;
+  const native=reverse?market.asset_out:market.asset_in,usdc=reverse?market.asset_in:market.asset_out;
+  if(native.id!==XLM.id||usdc.id!==`stellar-testnet:classic:USDC:${USDC_ISSUER}`||native.network!==NETWORK||usdc.network!==NETWORK||native.kind!=='native'||usdc.kind!=='classic'||usdc.issuer!==USDC_ISSUER||quote.network!==NETWORK||quote.market_id!==market.id||quote.asset_in_id!==market.asset_in.id||quote.asset_out_id!==market.asset_out.id||toAtomic(quote.amount_in,7)!==BigInt(quote.amount_in_atomic)||toAtomic(quote.min_receive,7)!==BigInt(quote.min_out_atomic)||native.contractId!==NATIVE_SAC||usdc.contractId!==USDC_SAC||native.decimals!==7||usdc.decimals!==7||market.protocols.length!==1||market.protocols[0]!=='soroswap'||quote.provider_quote.platform!=='router')fail('Only exact ordered native XLM / issuer-pinned USDC router routes are reviewed');
+  const reg=await this.registry();const intent:SwapIntent={wallet:customer.walletAddress,amount:BigInt(quote.amount_in_atomic),minimum:BigInt(quote.min_out_atomic),expiresAt:quote.expires_at,assetIn:reverse?USDC_SAC:NATIVE_SAC,assetOut:reverse?NATIVE_SAC:USDC_SAC};
   const raw=TransactionBuilder.fromXDR(input.unsignedXdr,NETWORK_PASSPHRASE);if(!(raw instanceof Transaction))fail('Fee-bump envelope is unavailable');
   inspectSwapTransaction(raw as Transaction,intent,reg,true);
   const narrowed=narrowSwapTimebounds(raw as Transaction,quote.expires_at);inspectSwapTransaction(narrowed,intent,reg);
