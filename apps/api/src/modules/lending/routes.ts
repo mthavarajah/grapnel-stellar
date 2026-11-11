@@ -6,9 +6,11 @@ import { BLEND_USDC_ASSET_ID } from '../../adapters/blend/usdc-inspector.js';
 import { requireBusiness, requireCustomer, success } from '../../lib/context.js';
 import { lock } from '../../db/index.js';
 import type { OperationService } from '../operations/service.js';
+import {registerBorrowingRoutes} from './borrowing-routes.js';
+import type {BorrowingAdapter} from './borrowing.js';
 
 export interface LendingRoutesDependencies {
- adapter:BlendAdapter;operations:OperationService;
+ adapter:BlendAdapter;operations:OperationService;borrowing?:BorrowingAdapter;
  balanceReader:(address:string)=>Promise<WalletBalance[]>;
 }
 export interface BlendReservation {assetId:string;amountAtomic:bigint;}
@@ -33,7 +35,8 @@ export async function registerLendingRoutes(app:FastifyInstance,deps:LendingRout
   const customer=await requireCustomer(request,customer_id);
   return success(request,await deps.adapter.positions(customer));
  });
- for(const action of ['supply','withdraw','borrow','repay'] as const){
+ await registerBorrowingRoutes(app,deps);
+ for(const action of ['supply','withdraw'] as const){
   app.post(`/v1/capital/lending/${action}`,async(request,reply)=>{
    await requireBusiness(request,'capital.lending');
    const body=LendingInputSchema.parse(request.body);
