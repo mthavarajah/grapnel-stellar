@@ -39,6 +39,25 @@ beforeEach(() => {
   });
 });
 afterEach(() => vi.restoreAllMocks());
+it.each(['mainnet','testnet'])('binds %s stock reference history to the stocks entitlement',async network=>{
+ const market=`sodax:catalog:${network}:CAZSFDNSSR2RKJ2LIIB2Y4G4WOSYYKC4646EUJ63PQLDDHOVQYZ4HDTK`;
+ const upstream=vi.spyOn(server,'grapnel').mockResolvedValue({market_id:market,points:[]});
+ const response=await GET(request(`market-history?market_id=${encodeURIComponent(market)}&range=1y`),context(['market-history']));
+ expect(response.status).toBe(200);expect(server.requireModule).toHaveBeenCalledWith('trade.stocks',session);
+ expect(upstream).toHaveBeenCalledWith(`/trade/markets/${encodeURIComponent(market)}/history?range=1y`,session);
+});
+it('requires the verified customer session before reading the overview',async()=>{
+ vi.mocked(server.requireSession).mockRejectedValueOnce(new server.BffError(401,'SESSION_REQUIRED','Sign in'));
+ const upstream=vi.spyOn(server,'grapnel');
+ expect((await GET(request('market-overview'),context(['market-overview']))).status).toBe(401);
+ expect(upstream).not.toHaveBeenCalled();
+});
+it('enforces wallet access before reading the public overview',async()=>{
+ vi.mocked(server.requireModule).mockRejectedValueOnce(new server.BffError(403,'MODULE_NOT_ENABLED','Disabled'));
+ const upstream=vi.spyOn(server,'grapnel');
+ expect((await GET(request('market-overview'),context(['market-overview']))).status).toBe(403);
+ expect(server.requireModule).toHaveBeenCalledWith('capital.wallets',session);expect(upstream).not.toHaveBeenCalled();
+});
 it('binds market history to the matching business module and safely encoded exact market',async()=>{
  const market='stellar-testnet:soroswap:verified-pair:XLM-USDC';
  const upstream=vi.spyOn(server,'grapnel').mockResolvedValue({market_id:market,points:[]});
