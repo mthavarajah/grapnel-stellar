@@ -1509,7 +1509,7 @@ footer strong {
 @media (max-width: 480px) { .login-card { padding: 28px; } }
 .asset-logo { display: block; width: 48px; height: 48px; object-fit: contain; margin-bottom: 18px; }
 
-.earn-balances { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin: 20px 0 8px; padding: 15px; border: 1px solid var(--line); border-radius: 12px; background: var(--bg); }
+.earn-balances { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin: 20px 0 8px; padding: 15px; border: 1px solid var(--line); border-radius: 12px; background: var(--bg); }
 .earn-balances dt { font-size: 11px; color: var(--muted); margin-bottom: 6px; }
 .earn-balances dd { margin: 0; font-weight: 650; font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
 .earn-actions { display: grid; gap: 16px; margin-top: 18px; }
@@ -1518,7 +1518,7 @@ footer strong {
 .earn-action .button { margin-bottom: 0; white-space: nowrap; }
 .earn-balance-error { color: #a43636; }
 .earn-setup { margin-top: 18px; }
-@media(max-width: 600px) { .earn-action { grid-template-columns: minmax(0, 1fr); } .earn-action .button { width: 100%; justify-content: center; } }
+@media(max-width: 600px) { .earn-action { grid-template-columns: minmax(0, 1fr) auto; gap: 6px; } .earn-action .button { padding-inline: 12px; justify-content: center; } }
 .market-pair-icons { display: inline-flex; align-items: center; flex-shrink: 0; }
 .market-pair-icons img + img { margin-left: -5px; border: 2px solid var(--paper); border-radius: 50%; }
 .spot-setup { padding: 15px; border: 1px solid var(--line); border-radius: 12px; margin: 16px 0; background: var(--bg); }
@@ -1558,3 +1558,8 @@ footer strong {
 .swap-details-content .detail-row strong { text-align: right; overflow-wrap: anywhere; font-weight: 550; }
 .swap-submit { display: flex; justify-content: center; width: 100%; min-height: 50px; border-radius: 13px; font-size: 14px; }
 @media(max-width: 600px) { .swap-card { margin-top: 20px; padding: 16px; border-radius: 20px; } .swap-token-panel { padding: 16px; } .swap-panel-main { gap: 8px; } .swap-panel-main .swap-amount, .swap-output { font-size: 28px; } .swap-token-pill { gap: 5px; padding: 8px; max-width: 58%; } .swap-token-pill select { min-width: 60px; max-width: 100px; font-size: 14px; } }
+
+.earn-action-toggle { display: grid; grid-template-columns: 1fr 1fr; gap: 3px; padding: 3px; border-radius: 9px; background: var(--bg); border: 1px solid var(--line); }
+.earn-action-toggle button { border: 0; background: transparent; padding: 8px 12px; border-radius: 6px; color: var(--muted); font: inherit; font-size: 13px; cursor: pointer; }
+.earn-action-toggle button[aria-pressed="true"] { background: white; color: var(--ink); box-shadow: 0 1px 3px #00000012; font-weight: 600; }
+@media(max-width: 600px) { .earn-balances { padding: 12px 10px; gap: 6px; } .earn-balances dt { font-size: 10px; } .earn-balances dd { font-size: 12px; } }

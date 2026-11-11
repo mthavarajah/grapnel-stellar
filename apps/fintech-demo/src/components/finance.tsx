@@ -30,6 +30,8 @@ type EarnBalance = {
   wallet_amount?: string | null;
   spendable?: string | null;
   in_earn?: string | null;
+  earned?: string | null;
+  earned_since?: string | null;
   as_of?: string | null;
   trustline_required: boolean;
 };
@@ -260,9 +262,10 @@ function FinanceShell({ page, auth }: { page: string; auth?: Auth }) {
   const [earnBalancesLoading, setEarnBalancesLoading] = useState(false);
   const [earnBalancesError, setEarnBalancesError] = useState("");
   const [earnAmounts, setEarnAmounts] = useState<Record<string, string>>({});
+  const [earnActions, setEarnActions] = useState<Record<string, "supply" | "withdraw">>({});
   const earnBalanceOwner = useRef<string | null>(null);
   earnBalanceOwner.current = session?.customer_id ?? null;
-  useEffect(() => { setEarnBalances([]); setEarnAmounts({}); setEarnBalancesError(""); }, [session?.customer_id]);
+  useEffect(() => { setEarnBalances([]); setEarnAmounts({}); setEarnActions({}); setEarnBalancesError(""); }, [session?.customer_id]);
   const refreshEarnBalances = useCallback(async () => {
     const customerId = session?.customer_id;
     if (!customerId) return;
@@ -1066,6 +1069,8 @@ function FinanceShell({ page, auth }: { page: string; auth?: Auth }) {
                   <div className="pool-grid">
                     {lending.map((m) => {
                       const balance = earnBalances.find(entry => entry.asset_id === m.asset_id);
+                      const earnAction = earnActions[m.asset_id] ?? "supply";
+                      const amountKey = `${m.asset_id}:${earnAction}`;
                       const isUsdc = m.asset_id === USDC_ASSET;
                       const needsTrustline = isUsdc && balance?.trustline_required === true;
                       const canPrepare = canPrepareBlendAction() &&
@@ -1092,10 +1097,10 @@ function FinanceShell({ page, auth }: { page: string; auth?: Auth }) {
                         {m.as_of && <p className="small muted">Observed {new Date(m.as_of).toLocaleString()}. Variable pool estimate.</p>}
 
                         <dl className="earn-balances" aria-label={`${m.asset?.code ?? "Asset"} balances`}>
-                          <div><dt>Available to supply</dt><dd>{shown(balance?.spendable)}</dd></div>
+                          <div><dt>Available</dt><dd>{shown(balance?.spendable)}</dd></div>
                           <div><dt>In Earn</dt><dd>{shown(balance?.in_earn)}</dd></div>
+                          <div><dt>Earned</dt><dd title={balance?.earned_since ? `Since ${new Date(balance.earned_since).toLocaleString()}` : undefined}>{balance?.earned == null ? "—" : shown(balance.earned)}</dd></div>
                         </dl>
-                        {balance?.as_of && !earnBalancesLoading && <p className="small muted">Balance observed {new Date(balance.as_of).toLocaleString()}.</p>}
                         {earnBalancesError && <p className="small earn-balance-error" role="alert">{customerMessage(earnBalancesError)}</p>}
                         {needsTrustline ? (
                           <div className="earn-setup">
@@ -1105,19 +1110,22 @@ function FinanceShell({ page, auth }: { page: string; auth?: Auth }) {
                           </div>
                         ) : (
                           <div className="earn-actions">
-                            {["supply", "withdraw"].map((a) => {
-                              const key = `${m.asset_id}:${a}`;
-                              return <div className="earn-action" key={a}>
-                                <label>{a === "supply" ? "Supply amount" : "Withdraw amount"}
-                                  <input inputMode="decimal" value={earnAmounts[key] ?? ""} placeholder="0.00"
-                                    onChange={(e) => setEarnAmounts(current => ({...current, [key]: e.target.value}))} />
-                                </label>
-                                <button className="button outline" disabled={busy || !session || !canPrepare || !earnAmounts[key]}
-                                  onClick={() => action(() => start("lending/" + a, {
-                                    market_id: m.market_id ?? m.id, asset_id: m.asset_id, amount: earnAmounts[key],
-                                  }))}>{`Prepare ${a}`}</button>
-                              </div>;
-                            })}
+                            <div className="earn-action-toggle" role="group" aria-label={`${m.asset?.code ?? "Asset"} Earn action`}>
+                              {(["supply", "withdraw"] as const).map(a => <button type="button" key={a}
+                                aria-pressed={earnAction === a} onClick={() => setEarnActions(current => ({...current, [m.asset_id]: a}))}>
+                                {a === "supply" ? "Supply" : "Withdraw"}
+                              </button>)}
+                            </div>
+                            <div className="earn-action">
+                              <label>{earnAction === "supply" ? "Supply amount" : "Withdraw amount"}
+                                <input inputMode="decimal" value={earnAmounts[amountKey] ?? ""} placeholder="0.00"
+                                  onChange={e => setEarnAmounts(current => ({...current, [amountKey]: e.target.value}))} />
+                              </label>
+                              <button className="button" disabled={busy || !session || !canPrepare || !earnAmounts[amountKey]}
+                                onClick={() => action(() => start("lending/" + earnAction, {
+                                  market_id: m.market_id ?? m.id, asset_id: m.asset_id, amount: earnAmounts[amountKey],
+                                }))}>{earnAction === "supply" ? "Supply" : "Withdraw"}</button>
+                            </div>
                           </div>
                         )}
                       </div>;
