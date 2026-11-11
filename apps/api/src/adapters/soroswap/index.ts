@@ -65,7 +65,7 @@ export class SoroswapSpotAdapter {
     return {module:'trade.spot' as const,provider:'soroswap',execution_status:'blocked' as const,reason,actions:[] as string[]};
   }
   markets() {
-    return [...this.registry.values()].map(m=>({market_id:m.id,provider:'soroswap',network:NETWORK,asset_class:'crypto_spot',asset_in_id:m.asset_in.id,asset_out_id:m.asset_out.id,preparation_available:Boolean(this.config.apiKey&&this.config.gate1Passed&&this.inspect&&m.route_verified_at),executable:this.verified(m),execution_status:this.verified(m)?'testnet_verified':'discovery_only',reason:this.verified(m)?null:this.capability().reason,as_of:m.route_verified_at}));
+    return [...this.registry.values()].map(m=>({market_id:m.id,provider:'soroswap',network:NETWORK,asset_class:'crypto_spot',asset_in_id:m.asset_in.id,asset_out_id:m.asset_out.id,preparation_available:Boolean(this.config.apiKey&&this.config.gate1Passed&&this.inspect&&m.route_verified_at),executable:this.verified(m),execution_status:this.verified(m)?'testnet_verified':'discovery_only',reason:this.verified(m)?null:(this.capability().reason??'SOROSWAP_SWAP_CHAIN_PROOF_REQUIRED'),as_of:m.route_verified_at}));
   }
   market(id:string):SpotMarket {
     const found=this.registry.get(id);if(!found)throw new GrapnelError(404,'NOT_FOUND','Verified spot market not found');return found;

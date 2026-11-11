@@ -1,5 +1,5 @@
 {
-  "observed_at": "2026-11-11T16:33:52.386Z",
+  "observed_at": "2026-11-11T16:37:55.426Z",
   "network": "stellar-testnet",
   "mode": "read_only_inspection",
   "broadcast": false,
@@ -18,8 +18,8 @@
     "read_bytes": 260,
     "write_bytes": 1220,
     "resource_fee": "21511",
-    "total_fee": "318164",
-    "expires_at": "2026-11-11T16:36:51.000Z",
+    "total_fee": "564533",
+    "expires_at": "2026-11-11T16:40:54.000Z",
     "read_only_keys": 5,
     "read_write_keys": 5,
     "signatures": 0
@@ -29,21 +29,21 @@
     "read_bytes": 260,
     "write_bytes": 1220,
     "resource_fee": "24667",
-    "total_fee": "318164",
-    "expires_at": "2026-11-11T16:34:21.000Z",
+    "total_fee": "564533",
+    "expires_at": "2026-11-11T16:38:24.000Z",
     "read_only_keys": 5,
     "read_write_keys": 5,
     "signatures": 0
   },
   "simulations": [
     {
-      "ledger": 5678237,
+      "ledger": 5678286,
       "success": true,
       "minimum_resource_fee": "21515",
       "instructions": 2492755
     },
     {
-      "ledger": 5678237,
+      "ledger": 5678286,
       "success": true,
       "minimum_resource_fee": "21515",
       "instructions": 2492755
