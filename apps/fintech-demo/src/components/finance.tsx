@@ -203,6 +203,15 @@ function FinanceShell({ page, auth }: { page: string; auth?: Auth }) {
   const executable = (module: string) =>
     capability(module)?.enabled &&
     capability(module)?.execution_status === "testnet_verified";
+  // Blend supply needs a first real customer operation to earn testnet_verified.
+  // Allow only the preparation attempt after the separate customer-signing gate;
+  // the API rechecks Gate 1 and fresh simulation before returning anything signable.
+  const canPrepareBlendSupply = () =>
+    capability("capital.lending")?.enabled &&
+    ["discovery_only", "testnet_verified"].includes(
+      capability("capital.lending")?.execution_status ?? "",
+    ) &&
+    capability("capital.wallets")?.execution_status === "testnet_verified";
   // Funding must allow the first real round trip after Gate 1. Capability stays
   // discovery_only until the first grant and customer return are chain-verified.
   const fundingCanStart = capability("capital.testnet_funding")?.enabled && assets.some((entry: any) => entry.available === true);
@@ -997,7 +1006,9 @@ function FinanceShell({ page, auth }: { page: string; auth?: Auth }) {
                               disabled={
                                 busy ||
                                 !session ||
-                                !executable("capital.lending")
+                                (a === "supply"
+                                  ? !canPrepareBlendSupply() || m.asset_id !== "stellar-testnet:native:XLM"
+                                  : !executable("capital.lending"))
                               }
                               onClick={() =>
                                 action(() =>
@@ -1009,7 +1020,9 @@ function FinanceShell({ page, auth }: { page: string; auth?: Auth }) {
                                 )
                               }
                             >
-                              {a}
+                              {a === "supply" && !executable("capital.lending")
+                                ? "Prepare supply"
+                                : a}
                             </button>
                           ))}
                         </div>
