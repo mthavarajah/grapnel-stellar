@@ -1,5 +1,6 @@
 "use client";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
   PrivyProvider,
@@ -180,6 +181,9 @@ function PrivyFinance({ page }: { page: string }) {
   return <FinanceShell page={page} auth={auth} />;
 }
 function FinanceShell({ page, auth }: { page: string; auth?: Auth }) {
+  const router = useRouter();
+  const [sessionChecked, setSessionChecked] = useState(false);
+  const attemptedConnection = useRef(false);
   const [status, setStatus] = useState<any>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [caps, setCaps] = useState<Capability[]>([]);
@@ -245,8 +249,19 @@ function FinanceShell({ page, auth }: { page: string; auth?: Auth }) {
     }
   }, []);
   useEffect(() => {
-    void refresh();
+    void refresh().finally(() => setSessionChecked(true));
   }, [refresh]);
+  useEffect(() => {
+    if (!sessionChecked || (auth && !auth.ready)) return;
+    if (!session && page !== "login") router.replace("/login");
+    if (session && page === "login") router.replace("/home");
+  }, [sessionChecked, session, auth?.ready, page, router]);
+  useEffect(() => {
+    if (!auth?.authenticated) { attemptedConnection.current = false; return; }
+    if (!sessionChecked || !auth.ready || session || attemptedConnection.current) return;
+    attemptedConnection.current = true;
+    void action(async () => { await auth.connect(); await refresh(); });
+  }, [sessionChecked, auth?.ready, auth?.authenticated, session, refresh]);
   useEffect(() => {
     if (!session) return;
     let alive = true;
@@ -378,6 +393,26 @@ function FinanceShell({ page, auth }: { page: string; auth?: Auth }) {
       await auth.connect();
       await refresh();
     });
+  if (!sessionChecked || (auth && !auth.ready) || !session) {
+    const loading = !sessionChecked || (auth && !auth.ready);
+    return (
+      <main className="login-screen">
+        <section className="login-card">
+          <div className="brand"><span className="brandmark">l<span>f</span></span><span>local finance</span></div>
+          <span className="badge"><i /> STELLAR TESTNET</span>
+          <h1>{loading ? "Opening your workspace…" : "Welcome to Local Finance."}</h1>
+          <p>Sign in to connect your wallet and open your dashboard.</p>
+          {error && <p className="login-error" role="alert">{customerMessage(error)}</p>}
+          <button className="button" onClick={connect} disabled={loading || busy || !auth}>
+            {loading ? "Checking session…" : busy ? "Connecting wallet…" : auth?.authenticated ? "Connect wallet" : "Sign in"}
+            {!loading && !busy && <Icon name="arrow" size={16} />}
+          </button>
+          {!auth && <p className="login-error">Customer login is currently unavailable.</p>}
+          <p className="muted small">Testnet tokens only. No fiat or real value.</p>
+        </section>
+      </main>
+    );
+  }
   return (
     <div className="app">
       <aside className="sidebar">
