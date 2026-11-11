@@ -10,7 +10,7 @@ import {
   useUser,
 } from "@privy-io/react-auth";
 import { useSignRawHash } from "@privy-io/react-auth/extended-chains";
-import { formatTokenAmount, fromAtomic, toAtomic, type PreparedAction } from "@grapnel/contracts";
+import { formatTokenAmount, fromAtomic, toAtomic, type PreparedAction, type AssetIdentity } from "@grapnel/contracts";
 import { api, ClientError, operationRequestKey, clearOperationRequest } from "@/lib/client";
 import { signPreparedAction } from "@/lib/privy-signer";
 type Capability = {
@@ -26,6 +26,19 @@ type Session = {
   wallet_id: string;
   stellar_address: string;
 };
+type BorrowAsset = {
+  market_id:string;asset:AssetIdentity;borrow_apr:string|null;borrow_apy:string|null;
+  available_liquidity:string|null;borrowed:string;repayable:string;
+  collateral_value:string|null;borrow_limit:string|null;available_to_borrow:string|null;health_factor:string|null;
+  can_prepare_borrow:boolean;can_prepare_repay:boolean;reason:string|null;
+  collateral?:string;can_prepare_collateral_supply?:boolean;can_prepare_collateral_withdraw?:boolean;
+};
+type Borrowing = {pool_id:string;as_of:string;assets:BorrowAsset[]};
+function borrowingRate(value:string|null):string {
+  if(value==null||!/^\d+(?:\.\d+)?$/.test(value))return "—";
+  const ratio=Number(value);return Number.isFinite(ratio)?new Intl.NumberFormat(undefined,{style:"percent",maximumFractionDigits:2}).format(ratio):"—";
+}
+const loanAmount=(value:string|null|undefined)=>value==null?"—":formatTokenAmount(value);
 type EarnBalance = {
   asset_id: string;
   wallet_amount?: string | null;
@@ -91,6 +104,7 @@ function Icon({ name, size = 20 }: { name: string; size?: number }) {
         <path d="M12 21V11M12 13C4 14 3 8 3 4c6 0 10 2 9 9Zm0-3c0-5 4-7 9-7 0 5-2 9-9 9" />
       </>
     ),
+    borrow: (<><path d="M4 8h16M4 16h16M16 4l4 4-4 4M8 12l-4 4 4 4" /></>),
     activity: (
       <>
         <path d="M3 12h4l3-8 4 16 3-8h4" />
@@ -137,6 +151,7 @@ const nav = [
   ["funds", "Funds"],
   ["markets", "Markets"],
   ["earn", "Earn"],
+  ["borrow", "Borrow"],
   ["activity", "Activity"],
 ];
 function customerMessage(message: string): string {
@@ -248,6 +263,8 @@ function activityLabel(op: Operation): string {
   if (op.type === "wallet.usdc_trustline") return op.status === "completed" ? "Enabled USDC" : "Enable USDC";
   const labels: Record<string, [string, string]> = {
     "blend.supply": ["Supply", "Supplied"], "blend.withdraw": ["Withdraw", "Withdrew"],
+    "blend.borrow": ["Borrow", "Borrowed"], "blend.repay": ["Repay", "Repaid"],
+    "blend.borrow_collateral_supply": ["Add collateral", "Added collateral"], "blend.borrow_collateral_withdraw": ["Remove collateral", "Removed collateral"],
     "testnet.fund": ["Receive funds", "Received"], "testnet.return": ["Return funds", "Returned"],
     "wallet.test_payment": ["Payment", "Sent"], "spot.swap": ["Swap", "Swapped"],
   };
@@ -269,6 +286,7 @@ const title: Record<string, string> = {
   markets: "Swap",
   trade: "Swap",
   earn: "Earn",
+  borrow: "Borrow",
   activity: "Activity",
 };
 export default function Finance({ page, initialCategory }: { page: string; initialCategory?:string }) {
@@ -342,6 +360,26 @@ function FinanceShell({ page, auth, initialCategory }: { page: string; auth?: Au
   const [marketResultsOpen, setMarketResultsOpen] = useState(false);
 
   const [lending, setLending] = useState<any[]>([]);
+  const [borrowing,setBorrowing] = useState<Borrowing|null>(null);
+  const [borrowingLoading,setBorrowingLoading] = useState(false);
+  const [borrowingError,setBorrowingError] = useState("");
+  const [loanActions,setLoanActions] = useState<Record<string,"borrow"|"repay"|"collateral-supply"|"collateral-withdraw">>({});
+  const [loanAmounts,setLoanAmounts] = useState<Record<string,string>>({});
+  const borrowerOwner=useRef<string|null>(null);borrowerOwner.current=session?.customer_id??null;
+  useEffect(()=>{setBorrowing(null);setLoanActions({});setLoanAmounts({});setBorrowingError("");},[session?.customer_id]);
+  const refreshBorrowing=useCallback(async()=>{
+    const customer=session?.customer_id;if(!customer)return;
+    setBorrowingLoading(true);setBorrowingError("");
+    try{
+      const response=await api("grapnel/borrowing");
+      if(!Array.isArray(response?.assets))throw Error("Loan information is unavailable. Please try again.");
+      if(borrowerOwner.current===customer)setBorrowing({...response,assets:response.assets.filter((row:BorrowAsset)=>row.asset?.network==="stellar-testnet"&&row.asset?.verified===true&&["XLM","USDC"].includes(row.asset.code))});
+    }catch(cause){if(borrowerOwner.current===customer){setBorrowing(null);setBorrowingError(cause instanceof Error?cause.message:"Loan information is unavailable. Please try again.");}}
+    finally{if(borrowerOwner.current===customer)setBorrowingLoading(false);}
+  },[session?.customer_id]);
+  const borrowingIdentity=(id?:string)=>borrowing?.assets.find(row=>row.asset.id===id)?.asset;
+  const borrowingCode=(id?:string)=>borrowingIdentity(id)?.code??assetCode(id);
+
   const [historyRange,setHistoryRange] = useState<HistoryRange>("live");
   const [marketHistory,setMarketHistory] = useState<MarketHistory|null>(null);
   const [historyScope,setHistoryScope] = useState("");
@@ -429,6 +467,10 @@ function FinanceShell({ page, auth, initialCategory }: { page: string; auth?: Au
     }).catch(()=>{}).finally(()=>{if(alive)setOverviewLoading(false);});
     return()=>{alive=false;};
   },[session?.customer_id,page,caps]);
+  useEffect(()=>{
+    if(page==="borrow"&&session&&capability("capital.lending")?.enabled)void refreshBorrowing();
+    else if(page==="borrow"){setBorrowing(null);setBorrowingError("");}
+  },[page,session?.customer_id,caps,refreshBorrowing]);
   const enabledTradeCategories = tradeCategories.filter(([id]) => capability("trade." + (id === "crypto_spot" ? "spot" : id))?.enabled);
   useEffect(() => {
     if (!caps.length || enabledTradeCategories.some(([id]) => id === category)) return;
@@ -632,8 +674,9 @@ function FinanceShell({ page, auth, initialCategory }: { page: string; auth?: Au
   useEffect(() => {
     if (active?.status !== "completed" || !session) return;
     if (page === "earn") void refreshEarnBalances();
+    if (page === "borrow") void refreshBorrowing();
     if (page === "markets" || page === "trade") { setQuote(null); void refreshUsdcStatus(); }
-  }, [page, session, active?.status, active?.operation_id, refreshEarnBalances, refreshUsdcStatus]);
+  }, [page, session, active?.status, active?.operation_id, refreshEarnBalances, refreshUsdcStatus, refreshBorrowing]);
   useEffect(() => {
     if (
       !active ||
@@ -804,7 +847,7 @@ function FinanceShell({ page, auth, initialCategory }: { page: string; auth?: Au
           <span className="chevron">⌄</span>
         </div>
         <nav aria-label="Main navigation">
-          {nav.map(([id, label]) => (
+          {nav.filter(([id])=>id!=="borrow"||capability("capital.lending")?.enabled).map(([id, label]) => (
             <Link
               key={id}
               href={"/" + id}
@@ -1349,6 +1392,36 @@ function FinanceShell({ page, auth, initialCategory }: { page: string; auth?: Au
               </section>
             </>
           )}
+          {page === "borrow" && <section className="card borrowing-section" aria-label="Borrowing" data-testid="borrowing">
+            <div className="section-heading"><h2>Borrow</h2><button type="button" className="button outline small-button" disabled={borrowingLoading||busy||!capability("capital.lending")?.enabled} onClick={()=>void refreshBorrowing()}>Refresh loans</button></div>
+            <p className="small muted">Borrowing accrues variable interest. Low collateral health can lead to liquidation.</p>
+            {borrowingError&&<p className="inline-note" role="alert">{customerMessage(borrowingError)}</p>}
+            {borrowingLoading&&!borrowing?<p className="small muted" role="status">Loading loan information…</p>:borrowing?.assets.length?<div className="borrowing-grid">{borrowing.assets.map(row=>{
+              const direction=loanActions[row.market_id]??"borrow",amountKey=`${row.market_id}:${direction}`;
+              const canPrepare=direction==="borrow"?row.can_prepare_borrow:direction==="repay"?row.can_prepare_repay:direction==="collateral-supply"?row.can_prepare_collateral_supply===true:row.can_prepare_collateral_withdraw===true;
+              const reviewLabel=direction==="borrow"?"Review borrow":direction==="repay"?"Review repayment":direction==="collateral-supply"?"Review collateral deposit":"Review collateral removal";
+              const collateralNeeded=row.reason==="COLLATERAL_REQUIRED"||/^0(?:\.0+)?$/.test(row.collateral_value??"");
+              return <section className="borrowing-asset" key={row.market_id} aria-label={`${row.asset.code} loan`} data-testid={`loan-${row.asset.code.toLowerCase()}`}>
+                <div className="loan-asset-heading"><AssetLogo symbol={row.asset.code} name={row.asset.name} assetId={row.asset.id} size={40}/><h3>{row.asset.code}</h3></div>
+                <div className="loan-rate"><span>Variable borrow APR</span><strong>{borrowingRate(row.borrow_apr)}</strong>{row.borrow_apy!=null&&<small>APY {borrowingRate(row.borrow_apy)}</small>}</div>
+                <dl className="loan-balances">
+                  <div><dt>Your debt</dt><dd>{loanAmount(row.borrowed)} {row.asset.code}</dd></div>
+                  <div><dt>Available to borrow</dt><dd>{loanAmount(row.available_to_borrow)}{row.available_to_borrow!=null?` ${row.asset.code}`:""}</dd></div>
+                  <div><dt>Available to repay</dt><dd>{loanAmount(row.repayable)} {row.asset.code}</dd></div>
+                  <div><dt>Pool liquidity</dt><dd>{loanAmount(row.available_liquidity)}{row.available_liquidity!=null?` ${row.asset.code}`:""}</dd></div>
+                  <div><dt>Your collateral</dt><dd>{loanAmount(row.collateral)}{row.collateral!=null?` ${row.asset.code}`:""}</dd></div>
+                  <div><dt>Collateral value</dt><dd>{loanAmount(row.collateral_value)}{row.collateral_value!=null?" USD":""}</dd></div>
+                  <div><dt>Borrow limit</dt><dd>{loanAmount(row.borrow_limit)}{row.borrow_limit!=null?" USD":""}</dd></div>
+                  <div><dt>Health factor</dt><dd>{loanAmount(row.health_factor)}</dd></div>
+                </dl>
+                {collateralNeeded&&<p className="loan-context">Add collateral to this borrowing pool to enable borrowing. Your other Earn balances are separate.</p>}
+                {!collateralNeeded&&row.reason&&<p className="loan-context">{customerMessage(row.reason)}</p>}
+                <div className="earn-action-toggle loan-action-toggle" role="group" aria-label={`${row.asset.code} loan action`}>{(["borrow","repay","collateral-supply","collateral-withdraw"] as const).map(action=><button key={action} type="button" disabled={busy} aria-pressed={direction===action} onClick={()=>setLoanActions(current=>({...current,[row.market_id]:action}))}>{action==="borrow"?"Borrow":action==="repay"?"Repay":action==="collateral-supply"?"Add collateral":"Remove collateral"}</button>)}</div>
+                <div className="loan-action"><label>{direction==="borrow"?"Borrow amount":direction==="repay"?"Repay amount":"Collateral amount"}<input inputMode="decimal" placeholder="0.00" disabled={busy} value={loanAmounts[amountKey]??""} onChange={event=>setLoanAmounts(current=>({...current,[amountKey]:event.target.value}))}/></label><button className="button" disabled={busy||borrowingLoading||!session||!canPrepare||!loanAmounts[amountKey]||capability("capital.wallets")?.execution_status!=="testnet_verified"} onClick={()=>action(()=>start(direction.startsWith("collateral-")?`borrow-${direction}`:`lending/${direction}`,{market_id:row.market_id,amount:loanAmounts[amountKey]}))}>{busy?"Preparing…":reviewLabel}</button></div>
+              </section>;
+            })}</div>:<Empty icon="borrow" title="Loan information is unavailable." text="Try refreshing to check current borrowing options."/>}
+            {borrowing?.as_of&&<p className="small muted">Updated {marketDate(borrowing.as_of,true)}</p>}
+          </section>}
           {page === "activity" && (
             <section className="card">
               <div className="section-heading">
@@ -1469,6 +1542,16 @@ function FinanceShell({ page, auth, initialCategory }: { page: string; auth?: Au
                 <div><span>{active.prepared_action.summary.toAssetId === XLM_ASSET ? "You receive at least before fee" : "You receive at least"}</span><code>{active.prepared_action.summary.minReceive} {swapIdentity(active.prepared_action.summary.toAssetId)}</code></div>
                 <div><span>Maximum fee</span><code>{approvalFee(active.prepared_action.summary.maxFeeStroops)}</code></div>
                 <div><span>Expires</span><code>{new Date(active.prepared_action.summary.expiresAt).toLocaleString()}</code></div>
+              </div>
+            ) : active.prepared_action && ["blend.borrow","blend.repay","blend.borrow_collateral_supply","blend.borrow_collateral_withdraw"].includes(active.type) ? (
+              <div className="approval-summary">
+                <div><span>{active.type==="blend.borrow"?"You receive":active.type==="blend.repay"?"You repay":active.type==="blend.borrow_collateral_supply"?"You add as collateral":"You remove"}</span><code>{active.prepared_action.summary.amount} {borrowingCode(active.prepared_action.summary.fromAssetId)}</code></div>
+                <div><span>Destination</span><code>{active.type==="blend.borrow"||active.type==="blend.borrow_collateral_withdraw"?"Your wallet":active.type==="blend.repay"?"Your loan":"Your loan collateral"}</code></div>
+                <div><span>Maximum fee</span><code>{approvalFee(active.prepared_action.summary.maxFeeStroops)}</code></div>
+                <div><span>Expires</span><code>{marketDate(active.prepared_action.summary.expiresAt,true)}</code></div>
+                {active.type==="blend.borrow"&&<p className="small muted">This creates debt at a variable rate. Collateral may be liquidated if your loan becomes unhealthy.</p>}
+                {active.type==="blend.borrow_collateral_supply"&&<p className="small muted">This collateral supports borrowing. It may be liquidated if your loan becomes unhealthy.</p>}
+                {active.type==="blend.borrow_collateral_withdraw"&&<p className="small muted">Removing collateral reduces your borrowing capacity.</p>}
               </div>
             ) : active.prepared_action && (
               <div className="approval-summary">

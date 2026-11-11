@@ -21,6 +21,7 @@ export default async function Page({
       "markets",
       "trade",
       "earn",
+      "borrow",
       "activity",
     ].includes(page)
   )

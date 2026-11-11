@@ -232,3 +232,29 @@ it.each(['fund','return'])('requires an idempotency key for %s from unified fund
  const response=await POST(new NextRequest('http://localhost:3002/api/grapnel/'+route,{method:'POST',headers:{origin:'http://localhost:3002','content-type':'application/json'},body:JSON.stringify({asset_id:'stellar-testnet:native:XLM',amount:'0.1'})}),context([route]));
  expect(response.status).toBe(400);expect((await response.json()).error.code).toBe('IDEMPOTENCY_KEY_REQUIRED');expect(upstream).not.toHaveBeenCalled();
 });
+
+describe('borrowing pool customer boundaries',()=>{
+ const asset={id:'stellar-testnet:native:XLM',code:'XLM',network:'stellar-testnet',verified:true};
+ const readPath=`/capital/lending/borrowing?customer_id=${session.customerId}&wallet_id=${session.walletId}`;
+ it('binds loan reads to the verified customer and wallet',async()=>{
+  const upstream=vi.spyOn(server,'grapnel').mockResolvedValue({assets:[]});
+  expect((await GET(request('borrowing'),context(['borrowing']))).status).toBe(200);
+  expect(server.requireModule).toHaveBeenCalledWith('capital.lending',session);expect(upstream).toHaveBeenCalledWith(readPath,session);
+ });
+ it.each([['lending/borrow','borrow','/capital/lending/borrow'],['lending/repay','repay','/capital/lending/repay'],['borrow-collateral-supply','collateral_supply','/capital/lending/borrowing/collateral/supply'],['borrow-collateral-withdraw','collateral_withdraw','/capital/lending/borrowing/collateral/withdraw']])('derives exact asset/session for %s',async(route,action,path)=>{
+  const upstream=vi.spyOn(server,'grapnel').mockResolvedValueOnce({assets:[{market_id:'new-pool-xlm',asset,[`can_prepare_${action}`]:true}]}).mockResolvedValueOnce({operation_id:operationId,status:'awaiting_customer_authorization'});
+  expect((await POST(request(route,{market_id:'new-pool-xlm',amount:'0.1234567'}),context(route.split('/')))).status).toBe(202);
+  expect(server.requireModule).toHaveBeenCalledWith('capital.wallets',session,true);
+  expect(upstream).toHaveBeenNthCalledWith(1,readPath,session);
+  expect(upstream).toHaveBeenNthCalledWith(2,path,session,{method:'POST',body:{market_id:'new-pool-xlm',amount:'0.1234567',asset_id:asset.id,customer_id:session.customerId,wallet_id:session.walletId},idempotencyKey:'offline-test-request'});
+ });
+ it.each([{asset_id:'caller-asset'},{customer_id:'foreign'},{wallet_id:'foreign'},{pool_id:'old-earn-pool'}])('rejects browser overrides %j',async override=>{
+  const upstream=vi.spyOn(server,'grapnel');expect((await POST(request('lending/borrow',{market_id:'new-pool-xlm',amount:'1',...override}),context(['lending','borrow']))).status).toBe(422);expect(upstream).not.toHaveBeenCalled();
+ });
+ it.each([{assets:[]},{assets:[{market_id:'old-earn-pool',asset,can_prepare_borrow:true}]},{assets:[{market_id:'new-pool-xlm',asset,can_prepare_borrow:false}]},{assets:[{market_id:'new-pool-xlm',asset:{...asset,network:'stellar-mainnet'},can_prepare_borrow:true}]}])('rejects unknown, blocked and wrong-network pool rows',async ({assets})=>{
+  const upstream=vi.spyOn(server,'grapnel').mockResolvedValue({assets});expect((await POST(request('lending/borrow',{market_id:'new-pool-xlm',amount:'1'}),context(['lending','borrow']))).status).toBe(409);expect(upstream).toHaveBeenCalledTimes(1);
+ });
+ it('denies disabled lending before reading pool or sending a write',async()=>{
+  vi.mocked(server.requireModule).mockRejectedValueOnce(new server.BffError(403,'MODULE_NOT_ENABLED','Disabled'));const upstream=vi.spyOn(server,'grapnel');expect((await POST(request('lending/borrow',{market_id:'new-pool-xlm',amount:'1'}),context(['lending','borrow']))).status).toBe(403);expect(upstream).not.toHaveBeenCalled();
+ });
+});

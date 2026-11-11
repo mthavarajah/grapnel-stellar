@@ -99,6 +99,10 @@ export async function GET(
       });
       return json({balances,as_of:new Date().toISOString()});
     }
+    if(key==="borrowing"){
+      await requireModule("capital.lending",s);
+      return json(await grapnel(`/capital/lending/borrowing?customer_id=${s.customerId}&wallet_id=${s.walletId}`,s));
+    }
     if (key === "lending-markets") {
       await requireModule("capital.lending", s);
       return json(await grapnel("/capital/lending/markets", s));
@@ -209,6 +213,17 @@ export async function POST(
         }),
         202,
       );
+    }
+    const borrowingAction=path.length===2&&path[0]==="lending"&&["borrow","repay"].includes(path[1]!)?path[1]:route==="borrow-collateral-supply"?"collateral_supply":route==="borrow-collateral-withdraw"?"collateral_withdraw":null;
+    if(borrowingAction){
+      await requireModule("capital.lending",s);
+      await requireModule("capital.wallets",s,true);
+      const body=z.object({market_id:z.string().min(1).max(200),amount:money}).strict().parse(raw);
+      const current=await grapnel(`/capital/lending/borrowing?customer_id=${s.customerId}&wallet_id=${s.walletId}`,s);
+      const row=(Array.isArray(current?.assets)?current.assets:[]).find((entry:{market_id:string})=>entry.market_id===body.market_id);
+      if(!row||row.asset?.network!=="stellar-testnet"||row.asset?.verified!==true||typeof row.asset?.id!=="string"||row[`can_prepare_${borrowingAction}`]!==true)throw new BffError(409,"EXECUTION_UNAVAILABLE","This loan action is unavailable right now. Refresh your loans and try again.");
+      const upstreamPath=borrowingAction.startsWith("collateral_")?`/capital/lending/borrowing/collateral/${borrowingAction.slice("collateral_".length)}`:`/capital/lending/${borrowingAction}`;
+      return json(await grapnel(upstreamPath,s,{method:"POST",body:{...body,asset_id:row.asset.id,...binding},idempotencyKey:key}),202);
     }
     if (
       path.length === 2 &&

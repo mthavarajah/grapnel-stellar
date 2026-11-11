@@ -1665,6 +1665,24 @@ footer strong {
 .overview-market-value { display: grid; gap: 4px; text-align: right; }
 .overview-market-value small { font-size: 9px; font-weight: 400; color: var(--muted); white-space: normal; }
 
+.borrowing-grid { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 22px; margin-top: 25px; }
+.borrowing-asset { min-width: 0; border: 1px solid var(--line); border-radius: 18px; padding: 24px; }
+.loan-asset-heading { display: flex; align-items: center; gap: 12px; }
+.loan-asset-heading h3 { margin: 0; font-size: 20px; }
+.loan-rate { display: flex; flex-direction: column; gap: 5px; margin: 25px 0; }
+.loan-rate > span, .loan-rate > small { color: var(--muted); font-size: 11px; }
+.loan-rate > strong { font-size: 30px; font-weight: 600; color: var(--ink); }
+.loan-balances { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 18px 12px; margin: 0 0 22px; }
+.loan-balances dt { font-size: 10px; color: var(--muted); margin-bottom: 6px; }
+.loan-balances dd { margin: 0; font-size: 13px; font-weight: 600; color: var(--ink); overflow-wrap: anywhere; }
+.loan-context { padding: 12px; border-radius: 9px; background: var(--bg); color: var(--muted); font-size: 11px; line-height: 1.6; margin: 0 0 18px; }
+.loan-action { display: grid; grid-template-columns: minmax(0,1fr) auto; align-items: end; gap: 10px; margin-top: 18px; }
+.loan-action label { min-width: 0; font-size: 12px; color: var(--muted); }
+.loan-action input { margin-top: 8px; }
+.loan-action .button { margin-bottom: 0; white-space: nowrap; }
+@media(max-width: 900px) { .borrowing-grid { grid-template-columns: minmax(0,1fr); } }
+@media(max-width: 600px) { .borrowing-section { padding: 18px; } .borrowing-asset { padding: 18px; } .loan-action { grid-template-columns: minmax(0,1fr); } .loan-action .button { justify-content: center; } }
+
 .interactive-price-chart { position: relative; }
 .market-chart { touch-action: pan-y; outline-offset: 5px; border-radius: 6px; }
 .market-chart:focus-visible { outline: 2px solid var(--blue); }
@@ -1673,3 +1691,6 @@ footer strong {
 .market-chart-tooltip strong { color: var(--ink); font-size: 11px; font-weight: 600; }
 .market-chart-tooltip time { color: var(--muted); font-size: 10px; }
 .chart-assistive { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+
+.loan-action-toggle { grid-template-columns: repeat(2,minmax(0,1fr)); }
+.loan-action-toggle button { font-size: 11px; padding-inline: 6px; }
