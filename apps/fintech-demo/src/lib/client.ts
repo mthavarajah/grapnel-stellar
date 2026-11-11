@@ -5,6 +5,7 @@ export function consumerErrorMessage(code: string, message: string): string {
   if (["CUSTOMER_SESSION_REQUIRED", "CUSTOMER_SESSION_EXPIRED", "INVALID_CUSTOMER_IDENTITY", "CUSTOMER_AUTH_REQUIRED"].includes(code)) return "Please sign in again.";
   if (code === "INSUFFICIENT_POSITION") return "You do not have enough in Earn to withdraw this amount.";
   if (code === "INSUFFICIENT_BALANCE") return "Your available balance is too low for this amount and fee.";
+  if (["PROVIDER_UNAVAILABLE", "PROVIDER_RATE_LIMITED"].includes(code)) return "This market is temporarily unavailable. Please try again shortly.";
   if (["MODULE_NOT_ENABLED", "MODULE_DEPENDENCY_MISSING", "EXECUTION_UNAVAILABLE"].includes(code)) return "This action is unavailable right now.";
   if (["INTENT_MISMATCH", "INVALID_CUSTOMER_SIGNATURE"].includes(code)) return "The approval did not match your request. Please prepare it again.";
   if (/Privy|Stellar|Soroswap|Blend|provider|protocol|GATE[_ ]|[A-Z]+(?:_[A-Z0-9]+)+|issuer|contract/i.test(message)) return "This action is unavailable right now. Please try again.";
