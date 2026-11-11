@@ -1,0 +1,9 @@
+import{describe,it,expect,vi}from'vitest';
+import{Account,Keypair,nativeToScVal,rpc}from'@stellar/stellar-sdk';
+import{assertQaPoolSwapQuote,readAndAssertFreshQaPoolSwapQuote,type PeridotQaPoolSwapIntent}from'./pool-swap.js';
+const wallet=Keypair.random().publicKey(),intent:PeridotQaPoolSwapIntent={purpose:'qa_rebalance',walletAddress:wallet,inputXlmAtomic:'10000000',minimumMockUsdtAtomic:'995001'};
+describe('fresh onchain quote guard',()=>{
+ it('rejects weakened minimum and rounds the 99.5% boundary upward',()=>{expect(()=>assertQaPoolSwapQuote(intent,1000001n)).not.toThrow();expect(()=>assertQaPoolSwapQuote({...intent,minimumMockUsdtAtomic:'995000'},1000001n)).toThrow();expect(()=>assertQaPoolSwapQuote({...intent,minimumMockUsdtAtomic:'1000002'},1000001n)).toThrow();});
+ it('reads the pinned actual estimate with exact token indices and input',async()=>{const simulate=vi.fn(async(tx:any)=>{const op=tx.operations[0];expect(op.func.invokeContract().functionName().toString()).toBe('estimate_swap');return{id:'1',latestLedger:123,result:{retval:nativeToScVal(1000001n,{type:'u128'}),auth:[]},transactionData:{},minResourceFee:'100'}}),server={getAccount:async()=>new Account(wallet,'123'),simulateTransaction:simulate}as unknown as rpc.Server;expect(await readAndAssertFreshQaPoolSwapQuote(server,intent)).toBe('1000001');await expect(readAndAssertFreshQaPoolSwapQuote(server,{...intent,minimumMockUsdtAtomic:'1'})).rejects.toThrow();expect(simulate).toHaveBeenCalledTimes(2);});
+ it('rejects a missing quote or authorization request',async()=>{for(const response of [{error:'unavailable',latestLedger:123},{id:'1',latestLedger:123,result:{retval:nativeToScVal(1000001n,{type:'u128'}),auth:[{}]},transactionData:{},minResourceFee:'100'}]){const server={getAccount:async()=>new Account(wallet,'123'),simulateTransaction:async()=>response}as unknown as rpc.Server;await expect(readAndAssertFreshQaPoolSwapQuote(server,intent)).rejects.toThrow();}});
+});

@@ -32,3 +32,11 @@ At ledger 5681615, unsigned simulations against public preexisting provider owne
 `research/existing-scope-readonly.json` and `vault-restore-analysis.json` preserve unsigned traces and decoded keys. `research/positions-readonly.json` captures public preexisting provider positions (all observed rows were Short/Open); they are not Grapnel position proof and several show zero debt shares. One test decodes actual XDR through the state validator. PendingOpen/Closing transitions remain unproven.
 
 Lead review requested: provider externally restores its existing vault/code, or a new narrowly scoped approval for exact pinned same-envelope vault restoration plus one-time fee ceiling. **No broader restoration or higher fee has been implemented/assumed. No writes have occurred.**
+
+## Reviewed scope additions prepared for lead review
+
+Fresh pool quote is now enforced inside both QA prepare and signed-envelope verification: exact pinned `estimate_swap(0u32,1u32,inputu128)` must return auth-free u128 and the approved minimum must be ≥ceil(99.5% of that fresh estimate) and ≤estimate. A caller cannot weaken the guard by supplying a low minimum.
+
+The lead approved a QA-only initial vault deposit exception, implemented in `vault-deposit.ts`: ≤10 MockUSDT deposited, fee ≤8 XLM only while a nonempty subset of the exact MockUSDT-vault INSTANCE/MockUSDT WASM/common-vault WASM are restored. Already-live keys remain RO; the exact sorted unique archived index list must cover every approved RW restoration key, without any extra entry. Normal warm deposit remains ≤1 XLM. Full fetched WASM bytes/hash and executable pins are checked; original/canonical/enforced/signed footprint and extension bytes must agree. No arbitrary account/trustline/storage restore or added operation is accepted.
+
+76 focused tests and API typecheck pass. Live unsigned preparers passed record → canonical → enforce: cold deposit fee 6.8317700 XLM and pool swap fee 0.6967483 XLM. These have no signatures, broadcast or tx hash. New code still requires lead review before own-QA writes.

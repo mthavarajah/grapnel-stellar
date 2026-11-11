@@ -24,6 +24,19 @@ export function buildPeridotQaPoolSwap(intent:PeridotQaPoolSwapIntent):string{
  unsigned(intent.minimumMockUsdtAtomic);
  return new Contract(P.aquarius_pool.address).call('swap',addr(intent.walletAddress),nativeToScVal(0,{type:'u32'}),nativeToScVal(1,{type:'u32'}),nativeToScVal(BigInt(intent.inputXlmAtomic),{type:'u128'}),nativeToScVal(BigInt(intent.minimumMockUsdtAtomic),{type:'u128'})).toXDR('base64');
 }
+/** 50bps maximum slippage against a fresh exact onchain pool estimate, rounded up. */
+export function assertQaPoolSwapQuote(intent:PeridotQaPoolSwapIntent,estimatedAtomic:unknown):void{
+ buildPeridotQaPoolSwap(intent);
+ if(typeof estimatedAtomic!=='bigint'||estimatedAtomic<=0n||estimatedAtomic>=(1n<<127n))return fail('QUOTE_INVALID');
+ const minimum=(estimatedAtomic*995n+999n)/1000n,approved=unsigned(intent.minimumMockUsdtAtomic);
+ if(approved<minimum||approved>estimatedAtomic)return fail('FRESH_QUOTE_MINIMUM');
+}
+export async function readAndAssertFreshQaPoolSwapQuote(server:rpc.Server,intent:PeridotQaPoolSwapIntent):Promise<string>{
+ const tx=new TransactionBuilder(await server.getAccount(intent.walletAddress),{fee:'100',networkPassphrase:NETWORK_PASSPHRASE}).addOperation(new Contract(P.aquarius_pool.address).call('estimate_swap',nativeToScVal(0,{type:'u32'}),nativeToScVal(1,{type:'u32'}),nativeToScVal(unsigned(intent.inputXlmAtomic),{type:'u128'}))).setTimeout(30).build();
+ const sim=await server.simulateTransaction(tx);
+ if(!rpc.Api.isSimulationSuccess(sim)||rpc.Api.isSimulationRestore(sim)||!sim.result||sim.result.auth.length||sim.result.retval.switch().name!=='scvU128'||!Number.isSafeInteger(sim.latestLedger)||sim.latestLedger<=0)return fail('QUOTE_UNAVAILABLE');
+ const estimate=scValToNative(sim.result.retval);assertQaPoolSwapQuote(intent,estimate);return (estimate as bigint).toString();
+}
 export function inspectQaPoolSwapAuthorization(auth:xdr.SorobanAuthorizationEntry[],intent:PeridotQaPoolSwapIntent):void{
  try{
   if(auth.length!==1||auth[0]!.credentials().switch().name!=='sorobanCredentialsSourceAccount')return fail('AUTH_SOURCE');
@@ -67,7 +80,7 @@ export class PeridotQaPoolSwapPreparer{
   inspectQaPoolSwapAuthorization(sim.result.auth,intent);inspectQaPoolSwapFootprint(sim.transactionData.build(),intent,this.policy);return sim;
  }
  async prepare(intent:PeridotQaPoolSwapIntent):Promise<QaPreparedPoolSwap>{
-  await this.verifyPins();const op=xdr.Operation.fromXDR(buildPeridotQaPoolSwap(intent),'base64'),account=await this.server.getAccount(intent.walletAddress),tx=new TransactionBuilder(account,{fee:'100',networkPassphrase:NETWORK_PASSPHRASE}).addOperation(op).setTimeout(90).build();
+  await this.verifyPins();await readAndAssertFreshQaPoolSwapQuote(this.server,intent);const op=xdr.Operation.fromXDR(buildPeridotQaPoolSwap(intent),'base64'),account=await this.server.getAccount(intent.walletAddress),tx=new TransactionBuilder(account,{fee:'100',networkPassphrase:NETWORK_PASSPHRASE}).addOperation(op).setTimeout(90).build();
   const sim=this.successful(await this.server.simulateTransaction(tx,{cpuInstructions:500000},'record'),intent),data=sim.transactionData.build(),resource=data.resources();
   resource.instructions(Math.ceil(resource.instructions()*1.1));resource.diskReadBytes(Math.ceil(resource.diskReadBytes()*1.1));resource.writeBytes(Math.ceil(resource.writeBytes()*1.1));data.resources(resource);
   data.resourceFee(xdr.Int64.fromString(((BigInt(sim.minResourceFee)*110n+99n)/100n).toString()));
@@ -81,6 +94,6 @@ export class PeridotQaPoolSwapPreparer{
  async verifySigned(prepared:QaPreparedPoolSwap,signedXdr:string):Promise<void>{
   const tx=TransactionBuilder.fromXDR(signedXdr,NETWORK_PASSPHRASE);if(!(tx instanceof Transaction)||prepared.networkPassphrase!==NETWORK_PASSPHRASE||this.now()>=Date.parse(prepared.expiresAt)||tx.hash().toString('hex')!==prepared.signingHashHex||tx.signatures.length!==1)return fail('SIGNATURE');
   inspectQaPoolSwapTransaction(tx,prepared.intent,prepared.expiresAt,this.policy);const signature=tx.signatures[0]!,publicKey=Keypair.fromPublicKey(prepared.intent.walletAddress);if(!publicKey.verify(tx.hash(),signature.signature())||!signature.hint().equals(publicKey.signatureHint()))return fail('SIGNATURE');
-  await this.verifyPins();if(BigInt((await this.server.getAccount(prepared.intent.walletAddress)).sequenceNumber())+1n!==BigInt(tx.sequence))return fail('SEQUENCE_CHANGED');const sim=this.successful(await this.server.simulateTransaction(tx,undefined,'enforce'),prepared.intent);const op=tx.operations[0];if(op?.type!=='invokeHostFunction'||bytes(op.auth![0]!)!==bytes(sim.result!.auth[0]!))return fail('AUTH_CHANGED');this.covered(tx,sim);
+  await this.verifyPins();await readAndAssertFreshQaPoolSwapQuote(this.server,prepared.intent);if(BigInt((await this.server.getAccount(prepared.intent.walletAddress)).sequenceNumber())+1n!==BigInt(tx.sequence))return fail('SEQUENCE_CHANGED');const sim=this.successful(await this.server.simulateTransaction(tx,undefined,'enforce'),prepared.intent);const op=tx.operations[0];if(op?.type!=='invokeHostFunction'||bytes(op.auth![0]!)!==bytes(sim.result!.auth[0]!))return fail('AUTH_CHANGED');this.covered(tx,sim);
  }
 }
