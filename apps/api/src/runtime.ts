@@ -22,6 +22,9 @@ import {createSpotReservation,inspectSpotDeltas,SpotBaselineSchema,SPOT_USDC_ID}
 import {SpotProofReadiness} from './modules/spot/proof.js';
 import { SpotService } from './modules/spot/service.js';
 import { registerSpotRoutes } from './modules/spot/routes.js';
+import {StocksTestnetDiscovery} from './adapters/stocks/index.js';
+import {CommodityAdapter,COMMODITIES_BLOCK_REASON} from './adapters/commodities/index.js';
+import {NoetherPublicAdapter} from './adapters/perps/index.js';
 import { WalletService } from './modules/wallets/service.js';
 import { hasFundingRoundTripProof, verifyNativeTransfer } from './modules/funding/readiness.js';
 import { FundingService } from './modules/funding/service.js';
@@ -48,6 +51,14 @@ export async function createRuntime(pool?:Pool) {
  const signer=new PrivyWalletSigner(privy,async(customerId,userId)=>!!(await db.query('SELECT 1 FROM customers WHERE id=$1 AND privy_user_id=$2',[customerId,userId])).rowCount);
  const wallets=new WalletService(db,identity,chain,signer);
  const operations=new OperationService(db);
+ const stocks=new StocksTestnetDiscovery({network:config.network,networkPassphrase:NETWORK_PASSPHRASE});
+ const commodities=new CommodityAdapter({network:config.network,passphrase:NETWORK_PASSPHRASE});
+ const perps=new NoetherPublicAdapter({network:config.network,networkPassphrase:NETWORK_PASSPHRASE});
+ let stocksReason='STOCKS_ROUTE_USES_MAINNET_ASSETS',stocksProbeAt=0,stocksProbeRunning=false;
+ const stocksReadiness=async()=>{
+  if(!stocksProbeRunning&&Date.now()-stocksProbeAt>60000){stocksProbeRunning=true;void stocks.probe().then(result=>{stocksReason=result.reason;}).catch(()=>{stocksReason='STOCKS_DISCOVERY_UNAVAILABLE';}).finally(()=>{stocksProbeAt=Date.now();stocksProbeRunning=false;});}
+  return {execution_status:'blocked' as const,reason:stocksReason,actions:[]};
+ };
  const gate1Passed=await hasGate1Proof(chain);
  const funding=new TestnetFundingAdapter({network:config.network,networkPassphrase:NETWORK_PASSPHRASE,treasurySecret:process.env.DEMO_TREASURY_SECRET,enabled:process.env.TESTNET_FUNDING_ENABLED==='true',gate1Passed,maxPerCustomerAtomic:BigInt(process.env.TESTNET_FUNDING_MAX_PER_CUSTOMER_ATOMIC??'250000000'),maxPerTenantAtomic:BigInt(process.env.TESTNET_FUNDING_MAX_PER_TENANT_ATOMIC??'1000000000'),maxGlobalAtomic:BigInt(process.env.TESTNET_FUNDING_MAX_GLOBAL_ATOMIC??'2000000000')});
  const spotInspector=new SoroswapDirectInspector('CBR76WMT6J733CCVBP23M2EL5QGP5HXLPEFNFZGZ7IB6QHOJAHP7YM3V');
@@ -85,6 +96,9 @@ export async function createRuntime(pool?:Pool) {
   capabilities:{
    'capital.lending':readBlendReadiness,
    'trade.spot':()=>spotReadiness.capability(),
+   'trade.stocks':stocksReadiness,
+   'trade.perps':async()=>({execution_status:'blocked' as const,reason:'REGION_RESTRICTED',actions:[]}),
+   'trade.commodities':async()=>({execution_status:'blocked' as const,reason:COMMODITIES_BLOCK_REASON,actions:[]}),
    'capital.wallets':async()=>{const current=await hasGate1Proof(chain);return {execution_status:current?'testnet_verified':'blocked',reason:current?null:privy?'Privy-signed Testnet payment proof is pending':'PRIVY_APP_ID and PRIVY_APP_SECRET are required',actions:current?['provision','balances','test_payment']:[]};},
    'capital.testnet_funding':readFundingReadiness
   },
@@ -121,7 +135,9 @@ export async function createRuntime(pool?:Pool) {
     return reply.code(202).send(success(request,result.operation));
    });
    await registerLendingRoutes(app,{adapter:blend,operations,balanceReader:address=>chain.getClassicBalances(address)});
-   await registerSpotRoutes(app,{service:new SpotService(spot,db,operations,createSpotReservation(operations,address=>chain.getClassicBalances(address))),refreshReadiness:()=>spotReadiness.refresh(),requireBusiness,requireCustomer,success,readPositions:async customer=>({wallet_holdings:await wallets.balances(customer.businessId,customer.walletId),venue_positions:[]})});
+   await registerSpotRoutes(app,{service:new SpotService(spot,db,operations,createSpotReservation(operations,address=>chain.getClassicBalances(address))),refreshReadiness:()=>spotReadiness.refresh(),requireBusiness,requireCustomer,success,
+    readDiscoveryMarkets:async category=>category==='perps'?perps.markets():category==='commodities'?commodities.markets():(await stocks.probe()).markets,
+    readPositions:async customer=>({wallet_holdings:await wallets.balances(customer.businessId,customer.walletId),venue_positions:[]})});
    await registerFundingRoutes(app,{service:new FundingService(funding,operations),requireBusiness,requireCustomer,success});
   }
  });

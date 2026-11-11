@@ -9,6 +9,7 @@ export interface SpotRouteDependencies {
  requireCustomer(request:FastifyRequest,customerId:string,walletId?:string):Promise<CustomerContext>;
  success(request:FastifyRequest,data:unknown):unknown;
  readPositions?(customer:CustomerContext):Promise<unknown>;
+ readDiscoveryMarkets?(category:'stocks'|'perps'|'commodities'):Promise<unknown[]>;
 }
 const key=(request:FastifyRequest)=>typeof request.headers['idempotency-key']==='string'?request.headers['idempotency-key']:'';
 export async function registerSpotRoutes(app:FastifyInstance,deps:SpotRouteDependencies):Promise<void> {
@@ -17,7 +18,7 @@ export async function registerSpotRoutes(app:FastifyInstance,deps:SpotRouteDepen
   const module:ModuleId=query.asset_class==='crypto_spot'?'trade.spot':`trade.${query.asset_class}`;
   await deps.requireBusiness(request,module);
   if(query.asset_class==='crypto_spot')await deps.refreshReadiness?.();
-  return deps.success(request,query.asset_class==='crypto_spot'?deps.service.adapter.markets():[]);
+  return deps.success(request,query.asset_class==='crypto_spot'?deps.service.adapter.markets():await deps.readDiscoveryMarkets?.(query.asset_class)??[]);
  });
  app.get<{Params:{id:string}}>('/v1/trade/markets/:id',async request=>{
   await deps.requireBusiness(request,'trade.spot');
