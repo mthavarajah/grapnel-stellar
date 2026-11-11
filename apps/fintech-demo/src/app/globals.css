@@ -1518,3 +1518,9 @@ footer strong {
 .earn-balance-error { color: #a43636; }
 .earn-setup { margin-top: 18px; }
 @media(max-width: 600px) { .earn-action { grid-template-columns: minmax(0, 1fr); } .earn-action .button { width: 100%; justify-content: center; } }
+.market-pair-icons { display: inline-flex; align-items: center; flex-shrink: 0; }
+.market-pair-icons img + img { margin-left: -5px; border: 2px solid var(--paper); border-radius: 50%; }
+.spot-setup { padding: 15px; border: 1px solid var(--line); border-radius: 12px; margin: 16px 0; background: var(--bg); }
+.spot-setup p { margin-top: 0; }
+.text-button { border: 0; background: transparent; color: var(--blue); text-decoration: underline; padding: 0 4px; }
+.quote-summary strong { overflow-wrap: anywhere; }

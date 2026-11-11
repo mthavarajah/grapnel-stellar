@@ -248,6 +248,32 @@ function FinanceShell({ page, auth }: { page: string; auth?: Auth }) {
   const [market, setMarket] = useState("");
   const [quote, setQuote] = useState<any>(null);
   const [category, setCategory] = useState("crypto_spot");
+  const [slippageBps, setSlippageBps] = useState(50);
+  const [quoteClock, setQuoteClock] = useState(Date.now());
+  const [usdcStatus, setUsdcStatus] = useState<{enabled:boolean;wallet_amount?:string;spendable?:string;as_of?:string} | null>(null);
+  const [usdcStatusError, setUsdcStatusError] = useState("");
+  const spotCustomer = useRef<string | null>(null);
+  spotCustomer.current = session?.customer_id ?? null;
+  const refreshUsdcStatus = useCallback(async () => {
+    const customerId = session?.customer_id;
+    if (!customerId) return;
+    setUsdcStatus(null); setUsdcStatusError("");
+    try {
+      const value = await api("grapnel/usdc-status");
+      if (spotCustomer.current !== customerId) return;
+      if (typeof value.enabled !== "boolean") throw Error("USDC wallet status is unavailable.");
+      setUsdcStatus(value);
+    } catch (cause) {
+      if (spotCustomer.current === customerId) setUsdcStatusError(cause instanceof Error ? cause.message : "USDC wallet status is unavailable.");
+    }
+  }, [session?.customer_id]);
+  useEffect(() => { setQuote(null); setMarket(""); setUsdcStatus(null); }, [session?.customer_id]);
+  useEffect(() => {
+    if (!quote) return;
+    setQuoteClock(Date.now());
+    const timer = setInterval(() => setQuoteClock(Date.now()), 1000);
+    return () => clearInterval(timer);
+  }, [quote]);
   const polling = useRef({ id: "", attempt: 0 });
   const capability = (module: string) => caps.find((c) => c.module === module);
   const executable = (module: string) =>
@@ -265,6 +291,13 @@ function FinanceShell({ page, auth }: { page: string; auth?: Auth }) {
   // Funding must allow the first real round trip after Gate 1. Capability stays
   // discovery_only until the first grant and customer return are chain-verified.
   const fundingCanStart = capability("capital.testnet_funding")?.enabled && assets.some((entry: any) => entry.available === true);
+  const selectedSpotMarket = markets.find(entry => (entry.market_id ?? entry.id) === market);
+  const canPrepareSpot = !!session && category === "crypto_spot" && capability("trade.spot")?.enabled === true &&
+    capability("capital.wallets")?.execution_status === "testnet_verified" &&
+    selectedSpotMarket?.asset_in_id === XLM_ASSET && selectedSpotMarket?.asset_out_id === USDC_ASSET &&
+    (selectedSpotMarket?.preparation_available === true || selectedSpotMarket?.executable === true);
+  const quoteExpired = !quote || !Number.isFinite(Date.parse(quote.expires_at)) || Date.parse(quote.expires_at) <= quoteClock;
+
   const refresh = useCallback(async () => {
     let identity: Session | null = null;
     try {
@@ -322,7 +355,8 @@ function FinanceShell({ page, auth }: { page: string; auth?: Auth }) {
           const selected = caps.find(c => c.module === "trade." + (category === "crypto_spot" ? "spot" : category));
           if (selected?.enabled && category === "crypto_spot") {
             const m = await api("grapnel/markets?asset_class=" + category);
-            if (alive) setMarkets(Array.isArray(m) ? m : (m.markets ?? []));
+            if (alive) setMarkets((Array.isArray(m) ? m : (m.markets ?? [])).filter((entry: {asset_in_id:string;asset_out_id:string}) => entry.asset_in_id === XLM_ASSET && entry.asset_out_id === USDC_ASSET));
+            if (alive) void refreshUsdcStatus();
           } else if (alive) setMarkets([]);
         }
         if (page === "earn") {
@@ -340,10 +374,12 @@ function FinanceShell({ page, auth }: { page: string; auth?: Auth }) {
     return () => {
       alive = false;
     };
-  }, [page, session, category, caps, refreshEarnBalances]);
+  }, [page, session, category, caps, refreshEarnBalances, refreshUsdcStatus]);
   useEffect(() => {
-    if (page === "earn" && session && active?.status === "completed") void refreshEarnBalances();
-  }, [page, session, active?.status, active?.operation_id, refreshEarnBalances]);
+    if (active?.status !== "completed" || !session) return;
+    if (page === "earn") void refreshEarnBalances();
+    if (page === "markets" || page === "trade") { setQuote(null); void refreshUsdcStatus(); }
+  }, [page, session, active?.status, active?.operation_id, refreshEarnBalances, refreshUsdcStatus]);
   useEffect(() => {
     if (
       !active ||
@@ -879,6 +915,7 @@ function FinanceShell({ page, auth }: { page: string; auth?: Auth }) {
                   <button
                     className={category === id ? "selected" : ""}
                     key={id}
+                    disabled={busy}
                     onClick={() => {
                       setCategory(id!);
                       setError("");
@@ -911,14 +948,13 @@ function FinanceShell({ page, auth }: { page: string; auth?: Auth }) {
                             ? "market selected-market"
                             : "market"
                         }
-                        onClick={() => setMarket(m.market_id ?? m.id)}
+                        disabled={busy}
+                        onClick={() => { setMarket(m.market_id ?? m.id); setAsset(m.asset_in_id); setQuote(null); }}
                       >
-                        <Icon name="markets" />
-                        <strong>{m.name ?? m.market_id ?? m.id}</strong>
+                        <span className="market-pair-icons"><img src="/assets/xlm.svg" alt="XLM" width={28} height={28} /><img src="/assets/usdc.svg" alt="USDC" width={28} height={28} /></span>
+                        <strong>XLM → USDC</strong>
                         <span>
-                          {m.executable
-                            ? "Route available"
-                            : customerMessage(m.reason ?? "Execution unavailable")}
+                          {m.executable ? "Testnet verified" : m.preparation_available ? "Quote and transaction review available" : customerMessage(m.reason ?? "Preparation unavailable")}
                         </span>
                       </button>
                     ))}
@@ -940,85 +976,49 @@ function FinanceShell({ page, auth }: { page: string; auth?: Auth }) {
               </div>
               {market && (
                 <section className="card compact-form">
-                  <h3>Request an exact-input quote</h3>
-                  <label>
-                    Input asset ID
-                    <input
-                      value={asset}
-                      onChange={(e) => setAsset(e.target.value)}
-                    />
+                  <h3>Swap XLM for Testnet USDC</h3>
+                  <p className="small muted">You choose the XLM input. Review the quoted USDC minimum before approving a transaction.</p>
+                  {usdcStatusError && <p className="inline-note" role="alert">{customerMessage(usdcStatusError)} <button className="text-button" onClick={() => action(refreshUsdcStatus)} disabled={busy}>Retry wallet check</button></p>}
+                  {!usdcStatus && !usdcStatusError && <p className="small muted" role="status">Checking USDC wallet setup…</p>}
+                  {usdcStatus?.enabled === false && <div className="spot-setup">
+                    <p>Enable Testnet USDC in your wallet to receive this swap.</p>
+                    <button className="button outline" disabled={busy || !canPrepareSpot}
+                      onClick={() => { setQuote(null); void action(() => start("usdc-trustline", {limit:"1000"})); }}>Enable USDC</button>
+                  </div>}
+                  {usdcStatus?.enabled && <p className="small muted">USDC available in wallet: {usdcStatus.spendable ?? "Unavailable"}{usdcStatus.as_of ? ` · observed ${new Date(usdcStatus.as_of).toLocaleTimeString()}` : ""}</p>}
+                  <label>XLM amount
+                    <input value={amount} disabled={busy} onChange={(e) => { setAmount(e.target.value); setQuote(null); }} inputMode="decimal" />
                   </label>
-                  <label>
-                    Amount
-                    <input
-                      value={amount}
-                      onChange={(e) => setAmount(e.target.value)}
-                      inputMode="decimal"
-                    />
+                  <label>Maximum slippage
+                    <select value={slippageBps} disabled={busy} onChange={(e) => { setSlippageBps(Number(e.target.value)); setQuote(null); }}>
+                      <option value={10}>0.1%</option><option value={50}>0.5%</option><option value={100}>1%</option>
+                    </select>
                   </label>
-                  <button
-                    className="button"
-                    disabled={busy || !executable("trade.spot")}
-                    onClick={() =>
-                      action(async () =>
-                        setQuote(
-                          await api("grapnel/quote", {
-                            market_id: market,
-                            asset_id: asset,
-                            amount,
-                            slippage_bps: 50,
-                          }),
-                        ),
-                      )
-                    }
-                  >
-                    Get quote
-                  </button>
-                  {quote && (
-                    <>
-                      <div className="quote-summary">
-                        <div className="detail-row">
-                          <span>Input amount</span>
-                          <strong>
-                            {quote.amount_in} · {quote.asset_in_id}
-                          </strong>
-                        </div>
-                        <div className="detail-row">
-                          <span>Expected receive</span>
-                          <strong>
-                            {quote.expected_out} · {quote.asset_out_id}
-                          </strong>
-                        </div>
-                        <div className="detail-row">
-                          <span>Minimum receive</span>
-                          <strong>{quote.min_receive}</strong>
-                        </div>
-                        <div className="detail-row">
-                          <span>Quote expires</span>
-                          <strong>
-                            {new Date(quote.expires_at).toLocaleTimeString()}
-                          </strong>
-                        </div>
-                        <p className="small muted">
-                          The final result appears only after confirmed
-                          execution.
-                        </p>
-                      </div>
-                      <button
-                        className="button"
-                        onClick={() =>
-                          action(() =>
-                            start("order", {
-                              quote_id: quote.quote_id ?? quote.id,
-                            }),
-                          )
-                        }
-                        disabled={busy}
-                      >
-                        Review order
-                      </button>
-                    </>
-                  )}
+                  <button className="button" disabled={busy || !canPrepareSpot || usdcStatus?.enabled !== true || !amount}
+                    onClick={() => action(async () => {
+                      setQuote(null);
+                      const customerId = session?.customer_id;
+                      const next = await api("grapnel/quote", {market_id:market,asset_id:asset,amount,slippage_bps:slippageBps});
+                      if (spotCustomer.current !== customerId) return;
+                      if (next.market_id !== market || next.asset_in_id !== XLM_ASSET || next.asset_out_id !== USDC_ASSET || !next.quote_id || !Number.isFinite(Date.parse(next.expires_at))) throw Error("The returned quote does not match this XLM to USDC market.");
+                      setQuoteClock(Date.now()); setQuote(next);
+                    })}>Get quote</button>
+                  {quote && <>
+                    <div className="quote-summary" aria-label="Swap quote review">
+                      <div className="detail-row"><span>Input amount</span><strong>{quote.amount_in} XLM</strong></div>
+                      <div className="detail-row"><span>Expected receive</span><strong>{quote.expected_out} USDC</strong></div>
+                      <div className="detail-row"><span>Minimum receive</span><strong>{quote.min_receive} USDC</strong></div>
+                      <div className="detail-row"><span>Maximum slippage</span><strong>{quote.slippage_bps ?? slippageBps} basis points</strong></div>
+                      <div className="detail-row"><span>Quote expires</span><strong>{new Date(quote.expires_at).toLocaleTimeString()}</strong></div>
+                      <div className="detail-row"><span>Network fee</span><strong>Shown in transaction review</strong></div>
+                      {quoteExpired ? <p className="inline-note" role="alert">This quote expired. Request a new quote before reviewing an order.</p> : <p className="small muted">A quote is an estimate. The swap completes only after chain confirmation and verified balance changes.</p>}
+                    </div>
+                    <button className="button" disabled={busy || quoteExpired || !canPrepareSpot || usdcStatus?.enabled !== true}
+                      onClick={() => action(async () => {
+                        if (Date.parse(quote.expires_at) <= Date.now()) { setQuoteClock(Date.now()); throw Error("This quote expired. Request a fresh quote."); }
+                        await start("order", {quote_id:quote.quote_id}); setQuote(null);
+                      })}>Review order</button>
+                  </>}
                 </section>
               )}
               <div className="notice neutral">
@@ -1214,7 +1214,9 @@ function FinanceShell({ page, auth }: { page: string; auth?: Auth }) {
             </span>
             <p className="eyebrow">STELLAR TESTNET OPERATION</p>
             <h2 id="operation-title">
-              {active.type === "wallet.usdc_trustline"
+              {active.type === "spot.swap" && active.status === "awaiting_customer_authorization"
+                ? "Review your XLM → USDC swap"
+                : active.type === "wallet.usdc_trustline"
                 ? active.status === "completed" ? "Testnet USDC enabled." : "Enable Testnet USDC"
                 : active.status === "awaiting_customer_authorization"
                 ? "Review before you approve."
@@ -1244,6 +1246,13 @@ function FinanceShell({ page, auth }: { page: string; auth?: Auth }) {
                 <div><span>Maximum network fee</span><code>{active.prepared_action.summary.maxFeeStroops} stroops</code></div>
                 <div><span>Expires</span><code>{new Date(active.prepared_action.summary.expiresAt).toLocaleString()}</code></div>
                 <p className="small muted">This enables the exact Testnet USDC asset in your wallet. It does not transfer or supply USDC. The trust limit is the maximum amount your wallet can hold.</p>
+              </div>
+            ) : active.prepared_action?.summary.action === "spot.swap" && active.prepared_action.summary.fromAssetId === XLM_ASSET && active.prepared_action.summary.toAssetId === USDC_ASSET ? (
+              <div className="approval-summary">
+                <div><span>You send</span><code>{active.prepared_action.summary.amount} XLM</code></div>
+                <div><span>You receive at least</span><code>{active.prepared_action.summary.minReceive} USDC</code></div>
+                <div><span>Maximum network fee</span><code>{active.prepared_action.summary.maxFeeStroops} stroops</code></div>
+                <div><span>Expires</span><code>{new Date(active.prepared_action.summary.expiresAt).toLocaleString()}</code></div>
               </div>
             ) : active.prepared_action && (
               <div className="approval-summary">
