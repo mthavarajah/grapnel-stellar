@@ -189,5 +189,5 @@
       }
     }
   ],
-  "last_error": "Exact unallocated deposited receipt required"
+  "last_error": "The QA begin phase exceeds its exact reviewed Testnet scope"
 }
