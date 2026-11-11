@@ -1980,6 +1980,18 @@
         }
       }
     },
+    "/v1/trade/markets/{id}/history": {
+      "get": {
+        "operationId":"get_market_observed_history",
+        "security":[{"businessKey":[]}],
+        "description":"Entitled public market observations only. Prices use the explicit quote_symbol; no invented historical candles or USD peg is implied.",
+        "parameters":[
+          {"name":"id","in":"path","required":true,"schema":{"type":"string","maxLength":200}},
+          {"name":"range","in":"query","schema":{"type":"string","enum":["live","1d","1w","1m","1y","all"],"default":"live"}}
+        ],
+        "responses":{"200":{"description":"Envelope data: market_id, base_asset_id, base_symbol, quote_symbol, latest_price, as_of, points[{timestamp,price}], change_absolute and change_percent. Missing prices/changes are null; all amounts are decimal strings."},"401":{"description":"Business key required"},"403":{"description":"Market module disabled"},"404":{"description":"Unknown verified market"},"503":{"description":"Current price cannot be verified"}}
+      }
+    },
     "/v1/trade/markets/{id}": {
       "get": {
         "operationId": "get_v1_trade_markets_id",
@@ -2364,6 +2376,18 @@
             }
           }
         }
+      }
+    },
+    "/v1/capital/lending/earnings": {
+      "get": {
+        "operationId":"get_customer_verified_earnings",
+        "security":[{"businessKey":[]}],
+        "description":"Requires verified customer identity and capital.lending entitlement. Realized plus unrealized token interest from verified principal flows and current positions. Incomplete proof/history returns null, never projected APY.",
+        "parameters":[
+          {"name":"customer_id","in":"query","required":true,"schema":{"type":"string","format":"uuid"}},
+          {"name":"wallet_id","in":"query","schema":{"type":"string","format":"uuid"}}
+        ],
+        "responses":{"200":{"description":"Envelope data: earnings[{asset_id,earned:string|null,earned_since:string|null}], as_of"},"401":{"description":"Business key required"},"403":{"description":"Customer identity or lending entitlement required"},"404":{"description":"Customer wallet not found in tenant"}}
       }
     },
     "/v1/capital/lending/markets": {

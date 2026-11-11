@@ -1,6 +1,7 @@
 import { readFile } from 'node:fs/promises';
 import type { Pool } from 'pg';
 import { z } from 'zod';
+import {xdr,scValToNative} from '@stellar/stellar-sdk';
 import { GrapnelError, NETWORK, NETWORK_PASSPHRASE, WalletInputSchema, AmountSchema, XLM, toAtomic, fromAtomic, PreparedActionSchema, type CustomerContext, type PreparedAction, type WalletBalance } from '@grapnel/contracts';
 import { buildApp } from './app.js';
 import { createPool } from './db/index.js';
@@ -18,7 +19,8 @@ import {verifyPreparedUsdcTrustline,TESTNET_USDC_ISSUER} from './adapters/stella
 import { registerLendingRoutes } from './modules/lending/routes.js';
 import {LendingEarningsReader} from './modules/lending/earnings.js';
 import { SoroswapSpotAdapter } from './adapters/soroswap/index.js';
-import {SoroswapDirectInspector} from './adapters/soroswap/inspector.js';
+import {SoroswapDirectInspector,NATIVE_SAC} from './adapters/soroswap/inspector.js';
+import {MarketDataService} from './modules/market-data/index.js';
 import {createSpotReservation,inspectSpotDeltas,SpotBaselineSchema,SPOT_USDC_ID} from './modules/spot/reservations.js';
 import {SpotProofReadiness} from './modules/spot/proof.js';
 import { SpotService } from './modules/spot/service.js';
@@ -70,6 +72,30 @@ export async function createRuntime(pool?:Pool) {
  const soroban=new BlendSorobanPreparer({network:config.network,passphrase:NETWORK_PASSPHRASE,rpcUrl:process.env.STELLAR_RPC_URL,gate1Passed});
  const blend=new BlendAdapter({network:config.network,passphrase:NETWORK_PASSPHRASE,rpcUrl:process.env.STELLAR_RPC_URL,gate1Passed},{prepareAndSimulate:input=>soroban.prepare(input)});
  const earningsReader=new LendingEarningsReader({pool:db,positions:customer=>blend.positions(customer)});
+ const marketProfile=async(id:string)=>{
+  if(id.startsWith('stellar-testnet:noether:')){
+   const market=(await perps.markets()).find(entry=>entry.market_id===id);
+   if(!market)throw new GrapnelError(404,'NOT_FOUND','Market not found');
+   return {base_asset_id:market.market_id,base_symbol:market.underlying.symbol,reference:market};
+  }
+  const market=spot.market(id),base=market.asset_in.kind==='native'?market.asset_out:market.asset_in;
+  return {base_asset_id:base.id,base_symbol:base.code,asset:base};
+ };
+ const marketData=new MarketDataService(db,async id=>{
+  const profile=await marketProfile(id);
+  if(profile.reference){
+   if(profile.reference.price_status!=='current'||!profile.reference.reference_price||!profile.reference.oracle_timestamp)throw new GrapnelError(503,'PRICE_UNAVAILABLE','Current price is unavailable');
+   return {market_id:id,price:profile.reference.reference_price,quote_symbol:'USD',observed_at:profile.reference.oracle_timestamp,source:profile.reference.source_url};
+  }
+  const reg=await spotInspector.registry();
+  const entry=await chain.server.getContractData(reg.pair,xdr.ScVal.scvLedgerKeyContractInstance());
+  const storage=entry.val.contractData().val().instance().storage()??[];
+  const field=(key:number)=>{const value=storage.find(item=>scValToNative(item.key())===key);return value?scValToNative(value.val()):undefined;};
+  const t0=field(0),t1=field(1),r0=field(2),r1=field(3);
+  if(!profile.asset||profile.asset.decimals!==7||typeof r0!=='bigint'||typeof r1!=='bigint'||r0<=0n||r1<=0n||!((t0===NATIVE_SAC&&t1===profile.asset.contractId)||(t1===NATIVE_SAC&&t0===profile.asset.contractId)))throw new GrapnelError(503,'PRICE_UNAVAILABLE','Verified market reserves are unavailable');
+  const nativeReserve=t0===NATIVE_SAC?r0:r1,tokenReserve=t0===NATIVE_SAC?r1:r0;
+  return {market_id:id,price:fromAtomic(nativeReserve*10n**18n/tokenReserve,18),quote_symbol:'XLM',observed_at:new Date().toISOString(),source:`stellar-testnet:pool:${reg.pair}`};
+ });
  let fundingVerified=false;let fundingProofAt=0;let fundingProofRunning=false;
  const readFundingReadiness=async()=>{
   if(!await hasGate1Proof(chain))return {execution_status:'blocked' as const,reason:'GATE_1_SIGNING_PROOF_REQUIRED',actions:[]};
@@ -105,6 +131,13 @@ export async function createRuntime(pool?:Pool) {
    'capital.testnet_funding':readFundingReadiness
   },
   registerAdapters:async app=>{
+   app.get('/v1/trade/markets/:id/history',async request=>{
+    const {id}=z.object({id:z.string().min(1).max(200)}).parse(request.params);
+    await requireBusiness(request,id.startsWith('stellar-testnet:noether:')?'trade.perps':'trade.spot');
+    const {range}=z.object({range:z.enum(['live','1d','1w','1m','1y','all']).default('live')}).strict().parse(request.query);
+    const profile=await marketProfile(id);
+    return success(request,{...await marketData.history(id,range),base_asset_id:profile.base_asset_id,base_symbol:profile.base_symbol});
+   });
    app.get('/v1/capital/lending/earnings',async request=>{
     await requireBusiness(request,'capital.lending');
     const query=z.object({customer_id:z.string().uuid(),wallet_id:z.string().uuid().optional()}).strict().parse(request.query);
