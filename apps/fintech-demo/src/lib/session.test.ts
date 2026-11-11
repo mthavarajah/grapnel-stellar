@@ -99,7 +99,7 @@ describe("encrypted bounded customer sessions", () => {
   });
   it("explicitly rejects oversized sessions and clears metadata plus all possible chunks", () => {
     expect(() => sessionCookieValues(fixture("a".repeat(20000)))).toThrow(
-      "identity session is too large",
+      "Your session could not be saved",
     );
     const response = NextResponse.json({ ok: true });
     setSession(response, fixture("a".repeat(5000)));
