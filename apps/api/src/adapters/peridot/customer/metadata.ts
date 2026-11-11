@@ -38,3 +38,22 @@ export class PeridotTransactionChanges {
 }
 export const contractKey=(name:string,...values:xdr.ScVal[])=>xdr.ScVal.scvVec([xdr.ScVal.scvSymbol(name),...values]);
 export const addressValue=(address:string)=>new Address(address).toScVal();
+
+/** Reformat actual committed ledger entry changes for the provider's pure state predicates.
+ * This never runs a simulation or establishes success; the caller already binds RPC/Horizon SUCCESS. */
+export function committedStateCheckInput(meta:xdr.TransactionMeta,ledger:number,retval=xdr.ScVal.scvVoid()):import('@stellar/stellar-sdk').rpc.Api.SimulateTransactionSuccessResponse {
+ const operations=meta.switch()===3?meta.v3().operations():meta.switch()===4?meta.v4().operations():null;if(!operations||operations.length!==1)return invalid('TRANSACTION_META_VERSION_OR_OPERATIONS');
+ const rows=new Map<string,{key:xdr.LedgerKey;before:xdr.LedgerEntry|null;after:xdr.LedgerEntry|null;removed:boolean;created:boolean}>();
+ for(const change of operations[0]!.changes()){
+  const kind=change.switch().name;
+  if(kind==='ledgerEntryRemoved'){
+   const key=change.removed();if(key.switch().name!=='contractData')continue;const id=key.toXDR('base64'),row=rows.get(id);if(!row?.before||row.after||row.removed)return invalid('COMMITTED_REMOVAL_STATE');row.removed=true;continue;
+  }
+  if(!['ledgerEntryState','ledgerEntryCreated','ledgerEntryUpdated'].includes(kind))continue;
+  const entry=kind==='ledgerEntryState'?change.state():kind==='ledgerEntryCreated'?change.created():change.updated();if(entry.data().switch().name!=='contractData')continue;
+  const data=entry.data().contractData(),key=xdr.LedgerKey.contractData(new xdr.LedgerKeyContractData({contract:data.contract(),key:data.key(),durability:data.durability()})),id=key.toXDR('base64'),row=rows.get(id)??{key,before:null,after:null,removed:false,created:false};
+  if(kind==='ledgerEntryState'){if(row.before||row.after||row.created)return invalid('COMMITTED_DUPLICATE_STATE');row.before=entry;}else{if(row.after||row.removed||kind==='ledgerEntryCreated'&&row.before)return invalid('COMMITTED_DUPLICATE_UPDATE');row.after=entry;row.created=kind==='ledgerEntryCreated';}rows.set(id,row);
+ }
+ const stateChanges=[...rows.values()].filter(r=>r.after||r.removed).map(r=>({key:r.key,before:r.before,after:r.after,type:r.removed?'deleted':r.created?'created':'updated'}));
+ return{latestLedger:ledger,result:{retval,auth:[]},stateChanges}as unknown as import('@stellar/stellar-sdk').rpc.Api.SimulateTransactionSuccessResponse;
+}

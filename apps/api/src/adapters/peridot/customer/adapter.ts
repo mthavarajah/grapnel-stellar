@@ -14,6 +14,8 @@ import {reviewedPhaseBindings,inspectPreparedHelper,type CustomerPhaseBindings,t
 import {knownMarginEvidence} from './evidence.js';
 import {PERIDOT_CUSTOMER_POLICY,PERIDOT_RECEIPT_ID,REQUIRED_CUSTOMER_STEPS,createCustomerTerms,validateCustomerTerms,fail,invalid,unsigned} from './policy.js';
 import {assertSamePrepared,inspectCustomerSignature} from './signature.js';
+import {encodePrivate} from './encoding.js';
+import {reviewedPositionBindings} from './position-bindings.js';
 
 export interface PeridotCustomerDependencies extends CustomerChainDependencies {
  /** Must independently verify an actual full current Testnet round trip. No flag or credentials establish this proof. */
@@ -21,7 +23,7 @@ export interface PeridotCustomerDependencies extends CustomerChainDependencies {
  /** Root supplies further reviewed phase guards and exact metadata extractors; an absent phase never inherits another phase's guards. */
  bindings?:CustomerPhaseBindings;
 }
-const safe=(value:unknown)=>JSON.parse(JSON.stringify(value,(_,v)=>typeof v==='bigint'?v.toString():v));
+const safe=(value:unknown)=>encodePrivate(value);
 const helperSchema=z.object({intent:z.object({step:z.string(),walletAddress:z.string()}).passthrough(),unsignedXdr:z.string().min(1),signingHashHex:z.string().regex(/^[a-f0-9]{64}$/),expiresAt:z.string().datetime(),feeStroops:z.string().regex(/^[1-9]\d*$/),networkPassphrase:z.literal(NETWORK_PASSPHRASE),expectedPositionId:z.string().optional()}).passthrough();
 const snapshotSchema=z.object({walletUnderlyingAtomic:z.string(),walletReceiptAtomic:z.string(),marginReceiptAtomic:z.string(),marginDebtAtomic:z.string(),nativeWalletAtomic:z.string(),nativeSpendableAtomic:z.string(),observedAt:z.string().datetime(),ledger:z.number().int().positive(),position:z.unknown()}).strict();
 const baselineSchema=z.object({version:z.literal(1),intentHash:z.string().regex(/^[a-f0-9]{64}$/),workflowRevision:z.number().int().positive(),helper:helperSchema,before:snapshotSchema}).strict();
@@ -33,7 +35,7 @@ export function publicMarginAction(context:MarginStepContext,helper:PhasePrepare
 }
 export class PeridotCustomerAdapter implements MarginAdapter {
  readonly chain:PeridotCustomerChain;readonly bindings:CustomerPhaseBindings;
- constructor(private readonly deps:PeridotCustomerDependencies){this.chain=new PeridotCustomerChain(deps);this.bindings={...reviewedPhaseBindings(this.chain),...deps.bindings};}
+ constructor(private readonly deps:PeridotCustomerDependencies){this.chain=new PeridotCustomerChain(deps);this.bindings={...reviewedPhaseBindings(this.chain),...reviewedPositionBindings(this.chain),...deps.bindings};}
  async executionReady():Promise<boolean>{
   if(!REQUIRED_CUSTOMER_STEPS.every(step=>this.bindings[step]&&(['vault_deposit','margin_transfer','open_begin'].includes(step)||!!this.bindings[step]!.readEvidence&&!!this.bindings[step]!.publicAction)&&(!['close_swap','close_short_swap'].includes(step)||!!this.bindings[step]!.quoteTerms)))return false;
   try{return await this.deps.verifyRoundTripProof?.()===true;}catch{return false;}
@@ -62,8 +64,8 @@ export class PeridotCustomerAdapter implements MarginAdapter {
   const reservations:MarginPreparation['reservations']=[{assetId:PERIDOT_BASE.id,amountAtomic:fee,spendableAtomic:unsigned(before.nativeSpendableAtomic),observedAt:new Date(before.observedAt)}];
   if(context.step==='vault_deposit')reservations.push({assetId:PERIDOT_COLLATERAL.id,amountAtomic:unsigned(context.workflow.terms.collateralAtomic,true),spendableAtomic:unsigned(before.walletUnderlyingAtomic),observedAt:new Date(before.observedAt)});
   if(context.step==='margin_transfer'||context.step==='vault_withdraw')reservations.push({assetId:PERIDOT_RECEIPT_ID,amountAtomic:unsigned(context.workflow.receiptAtomic,true),spendableAtomic:unsigned(before.walletReceiptAtomic),observedAt:new Date(before.observedAt)});
-  const baseline:PrivateMarginBaseline={version:1,intentHash:context.intentHash,workflowRevision:context.workflow.revision+1,helper,before:safe(before)};
-  return{prepared,baseline:safe(baseline),reservations};
+  const baseline:PrivateMarginBaseline={version:1,intentHash:context.intentHash,workflowRevision:context.workflow.revision+1,helper,before:safe(before)as PrivateMarginBaseline['before']};
+  return{prepared,baseline:safe(baseline)as Record<string,unknown>,reservations};
  }
  private actionFor(context:MarginStepContext,helper:PhasePrepared,customer:CustomerContext):PreparedAction {
   const action=this.bindings[context.step]?.publicAction;if(action)return action(context,helper,customer);
@@ -82,7 +84,7 @@ export class PeridotCustomerAdapter implements MarginAdapter {
   const baseline=this.baseline(context,context.baseline,customer),binding=this.bindings[context.step];if(!binding)return fail('PERIDOT_PHASE_EXTRACTOR_REQUIRED');
   const confirmed=await this.chain.confirmed(context.txHash,customer),prepared=this.actionFor(context,baseline.helper,customer);
   if(context.txHash!==prepared.signingHashHex)return invalid('STORED_CHAIN_HASH');inspectCustomerSignature(prepared,confirmed.transaction.toXDR(),customer);binding.inspectHistorical(baseline.helper,confirmed.transaction);
-  const positionId=context.step==='open_begin'?unsigned(baseline.helper.expectedPositionId,true).toString():context.workflow.positionId,after=await this.chain.snapshot(customer,positionId);
+  const positionId=context.step==='open_begin'?unsigned(baseline.helper.expectedPositionId,true).toString():context.workflow.positionId,after=await this.chain.snapshot(customer,positionId,['open_cancel','close_finish'].includes(context.step));
   if(binding.readEvidence)return binding.readEvidence(context,baseline,confirmed,after,customer);
   return knownMarginEvidence(context,baseline,confirmed,after,customer,this.chain.now());
  }

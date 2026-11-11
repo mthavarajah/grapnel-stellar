@@ -43,3 +43,11 @@ The initial open quote uses the exact pending amount from an unsigned inspected 
 V3 debt caveat: `Position.debt_shares` can remain0 after a real borrow. Snapshot reads bind the actual per-position MockUSDT vault `get_margin_borrow_balance(positionId)`; future activation/close extractors must use its transaction-local MarginBorrowPrincipal/Snapshot evidence. Never relabel legacy zero shares as zero debt.
 
 Remaining work: rolling integration of actual proven open-swap/cancel/activate/close/return/withdraw guards and metadata extractors; fresh customer round-trip acceptance; independent position valuation. Root owns routes, migrations, authorization/worker hooks, asset registration and frontend.
+
+## Rolling phase integration: open swap and unswapped cancellation
+
+The default set now also includes reviewed `open_swap` and `open_cancel` bindings. Their pure provider state predicates inspect **actual committed metadata**, reformatted without a simulation or invented entry change. Actual snapshots and decoded records must agree. Open swap proves vault borrow principal/snapshot, exact token recipients/output, pending digest and actual per-position vault debt; legacy debt shares are not used as debt proof. Cancellation proves exact record deletions, free receipt restoration and zero debt.
+
+After cancellation, `positionSnapshot(..., true)` accepts absence only after all five position/perps/pending/execution/close getters return null, the user list excludes the ID, and the actual per-position vault debt is zero. Errors are never treated as missing records. This removes the old reader's inability to verify a successfully removed position. Private snapshots preserve tagged BigInt types for these exact state checks.
+
+26 focused tests and API typecheck pass. Twelve additional cases use captured actual swap/cancel metadata and independently test explicit absence contradictions/transport errors. No additional network write or customer approval was performed.
