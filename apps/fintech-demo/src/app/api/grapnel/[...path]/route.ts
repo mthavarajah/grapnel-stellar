@@ -65,15 +65,6 @@ export async function GET(
       await requireModule("capital.lending", s);
       return json(await grapnel("/capital/lending/markets", s));
     }
-    if (key === "lending-positions") {
-      await requireModule("capital.lending", s);
-      return json(
-        await grapnel(
-          `/capital/lending/positions?customer_id=${s.customerId}`,
-          s,
-        ),
-      );
-    }
     if (key === "operations")
       return json(await grapnel(`/operations?customer_id=${s.customerId}`, s));
     if (path.length === 2 && path[0] === "operations")

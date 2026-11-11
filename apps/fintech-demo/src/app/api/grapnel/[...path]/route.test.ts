@@ -40,6 +40,15 @@ beforeEach(() => {
 });
 afterEach(() => vi.restoreAllMocks());
 describe("sample fintech BFF customer boundaries (offline fixtures)", () => {
+  it("does not expose protocol positions in the consumer sample fintech", async () => {
+    const upstream = vi.spyOn(server, "grapnel");
+    const response = await GET(
+      request("lending-positions"),
+      context(["lending-positions"]),
+    );
+    expect(response.status).toBe(404);
+    expect(upstream).not.toHaveBeenCalled();
+  });
   it("derives funding customer/wallet from verified session", async () => {
     const upstream = vi.spyOn(server, "grapnel")
       .mockResolvedValueOnce({capabilities:[{module:"capital.wallets",execution_status:"testnet_verified"}]})
