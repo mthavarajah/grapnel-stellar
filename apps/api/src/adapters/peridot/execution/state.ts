@@ -30,7 +30,7 @@ export function validateMarginPositionSnapshot(input:{positionId:string;walletAd
  for(const detail of [pendingOpen,pendingClose])if(detail){if(detail.owner!==input.walletAddress)return fail('PENDING_OWNER_MISMATCH');integer(detail.expires_at);}
  if(pendingOpen){integer(pendingOpen.margin_ptokens);integer(pendingOpen.margin_amount);integer(pendingOpen.borrow_amount);integer(pendingOpen.min_position_amount);if(pendingOpen.margin_vault!==P.mock_usdt_vault.address||pendingOpen.debt_vault!==(input.direction==='long'?P.mock_usdt_vault.address:P.native_vault.address)||pendingOpen.position_vault!==(input.direction==='long'?P.native_vault.address:P.mock_usdt_vault.address))return fail('PENDING_VAULT_MISMATCH');}
  if(openExecution){integer(openExecution.position_amount);integer(openExecution.margin_received);}
- if(pendingClose){integer(pendingClose.collateral_underlying);integer(pendingClose.debt_amount);integer(pendingClose.prepared_ledger);integer(pendingClose.received_debt_asset);}
+ if(pendingClose){integer(pendingClose.collateral_underlying);integer(pendingClose.debt_amount);if(typeof pendingClose.prepared_ledger!=='number'||!Number.isSafeInteger(pendingClose.prepared_ledger)||pendingClose.prepared_ledger<1||pendingClose.prepared_ledger>0xffffffff)return fail('INVALID_PREPARED_LEDGER_U32');integer(pendingClose.received_debt_asset);}
  if(status==='PendingOpen'&&(!pendingOpen||pendingClose)||status==='Open'&&(!perps||pendingOpen||pendingClose)||status==='Closing'&&(!perps||!pendingClose||pendingOpen)||['Closed','Liquidated'].includes(status)&&(pendingOpen||pendingClose))return fail('INCONSISTENT_PHASE');
  return{...input,status:status as MarginPositionSnapshot['status'],position,perps,pendingOpen,openExecution,pendingClose};
 }
