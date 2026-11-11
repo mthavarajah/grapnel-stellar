@@ -12,6 +12,7 @@ import { TestnetFundingAdapter } from './adapters/testnet-funding/index.js';
 import { BlendSorobanPreparer } from './adapters/stellar/blend-soroban.js';
 import { BlendAdapter, type BlendPosition } from './adapters/blend/index.js';
 import { inspectBlendWithdrawDeltas } from './adapters/blend/withdraw-inspector.js';
+import { BLEND_USDC_ASSET_ID, inspectBlendUsdcDeltas } from './adapters/blend/usdc-inspector.js';
 import {registerUsdcTrustline} from './modules/wallets/usdc.js';
 import {verifyPreparedUsdcTrustline,TESTNET_USDC_ISSUER} from './adapters/stellar/usdc-trustline.js';
 import { registerLendingRoutes } from './modules/lending/routes.js';
@@ -195,7 +196,7 @@ export function createRuntimeWorkerChain(deps:RuntimeWorkerDependencies):WorkerC
    if(operation.type==='blend.supply'||operation.type==='blend.withdraw'){
     if(operation.module_code!=='capital.lending'||operation.provider!=='blend'||typeof operation.privy_user_id!=='string'||!operation.privy_user_id.startsWith('did:privy:'))throw new GrapnelError(403,'INTENT_MISMATCH','Stored operation is not an approved Blend supply');
     const action=PreparedActionSchema.parse(operation.prepared_action);
-    if(action.operationId!==operation.id||action.customerId!==operation.customer_id||action.walletAddress!==operation.stellar_address||operation.request_json.asset_id!==XLM.id||action.summary.action!==operation.type||action.summary.fromAssetId!==XLM.id||zeroAtomic(action.summary.amount??'')!==toAtomic(operation.request_json.amount,7))throw new GrapnelError(403,'INTENT_MISMATCH','Stored supply and customer approval do not match');
+    if(action.operationId!==operation.id||action.customerId!==operation.customer_id||action.walletAddress!==operation.stellar_address||![XLM.id,BLEND_USDC_ASSET_ID].includes(operation.request_json.asset_id)||action.summary.action!==operation.type||action.summary.fromAssetId!==operation.request_json.asset_id||zeroAtomic(action.summary.amount??'')!==toAtomic(operation.request_json.amount,7))throw new GrapnelError(403,'INTENT_MISMATCH','Stored supply and customer approval do not match');
     await soroban.verifyForSubmission(action,envelope);
     await chain.verifyLiveNetwork();
     try{
@@ -239,10 +240,11 @@ export function createRuntimeWorkerChain(deps:RuntimeWorkerDependencies):WorkerC
     const confirmed=await chain.server.getTransaction(hash);
     if(confirmed.status!=='SUCCESS')return false;
     const action=PreparedActionSchema.parse(op.prepared_action);
-    if(action.operationId!==op.id||action.customerId!==op.customer_id||action.walletAddress!==op.stellar_address||action.summary.action!==op.type||action.summary.fromAssetId!==XLM.id||op.request_json.asset_id!==XLM.id||zeroAtomic(action.summary.amount??'')!==toAtomic(op.request_json.amount,7))return false;
+    if(action.operationId!==op.id||action.customerId!==op.customer_id||action.walletAddress!==op.stellar_address||action.summary.action!==op.type||![XLM.id,BLEND_USDC_ASSET_ID].includes(op.request_json.asset_id)||action.summary.fromAssetId!==op.request_json.asset_id||zeroAtomic(action.summary.amount??'')!==toAtomic(op.request_json.amount,7))return false;
     const customer:CustomerContext={businessId:op.business_id,customerId:op.customer_id,walletId:op.wallet_id,walletAddress:op.stellar_address,privyUserId:op.privy_user_id};
     try{
      const [positions,balances]=await Promise.all([blend.positions(customer),chain.getClassicBalances(customer.walletAddress)]);
+     if(action.summary.fromAssetId===BLEND_USDC_ASSET_ID)return inspectBlendUsdcDeltas({operation:op.type==='blend.supply'?'supply':'withdraw',baseline:op.result_json?.[op.type==='blend.supply'?'blend_supply_baseline':'blend_withdraw_baseline'],request:op.request_json,walletAddress:customer.walletAddress,positions,balances,confirmedLedger:confirmed.ledger});
      if(op.type==='blend.withdraw'){
       const tx=await chain.horizon.transactions().transaction(hash).call();
       if(!tx.successful)return false;
