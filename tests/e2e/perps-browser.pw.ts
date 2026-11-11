@@ -31,7 +31,7 @@ const history=(id:string,range:string)=>{
  const span=({live:60000,'1d':86400000,'1w':604800000,'1m':2592000000,'1y':31536000000,all:63072000000} as Record<string,number>)[range]??60000;
  const stock=id.startsWith('sodax:catalog:');
  return {market_id:id,base_asset_id:id,base_symbol:symbol,quote_symbol:'USD',latest_price:price,as_of:now,price_basis:stock?'underlying_equity_reference':'oracle_reference',source_url:'https://example.invalid/isolated-price-history',interval:range,
- points:[{timestamp:new Date(Date.parse(now)-span).toISOString(),price:stock?'140':'2390'},{timestamp:now,price}],change_absolute:'10.34',change_percent:'0.67',
+ points:[{timestamp:new Date(Date.parse(now)-span).toISOString(),price:stock?'140':'2390'},{timestamp:new Date(Date.parse(now)-Math.round(span*0.73)).toISOString(),price:stock?'147.1234567':'2401.1234567'},{timestamp:now,price}],change_absolute:'10.34',change_percent:'0.67',
  ...(stock?{metrics:{day_high:'194.12',day_low:'140.5',day_volume:'20000',fifty_two_week_high:'230.5',fifty_two_week_low:'100.25',previous_close:'148.95',market_time:now}}:{})};
 };
 async function fixture(page:Page,{allCategories=false,historyFailure=false,holdBtc=false,stockCatalog=false,stockHistory=false}={}){
@@ -165,4 +165,58 @@ test('stock reference history requests each horizon and renders sourced price me
  await page.screenshot({path:test.info().outputPath('stock-reference-desktop.png'),fullPage:true});
  await page.setViewportSize({width:390,height:844});await expect.poll(()=>page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
  await page.screenshot({path:test.info().outputPath('stock-reference-mobile.png'),fullPage:true});
+});
+
+// These tests assert source samples, not an interpolated value from the drawn line.
+async function expectChartSample(page:Page,point:{timestamp:string;price:string},unit='USD'){
+ const tooltip=page.getByTestId('price-chart-tooltip');
+ await expect(tooltip).toBeVisible();await expect(tooltip).toContainText(point.price);await expect(tooltip).toContainText(unit);
+ await expect(tooltip.locator('time')).toHaveAttribute('datetime',point.timestamp);
+ await expect(tooltip.locator('time')).toContainText(new Date(point.timestamp).getUTCFullYear().toString());
+ await expect(tooltip.locator('time')).toContainText(/\d{1,2}:\d{2}:\d{2}/);
+ await expect(page.getByTestId('price-chart-selected-point')).toBeVisible();const crosshair=page.getByTestId('price-chart-crosshair');await expect(crosshair).toHaveAttribute('y2','265');expect(await crosshair.evaluate(line=>getComputedStyle(line).stroke)).not.toBe('none');
+}
+
+test('stock chart pointer snaps to an exact irregular source sample and a new horizon replaces its timestamp',async({page})=>{
+ const {calls}=await fixture(page,{allCategories:true,stockCatalog:true,stockHistory:true});
+ await page.getByTestId('markets-category-stocks').click();await selectMarket(page,'NVDA');
+ const chart=page.getByTestId('price-chart');
+ await page.getByRole('group',{name:'Price timeframe'}).getByRole('button',{name:'1D',exact:true}).click();
+ await expect.poll(()=>calls.histories.at(-1)?.range).toBe('1d');await expect(chart).toBeVisible();
+ // The middle observation lies at27% of elapsed time; pointer50% must snap to it.
+ const box=await chart.boundingBox();expect(box).not.toBeNull();
+ await chart.hover({position:{x:box!.width/2,y:box!.height/2}});
+ const oldPoint=history(stocks[1].market_id!,'1d').points[1]!;await expectChartSample(page,oldPoint);
+ await page.getByRole('group',{name:'Price timeframe'}).getByRole('button',{name:'1Y',exact:true}).click();
+ await expect.poll(()=>calls.histories.at(-1)?.range).toBe('1y');await expect(chart).toBeVisible();
+ const yearBox=await chart.boundingBox();await chart.hover({position:{x:yearBox!.width/2,y:yearBox!.height/2}});
+ const yearPoint=history(stocks[1].market_id!,'1y').points[1]!;await expectChartSample(page,yearPoint);
+ expect(yearPoint.timestamp).not.toBe(oldPoint.timestamp);
+ await page.getByRole('heading',{name:'Markets',exact:true}).hover();await expect(page.getByTestId('price-chart-tooltip')).toHaveCount(0);
+ expect(calls.writes).toEqual([]);
+});
+
+test('perpetual chart keyboard traverses only exact samples including first and last',async({page})=>{
+ const {calls}=await fixture(page);await selectMarket(page,'ETH');
+ const chart=page.getByTestId('price-chart');await expect(chart).toBeVisible();await chart.focus();
+ const samples=history('stellar-testnet:noether:ETH-PERP','live').points;
+ await chart.press('Home');await expectChartSample(page,samples[0]!);
+ await chart.press('ArrowRight');await expectChartSample(page,samples[1]!);
+ await chart.press('End');await expectChartSample(page,samples[2]!);
+ await chart.press('ArrowLeft');await expectChartSample(page,samples[1]!);
+ await page.getByTestId('market-search').focus();await expect(page.getByTestId('price-chart-tooltip')).toHaveCount(0);
+ expect(calls.writes).toEqual([]);
+});
+
+test.describe('touch chart interaction',()=>{
+ test.use({hasTouch:true,viewport:{width:390,height:844}});
+ test('a touch selects the exact stock observation without overflow or financial requests',async({page})=>{
+  const {calls}=await fixture(page,{allCategories:true,stockCatalog:true,stockHistory:true});
+  await page.getByTestId('markets-category-stocks').click();await selectMarket(page,'NVDA');
+  const chart=page.getByTestId('price-chart');await expect(chart).toBeVisible();const box=await chart.boundingBox();
+  await chart.tap({position:{x:box!.width/2,y:box!.height/2}});
+  await expectChartSample(page,history(stocks[1].market_id!,'live').points[1]!);
+  await expect.poll(()=>page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
+  await page.screenshot({path:test.info().outputPath('stock-chart-touch.png'),fullPage:true});expect(calls.writes).toEqual([]);
+ });
 });

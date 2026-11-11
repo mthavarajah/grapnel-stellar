@@ -253,3 +253,15 @@ test('quote request failure is visible inline and restores the explicit retry bu
  await expect(page.locator('.notice.error')).toHaveCount(0);expect(quotes).toBe(1);
  await swap.getByRole('button',{name:'Get quote',exact:true}).click();await expect.poll(()=>quotes).toBe(2);
 });
+
+
+test('spot chart inspection preserves the exact nine-decimal sample and XLM quote unit without requesting a swap',async({page})=>{
+ const calls=await fixture(page,{historyMode:'multiple'});
+ const chart=page.getByTestId('price-chart');await expect(chart).toBeVisible();
+ const box=await chart.boundingBox();await chart.hover({position:{x:box!.width/2,y:box!.height/2}});
+ const tooltip=page.getByTestId('price-chart-tooltip');await expect(tooltip).toBeVisible();await expect(tooltip).toContainText('6.123456789');await expect(tooltip).toContainText('XLM');
+ await expect(tooltip.locator('time')).toHaveAttribute('datetime','2026-11-11T10:05:00Z');await expect(tooltip.locator('time')).toContainText(/Nov\. 11, 2026/);await expect(tooltip.locator('time')).toContainText(/\d{1,2}:\d{2}:\d{2}/);
+ await chart.focus();await chart.press('Home');await expect(tooltip).toContainText('6.0000000');await expect(tooltip.locator('time')).toHaveAttribute('datetime','2026-11-11T10:00:00Z');
+ await chart.press('End');await expect(tooltip).toContainText('6.0500000');await expect(tooltip.locator('time')).toHaveAttribute('datetime','2026-11-11T10:10:00Z');
+ expect(calls.quote).toEqual([]);expect(calls.order).toEqual([]);expect(calls.sign).toBe(0);
+});
