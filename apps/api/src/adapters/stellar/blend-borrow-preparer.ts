@@ -49,7 +49,7 @@ export function inspectBorrowFootprint(data:xdr.SorobanTransactionData,intent:Bo
    if(dur!=='persistent')throw Error();
    if(name==='Positions'&&write&&target===intent.walletAddress){position=true;continue;}
    if(name==='ResConfig'&&!write&&reserves.includes(target))continue;
-   if(name==='ResData'&&write&&reserves.includes(target)){if(target===intent.reserveId)selectedData=true;continue;}
+   if(name==='ResData'&&reserves.includes(target)&&((write&&target===intent.reserveId)||(!write&&intent.action==='borrow'&&target!==intent.reserveId))){if(write&&target===intent.reserveId)selectedData=true;continue;}
    if(name==='EmisData'&&[0,1,6,7].includes(target))continue;
    if(name==='UserEmis'&&objectKeys(target,['reserve_id','user'])&&[0,1,6,7].includes(Number(target.reserve_id))&&target.user===intent.walletAddress)continue;
    throw Error();
