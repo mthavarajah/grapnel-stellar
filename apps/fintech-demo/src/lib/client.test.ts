@@ -14,3 +14,13 @@ describe('ambiguous financial request recovery',()=>{
  it('separates customer sessions and changed intents',()=>{const body={amount:'2'};expect(operationRequestKey('customer-a','return',body)).not.toBe(operationRequestKey('customer-b','return',body));expect(operationRequestKey('customer-a','return',body)).not.toBe(operationRequestKey('customer-a','return',{amount:'3'}));});
  it('uses session storage to retain pending intent keys across client reloads',()=>{const body={amount:'4'};const intent='grapnel.pending:customer-c:fund:'+JSON.stringify(body);vi.stubGlobal('sessionStorage',{getItem:(name:string)=>name===intent?'existing-pending-key':null,setItem:vi.fn(),removeItem:vi.fn()});expect(operationRequestKey('customer-c','fund',body)).toBe('existing-pending-key');clearOperationRequest('customer-c','fund',body);expect(sessionStorage.removeItem).toHaveBeenCalledWith(intent);});
 });
+
+it('preserves pending-operation recovery details',async()=>{
+ const id='00000000-0000-4000-8000-000000000003';
+ vi.stubGlobal('fetch',vi.fn().mockResolvedValue({ok:false,status:409,json:async()=>({error:{code:'WALLET_OPERATION_PENDING',message:'Finish the pending wallet action',details:{operation_id:id}}})}));
+ await expect(api('grapnel/usdc-trustline',{limit:'1000'})).rejects.toMatchObject({code:'WALLET_OPERATION_PENDING',status:409,details:{operation_id:id}});
+});
+it('rejects malformed error details as a recovery object',async()=>{
+ vi.stubGlobal('fetch',vi.fn().mockResolvedValue({ok:false,status:409,json:async()=>({error:{code:'WALLET_OPERATION_PENDING',message:'Pending',details:['not-an-object']}})}));
+ await expect(api('grapnel/usdc-trustline',{limit:'1000'})).rejects.toMatchObject({details:{}});
+});

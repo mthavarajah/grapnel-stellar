@@ -259,6 +259,13 @@ function FinanceShell({ page, auth }: { page: string; auth?: Auth }) {
   }, [session?.customer_id]);
   const [operations, setOperations] = useState<Operation[]>([]);
   const [active, setActive] = useState<Operation | null>(null);
+  const [approvalClock, setApprovalClock] = useState(Date.now());
+  useEffect(() => {
+    if (active?.status !== "awaiting_customer_authorization") return;
+    setApprovalClock(Date.now());
+    const timer = setInterval(() => setApprovalClock(Date.now()), 1000);
+    return () => clearInterval(timer);
+  }, [active?.status, active?.operation_id]);
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
   const [amount, setAmount] = useState("1");
@@ -424,7 +431,7 @@ function FinanceShell({ page, auth }: { page: string; auth?: Auth }) {
       try {
         const op = await api("grapnel/operations/" + active.operation_id);
         if (alive) {
-          setActive(op);
+          openOperation(op);
           if (op.status === "completed") await refresh();
         }
       } catch (e) {
@@ -448,6 +455,26 @@ function FinanceShell({ page, auth }: { page: string; auth?: Auth }) {
       setBusy(false);
     }
   }
+  function openOperation(op: Operation) {
+    setActive(op);
+    setOperations(current => [op, ...current.filter(item => item.operation_id !== op.operation_id)]);
+  }
+  async function resumeOperation(id: string) {
+    if (!session || !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id)) throw Error("Wallet action could not be found.");
+    const op = await api("grapnel/operations/" + id);
+    if (op.customer_id !== session.customer_id || op.wallet_id !== session.wallet_id) throw Error("Wallet action could not be found.");
+    openOperation(op);
+  }
+  async function recoverPendingWalletAction(cause: ClientError) {
+    const result = await api("grapnel/operations");
+    const rows: Operation[] = Array.isArray(result.operations) ? result.operations : [];
+    setOperations(rows);
+    const detailId = cause.details.operation_id;
+    const pending = rows.find(op => op.wallet_id === session?.wallet_id && !["completed", "failed", "rejected", "expired"].includes(op.status));
+    const id = typeof detailId === "string" ? detailId : pending?.operation_id;
+    if (!id) throw Error("The earlier wallet action has ended. Try your action again to prepare a fresh transaction.");
+    await resumeOperation(id);
+  }
   async function start(path: string, body: unknown) {
     if(!session)throw Error('A current customer session is required');
     const key=operationRequestKey(session.customer_id,path,body);
@@ -456,12 +483,16 @@ function FinanceShell({ page, auth }: { page: string; auth?: Auth }) {
       op=await api('grapnel/'+path,body,'POST',key);
     }catch(error){
       if(error instanceof ClientError && error.status<500 && error.status!==408)clearOperationRequest(session.customer_id,path,body);
+      if (error instanceof ClientError && error.code === "WALLET_OPERATION_PENDING") {
+        await recoverPendingWalletAction(error);
+        return;
+      }
       throw error;
     }
     if(!op?.operation_id)throw Error('Operation status is uncertain; retry this same action to recover it');
     clearOperationRequest(session.customer_id,path,body);
-    setActive(op);
-    if(op.status==='awaiting_customer_authorization')setActive(await api('grapnel/operations/'+op.operation_id));
+    if(op.status==='awaiting_customer_authorization')await resumeOperation(op.operation_id);
+    else openOperation(op);
   }
   async function approve() {
     if (
@@ -477,14 +508,14 @@ function FinanceShell({ page, auth }: { page: string; auth?: Auth }) {
       session.stellar_address,
     );
     try {
-      setActive(await api(`grapnel/operations/${active.operation_id}/authorize`, {
+      openOperation(await api(`grapnel/operations/${active.operation_id}/authorize`, {
         customer_action_token: active.customer_action_token,
         signed_xdr: signed,
       }));
     } catch (cause) {
       // Recover status only: authorization may have committed before a timeout.
       // Never automatically sign again or resend a financial request here.
-      try { setActive(await api(`grapnel/operations/${active.operation_id}`)); } catch { /* retain the known operation for manual recovery */ }
+      try { openOperation(await api(`grapnel/operations/${active.operation_id}`)); } catch { /* retain the known operation for manual recovery */ }
       throw cause;
     }
   }
@@ -498,6 +529,8 @@ function FinanceShell({ page, auth }: { page: string; auth?: Auth }) {
       await auth.connect();
       await refresh();
     });
+  const pendingWalletAction = operations.find(op => op.wallet_id === session?.wallet_id && !["completed", "failed", "rejected", "expired"].includes(op.status));
+  const approvalExpired = active?.status === "awaiting_customer_authorization" && !!active.prepared_action && Date.parse(active.prepared_action.summary.expiresAt) <= approvalClock;
   if (!sessionChecked || (auth && !auth.ready) || !session) {
     const loading = !loginTimedOut && (!sessionChecked || (auth && !auth.ready));
     return (
@@ -627,6 +660,17 @@ function FinanceShell({ page, auth }: { page: string; auth?: Auth }) {
               ↻
             </button>
           </div>
+          {pendingWalletAction && !active && (
+            <div className="notice neutral" role="status">
+              <Icon name="wallet" />
+              <div><strong>{pendingWalletAction.status === "awaiting_customer_authorization" ? "Wallet approval waiting" : "Wallet action in progress"}</strong>
+                <p>{activityLabel(pendingWalletAction)} · {statusLabel(pendingWalletAction.status)}. Open the existing action before preparing another.</p>
+              </div>
+              <button className="button outline" disabled={busy} onClick={() => action(() => resumeOperation(pendingWalletAction.operation_id))}>
+                {pendingWalletAction.status === "awaiting_customer_authorization" ? "Resume approval" : "Check status"}
+              </button>
+            </div>
+          )}
           {error && (
             <div className="notice error" role="alert">
               <strong>Request unavailable</strong>
@@ -1109,11 +1153,7 @@ function FinanceShell({ page, auth }: { page: string; auth?: Auth }) {
                       className="activity-item"
                       key={op.operation_id}
                       onClick={() =>
-                        action(async () =>
-                          setActive(
-                            await api("grapnel/operations/" + op.operation_id),
-                          ),
-                        )
+                        action(() => resumeOperation(op.operation_id))
                       }
                     >
                       <span className="activity-icon">
@@ -1249,8 +1289,18 @@ function FinanceShell({ page, auth }: { page: string; auth?: Auth }) {
                 View transaction on Stellar Expert ↗
               </a>
             )}
+            {active.status === "expired" && !active.tx_hash && (
+              <div className="inline-note">
+                <p>This unsigned approval expired. It cannot be signed or submitted.</p>
+                {active.type === "wallet.usdc_trustline" ? <button className="button wide" disabled={busy}
+                  onClick={() => action(async () => { await start("usdc-trustline", {limit:"1000"}); })}>Prepare USDC again</button>
+                  : <button className="button outline" disabled={busy} onClick={() => setActive(null)}>Choose action again</button>}
+              </div>
+            )}
             {active.status === "awaiting_customer_authorization" && (
               <>
+                {approvalExpired && <p className="inline-note" role="status">This approval timed out. Check its status before preparing a new action.</p>}
+                <button className="button outline" disabled={busy} onClick={() => action(() => resumeOperation(active.operation_id))}>Check action status</button>
                 <p className="small muted">
                   {active.type === "wallet.usdc_trustline"
                     ? "Review the trust limit, additional reserve, network fee and expiry. Privy signs this exact Testnet wallet setup transaction."
@@ -1258,7 +1308,7 @@ function FinanceShell({ page, auth }: { page: string; auth?: Auth }) {
                 </p>
                 <button
                   className="button wide"
-                  disabled={busy || !auth}
+                  disabled={busy || !auth || approvalExpired}
                   onClick={() => action(approve)}
                 >
                   {busy ? "Waiting for approval…" : "Approve with Privy"}

@@ -3,6 +3,7 @@ export class ClientError extends Error {
     public code: string,
     message: string,
     public status: number,
+    public details: Record<string, unknown> = {},
   ) {
     super(message);
   }
@@ -29,6 +30,7 @@ export async function api(
       result.error?.code ?? "REQUEST_FAILED",
       result.error?.message ?? "Request failed",
       res.status,
+      result.error?.details && typeof result.error.details === "object" && !Array.isArray(result.error.details) ? result.error.details : {},
     );
   return result.data;
 }
