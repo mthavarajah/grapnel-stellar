@@ -1,0 +1,76 @@
+{
+  "observed_at": "2026-11-11T18:17:00.888Z",
+  "network": "testnet",
+  "mode": "read_only_unsigned_diagnostic",
+  "broadcast": false,
+  "rows": [
+    {
+      "direction": "BTC-XLM-customer-100atomic",
+      "assetIn": "CB7ICEHVRIRMF3CF6SIP2C2R3Z4E7WRPATT552QSVLIXZ5RSN6KLUDAE",
+      "assetOut": "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC",
+      "amount": "100",
+      "source": "GB4PC65ZHBPVEZMAHY2K2KYMS3RFBIN2FQIE3LGTLEHT2DEWVMTD7JYQ",
+      "quote_status": 201,
+      "quote": {
+        "assetIn": "CB7ICEHVRIRMF3CF6SIP2C2R3Z4E7WRPATT552QSVLIXZ5RSN6KLUDAE",
+        "assetOut": "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC",
+        "tradeType": "EXACT_IN",
+        "amountIn": "100",
+        "amountOut": "2545968",
+        "otherAmountThreshold": "2533492",
+        "priceImpactPct": "0.00",
+        "platform": "router",
+        "routePlan": [
+          {
+            "swapInfo": {
+              "protocol": "soroswap",
+              "path": [
+                "CB7ICEHVRIRMF3CF6SIP2C2R3Z4E7WRPATT552QSVLIXZ5RSN6KLUDAE",
+                "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC"
+              ]
+            },
+            "percent": "100.00"
+          }
+        ],
+        "rawTrade": {
+          "amountIn": "100",
+          "amountOutMin": "2533492",
+          "distribution": [
+            {
+              "protocol_id": "soroswap",
+              "path": [
+                "CB7ICEHVRIRMF3CF6SIP2C2R3Z4E7WRPATT552QSVLIXZ5RSN6KLUDAE",
+                "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC"
+              ],
+              "parts": 10,
+              "is_exact_in": true
+            }
+          ]
+        }
+      },
+      "build": {
+        "message": "RouterError.RouterInsufficientOutputAmount",
+        "errorCode": 507,
+        "error": "Simulation Failed",
+        "extra": {
+          "suggestion": "Try with a higher slippage"
+        }
+      },
+      "build_status": 400,
+      "request": {
+        "assetIn": "CB7ICEHVRIRMF3CF6SIP2C2R3Z4E7WRPATT552QSVLIXZ5RSN6KLUDAE",
+        "assetOut": "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC",
+        "amount": "100",
+        "tradeType": "EXACT_IN",
+        "protocols": [
+          "soroswap"
+        ],
+        "slippageBps": 49
+      }
+    }
+  ],
+  "tx_hash": null,
+  "operation_id": null,
+  "customer_id": null,
+  "endpoint": "POST /quote?network=testnet then POST /quote/build?network=testnet"
+}

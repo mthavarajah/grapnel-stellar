@@ -1,0 +1,46 @@
+{
+  "observed_at": "2026-11-11T18:18:27.980Z",
+  "pair": "CDZL65OIXMVK63DCIWKJ7ULKVHZ7V4B4OM3XQHRNHR4OCFADIUV4FL64",
+  "storage": [
+    [
+      0,
+      "CB7ICEHVRIRMF3CF6SIP2C2R3Z4E7WRPATT552QSVLIXZ5RSN6KLUDAE"
+    ],
+    [
+      1,
+      "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC"
+    ],
+    [
+      2,
+      "6273715"
+    ],
+    [
+      3,
+      "160210000000"
+    ],
+    [
+      4,
+      "CDP3HMUH6SMS3S7NPGNDJLULCOXXEPSHY4JKUKMBNQMATHDHWXRRJTBY"
+    ],
+    [
+      "METADATA",
+      {
+        "decimal": 7,
+        "name": "BTC-native Soroswap LP Token",
+        "symbol": "BTC-native-SOROSWAP-LP"
+      }
+    ],
+    [
+      [
+        "TotalSupply"
+      ],
+      "1002535880"
+    ]
+  ],
+  "reserve_in": "6273715",
+  "reserve_out": "160210000000",
+  "amount_in": "100",
+  "ceil_fee_atomic": "1",
+  "actual_integer_output": "2528093",
+  "fractional_fee_output": "2545968"
+}

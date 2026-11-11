@@ -84,6 +84,13 @@ export class SoroswapSpotAdapter {
       return unavailable('UNINSPECTED_PROVIDER_PREREQUISITE');
     }
     if(response.status===429)throw new GrapnelError(429,'PROVIDER_RATE_LIMITED','Soroswap rate limit reached',true);
+    if(response.status===400&&path==='/quote/build?network=testnet'){
+      // Only classify the observed router minimum failure. Never expose an opaque
+      // upstream body, widen the approved minimum, or retry a different intent.
+      let failure:Record<string,unknown>={};try{failure=record(await response.json());}catch{/* opaque response remains unavailable */}
+      if(failure.errorCode===507&&failure.message==='RouterError.RouterInsufficientOutputAmount'&&failure.error==='Simulation Failed')throw new GrapnelError(409,'EXECUTION_UNAVAILABLE','The current onchain output is below this quote’s approved minimum. Request a fresh quote and review the amount or slippage before approving again.',false,{reason:'QUOTE_MINIMUM_NOT_MET'});
+      return unavailable('NO_TESTNET_LIQUIDITY_OR_ROUTE');
+    }
     if([400,404,409,422].includes(response.status))return unavailable('NO_TESTNET_LIQUIDITY_OR_ROUTE');
     if(!response.ok)throw new GrapnelError(503,'PROVIDER_UNAVAILABLE','Soroswap request failed',true);
     try{return await response.json();}catch{return invalid('Soroswap returned invalid JSON');}
