@@ -278,3 +278,13 @@ it('binds the exact verified margin market history to the existing entitlement',
  expect(server.requireModule).toHaveBeenCalledWith('trade.perps',session);expect(upstream).toHaveBeenCalledWith(`/trade/markets/${encodeURIComponent(market)}/history?range=1w`,session);
  expect((await GET(request('market-history?market_id=stellar-testnet:peridot:unverified&range=1w'),context(['market-history']))).status).toBe(404);expect(upstream).toHaveBeenCalledTimes(1);
 });
+
+it('derives gross account valuation identity separately from wallet-only valuation',async()=>{
+ const upstream=vi.spyOn(server,'grapnel').mockResolvedValue({wallet_id:session.walletId,total_usd:'310.25',priced_subtotal_usd:'310.25',unpriced_asset_count:0,as_of:new Date().toISOString()});
+ expect((await GET(request('account-valuation?customer_id=foreign&wallet_id=foreign'),context(['account-valuation']))).status).toBe(200);
+ expect(server.requireModule).toHaveBeenCalledWith('capital.wallets',session);expect(upstream).toHaveBeenCalledWith(`/portfolio/valuation?customer_id=${session.customerId}&wallet_id=${session.walletId}`,session);
+});
+it('blocks account valuation without a customer session or wallet entitlement',async()=>{
+ const upstream=vi.spyOn(server,'grapnel');vi.mocked(server.requireSession).mockRejectedValueOnce(new server.BffError(401,'SESSION_REQUIRED','Sign in'));expect((await GET(request('account-valuation'),context(['account-valuation']))).status).toBe(401);expect(upstream).not.toHaveBeenCalled();
+ vi.mocked(server.requireModule).mockRejectedValueOnce(new server.BffError(403,'MODULE_NOT_ENABLED','Disabled'));expect((await GET(request('account-valuation'),context(['account-valuation']))).status).toBe(403);expect(upstream).not.toHaveBeenCalled();
+});

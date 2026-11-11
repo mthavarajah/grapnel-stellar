@@ -6,7 +6,7 @@ test('business dashboard and consumer login load with the configured backend net
  await expect(page.getByText(/testnet/i).first()).toBeVisible();
  await expect(page.locator('body')).not.toContainText(/application error|internal server error/i);
  const consumer=await page.goto(fintech);expect(consumer?.status()).toBeLessThan(400);
- await expect(page.getByText('local finance',{exact:true}).first()).toBeVisible();
+ await expect(page.getByRole('img',{name:'Local Finance',exact:true}).first()).toBeVisible();
  await expect(page.getByRole('heading',{name:/Welcome to Local Finance|Overview/i}).first()).toBeVisible();
  await expect(page.locator('body')).not.toContainText(/application error|internal server error/i);
  const status=await page.request.get(fintech+'/api/status');expect(status.ok()).toBe(true);

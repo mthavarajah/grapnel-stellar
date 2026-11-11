@@ -393,6 +393,11 @@ function FinanceShell({ page, auth, initialCategory }: { page: string; auth?: Au
   },[profileOpen]);
 
   const profileValue=walletValuation ? (walletValuation.unpriced_asset_count>0?walletValuation.priced_subtotal_usd:walletValuation.total_usd) : null;
+  const [accountValuation,setAccountValuation]=useState<WalletValuation|null>(null);
+  const [accountValueLoading,setAccountValueLoading]=useState(false);
+  const [accountValueUnavailable,setAccountValueUnavailable]=useState(false);
+  const accountTotal=accountValuation?(accountValuation.unpriced_asset_count>0?accountValuation.priced_subtotal_usd:accountValuation.total_usd):null;
+  const accountValueOwner=useRef("");accountValueOwner.current=`${session?.customer_id??""}:${session?.wallet_id??""}`;
   const [caps, setCaps] = useState<Capability[]>([]);
   const [overviewSections,setOverviewSections] = useState<OverviewSection[]>([]);
   const [overviewLoading,setOverviewLoading] = useState(false);
@@ -516,6 +521,18 @@ function FinanceShell({ page, auth, initialCategory }: { page: string; auth?: Au
     if(page==="borrow"&&session&&capability("capital.lending")?.enabled)void refreshBorrowing();
     else if(page==="borrow"){setBorrowing(null);setBorrowingError("");}
   },[page,session?.customer_id,caps,refreshBorrowing]);
+  useEffect(()=>{
+    setAccountValuation(null);setAccountValueUnavailable(false);
+    if(!session||!(page==="home"||page==="login")||!capability("capital.wallets")?.enabled){setAccountValueLoading(false);return;}
+    let alive=true;const owner=`${session.customer_id}:${session.wallet_id}`,walletId=session.wallet_id;
+    setAccountValueLoading(true);
+    void api("grapnel/account-valuation").then(value=>{
+      const money=(amount:unknown)=>typeof amount==="string"&&/^\d+(?:\.\d+)?$/.test(amount)&&formatTokenAmount(amount)!=="Unavailable";
+      if(value?.wallet_id!==walletId||!Number.isInteger(value.unpriced_asset_count)||value.unpriced_asset_count<0||!(value.total_usd===null||money(value.total_usd))||!money(value.priced_subtotal_usd)||!Number.isFinite(Date.parse(value.as_of)))throw Error("Account value is unavailable.");
+      if(alive&&accountValueOwner.current===owner)setAccountValuation(value);
+    }).catch(()=>{if(alive&&accountValueOwner.current===owner)setAccountValueUnavailable(true);}).finally(()=>{if(alive&&accountValueOwner.current===owner)setAccountValueLoading(false);});
+    return()=>{alive=false;};
+  },[session?.customer_id,session?.wallet_id,page,caps]);
   const enabledTradeCategories = tradeCategories.filter(([id]) => capability("trade." + (id === "crypto_spot" ? "spot" : id))?.enabled);
   useEffect(() => {
     if (!caps.length || enabledTradeCategories.some(([id]) => id === category)) return;
@@ -857,7 +874,7 @@ function FinanceShell({ page, auth, initialCategory }: { page: string; auth?: Au
     return (
       <main className="login-screen">
         <section className="login-card">
-          <div className="brand"><span className="brandmark">l<span>f</span></span><span>local finance</span></div>
+          <div className="local-finance-login-brand"><img src="/brand/local-finance-wordmark.svg" alt="Local Finance" width={250} height={48}/></div>
 
           <h1>{loading ? "Opening your workspace…" : "Welcome to Local Finance."}</h1>
           <p>Sign in to connect your wallet and open your dashboard.</p>
@@ -876,13 +893,9 @@ function FinanceShell({ page, auth, initialCategory }: { page: string; auth?: Au
   return (
     <div className="app">
       <aside className="sidebar">
-        <Link className="brand" href="/home">
-          <span className="brandmark">
-            l<span>f</span>
-          </span>
-          <span>
-            local finance
-          </span>
+        <Link className="brand local-finance-brand" href="/home" aria-label="Local Finance home">
+          <img className="local-finance-wordmark" src="/brand/local-finance-wordmark.svg" alt="Local Finance" width={200} height={39}/>
+          <img className="local-finance-compact-mark" src="/brand/local-finance-mark.svg" alt="Local Finance" width={36} height={36}/>
         </Link>
         <div className="workspace">
           <span className="workspace-avatar">L</span>
@@ -1009,6 +1022,7 @@ function FinanceShell({ page, auth, initialCategory }: { page: string; auth?: Au
                     </span>
                     <span className="hero-dot">●</span>
                   </div>
+                  <div className="wallet-hero-content"><div className="wallet-hero-account">
                   <h2>
                     {session
                       ? "Your wallet is connected."
@@ -1060,13 +1074,18 @@ function FinanceShell({ page, auth, initialCategory }: { page: string; auth?: Au
                       </button>
                     )}
                   </div>
+                  </div><section className="account-assets-total" aria-label="Account assets" data-testid="account-assets-total" title={accountValuation?.as_of?`As of ${marketDate(accountValuation.as_of,true,true)}`:undefined}>
+                    <span className="account-assets-label">{accountValuation&&accountValuation.unpriced_asset_count>0?"Estimated priced assets":"Total Assets"}</span>
+                    <strong className="account-assets-value" aria-live="polite">{accountValueLoading||accountValueUnavailable||!accountValuation?"—":accountTotal==null?"—":`$${formatTokenAmount(accountTotal)}`}</strong>
+                    <small>{accountValueLoading?"Loading value…":accountValueUnavailable||!accountValuation||accountTotal==null?"Value unavailable":accountValuation.unpriced_asset_count>0?`${accountValuation.unpriced_asset_count} ${accountValuation.unpriced_asset_count===1?"asset":"assets"} not priced`:"Estimated account assets"}</small>
+                  </section></div>
                 </div>
               </section>
               <section className="section">
                 <div className="section-heading">
                   <h2>Your assets</h2>
                   <span className="muted small">
-                    Wallet balances · no estimated USD value
+                    Wallet balances
                   </span>
                 </div>
                 <BalanceTable balances={balances} connected={!!session} />
