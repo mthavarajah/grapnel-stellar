@@ -271,3 +271,10 @@ it('refuses unauthenticated valuation and disabled wallets before any upstream r
  vi.mocked(server.requireModule).mockRejectedValueOnce(new server.BffError(403,'MODULE_NOT_ENABLED','Disabled'));
  expect((await GET(request('wallet-valuation'),context(['wallet-valuation']))).status).toBe(403);expect(upstream).not.toHaveBeenCalled();
 });
+
+it('binds the exact verified margin market history to the existing entitlement',async()=>{
+ const market='stellar-testnet:peridot:XLM-USDT-MARGIN';const upstream=vi.spyOn(server,'grapnel').mockResolvedValue({market_id:market,points:[]});
+ expect((await GET(request(`market-history?market_id=${encodeURIComponent(market)}&range=1w`),context(['market-history']))).status).toBe(200);
+ expect(server.requireModule).toHaveBeenCalledWith('trade.perps',session);expect(upstream).toHaveBeenCalledWith(`/trade/markets/${encodeURIComponent(market)}/history?range=1w`,session);
+ expect((await GET(request('market-history?market_id=stellar-testnet:peridot:unverified&range=1w'),context(['market-history']))).status).toBe(404);expect(upstream).toHaveBeenCalledTimes(1);
+});

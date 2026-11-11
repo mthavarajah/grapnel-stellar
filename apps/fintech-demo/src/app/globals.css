@@ -1710,3 +1710,6 @@ footer strong {
 .profile-logout { border: 0; border-top: 1px solid var(--line); background: transparent; color: #a5403a; padding: 15px 0 0; width: 100%; text-align: left; font: inherit; font-size: 12px; cursor: pointer; }
 .profile-logout:hover { color: #7b2721; }
 @media(max-width: 600px) { .profile-panel { padding: 17px; } .profile-valuation > strong { font-size: 23px; } }
+
+.margin-collateral { display: flex; align-items: center; gap: 7px; }
+.margin-trading-reason { margin: 20px 0 0; padding: 11px; color: #8a642b; background: #faf5e8; border-radius: 9px; font-size: 11px; line-height: 1.6; }
