@@ -1,6 +1,6 @@
 import { randomUUID,createHash } from 'node:crypto';
 import { createRequire } from 'node:module';
-import { beforeAll,afterAll,describe,it,expect,vi } from 'vitest';
+import { beforeAll,beforeEach,afterAll,describe,it,expect,vi } from 'vitest';
 import { buildApp } from '../../apps/api/src/app.js';
 import { createPool } from '../../apps/api/src/db/index.js';
 import { migrate } from '../../apps/api/src/db/migrate.js';
@@ -40,6 +40,13 @@ describe.skipIf(!url)('QA Postgres tenant boundaries and treasury concurrency',(
   }});
   const login=await app.inject({method:'POST',url:'/v1/dashboard/login',headers:{origin:ownerOrigin},payload:{secret:'qa-only-owner-secret'}});
   ownerCookie=login.cookies[0]!.name+'='+login.cookies[0]!.value;csrf=login.json().data.csrf_token;
+ });
+ // Each case owns its offline pending operations. Terminalize only prior-case fixture
+ // operations; runtime pending/ambiguous-send assertions within each case stay intact.
+ beforeEach(async()=>{
+  await pool.query("UPDATE operations SET state='failed' WHERE business_id=ANY($1::uuid[]) AND state NOT IN ('completed','failed','rejected','expired')",[[tenantA,tenantB]]);
+  await pool.query("UPDATE balance_reservations SET state='released' WHERE business_id=ANY($1::uuid[])",[[tenantA,tenantB]]);
+  await pool.query("UPDATE worker_jobs SET state='completed' WHERE operation_id IN (SELECT id FROM operations WHERE business_id=ANY($1::uuid[]))",[[tenantA,tenantB]]);
  });
  afterAll(async()=>{await app?.close();await pool.end();});
  it('hides foreign wallet, operation and portfolio under valid tenant A key',async()=>{

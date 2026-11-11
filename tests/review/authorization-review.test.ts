@@ -1,5 +1,5 @@
 import {randomUUID} from 'node:crypto';
-import {beforeAll,afterAll,describe,it,expect,vi} from 'vitest';
+import {beforeAll,beforeEach,afterAll,describe,it,expect,vi} from 'vitest';
 import {createPool} from '../../apps/api/src/db/index.js';
 import {migrate} from '../../apps/api/src/db/migrate.js';
 import {OperationService} from '../../apps/api/src/modules/operations/service.js';
@@ -19,6 +19,13 @@ describe.skipIf(!databaseUrl)('review: atomic authorization and ambiguous send s
   await pool.query("INSERT INTO customers(id,business_id,external_customer_id,privy_user_id) VALUES($1,$2,'offline-user','did:privy:offline-review')",[customerId,businessId]);
   await pool.query("INSERT INTO wallets(id,business_id,customer_id,privy_wallet_id,stellar_address,public_key) VALUES($1,$2,$3,'offline-wallet',$4,$4)",[walletId,businessId,customerId,address]);
  });
+ // Each case owns its offline pending operations. Terminalize only prior-case fixture
+ // operations; runtime pending/ambiguous-send assertions within each case stay intact.
+ beforeEach(async()=>{
+  await pool.query("UPDATE operations SET state='failed' WHERE business_id=ANY($1::uuid[]) AND state NOT IN ('completed','failed','rejected','expired')",[[businessId]]);
+  await pool.query("UPDATE balance_reservations SET state='released' WHERE business_id=ANY($1::uuid[])",[[businessId]]);
+  await pool.query("UPDATE worker_jobs SET state='completed' WHERE operation_id IN (SELECT id FROM operations WHERE business_id=ANY($1::uuid[]))",[[businessId]]);
+ });
  afterAll(async()=>{await pool.end();});
  async function preparedOperation(){
   const result=await service.createIdempotent({businessId,customerId,walletId,module:'capital.wallets',type:'offline.review',provider:'offline_fixture',route:'/offline-review',idempotencyKey:randomUUID(),request:{fixture:true}},async(client,id)=>{
@@ -37,7 +44,11 @@ describe.skipIf(!databaseUrl)('review: atomic authorization and ambiguous send s
   expect((await pool.query('SELECT id FROM worker_jobs WHERE operation_id=$1',[op.id])).rowCount).toBe(0);
  });
  it('rejects another operation token for the same authenticated customer/wallet before verifier runs',async()=>{
-  const a=await preparedOperation(),b=await preparedOperation();const verify=vi.fn(async()=>({txHash:'b'.repeat(64)}));
+  const a=await preparedOperation();
+  await expect(preparedOperation()).rejects.toMatchObject({code:'WALLET_OPERATION_PENDING'});
+  // Model a rejected first fixture before a second action can legally be prepared.
+  await pool.query("UPDATE operations SET state='rejected' WHERE id=$1",[a.id]);
+  const b=await preparedOperation();const verify=vi.fn(async()=>({txHash:'b'.repeat(64)}));
   await expect(service.authorize({businessId,customerId,operationId:b.id,token:a.token,signedXdr:'OFFLINE_FIXTURE',verify})).rejects.toMatchObject({code:'CUSTOMER_AUTH_INVALID'});
   expect(verify).not.toHaveBeenCalled();
  });
