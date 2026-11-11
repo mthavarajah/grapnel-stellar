@@ -1664,3 +1664,12 @@ footer strong {
 
 .overview-market-value { display: grid; gap: 4px; text-align: right; }
 .overview-market-value small { font-size: 9px; font-weight: 400; color: var(--muted); white-space: normal; }
+
+.interactive-price-chart { position: relative; }
+.market-chart { touch-action: pan-y; outline-offset: 5px; border-radius: 6px; }
+.market-chart:focus-visible { outline: 2px solid var(--blue); }
+.market-chart-crosshair { stroke: #8092c7; stroke-width: 1; stroke-dasharray: 4 4; pointer-events: none; }
+.market-chart-tooltip { position: absolute; top: 5px; left: 10px; right: 10px; width: fit-content; max-width: calc(100% - 20px); margin: auto; padding: 9px 12px; display: grid; gap: 4px; pointer-events: none; border: 1px solid var(--line); border-radius: 9px; background: var(--paper); box-shadow: 0 4px 18px #18293c12; text-align: center; overflow-wrap: anywhere; }
+.market-chart-tooltip strong { color: var(--ink); font-size: 11px; font-weight: 600; }
+.market-chart-tooltip time { color: var(--muted); font-size: 10px; }
+.chart-assistive { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }

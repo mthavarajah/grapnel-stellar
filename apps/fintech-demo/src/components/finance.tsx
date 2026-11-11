@@ -166,11 +166,11 @@ function displayPublicNotional(value:unknown):string {
   if(typeof value!=="string"||!/^[-]?\d+$/.test(value))return "—";
   try{const amount=BigInt(value);return `${amount<0n?"-":""}${formatTokenAmount(fromAtomic(amount<0n?-amount:amount,7))} USDC`;}catch{return "—";}
 }
-function marketDate(value:string|number,includeTime=false):string {
+function marketDate(value:string|number,includeTime=false,includeSeconds=false):string {
   const date=new Date(value);if(!Number.isFinite(date.getTime()))return "Date unavailable";
   const parts=new Intl.DateTimeFormat("en-US",{month:"short",day:"2-digit",year:"numeric"}).formatToParts(date);
   const part=(type:string)=>parts.find(item=>item.type===type)?.value??"";
-  return `${part("month")}. ${part("day")}, ${part("year")}${includeTime?` · ${date.toLocaleTimeString(undefined,{hour:"numeric",minute:"2-digit"})}`:""}`;
+  return `${part("month")}. ${part("day")}, ${part("year")}${includeTime?` · ${date.toLocaleTimeString(undefined,{hour:"numeric",minute:"2-digit",...(includeSeconds?{second:"2-digit" as const}:{})})}`:""}`;
 }
 function displayChange(value:string|null|undefined):string {
   if(typeof value!=="string"||!/^[-+]?\d+(?:\.\d+)?$/.test(value))return "—";
@@ -178,8 +178,11 @@ function displayChange(value:string|null|undefined):string {
   return formatted==="Unavailable"?"—":`${value.startsWith("-")?"-":"+"}${formatted}`;
 }
 function PriceChart({history,loading}:{history:MarketHistory|null;loading:boolean}) {
+  const [selectedIndex,setSelectedIndex]=useState<number|null>(null);
+  const chartRef=useRef<SVGSVGElement|null>(null);
+  useEffect(()=>{setSelectedIndex(null);},[history?.market_id,history?.as_of,history?.points]);
   const points=(history?.points??[]).flatMap(point=>{
-    try {const timestamp=Date.parse(point.timestamp),price=toAtomic(point.price,38);return Number.isFinite(timestamp)?[{timestamp,price}]:[];}catch{return [];}
+    try {const timestamp=Date.parse(point.timestamp),price=toAtomic(point.price,38);return Number.isFinite(timestamp)?[{timestamp,price,originalPrice:point.price,originalTimestamp:point.timestamp}]:[];}catch{return [];}
   }).sort((a,b)=>a.timestamp-b.timestamp).filter((point,index,all)=>index===0||point.timestamp!==all[index-1]!.timestamp);
   if(loading)return <div className="market-chart-empty" role="status">Loading price history…</div>;
   if(!points.length)return <div className="market-chart-empty" role="status">Price history is not available yet.</div>;
@@ -187,13 +190,34 @@ function PriceChart({history,loading}:{history:MarketHistory|null;loading:boolea
   const max=points.reduce((current,p)=>p.price>current?p.price:current,points[0]!.price);
   const first=points[0]!.timestamp,last=points[points.length-1]!.timestamp;
   const coordinates=points.map(point=>({x:last===first?300:20+(point.timestamp-first)*560/(last-first),y:max===min?140:260-Number((point.price-min)*240000n/(max-min))/1000}));
+  const index=selectedIndex==null?null:Math.max(0,Math.min(selectedIndex,points.length-1));
+  const selected=index==null?null:points[index]!,coordinate=index==null?null:coordinates[index]!;
+  const selectAtX=(clientX:number)=>{
+    const bounds=chartRef.current?.getBoundingClientRect();if(!bounds||!bounds.width)return;
+    const timestamp=first+(((clientX-bounds.left)/bounds.width*600-20)/560)*(last-first);
+    let closest=0;for(let i=1;i<points.length;i++)if(Math.abs(points[i]!.timestamp-timestamp)<Math.abs(points[closest]!.timestamp-timestamp))closest=i;
+    setSelectedIndex(closest);
+  };
   return <div className="market-chart-wrap">
-    <svg viewBox="0 0 600 280" role="img" aria-label="Price history" className="market-chart">
-      <title>{`${history!.base_symbol} price in ${history!.quote_symbol}`}</title>
-      {[60,140,220].map(y=><line key={y} x1="20" x2="580" y1={y} y2={y} className="market-chart-grid" />)}
-      {coordinates.length>1&&<polyline points={coordinates.map(p=>`${p.x},${p.y}`).join(" ")} className="market-chart-line" />}
-      <circle cx={coordinates.at(-1)!.x} cy={coordinates.at(-1)!.y} r="4" className="market-chart-dot" />
-    </svg>
+    <div className="interactive-price-chart">
+      <svg ref={chartRef} viewBox="0 0 600 280" role="img" aria-label="Price history" aria-describedby="price-chart-help" tabIndex={0} data-testid="price-chart" className="market-chart"
+        onPointerMove={event=>selectAtX(event.clientX)} onPointerDown={event=>{event.currentTarget.focus({preventScroll:true});selectAtX(event.clientX);}}
+        onPointerLeave={event=>{if(event.pointerType!=="touch")setSelectedIndex(null);}} onFocus={()=>setSelectedIndex(current=>current??points.length-1)} onBlur={()=>setSelectedIndex(null)}
+        onKeyDown={event=>{
+          if(!["ArrowLeft","ArrowRight","Home","End","Escape"].includes(event.key))return;event.preventDefault();
+          if(event.key==="Escape"){setSelectedIndex(null);return;}
+          if(event.key==="Home"){setSelectedIndex(0);return;}if(event.key==="End"){setSelectedIndex(points.length-1);return;}
+          setSelectedIndex(current=>Math.max(0,Math.min(points.length-1,(current??points.length-1)+(event.key==="ArrowRight"?1:-1))));
+        }}>
+        <title>{`${history!.base_symbol} price in ${history!.quote_symbol}`}</title>
+        {[60,140,220].map(y=><line key={y} x1="20" x2="580" y1={y} y2={y} className="market-chart-grid" />)}
+        {coordinates.length>1&&<polyline points={coordinates.map(p=>`${p.x},${p.y}`).join(" ")} className="market-chart-line" />}
+        <circle cx={coordinates.at(-1)!.x} cy={coordinates.at(-1)!.y} r="4" className="market-chart-dot" />
+        {coordinate&&<><line x1={coordinate.x} x2={coordinate.x} y1="15" y2="265" className="market-chart-crosshair" data-testid="price-chart-crosshair"/><circle cx={coordinate.x} cy={coordinate.y} r="5" className="market-chart-dot" data-testid="price-chart-selected-point"/></>}
+      </svg>
+      <span className="chart-assistive" id="price-chart-help">Use left and right arrow keys to inspect each recorded price. Home and End select the first and latest observations.</span>
+      {selected&&<div className="market-chart-tooltip" role="tooltip" data-testid="price-chart-tooltip"><strong>{selected.originalPrice} {history!.quote_symbol}</strong><time dateTime={selected.originalTimestamp}>{marketDate(selected.originalTimestamp,true,true)}</time></div>}
+    </div>
     {points.length===1?<p className="market-chart-caption">One price observation. More history is not available yet.</p>:<div className="market-chart-dates"><span>{marketDate(first,true)}</span><span>{marketDate(last,true)}</span></div>}
   </div>;
 }
