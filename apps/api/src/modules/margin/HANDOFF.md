@@ -37,3 +37,15 @@ pnpm --filter @grapnel/api typecheck
 40 tests passed:24 offline state/evidence and16 dedicated disposable Postgres coordinator cases. DB suite requires exact database name `grapnel_margin_workflow_test` before resetting its schema; it cannot target development data. It exercises real SQL constraints, atomic child creation/reservations, idempotency and rollback. Provider/chain adapter is an explicit offline fixture; no external requests, signing, broadcasting or acceptance hashes were produced by this agent.
 
 Remaining root work: install reviewed migration; register actual asset/receipt identities; bind live verified provider steps, authorization and worker; add public scoped routes and frontend approvals; execute customer Privy acceptance. Do not advertise customer Margin execution from this coordinator alone.
+
+## Scoped HTTP follow-up
+
+Root installed the proposal as migration `0003_margin_workflows.sql` and froze shared public validators in contract0.2.1. Service DB tests now use the actual migration only. `routes.ts` consumes those shared validators and exports `registerMarginRoutes`; root still owns runtime registration.
+
+Routes: POST/list GET `/v1/trade/margin/workflows`, customer-scoped GET`/:id`, POST`/:id/reconcile`, POST`/:id/steps/:step`, and trusted read-only preparation POST`/:id/steps/:step/quote`. Every route checks current `trade.perps` business entitlement and verified customer/wallet binding before service/provider reads. Create and each step require visible ASCII1–200-character Idempotency-Key. Public responses whitelist snake_case IDs, exact raw amount/asset, phase/revision, operation/position IDs, readiness and permitted next steps; private pins/policy/baselines/owner evidence never serialize.
+
+Create additionally requires explicit trusted `creationReadyFor(terms,customer)===true` **before persistence**. Missing service, terms constructor, overall readiness or quote adapter returns structured EXECUTION_UNAVAILABLE. Read/list/reconcile remain usable for existing workflows even when new creation is blocked. Per-step readiness defaults blocked; next_steps is the intersection of phase order and actually proven steps. Source quote terms must be canonical, exact to the step, expire within120seconds and preserve workflow revision while fetched. A quote never creates an operation; actual preparation rechecks fresh provider bounds. Browser-supplied revision, owner, tx hash, evidence, fullterms/pins/policy are rejected.
+
+Root must bind trusted `termsFor`, `creationReadyFor`, `readinessFor` and `quoteFor` only to actual verified provider state. No optimistic default is provided. Existing operations authorization remains unchanged. Service list reads at most20 exact tenant/customer/wallet rows, active first then newest, for recovery beyond browser local storage.
+
+Latest follow-up:43 route tests +25 reducer tests +16 actual0003 Postgres tests pass (84 total); API typecheck passes. Zero-refund open cancellation now becomes recovered after mandatory verified cancellation evidence, avoiding an impossible zero-amount return.

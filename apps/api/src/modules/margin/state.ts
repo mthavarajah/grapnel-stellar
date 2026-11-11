@@ -10,9 +10,12 @@ export function validateMarginTerms(t:MarginTerms):void {
  if(t.network!=='stellar-testnet'||t.provider!=='peridot'||!t.marketId||!t.poolId||!t.marginAssetId||!t.baseAssetId||!t.receiptAssetId||t.marginAssetId===t.baseAssetId||!['long','short'].includes(t.direction)||![2,3,4,5].includes(t.leverage)||!Number.isInteger(t.slippageBps)||t.slippageBps<0||t.slippageBps>500||!/^[a-f0-9]{64}$/.test(t.pinsHash)||!t.policyVersion)return fail('TERMS');
  atomic(t.collateralAtomic,true);atomic(t.maxFeeStroops,true);atomic(t.depositMaxFeeStroops,true);
 }
-export function assertNextMarginStep(w:MarginWorkflow,step:MarginStep,terms:MarginStepTerms):void {
+export function orderedMarginSteps(w:MarginWorkflow):MarginStep[] {
  const allowed:Record<MarginPhase,readonly MarginStep[]>={awaiting_collateral:['vault_deposit'],awaiting_margin_transfer:['margin_transfer'],awaiting_open_begin:['open_begin','margin_return'],opening_pending:['open_swap','open_cancel'],opening_swapped:['open_activate'],open:['close_prepare'],closing_prepared:w.terms.direction==='long'?['close_swap','close_cancel']:['close_short_swap','close_cancel'],closing_swapped:['close_finish'],closed:['margin_return'],awaiting_vault_withdraw:['vault_withdraw'],recovered:[]};
- if(w.activeOperationId||!allowed[w.phase]?.includes(step))return fail('STEP_ORDER_OR_PENDING');
+ return w.activeOperationId?[]:[...(allowed[w.phase]??[])];
+}
+export function assertNextMarginStep(w:MarginWorkflow,step:MarginStep,terms:MarginStepTerms):void {
+ if(!orderedMarginSteps(w).includes(step))return fail('STEP_ORDER_OR_PENDING');
  const keys=Object.keys(terms).sort().join(',');
  const expected=step==='open_begin'||step==='close_swap'?'minimumOutputAtomic':step==='close_short_swap'?'maximumInputAtomic,minimumDebtOutputAtomic':'';
  if(keys!==expected)return fail('EXACT_STEP_TERMS');
@@ -48,7 +51,7 @@ export function applyMarginEvidence(w:MarginWorkflow,step:MarginStep,intentHash:
   case 'close_prepare':position(w,e.before.position,'Open');position(w,e.after.position,'Closing');if(e.after.position!.pendingExpiresAt===null||Date.parse(e.after.position!.pendingExpiresAt)<=now||atomic(e.after.position!.swapOutputAtomic)!==0n)return fail('CLOSE_PREPARE');result.phase='closing_prepared';break;
   case 'close_swap':case 'close_short_swap':{const before=position(w,e.before.position,'Closing'),after=position(w,e.after.position,'Closing');if(atomic(before.swapOutputAtomic)!==0n||atomic(after.swapOutputAtomic)<=0n)return fail('CLOSE_SWAP_DELTA');result.phase='closing_swapped';break;}
   case 'close_finish':{const before=position(w,e.before.position,'Closing'),after=position(w,e.after.position,'Closed');if(atomic(before.swapOutputAtomic)<=0n||atomic(after.debtAtomic)!==0n||marginDelta<0n)return fail('CLOSE_FINISH');result.receiptAtomic=marginDelta.toString();result.phase=marginDelta===0n?'recovered':'closed';break;}
-  case 'open_cancel':{const p=position(w,e.before.position,'PendingOpen');if(atomic(p.swapOutputAtomic)!==0n||!e.cancellationVerified||e.after.position!==null||marginDelta<0n)return fail('OPEN_CANCEL');result.receiptAtomic=marginDelta.toString();result.phase='closed';break;}
+  case 'open_cancel':{const p=position(w,e.before.position,'PendingOpen');if(atomic(p.swapOutputAtomic)!==0n||!e.cancellationVerified||e.after.position!==null||marginDelta<0n)return fail('OPEN_CANCEL');result.receiptAtomic=marginDelta.toString();result.phase=marginDelta===0n?'recovered':'closed';break;}
   case 'close_cancel':{const p=position(w,e.before.position,'Closing');position(w,e.after.position,'Open');if(atomic(p.swapOutputAtomic)!==0n||!e.cancellationVerified)return fail('CLOSE_CANCEL');result.phase='open';break;}
   case 'margin_return':if(marginDelta!==-exactReceipts()||walletReceiptDelta!==exactReceipts()||e.after.position&&atomic(e.after.position.debtAtomic)!==0n)return fail('RETURN_DELTA');result.phase='awaiting_vault_withdraw';break;
   case 'vault_withdraw':if(walletReceiptDelta!==-exactReceipts()||atomic(e.after.walletUnderlyingAtomic)<=atomic(e.before.walletUnderlyingAtomic)||marginDelta!==0n)return fail('WITHDRAW_DELTA');result.receiptAtomic='0';result.phase='recovered';break;

@@ -1,4 +1,3 @@
-import {readFile} from 'node:fs/promises';
 import {randomUUID} from 'node:crypto';
 import {Keypair} from '@stellar/stellar-sdk';
 import pg from 'pg';
@@ -19,7 +18,7 @@ describe.skipIf(!databaseUrl)('Margin coordinator disposable Postgres integratio
  beforeAll(async()=>{
   pool=new pg.Pool({connectionString:databaseUrl});const actual=(await pool.query('SELECT current_database() AS name')).rows[0].name;
   if(actual!=='grapnel_margin_workflow_test')throw Error('Use only the dedicated disposable grapnel_margin_workflow_test database');
-  await pool.query('DROP SCHEMA public CASCADE;CREATE SCHEMA public');await migrate(pool);await pool.query(await readFile(new URL('./schema-proposal.sql',import.meta.url),'utf8'));
+  await pool.query('DROP SCHEMA public CASCADE;CREATE SCHEMA public');await migrate(pool);
   await pool.query("INSERT INTO assets(id,network,kind,code,decimals,verified,source_url) VALUES('test-only-usdt','stellar-testnet','soroban','MOCK',7,true,'test-fixture'),('test-only-receipt','stellar-testnet','soroban','RECEIPT',6,true,'test-fixture')");
  });
  afterAll(async()=>{await pool?.end();});

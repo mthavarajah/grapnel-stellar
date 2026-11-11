@@ -25,6 +25,11 @@ export class MarginWorkflowService {
   return workflow;
  }
  async get(customer:CustomerContext,id:string):Promise<MarginWorkflow>{await this.binding(this.operations.pool,customer);return this.read(this.operations.pool,customer,id);}
+ async list(customer:CustomerContext):Promise<MarginWorkflow[]>{
+  await this.binding(this.operations.pool,customer);
+  const rows=(await this.operations.pool.query("SELECT id FROM margin_workflows WHERE business_id=$1 AND customer_id=$2 AND wallet_id=$3 ORDER BY (phase='recovered') ASC,created_at DESC,id DESC LIMIT 20",[customer.businessId,customer.customerId,customer.walletId])).rows;
+  return Promise.all(rows.map(row=>this.read(this.operations.pool,customer,row.id)));
+ }
  async create(customer:CustomerContext,terms:MarginTerms,idempotencyKey:string):Promise<MarginWorkflow>{
   validateMarginTerms(terms);if(!idempotencyKey||idempotencyKey.length>200)throw new GrapnelError(400,'IDEMPOTENCY_KEY_REQUIRED','Idempotency-Key must contain 1–200 characters');
   if(terms.pinsHash!==this.approvedPolicy.pinsHash||terms.policyVersion!==this.approvedPolicy.policyVersion)return conflict('POLICY_NOT_APPROVED');

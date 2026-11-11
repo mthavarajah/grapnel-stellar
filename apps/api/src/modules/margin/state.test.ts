@@ -36,6 +36,9 @@ describe('Margin workflow phase/evidence defense (offline fixtures, not chain pr
  it('keeps expired/cancel recovery separate from automatic signing, refuses cancelling already-swapped opens',()=>{
   const w={...fixture(),phase:'opening_pending' as const,receiptAtomic:'9999780',positionId:'42'},e=evidence('open_cancel');e.before.position=p('PendingOpen','0','1');e.after.position=null;e.cancellationVerified=true;expect(()=>apply(w,e)).toThrow();e.before.position.swapOutputAtomic='0';e.after.marginReceiptAtomic='9999780';const next=apply(w,e);expect(next.phase).toBe('closed');expect(next.receiptAtomic).toBe('9999780');
  });
+ it('terminates verified zero-refund cancellation without an impossible zero-amount return',()=>{
+  const w={...fixture(),phase:'opening_pending' as const,receiptAtomic:'9999780',positionId:'42'},e=evidence('open_cancel');e.before.position=p('PendingOpen');e.after.position=null;e.cancellationVerified=true;e.after.marginReceiptAtomic='0';const next=apply(w,e);expect(next.phase).toBe('recovered');expect(next.receiptAtomic).toBe('0');expect(()=>assertNextMarginStep(next,'margin_return',{})).toThrow();e.cancellationVerified=false;expect(()=>apply(w,e)).toThrow();
+ });
  it('rejects finish with foreign owner, outstanding debt or missing swap proceeds',()=>{
   const w={...fixture(),phase:'closing_swapped' as const,positionId:'42',receiptAtomic:'9999780'},e=evidence('close_finish');e.before.position=p('Closing','1','0');e.after.position=p('Closed');expect(()=>apply(w,e)).toThrow();e.before.position.swapOutputAtomic='1';e.after.position.debtAtomic='1';expect(()=>apply(w,e)).toThrow();e.after.position.debtAtomic='0';e.after.position.owner='other';expect(()=>apply(w,e)).toThrow();
  });
