@@ -32,7 +32,7 @@ function dependencies(options: { passphrase?: string; wasm?: Buffer; amount?: bi
 describe('Soroban Testnet token balance reader', () => {
   it('reads exact pinned token.balance through a fresh read-only simulation', async () => {
     await expect(dependencies().getBalances(wallet, [asset])).resolves.toEqual([{
-      asset_id: asset.id, wallet_amount: '1.2345678', reserved: '0.0000000', spendable: '1.2345678',
+      asset_id: asset.id, asset, wallet_amount: '1.2345678', reserved: '0.0000000', spendable: '1.2345678',
       as_of: '2026-11-11T16:00:00.000Z', source: 'stellar_rpc_testnet',
     }]);
   });
