@@ -308,6 +308,12 @@
       }
     }
   ],
-  "last_error": "The QA begin phase exceeds its exact reviewed Testnet scope",
-  "position_id": "13843"
+  "last_error": "The QA open swap exceeds its exact reviewed Testnet scope",
+  "position_id": "13843",
+  "last_error_diagnostic": {
+    "stage": "fresh_state",
+    "code": "PERIDOT_OPEN_SWAP_SCOPE",
+    "reason": "PERSISTED_MINIMUM_NOT_FRESH",
+    "tx_hash": null
+  }
 }

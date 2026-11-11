@@ -1,0 +1,24 @@
+{
+  "observed_at": "2026-11-11T22:51:19.226Z",
+  "mode": "READ_ONLY_FROZEN_OPEN_MINIMUM_DIAGNOSIS",
+  "broadcast": false,
+  "tx_hash": null,
+  "positionId": "13843",
+  "owner": "GAJZ5PEECGFB46QXKFW2QTWRXHYL4SOBS5VE2JDGJ4TDUIAUWEAHKV34",
+  "input": "19999997",
+  "persisted_min": "129282345",
+  "quote": "129932005",
+  "min_50bps": "129282345",
+  "oracle_min_5percent": "129300978",
+  "min_minus_required_50bps": "0",
+  "min_minus_oracle_floor": "-18633",
+  "xlm_price": [
+    "14681748550968",
+    "100000000000000"
+  ],
+  "mock_price": [
+    "99913932634613",
+    "100000000000000"
+  ],
+  "expires_at": "1794438853"
+}
