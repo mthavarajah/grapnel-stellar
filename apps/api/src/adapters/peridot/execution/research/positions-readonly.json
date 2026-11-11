@@ -1,0 +1,578 @@
+{
+  "observed_at": "2026-11-11T21:15:02.608Z",
+  "mode": "PUBLIC_EXISTING_PROVIDER_POSITION_READS_NOT_GRAPNEL_POSITIONS",
+  "broadcast": false,
+  "signatures": 0,
+  "tx_hash": null,
+  "counter": {
+    "ledger": 5681609,
+    "value": "13842",
+    "xdr": "AAAABQAAAAAAADYS"
+  },
+  "rows": [
+    {
+      "id": "13842",
+      "position": {
+        "ledger": 5681609,
+        "value": {
+          "collateral_asset": "CDPXNHHVSLX3HFAHV7XOISM23MZH36WSXTO45RNDOBIDFZBGTSOVD4OY",
+          "collateral_ptokens": "620640422",
+          "debt_asset": "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC",
+          "debt_shares": "0",
+          "entry_price_scaled": "165127",
+          "opened_at": "1793651710",
+          "owner": "GDWB4HCEW3ZMSGY342RETZKV25TX3AHLVA6XWME5DVSPHDUEXJYQEV3V",
+          "side": [
+            "Short"
+          ],
+          "status": [
+            "Open"
+          ]
+        },
+        "xdr": "AAAAEQAAAAEAAAAJAAAADwAAABBjb2xsYXRlcmFsX2Fzc2V0AAAAEgAAAAHfdpz1ku+zlAev7uRJmtsyffrSvN3OxaNwUDLkJpydUQAAAA8AAAASY29sbGF0ZXJhbF9wdG9rZW5zAAAAAAAJAAAAAAAAAAAAAAAAJP44pgAAAA8AAAAKZGVidF9hc3NldAAAAAAAEgAAAAHXkotywnA8z+r365/0701QSlWouXn8m0UOoshCtNHOYQAAAA8AAAALZGVidF9zaGFyZXMAAAAACQAAAAAAAAAAAAAAAAAAAAAAAAAPAAAAEmVudHJ5X3ByaWNlX3NjYWxlZAAAAAAACQAAAAAAAAAAAAAAAAAChQcAAAAPAAAACW9wZW5lZF9hdAAAAAAAAAUAAAAAaujz/gAAAA8AAAAFb3duZXIAAAAAAAASAAAAAAAAAADsHhxEtvLJGxvmoknlVddnfYDrqD17MJ0dZPOOhLpxAgAAAA8AAAAEc2lkZQAAABAAAAABAAAAAQAAAA8AAAAFU2hvcnQAAAAAAAAPAAAABnN0YXR1cwAAAAAAEAAAAAEAAAABAAAADwAAAARPcGVu"
+      },
+      "perps": {
+        "ledger": 5681610,
+        "value": {
+          "base_asset": "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC",
+          "liquidation_incentive_scaled": "10000",
+          "maintenance_margin_scaled": "50000",
+          "margin_amount": "116299999",
+          "margin_asset": "CDPXNHHVSLX3HFAHV7XOISM23MZH36WSXTO45RNDOBIDFZBGTSOVD4OY",
+          "notional_value": "464576560",
+          "pool": "CCMNSENXDBNJSY72BDIPH5CCXLLHBKZ4LXTRKDLKZN4UI2NJFQLWTLD6",
+          "pool_id": {
+            "type": "Buffer",
+            "data": [
+              154,
+              199,
+              169,
+              205,
+              226,
+              58,
+              194,
+              173,
+              161,
+              17,
+              5,
+              238,
+              170,
+              66,
+              228,
+              60,
+              46,
+              168,
+              51,
+              44,
+              160,
+              170,
+              143,
+              65,
+              245,
+              141,
+              113,
+              96,
+              39,
+              77,
+              113,
+              142
+            ]
+          },
+          "pool_tokens": [
+            "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC",
+            "CDPXNHHVSLX3HFAHV7XOISM23MZH36WSXTO45RNDOBIDFZBGTSOVD4OY"
+          ],
+          "side": [
+            "Short"
+          ]
+        },
+        "xdr": "AAAAEQAAAAEAAAAKAAAADwAAAApiYXNlX2Fzc2V0AAAAAAASAAAAAdeSi3LCcDzP6vfrn/TvTVBKVai5efybRQ6iyEK00c5hAAAADwAAABxsaXF1aWRhdGlvbl9pbmNlbnRpdmVfc2NhbGVkAAAACQAAAAAAAAAAAAAAAAAAJxAAAAAPAAAAGW1haW50ZW5hbmNlX21hcmdpbl9zY2FsZWQAAAAAAAAJAAAAAAAAAAAAAAAAAADDUAAAAA8AAAANbWFyZ2luX2Ftb3VudAAAAAAAAAkAAAAAAAAAAAAAAAAG7pjfAAAADwAAAAxtYXJnaW5fYXNzZXQAAAASAAAAAd92nPWS77OUB6/u5Ema2zJ9+tK83c7Fo3BQMuQmnJ1RAAAADwAAAA5ub3Rpb25hbF92YWx1ZQAAAAAACQAAAAAAAAAAAAAAABuw4DAAAAAPAAAABHBvb2wAAAASAAAAAZjZEbcYWplj+gjQ8/RCutZwqzxd5xUNast5RGmpLBdpAAAADwAAAAdwb29sX2lkAAAAAA0AAAAgmsepzeI6wq2hEQXuqkLkPC6oMyygqo9B9Y1xYCdNcY4AAAAPAAAAC3Bvb2xfdG9rZW5zAAAAABAAAAABAAAAAgAAABIAAAAB15KLcsJwPM/q9+uf9O9NUEpVqLl5/JtFDqLIQrTRzmEAAAASAAAAAd92nPWS77OUB6/u5Ema2zJ9+tK83c7Fo3BQMuQmnJ1RAAAADwAAAARzaWRlAAAAEAAAAAEAAAABAAAADwAAAAVTaG9ydAAAAA=="
+      },
+      "pendingOpen": {
+        "ledger": 5681610,
+        "value": null,
+        "xdr": "AAAAAQ=="
+      },
+      "openExecution": {
+        "ledger": 5681610,
+        "value": null,
+        "xdr": "AAAAAQ=="
+      },
+      "pendingClose": {
+        "ledger": 5681610,
+        "value": null,
+        "xdr": "AAAAAQ=="
+      }
+    },
+    {
+      "id": "13841",
+      "position": {
+        "ledger": 5681610,
+        "value": {
+          "collateral_asset": "CDPXNHHVSLX3HFAHV7XOISM23MZH36WSXTO45RNDOBIDFZBGTSOVD4OY",
+          "collateral_ptokens": "313025379",
+          "debt_asset": "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC",
+          "debt_shares": "0",
+          "entry_price_scaled": "164992",
+          "opened_at": "1793650845",
+          "owner": "GAAZLZHOGZVHPP6E3D4S5FTHTGHSCCFQZ5OJQZJ2XCGP5XNRM4ZWI67T",
+          "side": [
+            "Short"
+          ],
+          "status": [
+            "Open"
+          ]
+        },
+        "xdr": "AAAAEQAAAAEAAAAJAAAADwAAABBjb2xsYXRlcmFsX2Fzc2V0AAAAEgAAAAHfdpz1ku+zlAev7uRJmtsyffrSvN3OxaNwUDLkJpydUQAAAA8AAAASY29sbGF0ZXJhbF9wdG9rZW5zAAAAAAAJAAAAAAAAAAAAAAAAEqhjYwAAAA8AAAAKZGVidF9hc3NldAAAAAAAEgAAAAHXkotywnA8z+r365/0701QSlWouXn8m0UOoshCtNHOYQAAAA8AAAALZGVidF9zaGFyZXMAAAAACQAAAAAAAAAAAAAAAAAAAAAAAAAPAAAAEmVudHJ5X3ByaWNlX3NjYWxlZAAAAAAACQAAAAAAAAAAAAAAAAAChIAAAAAPAAAACW9wZW5lZF9hdAAAAAAAAAUAAAAAaujwnQAAAA8AAAAFb3duZXIAAAAAAAASAAAAAAAAAAABleTuNmp3v8TY+S6WZ5mPIQiwz1yYZTq4jP7dsWczZAAAAA8AAAAEc2lkZQAAABAAAAABAAAAAQAAAA8AAAAFU2hvcnQAAAAAAAAPAAAABnN0YXR1cwAAAAAAEAAAAAEAAAABAAAADwAAAARPcGVu"
+      },
+      "perps": {
+        "ledger": 5681610,
+        "value": {
+          "base_asset": "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC",
+          "liquidation_incentive_scaled": "10000",
+          "maintenance_margin_scaled": "50000",
+          "margin_amount": "98699999",
+          "margin_asset": "CDPXNHHVSLX3HFAHV7XOISM23MZH36WSXTO45RNDOBIDFZBGTSOVD4OY",
+          "notional_value": "197139202",
+          "pool": "CCMNSENXDBNJSY72BDIPH5CCXLLHBKZ4LXTRKDLKZN4UI2NJFQLWTLD6",
+          "pool_id": {
+            "type": "Buffer",
+            "data": [
+              154,
+              199,
+              169,
+              205,
+              226,
+              58,
+              194,
+              173,
+              161,
+              17,
+              5,
+              238,
+              170,
+              66,
+              228,
+              60,
+              46,
+              168,
+              51,
+              44,
+              160,
+              170,
+              143,
+              65,
+              245,
+              141,
+              113,
+              96,
+              39,
+              77,
+              113,
+              142
+            ]
+          },
+          "pool_tokens": [
+            "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC",
+            "CDPXNHHVSLX3HFAHV7XOISM23MZH36WSXTO45RNDOBIDFZBGTSOVD4OY"
+          ],
+          "side": [
+            "Short"
+          ]
+        },
+        "xdr": "AAAAEQAAAAEAAAAKAAAADwAAAApiYXNlX2Fzc2V0AAAAAAASAAAAAdeSi3LCcDzP6vfrn/TvTVBKVai5efybRQ6iyEK00c5hAAAADwAAABxsaXF1aWRhdGlvbl9pbmNlbnRpdmVfc2NhbGVkAAAACQAAAAAAAAAAAAAAAAAAJxAAAAAPAAAAGW1haW50ZW5hbmNlX21hcmdpbl9zY2FsZWQAAAAAAAAJAAAAAAAAAAAAAAAAAADDUAAAAA8AAAANbWFyZ2luX2Ftb3VudAAAAAAAAAkAAAAAAAAAAAAAAAAF4grfAAAADwAAAAxtYXJnaW5fYXNzZXQAAAASAAAAAd92nPWS77OUB6/u5Ema2zJ9+tK83c7Fo3BQMuQmnJ1RAAAADwAAAA5ub3Rpb25hbF92YWx1ZQAAAAAACQAAAAAAAAAAAAAAAAvAGwIAAAAPAAAABHBvb2wAAAASAAAAAZjZEbcYWplj+gjQ8/RCutZwqzxd5xUNast5RGmpLBdpAAAADwAAAAdwb29sX2lkAAAAAA0AAAAgmsepzeI6wq2hEQXuqkLkPC6oMyygqo9B9Y1xYCdNcY4AAAAPAAAAC3Bvb2xfdG9rZW5zAAAAABAAAAABAAAAAgAAABIAAAAB15KLcsJwPM/q9+uf9O9NUEpVqLl5/JtFDqLIQrTRzmEAAAASAAAAAd92nPWS77OUB6/u5Ema2zJ9+tK83c7Fo3BQMuQmnJ1RAAAADwAAAARzaWRlAAAAEAAAAAEAAAABAAAADwAAAAVTaG9ydAAAAA=="
+      },
+      "pendingOpen": {
+        "ledger": 5681610,
+        "value": null,
+        "xdr": "AAAAAQ=="
+      },
+      "openExecution": {
+        "ledger": 5681610,
+        "value": null,
+        "xdr": "AAAAAQ=="
+      },
+      "pendingClose": {
+        "ledger": 5681610,
+        "value": null,
+        "xdr": "AAAAAQ=="
+      }
+    },
+    {
+      "id": "13840",
+      "position": {
+        "ledger": 5681610,
+        "value": {
+          "collateral_asset": "CDPXNHHVSLX3HFAHV7XOISM23MZH36WSXTO45RNDOBIDFZBGTSOVD4OY",
+          "collateral_ptokens": "1897703062",
+          "debt_asset": "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC",
+          "debt_shares": "0",
+          "entry_price_scaled": "165770",
+          "opened_at": "1793643010",
+          "owner": "GBVGABZA7KSJPFUVYY7DKGDN4B6NQRMVMGPMTGFC4QEBHWLTBB2ITPYJ",
+          "side": [
+            "Short"
+          ],
+          "status": [
+            "Open"
+          ]
+        },
+        "xdr": "AAAAEQAAAAEAAAAJAAAADwAAABBjb2xsYXRlcmFsX2Fzc2V0AAAAEgAAAAHfdpz1ku+zlAev7uRJmtsyffrSvN3OxaNwUDLkJpydUQAAAA8AAAASY29sbGF0ZXJhbF9wdG9rZW5zAAAAAAAJAAAAAAAAAAAAAAAAcRymlgAAAA8AAAAKZGVidF9hc3NldAAAAAAAEgAAAAHXkotywnA8z+r365/0701QSlWouXn8m0UOoshCtNHOYQAAAA8AAAALZGVidF9zaGFyZXMAAAAACQAAAAAAAAAAAAAAAAAAAAAAAAAPAAAAEmVudHJ5X3ByaWNlX3NjYWxlZAAAAAAACQAAAAAAAAAAAAAAAAACh4oAAAAPAAAACW9wZW5lZF9hdAAAAAAAAAUAAAAAaujSAgAAAA8AAAAFb3duZXIAAAAAAAASAAAAAAAAAABqYAcg+qSXlpXGPjUYbeB82EWVYZ7JmKLkCBPZcwh0iQAAAA8AAAAEc2lkZQAAABAAAAABAAAAAQAAAA8AAAAFU2hvcnQAAAAAAAAPAAAABnN0YXR1cwAAAAAAEAAAAAEAAAABAAAADwAAAARPcGVu"
+      },
+      "perps": {
+        "ledger": 5681610,
+        "value": {
+          "base_asset": "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC",
+          "liquidation_incentive_scaled": "10000",
+          "maintenance_margin_scaled": "50000",
+          "margin_amount": "599999999",
+          "margin_asset": "CDPXNHHVSLX3HFAHV7XOISM23MZH36WSXTO45RNDOBIDFZBGTSOVD4OY",
+          "notional_value": "1198702424",
+          "pool": "CCMNSENXDBNJSY72BDIPH5CCXLLHBKZ4LXTRKDLKZN4UI2NJFQLWTLD6",
+          "pool_id": {
+            "type": "Buffer",
+            "data": [
+              154,
+              199,
+              169,
+              205,
+              226,
+              58,
+              194,
+              173,
+              161,
+              17,
+              5,
+              238,
+              170,
+              66,
+              228,
+              60,
+              46,
+              168,
+              51,
+              44,
+              160,
+              170,
+              143,
+              65,
+              245,
+              141,
+              113,
+              96,
+              39,
+              77,
+              113,
+              142
+            ]
+          },
+          "pool_tokens": [
+            "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC",
+            "CDPXNHHVSLX3HFAHV7XOISM23MZH36WSXTO45RNDOBIDFZBGTSOVD4OY"
+          ],
+          "side": [
+            "Short"
+          ]
+        },
+        "xdr": "AAAAEQAAAAEAAAAKAAAADwAAAApiYXNlX2Fzc2V0AAAAAAASAAAAAdeSi3LCcDzP6vfrn/TvTVBKVai5efybRQ6iyEK00c5hAAAADwAAABxsaXF1aWRhdGlvbl9pbmNlbnRpdmVfc2NhbGVkAAAACQAAAAAAAAAAAAAAAAAAJxAAAAAPAAAAGW1haW50ZW5hbmNlX21hcmdpbl9zY2FsZWQAAAAAAAAJAAAAAAAAAAAAAAAAAADDUAAAAA8AAAANbWFyZ2luX2Ftb3VudAAAAAAAAAkAAAAAAAAAAAAAAAAjw0X/AAAADwAAAAxtYXJnaW5fYXNzZXQAAAASAAAAAd92nPWS77OUB6/u5Ema2zJ9+tK83c7Fo3BQMuQmnJ1RAAAADwAAAA5ub3Rpb25hbF92YWx1ZQAAAAAACQAAAAAAAAAAAAAAAEdyv1gAAAAPAAAABHBvb2wAAAASAAAAAZjZEbcYWplj+gjQ8/RCutZwqzxd5xUNast5RGmpLBdpAAAADwAAAAdwb29sX2lkAAAAAA0AAAAgmsepzeI6wq2hEQXuqkLkPC6oMyygqo9B9Y1xYCdNcY4AAAAPAAAAC3Bvb2xfdG9rZW5zAAAAABAAAAABAAAAAgAAABIAAAAB15KLcsJwPM/q9+uf9O9NUEpVqLl5/JtFDqLIQrTRzmEAAAASAAAAAd92nPWS77OUB6/u5Ema2zJ9+tK83c7Fo3BQMuQmnJ1RAAAADwAAAARzaWRlAAAAEAAAAAEAAAABAAAADwAAAAVTaG9ydAAAAA=="
+      },
+      "pendingOpen": {
+        "ledger": 5681610,
+        "value": null,
+        "xdr": "AAAAAQ=="
+      },
+      "openExecution": {
+        "ledger": 5681610,
+        "value": null,
+        "xdr": "AAAAAQ=="
+      },
+      "pendingClose": {
+        "ledger": 5681610,
+        "value": null,
+        "xdr": "AAAAAQ=="
+      }
+    },
+    {
+      "id": "13839",
+      "position": {
+        "ledger": 5681610,
+        "value": {
+          "collateral_asset": "CDPXNHHVSLX3HFAHV7XOISM23MZH36WSXTO45RNDOBIDFZBGTSOVD4OY",
+          "collateral_ptokens": "515093844",
+          "debt_asset": "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC",
+          "debt_shares": "0",
+          "entry_price_scaled": "165208",
+          "opened_at": "1793641545",
+          "owner": "GATE2J2P7WAIVSZ6DA4Z4CQLRAIRIBGVLYMWLUBLO4O6BPH3WK5LYAQX",
+          "side": [
+            "Short"
+          ],
+          "status": [
+            "Open"
+          ]
+        },
+        "xdr": "AAAAEQAAAAEAAAAJAAAADwAAABBjb2xsYXRlcmFsX2Fzc2V0AAAAEgAAAAHfdpz1ku+zlAev7uRJmtsyffrSvN3OxaNwUDLkJpydUQAAAA8AAAASY29sbGF0ZXJhbF9wdG9rZW5zAAAAAAAJAAAAAAAAAAAAAAAAHrO1VAAAAA8AAAAKZGVidF9hc3NldAAAAAAAEgAAAAHXkotywnA8z+r365/0701QSlWouXn8m0UOoshCtNHOYQAAAA8AAAALZGVidF9zaGFyZXMAAAAACQAAAAAAAAAAAAAAAAAAAAAAAAAPAAAAEmVudHJ5X3ByaWNlX3NjYWxlZAAAAAAACQAAAAAAAAAAAAAAAAAChVgAAAAPAAAACW9wZW5lZF9hdAAAAAAAAAUAAAAAaujMSQAAAA8AAAAFb3duZXIAAAAAAAASAAAAAAAAAAAmTSdP/YCKyz4YOZ4KC4gRFATVXhll0Ct3HeC8+7K6vAAAAA8AAAAEc2lkZQAAABAAAAABAAAAAQAAAA8AAAAFU2hvcnQAAAAAAAAPAAAABnN0YXR1cwAAAAAAEAAAAAEAAAABAAAADwAAAARPcGVu"
+      },
+      "perps": {
+        "ledger": 5681610,
+        "value": {
+          "base_asset": "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC",
+          "liquidation_incentive_scaled": "10000",
+          "maintenance_margin_scaled": "50000",
+          "margin_amount": "162599999",
+          "margin_asset": "CDPXNHHVSLX3HFAHV7XOISM23MZH36WSXTO45RNDOBIDFZBGTSOVD4OY",
+          "notional_value": "324871804",
+          "pool": "CCMNSENXDBNJSY72BDIPH5CCXLLHBKZ4LXTRKDLKZN4UI2NJFQLWTLD6",
+          "pool_id": {
+            "type": "Buffer",
+            "data": [
+              154,
+              199,
+              169,
+              205,
+              226,
+              58,
+              194,
+              173,
+              161,
+              17,
+              5,
+              238,
+              170,
+              66,
+              228,
+              60,
+              46,
+              168,
+              51,
+              44,
+              160,
+              170,
+              143,
+              65,
+              245,
+              141,
+              113,
+              96,
+              39,
+              77,
+              113,
+              142
+            ]
+          },
+          "pool_tokens": [
+            "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC",
+            "CDPXNHHVSLX3HFAHV7XOISM23MZH36WSXTO45RNDOBIDFZBGTSOVD4OY"
+          ],
+          "side": [
+            "Short"
+          ]
+        },
+        "xdr": "AAAAEQAAAAEAAAAKAAAADwAAAApiYXNlX2Fzc2V0AAAAAAASAAAAAdeSi3LCcDzP6vfrn/TvTVBKVai5efybRQ6iyEK00c5hAAAADwAAABxsaXF1aWRhdGlvbl9pbmNlbnRpdmVfc2NhbGVkAAAACQAAAAAAAAAAAAAAAAAAJxAAAAAPAAAAGW1haW50ZW5hbmNlX21hcmdpbl9zY2FsZWQAAAAAAAAJAAAAAAAAAAAAAAAAAADDUAAAAA8AAAANbWFyZ2luX2Ftb3VudAAAAAAAAAkAAAAAAAAAAAAAAAAJsRQ/AAAADwAAAAxtYXJnaW5fYXNzZXQAAAASAAAAAd92nPWS77OUB6/u5Ema2zJ9+tK83c7Fo3BQMuQmnJ1RAAAADwAAAA5ub3Rpb25hbF92YWx1ZQAAAAAACQAAAAAAAAAAAAAAABNdJnwAAAAPAAAABHBvb2wAAAASAAAAAZjZEbcYWplj+gjQ8/RCutZwqzxd5xUNast5RGmpLBdpAAAADwAAAAdwb29sX2lkAAAAAA0AAAAgmsepzeI6wq2hEQXuqkLkPC6oMyygqo9B9Y1xYCdNcY4AAAAPAAAAC3Bvb2xfdG9rZW5zAAAAABAAAAABAAAAAgAAABIAAAAB15KLcsJwPM/q9+uf9O9NUEpVqLl5/JtFDqLIQrTRzmEAAAASAAAAAd92nPWS77OUB6/u5Ema2zJ9+tK83c7Fo3BQMuQmnJ1RAAAADwAAAARzaWRlAAAAEAAAAAEAAAABAAAADwAAAAVTaG9ydAAAAA=="
+      },
+      "pendingOpen": {
+        "ledger": 5681611,
+        "value": null,
+        "xdr": "AAAAAQ=="
+      },
+      "openExecution": {
+        "ledger": 5681611,
+        "value": null,
+        "xdr": "AAAAAQ=="
+      },
+      "pendingClose": {
+        "ledger": 5681611,
+        "value": null,
+        "xdr": "AAAAAQ=="
+      }
+    },
+    {
+      "id": "13835",
+      "position": {
+        "ledger": 5681611,
+        "value": {
+          "collateral_asset": "CDPXNHHVSLX3HFAHV7XOISM23MZH36WSXTO45RNDOBIDFZBGTSOVD4OY",
+          "collateral_ptokens": "1031009624",
+          "debt_asset": "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC",
+          "debt_shares": "0",
+          "entry_price_scaled": "168261",
+          "opened_at": "1793632510",
+          "owner": "GCSDDHDZN7OHRC7EG3GQJXS3MHF6YMJZMB3SED5OP6QLM5XPE6UMTJVE",
+          "side": [
+            "Short"
+          ],
+          "status": [
+            "Open"
+          ]
+        },
+        "xdr": "AAAAEQAAAAEAAAAJAAAADwAAABBjb2xsYXRlcmFsX2Fzc2V0AAAAEgAAAAHfdpz1ku+zlAev7uRJmtsyffrSvN3OxaNwUDLkJpydUQAAAA8AAAASY29sbGF0ZXJhbF9wdG9rZW5zAAAAAAAJAAAAAAAAAAAAAAAAPXP1WAAAAA8AAAAKZGVidF9hc3NldAAAAAAAEgAAAAHXkotywnA8z+r365/0701QSlWouXn8m0UOoshCtNHOYQAAAA8AAAALZGVidF9zaGFyZXMAAAAACQAAAAAAAAAAAAAAAAAAAAAAAAAPAAAAEmVudHJ5X3ByaWNlX3NjYWxlZAAAAAAACQAAAAAAAAAAAAAAAAACkUUAAAAPAAAACW9wZW5lZF9hdAAAAAAAAAUAAAAAauio/gAAAA8AAAAFb3duZXIAAAAAAAASAAAAAAAAAACkMZx5b9x4i+Q2zQTeW2HL7DE5YHciD65/oLZ27yeoyQAAAA8AAAAEc2lkZQAAABAAAAABAAAAAQAAAA8AAAAFU2hvcnQAAAAAAAAPAAAABnN0YXR1cwAAAAAAEAAAAAEAAAABAAAADwAAAARPcGVu"
+      },
+      "perps": {
+        "ledger": 5681611,
+        "value": {
+          "base_asset": "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC",
+          "liquidation_incentive_scaled": "10000",
+          "maintenance_margin_scaled": "50000",
+          "margin_amount": "245899999",
+          "margin_asset": "CDPXNHHVSLX3HFAHV7XOISM23MZH36WSXTO45RNDOBIDFZBGTSOVD4OY",
+          "notional_value": "736733856",
+          "pool": "CCMNSENXDBNJSY72BDIPH5CCXLLHBKZ4LXTRKDLKZN4UI2NJFQLWTLD6",
+          "pool_id": {
+            "type": "Buffer",
+            "data": [
+              154,
+              199,
+              169,
+              205,
+              226,
+              58,
+              194,
+              173,
+              161,
+              17,
+              5,
+              238,
+              170,
+              66,
+              228,
+              60,
+              46,
+              168,
+              51,
+              44,
+              160,
+              170,
+              143,
+              65,
+              245,
+              141,
+              113,
+              96,
+              39,
+              77,
+              113,
+              142
+            ]
+          },
+          "pool_tokens": [
+            "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC",
+            "CDPXNHHVSLX3HFAHV7XOISM23MZH36WSXTO45RNDOBIDFZBGTSOVD4OY"
+          ],
+          "side": [
+            "Short"
+          ]
+        },
+        "xdr": "AAAAEQAAAAEAAAAKAAAADwAAAApiYXNlX2Fzc2V0AAAAAAASAAAAAdeSi3LCcDzP6vfrn/TvTVBKVai5efybRQ6iyEK00c5hAAAADwAAABxsaXF1aWRhdGlvbl9pbmNlbnRpdmVfc2NhbGVkAAAACQAAAAAAAAAAAAAAAAAAJxAAAAAPAAAAGW1haW50ZW5hbmNlX21hcmdpbl9zY2FsZWQAAAAAAAAJAAAAAAAAAAAAAAAAAADDUAAAAA8AAAANbWFyZ2luX2Ftb3VudAAAAAAAAAkAAAAAAAAAAAAAAAAOqCLfAAAADwAAAAxtYXJnaW5fYXNzZXQAAAASAAAAAd92nPWS77OUB6/u5Ema2zJ9+tK83c7Fo3BQMuQmnJ1RAAAADwAAAA5ub3Rpb25hbF92YWx1ZQAAAAAACQAAAAAAAAAAAAAAACvpqqAAAAAPAAAABHBvb2wAAAASAAAAAZjZEbcYWplj+gjQ8/RCutZwqzxd5xUNast5RGmpLBdpAAAADwAAAAdwb29sX2lkAAAAAA0AAAAgmsepzeI6wq2hEQXuqkLkPC6oMyygqo9B9Y1xYCdNcY4AAAAPAAAAC3Bvb2xfdG9rZW5zAAAAABAAAAABAAAAAgAAABIAAAAB15KLcsJwPM/q9+uf9O9NUEpVqLl5/JtFDqLIQrTRzmEAAAASAAAAAd92nPWS77OUB6/u5Ema2zJ9+tK83c7Fo3BQMuQmnJ1RAAAADwAAAARzaWRlAAAAEAAAAAEAAAABAAAADwAAAAVTaG9ydAAAAA=="
+      },
+      "pendingOpen": {
+        "ledger": 5681611,
+        "value": null,
+        "xdr": "AAAAAQ=="
+      },
+      "openExecution": {
+        "ledger": 5681611,
+        "value": null,
+        "xdr": "AAAAAQ=="
+      },
+      "pendingClose": {
+        "ledger": 5681611,
+        "value": null,
+        "xdr": "AAAAAQ=="
+      }
+    },
+    {
+      "id": "13834",
+      "position": {
+        "ledger": 5681611,
+        "value": {
+          "collateral_asset": "CDPXNHHVSLX3HFAHV7XOISM23MZH36WSXTO45RNDOBIDFZBGTSOVD4OY",
+          "collateral_ptokens": "202806111",
+          "debt_asset": "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC",
+          "debt_shares": "0",
+          "entry_price_scaled": "167847",
+          "opened_at": "1793625350",
+          "owner": "GCY5T5IHR7FNKRNDZEC4V5S7VXD5QIL34VRFBGWTB5U3Q7T3ZY5B6J6U",
+          "side": [
+            "Short"
+          ],
+          "status": [
+            "Open"
+          ]
+        },
+        "xdr": "AAAAEQAAAAEAAAAJAAAADwAAABBjb2xsYXRlcmFsX2Fzc2V0AAAAEgAAAAHfdpz1ku+zlAev7uRJmtsyffrSvN3OxaNwUDLkJpydUQAAAA8AAAASY29sbGF0ZXJhbF9wdG9rZW5zAAAAAAAJAAAAAAAAAAAAAAAADBaTXwAAAA8AAAAKZGVidF9hc3NldAAAAAAAEgAAAAHXkotywnA8z+r365/0701QSlWouXn8m0UOoshCtNHOYQAAAA8AAAALZGVidF9zaGFyZXMAAAAACQAAAAAAAAAAAAAAAAAAAAAAAAAPAAAAEmVudHJ5X3ByaWNlX3NjYWxlZAAAAAAACQAAAAAAAAAAAAAAAAACj6cAAAAPAAAACW9wZW5lZF9hdAAAAAAAAAUAAAAAauiNBgAAAA8AAAAFb3duZXIAAAAAAAASAAAAAAAAAACx2fUHj8rVRaPJBcr2X63H2CF75WJQmtMPabh+e846HwAAAA8AAAAEc2lkZQAAABAAAAABAAAAAQAAAA8AAAAFU2hvcnQAAAAAAAAPAAAABnN0YXR1cwAAAAAAEAAAAAEAAAABAAAADwAAAARPcGVu"
+      },
+      "perps": {
+        "ledger": 5681611,
+        "value": {
+          "base_asset": "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC",
+          "liquidation_incentive_scaled": "10000",
+          "maintenance_margin_scaled": "50000",
+          "margin_amount": "64699999",
+          "margin_asset": "CDPXNHHVSLX3HFAHV7XOISM23MZH36WSXTO45RNDOBIDFZBGTSOVD4OY",
+          "notional_value": "129269246",
+          "pool": "CCMNSENXDBNJSY72BDIPH5CCXLLHBKZ4LXTRKDLKZN4UI2NJFQLWTLD6",
+          "pool_id": {
+            "type": "Buffer",
+            "data": [
+              154,
+              199,
+              169,
+              205,
+              226,
+              58,
+              194,
+              173,
+              161,
+              17,
+              5,
+              238,
+              170,
+              66,
+              228,
+              60,
+              46,
+              168,
+              51,
+              44,
+              160,
+              170,
+              143,
+              65,
+              245,
+              141,
+              113,
+              96,
+              39,
+              77,
+              113,
+              142
+            ]
+          },
+          "pool_tokens": [
+            "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC",
+            "CDPXNHHVSLX3HFAHV7XOISM23MZH36WSXTO45RNDOBIDFZBGTSOVD4OY"
+          ],
+          "side": [
+            "Short"
+          ]
+        },
+        "xdr": "AAAAEQAAAAEAAAAKAAAADwAAAApiYXNlX2Fzc2V0AAAAAAASAAAAAdeSi3LCcDzP6vfrn/TvTVBKVai5efybRQ6iyEK00c5hAAAADwAAABxsaXF1aWRhdGlvbl9pbmNlbnRpdmVfc2NhbGVkAAAACQAAAAAAAAAAAAAAAAAAJxAAAAAPAAAAGW1haW50ZW5hbmNlX21hcmdpbl9zY2FsZWQAAAAAAAAJAAAAAAAAAAAAAAAAAADDUAAAAA8AAAANbWFyZ2luX2Ftb3VudAAAAAAAAAkAAAAAAAAAAAAAAAAD2z5fAAAADwAAAAxtYXJnaW5fYXNzZXQAAAASAAAAAd92nPWS77OUB6/u5Ema2zJ9+tK83c7Fo3BQMuQmnJ1RAAAADwAAAA5ub3Rpb25hbF92YWx1ZQAAAAAACQAAAAAAAAAAAAAAAAe0ff4AAAAPAAAABHBvb2wAAAASAAAAAZjZEbcYWplj+gjQ8/RCutZwqzxd5xUNast5RGmpLBdpAAAADwAAAAdwb29sX2lkAAAAAA0AAAAgmsepzeI6wq2hEQXuqkLkPC6oMyygqo9B9Y1xYCdNcY4AAAAPAAAAC3Bvb2xfdG9rZW5zAAAAABAAAAABAAAAAgAAABIAAAAB15KLcsJwPM/q9+uf9O9NUEpVqLl5/JtFDqLIQrTRzmEAAAASAAAAAd92nPWS77OUB6/u5Ema2zJ9+tK83c7Fo3BQMuQmnJ1RAAAADwAAAARzaWRlAAAAEAAAAAEAAAABAAAADwAAAAVTaG9ydAAAAA=="
+      },
+      "pendingOpen": {
+        "ledger": 5681611,
+        "value": null,
+        "xdr": "AAAAAQ=="
+      },
+      "openExecution": {
+        "ledger": 5681611,
+        "value": null,
+        "xdr": "AAAAAQ=="
+      },
+      "pendingClose": {
+        "ledger": 5681611,
+        "value": null,
+        "xdr": "AAAAAQ=="
+      }
+    }
+  ]
+}

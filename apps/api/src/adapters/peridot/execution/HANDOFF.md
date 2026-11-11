@@ -23,4 +23,12 @@ Current scoped intent DTO is `PeridotStepIntent` in intents.ts. Underlying atomi
 
 ## Validation
 
-53 focused tests pass; API TypeScript check passes. Tests mutate auth recipient/amount/extra invocation, amount budgets, code and account keys, archive indices, duplicate scope, network and fees. `state.ts` adds fail-closed owner/pool/asset/phase reads; synthetic state tests do not prove actual deployed PendingOpen/Closing transitions. These reads remain subject to confirmation against actual QA traces. Main canonical margin auth/footprint inspectors and customer route integration remain incomplete. Do not advertise margin executable yet.
+54 focused tests pass; API TypeScript check passes. Tests mutate auth recipient/amount/extra invocation, amount budgets, code and account keys, archive indices, duplicate scope, network and fees. `state.ts` adds fail-closed owner/pool/asset/phase reads; synthetic state tests do not prove actual deployed PendingOpen/Closing transitions. These reads remain subject to confirmation against actual QA traces. Main canonical margin auth/footprint inspectors and customer route integration remain incomplete. Do not advertise margin executable yet.
+
+## Newly verified downstream restoration blocker
+
+At ledger 5681615, unsigned simulations against public preexisting provider owners (not Grapnel/customer authorization, no signer or broadcast) independently exercised current v3 `prepare_close_position_v3` and vault `deposit`. Minimum deposit resource fee is **6.2106876 XLM**, close prepare **6.2382247 XLM**. Both exceed the approved 1-XLM cap. Their archived entries are exactly pinned MockUSDT vault INSTANCE, pinned MockUSDT code, and pinned common vault code `c22680741c50eb52758a720b36d44c44b7f3f86271bcb8873ef90734607de120`. Current policy permits only MockUSDT code restoration, so these calls fail policy and must not proceed. The QA rebalance has also not proceeded because obtaining MockUSDT alone would not unlock this downstream action.
+
+`research/existing-scope-readonly.json` and `vault-restore-analysis.json` preserve unsigned traces and decoded keys. `research/positions-readonly.json` captures public preexisting provider positions (all observed rows were Short/Open); they are not Grapnel position proof and several show zero debt shares. One test decodes actual XDR through the state validator. PendingOpen/Closing transitions remain unproven.
+
+Lead review requested: provider externally restores its existing vault/code, or a new narrowly scoped approval for exact pinned same-envelope vault restoration plus one-time fee ceiling. **No broader restoration or higher fee has been implemented/assumed. No writes have occurred.**
