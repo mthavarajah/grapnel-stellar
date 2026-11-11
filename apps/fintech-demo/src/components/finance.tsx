@@ -756,11 +756,6 @@ function FinanceShell({ page, auth }: { page: string; auth?: Auth }) {
                     )}
                   </div>
                 </div>
-                <div className="path-card">
-                  <span className="eyebrow">WALLET DETAILS</span>
-                  <h3>Your wallet</h3>
-                  <div className="detail-row"><span>Status</span><strong>{session ? "Connected" : "Not connected"}</strong></div>
-                </div>
               </section>
               <section className="section">
                 <div className="section-heading">

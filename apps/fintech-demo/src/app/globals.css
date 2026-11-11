@@ -366,6 +366,7 @@ main {
   gap: 23px;
 }
 .wallet-hero {
+  grid-column: 1 / -1;
   border-radius: var(--radius);
   padding: 27px 29px;
   background: #264bc0;
