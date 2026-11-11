@@ -6,6 +6,7 @@ import {createPool} from '../../apps/api/src/db/index.js';
 import {migrate} from '../../apps/api/src/db/migrate.js';
 import {requireBusiness,requireCustomer,success} from '../../apps/api/src/lib/context.js';
 import {SoroswapSpotAdapter,type SpotMarket} from '../../apps/api/src/adapters/soroswap/index.js';
+import {createSpotReservation} from '../../apps/api/src/modules/spot/reservations.js';
 import {SpotService} from '../../apps/api/src/modules/spot/service.js';
 import {registerSpotRoutes} from '../../apps/api/src/modules/spot/routes.js';
 import {OperationService} from '../../apps/api/src/modules/operations/service.js';
@@ -29,7 +30,7 @@ describe.skipIf(!url)('Spot HTTP/DB workflow — isolated provider and chain fix
  const hash=(v:string)=>createHash('sha256').update(v).digest('hex');
  const marketId='qa-xlmusdc-'+randomUUID();
  const router='CCEBVDYM32YNYCVNRXQKDFFPISJJCV557CDZEIRBEE4NCV4KHPQ44HGF';
- const market:SpotMarket={id:marketId,asset_in:{...XLM,contractId:nativeSac},asset_out:{id:usdcId,network:NETWORK,kind:'classic',code:'USDC',issuer,contractId:usdcSac,decimals:7,verified:true,sourceUrl:'https://example.invalid/qa-fixture'},protocols:['soroswap'],route_verified_at:null,execution_verified_at:null};
+ const market:SpotMarket={id:marketId,asset_in:{...XLM,contractId:nativeSac},asset_out:{id:usdcId,network:NETWORK,kind:'classic',code:'USDC',issuer,contractId:usdcSac,decimals:7,verified:true,sourceUrl:'https://example.invalid/qa-fixture'},protocols:['soroswap'],route_verified_at:new Date().toISOString(),execution_verified_at:null};
  let app:Awaited<ReturnType<typeof buildApp>>,operations:OperationService;let badMinimum=false;let providerCalls=0;let inspectorCalls=0;
  const auth=(key=keyA,identity='qa-a')=>({authorization:'Bearer '+key,'x-customer-identity':identity});
  const post=(path:string,payload:Record<string,unknown>,headers=auth(),idempotencyKey=randomUUID())=>app.inject({method:'POST',url:path,headers:{...headers,'idempotency-key':idempotencyKey},payload});
@@ -47,8 +48,6 @@ describe.skipIf(!url)('Spot HTTP/DB workflow — isolated provider and chain fix
    await pool.query('INSERT INTO customers(id,business_id,external_customer_id,privy_user_id) VALUES($1,$2,$3,$3)',[customer,business,identity]);
    await pool.query("INSERT INTO wallets(id,business_id,customer_id,privy_wallet_id,stellar_address,public_key,status) VALUES($1,$2,$3,$4,$5,$5,'active')",[walletId,business,customer,identity+'-wallet',signer.publicKey()]);
   }
-  for(const asset of [market.asset_in,market.asset_out])await pool.query('INSERT INTO assets(id,network,kind,code,issuer,contract_id,decimals,verified,source_url) VALUES($1,$2,$3,$4,$5,$6,$7,true,$8) ON CONFLICT(id) DO NOTHING',[asset.id,asset.network,asset.kind,asset.code,asset.issuer??null,asset.contractId,asset.decimals,asset.sourceUrl]);
-  await pool.query("INSERT INTO provider_markets(id,module_code,provider,asset_in_id,asset_out_id,network) VALUES($1,'trade.spot','soroswap',$2,$3,$4)",[marketId,XLM.id,usdcId,NETWORK]);
   const fetcher=vi.fn(async(address:string|URL|Request,init?:RequestInit)=>{
    providerCalls++;const path=String(address);
    if(path.includes('/protocols'))return new Response(JSON.stringify(['soroswap']));
@@ -65,7 +64,10 @@ describe.skipIf(!url)('Spot HTTP/DB workflow — isolated provider and chain fix
    return {operationId:input.operationId,customerId:input.customer.customerId,network:NETWORK,walletAddress:input.customer.walletAddress,unsignedXdr:input.unsignedXdr,signingHashHex:tx.hash().toString('hex'),summary:{action:'spot.swap',fromAssetId:XLM.id,toAssetId:usdcId,amount:input.quote.amount_in,minReceive:input.quote.min_receive,contractId:router,recipient:input.customer.walletAddress,maxFeeStroops:tx.fee,expiresAt},authorization:{method:'privy_stellar',expiresAt}};
   });
   operations=new OperationService(pool);
-  const service=new SpotService(adapter,pool,operations,async(client,id,q,customer,prepared)=>operations.reserve(client,{businessId:customer.businessId,customerId:customer.customerId,walletId:customer.walletId,operationId:id,assetId:XLM.id,amountAtomic:toAtomic(q.amount_in,7)+BigInt(prepared.summary.maxFeeStroops!),spendableAtomic:1000000000n,observedAt:new Date(),expiresAt:new Date(prepared.summary.expiresAt)}));
+  const service=new SpotService(adapter,pool,operations,createSpotReservation(operations,async()=>[
+   {asset_id:XLM.id,wallet_amount:'100.0000000',reserved:'0.0000000',spendable:'99.0000000',as_of:new Date().toISOString(),source:'stellar_horizon_testnet'},
+   {asset_id:usdcId,wallet_amount:'0.0000000',reserved:'0.0000000',spendable:'0.0000000',as_of:new Date().toISOString(),source:'stellar_horizon_testnet'}
+  ]));
   app=await buildApp({pool,config:{databaseUrl:url!,network:'testnet',networkPassphrase:NETWORK_PASSPHRASE,dashboardOrigin:'http://localhost:3000',fintechOrigin:'http://localhost:3002',adminLoginSecret:'qa-only-owner-secret',sessionSecret:'qa-only-owner-session-secret-32-characters',production:false,port:0,demoBusinessId:tenantA},identityVerifier:{async verify(token){const signer=token==='qa-a'?wallet:token==='qa-b'?otherWallet:null;if(!signer)throw Error('fixture identity mismatch');return {userId:token,wallets:[{id:token+'-wallet',address:signer.publicKey(),publicKey:signer.publicKey()}]};}},verifySignedAction:async(action:PreparedAction,signed:string)=>{
    const tx=TransactionBuilder.fromXDR(signed,NETWORK_PASSPHRASE);const expected=TransactionBuilder.fromXDR(action.unsignedXdr,NETWORK_PASSPHRASE);
    if(tx.hash().toString('hex')!==expected.hash().toString('hex')||tx.hash().toString('hex')!==action.signingHashHex||tx.signatures.length!==1||!Keypair.fromPublicKey(action.walletAddress).verify(tx.hash(),tx.signatures[0].signature()))throw new GrapnelError(403,'INVALID_CUSTOMER_SIGNATURE','Fixture approval differs');
@@ -94,6 +96,8 @@ describe.skipIf(!url)('Spot HTTP/DB workflow — isolated provider and chain fix
   expect((await post('/v1/trade/quotes',quoteRequest())).statusCode).toBe(403);expect(providerCalls).toBe(count);
   await pool.query("UPDATE business_modules SET enabled=true WHERE business_id=$1 AND module_code='trade.spot'",[tenantA]);expect((await post('/v1/trade/quotes',quoteRequest())).statusCode).toBe(200);
  });
+ it('persists exact route assets and discovery market without external manual seeding',async()=>{await quote();const stored=(await pool.query('SELECT * FROM provider_markets WHERE id=$1',[marketId])).rows[0];expect(stored).toMatchObject({asset_in_id:XLM.id,asset_out_id:usdcId,readiness:'discovery_only'});expect((await pool.query('SELECT contract_id,decimals FROM assets WHERE id=$1',[usdcId])).rows[0]).toEqual({contract_id:usdcSac,decimals:7});});
+ it('rejects a different provider operation while any wallet sequence is pending',async()=>{const q=await quote(),id=randomUUID();await pool.query("INSERT INTO operations(id,business_id,customer_id,wallet_id,module_code,type,state,request_json,provider) VALUES($1,$2,$3,$4,'capital.lending','blend.supply','accepted','{}','offline-fixture')",[id,tenantA,customerA,walletA]);try{const response=await post('/v1/trade/orders',{customer_id:customerA,wallet_id:walletA,quote_id:q.quote_id});expect(response.statusCode).toBe(409);expect(response.json().error.code).toBe('WALLET_OPERATION_PENDING');}finally{await pool.query('DELETE FROM operations WHERE id=$1',[id]);}});
  it('rejects expired or foreign quotes before preparation',async()=>{
   const q=await quote();await pool.query("UPDATE trade_quotes SET expires_at=now()-interval '1 second' WHERE id=$1",[q.quote_id]);const before=inspectorCalls;
   const response=await post('/v1/trade/orders',{customer_id:customerA,wallet_id:walletA,quote_id:q.quote_id});expect(response.statusCode).toBe(409);expect(response.json().error.code).toBe('QUOTE_EXPIRED');expect(inspectorCalls).toBe(before);
@@ -102,6 +106,7 @@ describe.skipIf(!url)('Spot HTTP/DB workflow — isolated provider and chain fix
  it('persists one exact prepared order, requires a one-use customer signature, and keeps pending unsettled',async()=>{
   const q=await quote(),body={customer_id:customerA,wallet_id:walletA,quote_id:q.quote_id},key=randomUUID();
   const created=await post('/v1/trade/orders',body,auth(),key);expect(created.statusCode).toBe(202);const id=created.json().data.operation_id;
+  const held=(await pool.query('SELECT amount_atomic FROM balance_reservations WHERE operation_id=$1',[id])).rows[0];expect(held.amount_atomic).toBe('10000100');expect((await pool.query('SELECT result_json FROM operations WHERE id=$1',[id])).rows[0].result_json.spot_swap_baseline).toMatchObject({asset_in_id:XLM.id,asset_out_id:usdcId,wallet_in_amount:'100.0000000',wallet_out_amount:'0.0000000'});
   expect(created.json().data.status).toBe('awaiting_customer_authorization');expect(created.json().data.tx_hash).toBeNull();
   const retry=await post('/v1/trade/orders',body,auth(),key);expect(retry.json().data.operation_id).toBe(id);
   expect((await post('/v1/trade/orders',body)).json().error.code).toBe('QUOTE_ALREADY_USED');
