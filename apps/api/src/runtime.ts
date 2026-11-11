@@ -79,7 +79,8 @@ export async function createRuntime(pool?:Pool) {
    return {base_asset_id:market.market_id,base_symbol:market.underlying.symbol,reference:market};
   }
   const market=spot.market(id),base=market.asset_in.kind==='native'?market.asset_out:market.asset_in;
-  return {base_asset_id:base.id,base_symbol:base.code,asset:base};
+  const canonical=spot.markets().find(entry=>entry.asset_in_id===XLM.id&&entry.asset_out_id===base.id);
+  return {base_asset_id:base.id,base_symbol:base.code,asset:base,history_market_id:canonical?.market_id??id};
  };
  const marketData=new MarketDataService(db,async id=>{
   const profile=await marketProfile(id);
@@ -136,7 +137,7 @@ export async function createRuntime(pool?:Pool) {
     await requireBusiness(request,id.startsWith('stellar-testnet:noether:')?'trade.perps':'trade.spot');
     const {range}=z.object({range:z.enum(['live','1d','1w','1m','1y','all']).default('live')}).strict().parse(request.query);
     const profile=await marketProfile(id);
-    return success(request,{...await marketData.history(id,range),base_asset_id:profile.base_asset_id,base_symbol:profile.base_symbol});
+    return success(request,{...await marketData.history(profile.history_market_id??id,range),market_id:id,base_asset_id:profile.base_asset_id,base_symbol:profile.base_symbol});
    });
    app.get('/v1/capital/lending/earnings',async request=>{
     await requireBusiness(request,'capital.lending');
