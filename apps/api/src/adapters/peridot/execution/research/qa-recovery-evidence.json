@@ -76,6 +76,17 @@
       "send_status": "PENDING",
       "ledger": 5682857,
       "return_value": "13844"
+    },
+    {
+      "label": "qa_two_x_long_open_swap",
+      "hash": "24702136dc0aa0c2da2f430774de7a344dffc039bedb93dd999f9d49b17abb35",
+      "sequence": "24403398585483271",
+      "max_fee_stroops": "1442086",
+      "status": "SUCCESS",
+      "explorer": "https://stellar.expert/explorer/testnet/tx/24702136dc0aa0c2da2f430774de7a344dffc039bedb93dd999f9d49b17abb35",
+      "send_status": "PENDING",
+      "ledger": 5682888,
+      "return_value": null
     }
   ],
   "snapshots": [
@@ -462,6 +473,188 @@
         "observedAt": "2026-11-11T22:58:51.043Z",
         "status": "PendingOpen"
       }
+    },
+    {
+      "phase": "qa_open_swap",
+      "intent": {
+        "step": "open_swap",
+        "walletAddress": "GAJZ5PEECGFB46QXKFW2QTWRXHYL4SOBS5VE2JDGJ4TDUIAUWEAHKV34",
+        "positionId": "13844"
+      },
+      "beforePosition": {
+        "walletAddress": "GAJZ5PEECGFB46QXKFW2QTWRXHYL4SOBS5VE2JDGJ4TDUIAUWEAHKV34",
+        "positionId": "13844",
+        "direction": "long",
+        "position": {
+          "collateral_asset": "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC",
+          "collateral_ptokens": "0",
+          "debt_asset": "CDPXNHHVSLX3HFAHV7XOISM23MZH36WSXTO45RNDOBIDFZBGTSOVD4OY",
+          "debt_shares": "0",
+          "entry_price_scaled": "0",
+          "opened_at": "1794437928",
+          "owner": "GAJZ5PEECGFB46QXKFW2QTWRXHYL4SOBS5VE2JDGJ4TDUIAUWEAHKV34",
+          "side": [
+            "Long"
+          ],
+          "status": [
+            "PendingOpen"
+          ]
+        },
+        "perps": null,
+        "pendingOpen": {
+          "base_asset": "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC",
+          "borrow_amount": "9999998",
+          "debt_vault": "CCEW6NSPCV7XUEQV75ZMII5HK5DGXK5JP2QOTGLV4UFLDBPEKRGO4Y4B",
+          "expires_at": "1794439728",
+          "margin_amount": "9999999",
+          "margin_asset": "CDPXNHHVSLX3HFAHV7XOISM23MZH36WSXTO45RNDOBIDFZBGTSOVD4OY",
+          "margin_ptokens": "9999780",
+          "margin_vault": "CCEW6NSPCV7XUEQV75ZMII5HK5DGXK5JP2QOTGLV4UFLDBPEKRGO4Y4B",
+          "min_position_amount": "129932005",
+          "notional_value": "19982434",
+          "owner": "GAJZ5PEECGFB46QXKFW2QTWRXHYL4SOBS5VE2JDGJ4TDUIAUWEAHKV34",
+          "pool": "CCMNSENXDBNJSY72BDIPH5CCXLLHBKZ4LXTRKDLKZN4UI2NJFQLWTLD6",
+          "pool_id": {
+            "type": "Buffer",
+            "data": [
+              154,
+              199,
+              169,
+              205,
+              226,
+              58,
+              194,
+              173,
+              161,
+              17,
+              5,
+              238,
+              170,
+              66,
+              228,
+              60,
+              46,
+              168,
+              51,
+              44,
+              160,
+              170,
+              143,
+              65,
+              245,
+              141,
+              113,
+              96,
+              39,
+              77,
+              113,
+              142
+            ]
+          },
+          "pool_tokens": [
+            "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC",
+            "CDPXNHHVSLX3HFAHV7XOISM23MZH36WSXTO45RNDOBIDFZBGTSOVD4OY"
+          ],
+          "position_vault": "CB32OVY4AADCHQT3DLKJYW5QVTWY5MOX7BBNZFT3SDHZ5HPSDDEA2THJ",
+          "side": [
+            "Long"
+          ]
+        },
+        "openExecution": null,
+        "pendingClose": null,
+        "observedLedger": 5682883,
+        "observedAt": "2026-11-11T23:01:03.019Z",
+        "status": "PendingOpen"
+      },
+      "position": {
+        "walletAddress": "GAJZ5PEECGFB46QXKFW2QTWRXHYL4SOBS5VE2JDGJ4TDUIAUWEAHKV34",
+        "positionId": "13844",
+        "direction": "long",
+        "position": {
+          "collateral_asset": "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC",
+          "collateral_ptokens": "0",
+          "debt_asset": "CDPXNHHVSLX3HFAHV7XOISM23MZH36WSXTO45RNDOBIDFZBGTSOVD4OY",
+          "debt_shares": "0",
+          "entry_price_scaled": "0",
+          "opened_at": "1794437928",
+          "owner": "GAJZ5PEECGFB46QXKFW2QTWRXHYL4SOBS5VE2JDGJ4TDUIAUWEAHKV34",
+          "side": [
+            "Long"
+          ],
+          "status": [
+            "PendingOpen"
+          ]
+        },
+        "perps": null,
+        "pendingOpen": {
+          "base_asset": "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC",
+          "borrow_amount": "9999998",
+          "debt_vault": "CCEW6NSPCV7XUEQV75ZMII5HK5DGXK5JP2QOTGLV4UFLDBPEKRGO4Y4B",
+          "expires_at": "1794439728",
+          "margin_amount": "9999999",
+          "margin_asset": "CDPXNHHVSLX3HFAHV7XOISM23MZH36WSXTO45RNDOBIDFZBGTSOVD4OY",
+          "margin_ptokens": "9999780",
+          "margin_vault": "CCEW6NSPCV7XUEQV75ZMII5HK5DGXK5JP2QOTGLV4UFLDBPEKRGO4Y4B",
+          "min_position_amount": "129932005",
+          "notional_value": "19982434",
+          "owner": "GAJZ5PEECGFB46QXKFW2QTWRXHYL4SOBS5VE2JDGJ4TDUIAUWEAHKV34",
+          "pool": "CCMNSENXDBNJSY72BDIPH5CCXLLHBKZ4LXTRKDLKZN4UI2NJFQLWTLD6",
+          "pool_id": {
+            "type": "Buffer",
+            "data": [
+              154,
+              199,
+              169,
+              205,
+              226,
+              58,
+              194,
+              173,
+              161,
+              17,
+              5,
+              238,
+              170,
+              66,
+              228,
+              60,
+              46,
+              168,
+              51,
+              44,
+              160,
+              170,
+              143,
+              65,
+              245,
+              141,
+              113,
+              96,
+              39,
+              77,
+              113,
+              142
+            ]
+          },
+          "pool_tokens": [
+            "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC",
+            "CDPXNHHVSLX3HFAHV7XOISM23MZH36WSXTO45RNDOBIDFZBGTSOVD4OY"
+          ],
+          "position_vault": "CB32OVY4AADCHQT3DLKJYW5QVTWY5MOX7BBNZFT3SDHZ5HPSDDEA2THJ",
+          "side": [
+            "Long"
+          ]
+        },
+        "openExecution": {
+          "margin_received": "9999999",
+          "position_amount": "129932005"
+        },
+        "pendingClose": null,
+        "observedLedger": 5682888,
+        "observedAt": "2026-11-11T23:01:26.919Z",
+        "status": "PendingOpen"
+      },
+      "borrow_balance_atomic": "9999998"
     }
   ],
   "last_error": "The QA open swap exceeds its exact reviewed Testnet scope",
