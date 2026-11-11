@@ -19,8 +19,8 @@ Foundation committed before delegation as `6ed12fd`. Monorepo, seven module IDs,
 ## Gate 1 — passed
 Actual Privy customer signature and approved intent verified for completed 0.1 XLM Testnet payment `c1fd6b62b43b062ec88b4bdeddf86e45ea329ac1b9e5969a199289b536208ab2`, ledger 5669076. Independent Horizon reads confirm exact source, fixed treasury recipient, native asset and 0.1000000 debit/credit, plus 100-stroop fee. Auth/tenant/customer-negative suite rerun:55 passed. No fallback signer was used. This does not prove treasury funding, spot or lending execution.
 
-## Gate 2 — pending
-No confirmed treasury grant, customer return, Soroswap swap, Blend supply or Blend withdrawal. Read-only simulations do not pass this gate. Financial writes remain behind Gate 1; unsupported/unproven paths fail closed.
+## Gate 2 — partially passed
+Treasury grant and customer return are verified for the same customer wallet and amount, in order. The 0.1 XLM grant is `70d688bc1a5e1a852a2d19ff0d2c9d9c3215b5458e2e2a2700bf24064be06b1c` (ledger 5669361); the customer-signed 0.1 XLM return is `4f1dcf32382fa783e9efafbcdf6eacee64fa926ece108bd3277165e6e86acece` (ledger 5669372). Horizon independently confirms exact native XLM debit/credit effects and 100-stroop fees. The live API now promotes funding to `testnet_verified`. Soroswap swap, Blend supply and Blend withdrawal remain unproven. Read-only simulations do not pass this gate. Financial writes remain behind Gate 1; unsupported/unproven paths fail closed.
 
 ## Gate 3 — partially complete
 Public source published and unauthenticated access verified: https://github.com/mthavarajah/grapnel-stellar . Public dashboard/API/fintech URLs and qualifying video remain absent. Owned Grapnel contract IDs: none. Referenced Blend contracts belong to Blend.
