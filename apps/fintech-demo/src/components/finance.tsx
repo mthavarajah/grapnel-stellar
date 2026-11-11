@@ -152,6 +152,14 @@ type MarketHistory = {
   price_basis?:string; source_url?:string; interval?:string;
   metrics?:{day_high?:string|null;day_low?:string|null;day_volume?:string|null;fifty_two_week_high?:string|null;fifty_two_week_low?:string|null;previous_close?:string|null;market_time?:string|null};
 };
+type OverviewSection = {id:"spot"|"perps"|"stocks"|"commodities"|"lending";label:string;items:{symbol:string;name:string;value:string;unit:"USD"|"percent";as_of:string}[];available:boolean};
+const overviewGroups = [
+  {id:"spot",label:"Spot prices",module:"trade.spot",href:"/markets?category=crypto_spot"},
+  {id:"perps",label:"Futures prices",module:"trade.perps",href:"/markets?category=perps"},
+  {id:"stocks",label:"Stock prices",module:"trade.stocks",href:"/markets?category=stocks"},
+  {id:"commodities",label:"Commodity prices",module:"trade.commodities",href:"/markets?category=commodities"},
+  {id:"lending",label:"Lending rates",module:"capital.lending",href:"/earn"},
+] as const;
 type HistoryRange = "live"|"1d"|"1w"|"1m"|"1y"|"all";
 function displayPublicNotional(value:unknown):string {
   if(typeof value!=="string"||!/^[-]?\d+$/.test(value))return "—";
@@ -238,7 +246,7 @@ const title: Record<string, string> = {
   earn: "Earn",
   activity: "Activity",
 };
-export default function Finance({ page }: { page: string }) {
+export default function Finance({ page, initialCategory }: { page: string; initialCategory?:string }) {
   const id = process.env.NEXT_PUBLIC_PRIVY_APP_ID;
   return id ? (
     <PrivyProvider
@@ -248,10 +256,10 @@ export default function Finance({ page }: { page: string }) {
         appearance: { theme: "light", accentColor: "#2555d7" },
       }}
     >
-      <PrivyFinance page={page} />
+      <PrivyFinance page={page} initialCategory={initialCategory} />
     </PrivyProvider>
   ) : (
-    <FinanceShell page={page} />
+    <FinanceShell page={page} initialCategory={initialCategory} />
   );
 }
 async function loginToken(): Promise<string | null> {
@@ -262,7 +270,7 @@ async function loginToken(): Promise<string | null> {
     })]);
   } finally { clearTimeout(timer!); }
 }
-function PrivyFinance({ page }: { page: string }) {
+function PrivyFinance({ page, initialCategory }: { page: string; initialCategory?:string }) {
   const { ready, authenticated, login, logout } = usePrivy();
   const { refreshUser } = useUser();
   const { signRawHash } = useSignRawHash();
@@ -283,9 +291,9 @@ function PrivyFinance({ page }: { page: string }) {
     },
     sign: (a, address) => signPreparedAction(a, signRawHash, address),
   };
-  return <FinanceShell page={page} auth={auth} />;
+  return <FinanceShell page={page} auth={auth} initialCategory={initialCategory} />;
 }
-function FinanceShell({ page, auth }: { page: string; auth?: Auth }) {
+function FinanceShell({ page, auth, initialCategory }: { page: string; auth?: Auth;initialCategory?:string }) {
   const router = useRouter();
   const [sessionChecked, setSessionChecked] = useState(false);
   const attemptedConnection = useRef(false);
@@ -298,6 +306,8 @@ function FinanceShell({ page, auth }: { page: string; auth?: Auth }) {
   const [status, setStatus] = useState<any>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [caps, setCaps] = useState<Capability[]>([]);
+  const [overviewSections,setOverviewSections] = useState<OverviewSection[]>([]);
+  const [overviewLoading,setOverviewLoading] = useState(false);
   const [balances, setBalances] = useState<any[]>([]);
   const [assets, setAssets] = useState<any[]>([]);
   const [fundingError, setFundingError] = useState("");
@@ -355,7 +365,8 @@ function FinanceShell({ page, auth }: { page: string; auth?: Auth }) {
   const [market, setMarket] = useState("");
   const [quote, setQuote] = useState<any>(null);
   const [swapAmount, setSwapAmount] = useState("");
-  const [category, setCategory] = useState("crypto_spot");
+  const [category, setCategory] = useState(initialCategory??"crypto_spot");
+  useEffect(()=>{if(initialCategory&&(page==="markets"||page==="trade"))setCategory(initialCategory);},[initialCategory,page]);
   const [slippageBps, setSlippageBps] = useState(50);
   const [quoteClock, setQuoteClock] = useState(Date.now());
   const [usdcStatus, setUsdcStatus] = useState<{enabled:boolean;wallet_amount?:string;spendable?:string;as_of?:string} | null>(null);
@@ -384,6 +395,15 @@ function FinanceShell({ page, auth }: { page: string; auth?: Auth }) {
   }, [quote]);
   const polling = useRef({ id: "", attempt: 0 });
   const capability = (module: string) => caps.find((c) => c.module === module);
+  useEffect(()=>{
+    setOverviewSections([]);
+    if(!session||!(page==="home"||page==="login")||!capability("capital.wallets")?.enabled){setOverviewLoading(false);return;}
+    let alive=true;setOverviewLoading(true);
+    void api("grapnel/market-overview").then(result=>{
+      if(alive&&Array.isArray(result?.sections))setOverviewSections(result.sections.filter((section:any)=>overviewGroups.some(group=>group.id===section.id)&&Array.isArray(section.items)));
+    }).catch(()=>{}).finally(()=>{if(alive)setOverviewLoading(false);});
+    return()=>{alive=false;};
+  },[session?.customer_id,page,caps]);
   const enabledTradeCategories = tradeCategories.filter(([id]) => capability("trade." + (id === "crypto_spot" ? "spot" : id))?.enabled);
   useEffect(() => {
     if (!caps.length || enabledTradeCategories.some(([id]) => id === category)) return;
@@ -940,35 +960,15 @@ function FinanceShell({ page, auth }: { page: string; auth?: Auth }) {
                 </div>
                 <BalanceTable balances={balances} connected={!!session} />
               </section>
-              <section className="opportunity-grid">
-                <Link className="opportunity" href="/markets">
-                  <span className="feature-icon blue">
-                    <Icon name="markets" />
-                  </span>
-                  <span className="status-pill">
-                    Markets
-                  </span>
-                  <h3>Find your next opportunity.</h3>
-                  <p>
-                    View available markets.
-                  </p>
-                  <strong>
-                    Explore markets <Icon name="arrow" size={17} />
-                  </strong>
-                </Link>
-                <Link className="opportunity" href="/earn">
-                  <span className="feature-icon green">
-                    <Icon name="earn" />
-                  </span>
-                  <span className="status-pill">Earn</span>
-                  <h3>Understand what you supply.</h3>
-                  <p>
-                    View earning options.
-                  </p>
-                  <strong>
-                    Explore Earn <Icon name="arrow" size={17} />
-                  </strong>
-                </Link>
+              <section className="market-overview" aria-label="Market overview" data-testid="market-overview">
+                {overviewGroups.filter(group=>capability(group.module)?.enabled).map(group=>{
+                  const section=overviewSections.find(entry=>entry.id===group.id);
+                  const items=(section?.available?section.items:[]).filter(item=>typeof item.value==="string"&&/^\d+(?:\.\d+)?$/.test(item.value)&&(item.unit==="USD"||item.unit==="percent")&&Number.isFinite(Date.parse(item.as_of))).slice(0,3);
+                  return <section className="overview-market-group" key={group.id} aria-label={group.label} data-testid={`overview-${group.id}`}>
+                    <Link className="overview-market-heading" href={group.href}><h3>{group.label}</h3><Icon name="arrow" size={15} /></Link>
+                    {items.length?<ul>{items.map(item=><li key={`${item.symbol}:${item.name}`}><div><strong title={item.name}>{item.symbol}</strong><time dateTime={item.as_of} title={marketDate(item.as_of,true)}>{marketDate(item.as_of)}</time></div><span>{formatTokenAmount(item.value)}{item.unit==="percent"?"%":" USD"}</span></li>)}</ul>:<p className="small muted" role="status">{overviewLoading?"Loading prices":"Prices updating"}</p>}
+                  </section>;
+                })}
               </section>
               {session && capability("capital.wallets")?.execution_status !== "testnet_verified" && (
                 <section className="proof-card">

@@ -2,8 +2,10 @@ import Finance from "@/components/finance";
 import { notFound, redirect } from "next/navigation";
 export default async function Page({
   params,
+  searchParams,
 }: {
   params: Promise<{ page?: string[] }>;
+  searchParams: Promise<{category?:string|string[]}>;
 }) {
   const path = (await params).page ?? [];
   const page = path[0] ?? "home";
@@ -23,5 +25,7 @@ export default async function Page({
     ].includes(page)
   )
     notFound();
-  return <Finance page={page} />;
+  const requestedCategory=(await searchParams).category;
+  const initialCategory=typeof requestedCategory==="string"&&["crypto_spot","perps","stocks","commodities"].includes(requestedCategory)?requestedCategory:undefined;
+  return <Finance page={page} initialCategory={initialCategory} />;
 }

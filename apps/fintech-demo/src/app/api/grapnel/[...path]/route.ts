@@ -40,6 +40,10 @@ export async function GET(
       return json(await grapnel("/capabilities"));
     const s = await requireSession();
     const key = path.join("/");
+    if(key==="market-overview"){
+      await requireModule("capital.wallets",s);
+      return json(await grapnel("/market-overview",s));
+    }
     if (key === "wallet")
       return json(await grapnel(`/capital/wallets/${s.walletId}`, s));
     if (key === "balances")
@@ -65,7 +69,7 @@ export async function GET(
       const parsed=z.object({market_id:z.string().min(1).max(200),range:z.enum(['live','1d','1w','1m','1y','all'])}).safeParse({market_id:request.nextUrl.searchParams.get('market_id'),range:request.nextUrl.searchParams.get('range')??'live'});
       if(!parsed.success)throw new BffError(422,'VALIDATION_ERROR','Select a market and time range');
       const {market_id,range}=parsed.data;
-      const module=market_id.startsWith('stellar-testnet:noether:')?'trade.perps':market_id.startsWith('stellar-testnet:soroswap:')?'trade.spot':null;
+      const module=market_id.startsWith('stellar-testnet:noether:')?'trade.perps':market_id.startsWith('stellar-testnet:soroswap:')?'trade.spot':(market_id.startsWith('sodax:catalog:mainnet:')||market_id.startsWith('sodax:catalog:testnet:'))?'trade.stocks':null;
       if(!module)throw new BffError(404,'NOT_FOUND','Market not found');
       await requireModule(module,s);
       return json(await grapnel(`/trade/markets/${encodeURIComponent(market_id)}/history?range=${range}`,s));
