@@ -9,7 +9,7 @@ import {
   useUser,
 } from "@privy-io/react-auth";
 import { useSignRawHash } from "@privy-io/react-auth/extended-chains";
-import { formatTokenAmount, fromAtomic, type PreparedAction } from "@grapnel/contracts";
+import { formatTokenAmount, fromAtomic, toAtomic, type PreparedAction } from "@grapnel/contracts";
 import { api, ClientError, operationRequestKey, clearOperationRequest } from "@/lib/client";
 import { signPreparedAction } from "@/lib/privy-signer";
 type Capability = {
@@ -142,8 +142,18 @@ function customerMessage(message: string): string {
   return message;
 }
 const assetCode = (id?: string): string => id === XLM_ASSET ? "XLM" : id === USDC_ASSET ? "USDC" : "Asset";
-const supportedSpotPair = (input?: string, output?: string): boolean =>
-  input === XLM_ASSET && output === USDC_ASSET || input === USDC_ASSET && output === XLM_ASSET;
+type SwapAsset = {id:string;code:string;decimals?:number};
+function quoteUnitRate(quote: any, input?: SwapAsset, output?: SwapAsset): string | null {
+  if (!input || !output || !Number.isInteger(input.decimals) || !Number.isInteger(output.decimals)) return null;
+  try {
+    const amountIn = toAtomic(quote.amount_in, input.decimals!);
+    const amountOut = toAtomic(quote.expected_out, output.decimals!);
+    const scaled = amountOut * 10n ** BigInt(input.decimals!) * 10n ** 38n / (amountIn * 10n ** BigInt(output.decimals!));
+    if (scaled <= 0n) return null;
+    const display = formatTokenAmount(fromAtomic(scaled,38));
+    return display === "Unavailable" ? null : display;
+  } catch { return null; }
+}
 const approvalFee = (value?: string): string => value && /^\d+$/.test(value) ? `${fromAtomic(BigInt(value), 7)} XLM` : "Unavailable";
 const statusLabel = (status: string): string => ({completed:"Completed",awaiting_customer_authorization:"Needs approval",preparing:"Preparing",submitted:"Submitted",confirming:"Confirming",failed:"Failed",rejected:"Declined",expired:"Expired",recovery_required:"Check transaction"}[status] ?? "In progress");
 function activityLabel(op: Operation): string {
@@ -168,8 +178,8 @@ const title: Record<string, string> = {
   fund: "Get funds",
   funds: "Funds",
   return: "Return funds",
-  markets: "Markets",
-  trade: "Markets",
+  markets: "Swap",
+  trade: "Swap",
   earn: "Earn",
   activity: "Activity",
 };
@@ -278,6 +288,7 @@ function FinanceShell({ page, auth }: { page: string; auth?: Auth }) {
   const [asset, setAsset] = useState("stellar-testnet:native:XLM");
   const [market, setMarket] = useState("");
   const [quote, setQuote] = useState<any>(null);
+  const [swapAmount, setSwapAmount] = useState("");
   const [category, setCategory] = useState("crypto_spot");
   const [slippageBps, setSlippageBps] = useState(50);
   const [quoteClock, setQuoteClock] = useState(Date.now());
@@ -329,16 +340,49 @@ function FinanceShell({ page, auth }: { page: string; auth?: Auth }) {
   // discovery_only until the first grant and customer return are chain-verified.
   const fundingCanStart = capability("capital.testnet_funding")?.enabled && assets.some((entry: any) => entry.available === true);
   const selectedSpotMarket = markets.find(entry => (entry.market_id ?? entry.id) === market);
+  const swapAssetMap = new Map<string, SwapAsset>();
+  for (const entry of markets) {
+    for (const side of ["in", "out"] as const) {
+      const id = entry[`asset_${side}_id`];
+      if (typeof id !== "string" || !id) continue;
+      const metadata = entry[`asset_${side}`];
+      const sameIdentity = metadata?.id === id;
+      swapAssetMap.set(id, {id, code: sameIdentity && typeof metadata.code === "string" && metadata.code ? metadata.code : id === XLM_ASSET ? "XLM" : id === USDC_ASSET ? "USDC" : "Token",
+        decimals: sameIdentity && Number.isInteger(metadata.decimals) ? metadata.decimals : id === XLM_ASSET || id === USDC_ASSET ? 7 : undefined});
+    }
+  }
+  const swapAssets = [...swapAssetMap.values()];
+  const sellAssets = swapAssets.filter(item => markets.some(entry => entry.asset_in_id === item.id));
+  const buyAssets = swapAssets.filter(item => markets.some(entry => entry.asset_in_id === selectedSpotMarket?.asset_in_id && entry.asset_out_id === item.id));
+  const swapCode = (id?: string) => swapAssetMap.get(id ?? "")?.code ?? assetCode(id);
+  const swapLogo = (id?: string) => id === XLM_ASSET ? "/assets/xlm.svg" : id === USDC_ASSET ? "/assets/usdc.svg" : null;
+  const swapBalance = (id: string | undefined, available = true) => {
+    const observed = balances.find(entry => entry.asset_id === id);
+    if (observed) return available ? observed.spendable : observed.wallet_amount;
+    if (id === USDC_ASSET && usdcStatus) return available ? usdcStatus.spendable : usdcStatus.wallet_amount;
+    return undefined;
+  };
+  const chooseSpotMarket = (next: any, clearAmount = true) => {
+    if (!next) return;
+    setMarket(next.market_id ?? next.id); setAsset(next.asset_in_id); setQuote(null);
+    if (clearAmount) setSwapAmount("");
+  };
+  useEffect(() => {
+    if (category !== "crypto_spot" || !markets.length || selectedSpotMarket) return;
+    chooseSpotMarket(markets.find(entry => entry.preparation_available || entry.executable) ?? markets[0], false);
+  }, [markets, category, market]);
   const canPrepareSpot = !!session && category === "crypto_spot" && capability("trade.spot")?.enabled === true &&
     capability("capital.wallets")?.execution_status === "testnet_verified" &&
-    supportedSpotPair(selectedSpotMarket?.asset_in_id, selectedSpotMarket?.asset_out_id) &&
+    typeof selectedSpotMarket?.asset_in_id === "string" && typeof selectedSpotMarket?.asset_out_id === "string" &&
     (selectedSpotMarket?.preparation_available === true || selectedSpotMarket?.executable === true);
+  const pairUsesUsdc = selectedSpotMarket?.asset_in_id === USDC_ASSET || selectedSpotMarket?.asset_out_id === USDC_ASSET;
+  const walletReadyForPair = !pairUsesUsdc || usdcStatus?.enabled === true;
   const quoteExpired = !quote || !Number.isFinite(Date.parse(quote.expires_at)) || Date.parse(quote.expires_at) <= quoteClock;
   const quoteMatchesMarket = quote && quote.market_id === market && quote.asset_in_id === selectedSpotMarket?.asset_in_id && quote.asset_out_id === selectedSpotMarket?.asset_out_id;
-  const spotInputCode = assetCode(selectedSpotMarket?.asset_in_id);
-  const spotOutputCode = assetCode(selectedSpotMarket?.asset_out_id);
-  const spotInputBalance = selectedSpotMarket?.asset_in_id === USDC_ASSET ? usdcStatus?.spendable : balances.find(entry => entry.asset_id === XLM_ASSET)?.spendable;
-
+  const spotInputCode = swapCode(selectedSpotMarket?.asset_in_id);
+  const spotOutputCode = swapCode(selectedSpotMarket?.asset_out_id);
+  const reverseSpotMarket = markets.find(entry => entry.asset_in_id === selectedSpotMarket?.asset_out_id && entry.asset_out_id === selectedSpotMarket?.asset_in_id);
+  const quotedRate = quoteMatchesMarket && !quoteExpired ? quoteUnitRate(quote,swapAssetMap.get(quote.asset_in_id),swapAssetMap.get(quote.asset_out_id)) : null;
 
   const refresh = useCallback(async () => {
     let identity: Session | null = null;
@@ -397,7 +441,7 @@ function FinanceShell({ page, auth }: { page: string; auth?: Auth }) {
           const selected = caps.find(c => c.module === "trade." + (category === "crypto_spot" ? "spot" : category));
           if (selected?.enabled && category === "crypto_spot") {
             const m = await api("grapnel/markets?asset_class=" + category);
-            if (alive) setMarkets((Array.isArray(m) ? m : (m.markets ?? [])).filter((entry: {asset_in_id:string;asset_out_id:string}) => supportedSpotPair(entry.asset_in_id, entry.asset_out_id)));
+            if (alive) setMarkets((Array.isArray(m) ? m : (m.markets ?? [])).filter((entry: {asset_in_id?:unknown;asset_out_id?:unknown}) => typeof entry.asset_in_id === "string" && typeof entry.asset_out_id === "string" && entry.asset_in_id !== entry.asset_out_id));
             if (alive) void refreshUsdcStatus();
           } else if (alive) setMarkets([]);
         }
@@ -930,110 +974,71 @@ function FinanceShell({ page, auth }: { page: string; auth?: Auth }) {
                   </button>
                 ))}
               </div>
-              <div className="card">
-                <div className="section-heading">
-                  <h2>Markets</h2>
-                  <span className="status-pill">
-                    {category === "crypto_spot" && markets.some(entry => entry.preparation_available || entry.executable) ? "Available" : "Unavailable"}
-                  </span>
-                </div>
-                {markets.length ? (
-                  <div className="market-list">
-                    {markets.map((m) => (
-                      <button
-                        key={m.market_id ?? m.id}
-                        className={
-                          market === (m.market_id ?? m.id)
-                            ? "market selected-market"
-                            : "market"
-                        }
-                        disabled={busy}
-                        onClick={() => { setMarket(m.market_id ?? m.id); setAsset(m.asset_in_id); setQuote(null); }}
-                      >
-                        <span className="market-pair-icons"><img src={m.asset_in_id === XLM_ASSET ? "/assets/xlm.svg" : "/assets/usdc.svg"} alt={assetCode(m.asset_in_id)} width={28} height={28} /><img src={m.asset_out_id === XLM_ASSET ? "/assets/xlm.svg" : "/assets/usdc.svg"} alt={assetCode(m.asset_out_id)} width={28} height={28} /></span>
-                        <strong>{assetCode(m.asset_in_id)} → {assetCode(m.asset_out_id)}</strong>
-                        <span>
-                          {m.executable || m.preparation_available ? "Available" : "Currently unavailable"}
-                        </span>
-                      </button>
-                    ))}
-                  </div>
-                ) : (
-                  <Empty
-                    icon="markets"
-                    title={
-                      session
-                        ? "No verified route available."
-                        : "Connect your wallet to explore."
-                    }
-                    text={category !== "crypto_spot"
-                      ? "This category is currently unavailable."
-                      : "No XLM to USDC route is available right now."}
-
-                  />
-                )}
-              </div>
-              {market && (
-                <section className="card compact-form">
-                  <h3>Swap {spotInputCode} for {spotOutputCode}</h3>
-                  <label>Swap direction
-                    <select value={market} disabled={busy} onChange={(event) => {
-                      const next = markets.find(entry => (entry.market_id ?? entry.id) === event.target.value);
-                      if (!next || !supportedSpotPair(next.asset_in_id, next.asset_out_id)) return;
-                      setMarket(event.target.value); setAsset(next.asset_in_id); setQuote(null);
-                    }}>{markets.map(entry => <option key={entry.market_id ?? entry.id} value={entry.market_id ?? entry.id}>{assetCode(entry.asset_in_id)} → {assetCode(entry.asset_out_id)}</option>)}</select>
-                  </label>
-                  {usdcStatusError && <p className="inline-note" role="alert">{customerMessage(usdcStatusError)} <button className="text-button" onClick={() => action(refreshUsdcStatus)} disabled={busy}>Retry wallet check</button></p>}
-                  {!usdcStatus && !usdcStatusError && <p className="small muted" role="status">Checking USDC wallet setup…</p>}
-                  {usdcStatus?.enabled === false && <div className="spot-setup">
-                    <p>Enable USDC in your wallet to continue.</p>
-                    <button className="button outline" disabled={busy || !canPrepareSpot}
-                      onClick={() => { setQuote(null); void action(() => start("usdc-trustline", {limit:"1000"})); }}>Enable USDC</button>
-                  </div>}
-                  {usdcStatus?.enabled && <p className="small muted">Available {spotInputCode}: {formatTokenAmount(spotInputBalance)}</p>}
-                  <label>{spotInputCode} amount
-                    <input value={amount} disabled={busy} onChange={(e) => { setAmount(e.target.value); setQuote(null); }} inputMode="decimal" />
-                  </label>
-                  <label>Maximum slippage
-                    <select value={slippageBps} disabled={busy} onChange={(e) => { setSlippageBps(Number(e.target.value)); setQuote(null); }}>
-                      <option value={10}>0.1%</option><option value={50}>0.5%</option><option value={100}>1%</option>
-                    </select>
-                  </label>
-                  <button className="button" disabled={busy || !canPrepareSpot || usdcStatus?.enabled !== true || !amount}
-                    onClick={() => action(async () => {
-                      setQuote(null);
-                      const customerId = session?.customer_id;
-                      const expectedMarket = market, expectedInput = selectedSpotMarket.asset_in_id, expectedOutput = selectedSpotMarket.asset_out_id;
-                      const next = await api("grapnel/quote", {market_id:expectedMarket,asset_id:expectedInput,amount,slippage_bps:slippageBps});
-                      if (spotCustomer.current !== customerId) return;
-                      if (next.market_id !== expectedMarket || next.asset_in_id !== expectedInput || next.asset_out_id !== expectedOutput || !next.quote_id || !Number.isFinite(Date.parse(next.expires_at))) throw Error("The returned quote does not match your selected assets.");
-                      setQuoteClock(Date.now()); setQuote(next);
-                    })}>Get quote</button>
-                  {quote && <>
-                    <div className="quote-summary" aria-label="Swap quote review">
-                      <div className="detail-row"><span>Input amount</span><strong>{quote.amount_in} {assetCode(quote.asset_in_id)}</strong></div>
-                      <div className="detail-row"><span>{quote.asset_out_id === XLM_ASSET ? "Expected receive before fee" : "Expected receive"}</span><strong>{quote.expected_out} {assetCode(quote.asset_out_id)}</strong></div>
-                      <div className="detail-row"><span>{quote.asset_out_id === XLM_ASSET ? "Minimum receive before fee" : "Minimum receive"}</span><strong>{quote.min_receive} {assetCode(quote.asset_out_id)}</strong></div>
-                      <div className="detail-row"><span>Maximum slippage</span><strong>{(quote.slippage_bps ?? slippageBps) / 100}%</strong></div>
-                      <div className="detail-row"><span>Quote expires</span><strong>{new Date(quote.expires_at).toLocaleTimeString()}</strong></div>
-                      <div className="detail-row"><span>Transaction fee</span><strong>Shown in transaction review</strong></div>
-                      {quoteExpired ? <p className="inline-note" role="alert">This quote expired. Request a new quote before reviewing an order.</p> : null}
+              {category === "crypto_spot" && markets.length && selectedSpotMarket ? (
+                <section className="swap-card" aria-label="Swap assets">
+                  <div className="swap-token-panel">
+                    <span className="swap-panel-label">Sell</span>
+                    <div className="swap-panel-main">
+                      <input className="swap-amount" aria-label="Sell amount" inputMode="decimal" placeholder="0.00" value={swapAmount} disabled={busy}
+                        onChange={event => { setSwapAmount(event.target.value); setQuote(null); }} />
+                      <div className="swap-token-pill">
+                        {swapLogo(selectedSpotMarket.asset_in_id) ? <img src={swapLogo(selectedSpotMarket.asset_in_id)!} alt="" width={28} height={28} /> : <span className="swap-token-fallback" aria-hidden="true">{spotInputCode.slice(0,1)}</span>}
+                        <select aria-label="Sell asset" value={selectedSpotMarket.asset_in_id} disabled={busy} onChange={event => {
+                          const options = markets.filter(entry => entry.asset_in_id === event.target.value);
+                          chooseSpotMarket(options.find(entry => entry.asset_out_id === selectedSpotMarket.asset_out_id) ?? options.find(entry => entry.preparation_available || entry.executable) ?? options[0]);
+                        }}>{sellAssets.map(item => <option value={item.id} key={item.id}>{item.code}</option>)}</select>
+                      </div>
                     </div>
-                    <button className="button" disabled={busy || quoteExpired || !quoteMatchesMarket || !canPrepareSpot || usdcStatus?.enabled !== true}
+                    <div className="swap-panel-balance">Available: <strong>{formatTokenAmount(swapBalance(selectedSpotMarket.asset_in_id))} {spotInputCode}</strong></div>
+                  </div>
+                  <div className="swap-flip-row"><button type="button" className="swap-flip" aria-label="Flip assets" disabled={busy || !reverseSpotMarket}
+                    onClick={() => chooseSpotMarket(reverseSpotMarket)}><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true"><path d="M8 3v14m-4-4 4 4 4-4M16 21V7m-4 4 4-4 4 4" /></svg></button></div>
+                  <div className="swap-token-panel">
+                    <span className="swap-panel-label">Buy</span>
+                    <div className="swap-panel-main">
+                      <output className="swap-output" aria-label="Estimated buy amount">{quoteMatchesMarket && !quoteExpired ? formatTokenAmount(quote.expected_out) : "—"}</output>
+                      <div className="swap-token-pill">
+                        {swapLogo(selectedSpotMarket.asset_out_id) ? <img src={swapLogo(selectedSpotMarket.asset_out_id)!} alt="" width={28} height={28} /> : <span className="swap-token-fallback" aria-hidden="true">{spotOutputCode.slice(0,1)}</span>}
+                        <select aria-label="Buy asset" value={selectedSpotMarket.asset_out_id} disabled={busy} onChange={event => {
+                          chooseSpotMarket(markets.find(entry => entry.asset_in_id === selectedSpotMarket.asset_in_id && entry.asset_out_id === event.target.value),false);
+                        }}>{buyAssets.map(item => <option value={item.id} key={item.id}>{item.code}</option>)}</select>
+                      </div>
+                    </div>
+                    <div className="swap-panel-balance">Balance: <strong>{formatTokenAmount(swapBalance(selectedSpotMarket.asset_out_id,false))} {spotOutputCode}</strong></div>
+                  </div>
+                  {pairUsesUsdc && usdcStatusError && <p className="inline-note" role="alert">{customerMessage(usdcStatusError)} <button className="text-button" onClick={() => action(refreshUsdcStatus)} disabled={busy}>Retry wallet check</button></p>}
+                  {pairUsesUsdc && !usdcStatus && !usdcStatusError && <p className="small muted" role="status">Checking wallet setup…</p>}
+                  {pairUsesUsdc && usdcStatus?.enabled === false && <div className="spot-setup"><p>Enable USDC in your wallet to continue.</p><button className="button outline" disabled={busy || !canPrepareSpot}
+                    onClick={() => { setQuote(null); void action(() => start("usdc-trustline", {limit:"1000"})); }}>Enable USDC</button></div>}
+                  <div className="swap-settings"><label htmlFor="swap-slippage">Maximum slippage</label><select id="swap-slippage" value={slippageBps} disabled={busy}
+                    onChange={event => {setSlippageBps(Number(event.target.value));setQuote(null);}}><option value={10}>0.1%</option><option value={50}>0.5%</option><option value={100}>1%</option></select></div>
+                  <details className="swap-details" key={`${market}:${quote?.quote_id ?? "none"}`}>
+                    <summary><span>{quotedRate ? `1 ${spotInputCode} = ${quotedRate} ${spotOutputCode}` : "Quote details"}</span><svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.6" aria-hidden="true"><path d="m5 7 5 5 5-5" /></svg></summary>
+                    <div className="swap-details-content">
+                      <div className="detail-row"><span>{selectedSpotMarket.asset_out_id === XLM_ASSET ? "Expected output before fee" : "Expected output"}</span><strong>{quoteMatchesMarket ? `${quote.expected_out} ${spotOutputCode}` : "Not quoted"}</strong></div>
+                      <div className="detail-row"><span>{selectedSpotMarket.asset_out_id === XLM_ASSET ? "Minimum received before fee" : "Minimum received"}</span><strong>{quoteMatchesMarket ? `${quote.min_receive} ${spotOutputCode}` : "Not quoted"}</strong></div>
+                      <div className="detail-row"><span>Fee</span><strong>Shown in transaction review</strong></div>
+                      {quoteMatchesMarket && <div className="detail-row"><span>Quote expires</span><strong>{new Date(quote.expires_at).toLocaleTimeString()}</strong></div>}
+                    </div>
+                  </details>
+                  {quote && quoteExpired && <p className="inline-note" role="alert">This quote expired. Request a new quote before reviewing a swap.</p>}
+                  {!canPrepareSpot && <p className="small muted">This pair is currently unavailable.</p>}
+                  {quoteMatchesMarket && !quoteExpired ? <button className="button swap-submit" disabled={busy || !canPrepareSpot || !walletReadyForPair}
+                    onClick={() => action(async () => {
+                      if (!quoteMatchesMarket || Date.parse(quote.expires_at) <= Date.now()) {setQuoteClock(Date.now());throw Error("This quote expired. Request a new quote.");}
+                      await start("order",{quote_id:quote.quote_id});setQuote(null);
+                    })}>{busy ? "Preparing…" : "Review swap"}</button>
+                    : <button className="button swap-submit" disabled={busy || !canPrepareSpot || !walletReadyForPair || !swapAmount}
                       onClick={() => action(async () => {
-                        if (!quoteMatchesMarket) throw Error("Request a new quote for the selected assets.");
-                        if (Date.parse(quote.expires_at) <= Date.now()) { setQuoteClock(Date.now()); throw Error("This quote expired. Request a fresh quote."); }
-                        await start("order", {quote_id:quote.quote_id}); setQuote(null);
-                      })}>Review order</button>
-                  </>}
+                        setQuote(null);
+                        const customerId=session?.customer_id, expectedMarket=market, expectedInput=selectedSpotMarket.asset_in_id, expectedOutput=selectedSpotMarket.asset_out_id;
+                        const next=await api("grapnel/quote",{market_id:expectedMarket,asset_id:expectedInput,amount:swapAmount,slippage_bps:slippageBps});
+                        if(spotCustomer.current!==customerId)return;
+                        if(next.market_id!==expectedMarket||next.asset_in_id!==expectedInput||next.asset_out_id!==expectedOutput||!next.quote_id||!Number.isFinite(Date.parse(next.expires_at)))throw Error("The returned quote does not match your selected assets.");
+                        setQuoteClock(Date.now());setQuote(next);
+                      })}>{busy ? "Getting quote…" : "Get quote"}</button>}
                 </section>
-              )}
-              <div className="notice neutral">
-                <Icon name="shield" />
-                <p>
-                  Stocks, perps and commodities are currently unavailable.
-                </p>
-              </div>
+              ) : <section className="card"><Empty icon="markets" title="No markets available." text={category === "crypto_spot" ? "Try refreshing to check available assets." : "This category is currently unavailable."} /></section>}
             </>
           )}
           {page === "earn" && (
@@ -1203,7 +1208,7 @@ function FinanceShell({ page, auth }: { page: string; auth?: Auth }) {
             <p className="eyebrow">WALLET ACTION</p>
             <h2 id="operation-title">
               {active.type === "spot.swap" && active.status === "awaiting_customer_authorization"
-                ? `Review your ${assetCode(active.prepared_action?.summary.fromAssetId)} → ${assetCode(active.prepared_action?.summary.toAssetId)} swap`
+                ? `Review your ${swapCode(active.prepared_action?.summary.fromAssetId)} → ${swapCode(active.prepared_action?.summary.toAssetId)} swap`
                 : active.type === "wallet.usdc_trustline"
                 ? active.status === "completed" ? "USDC enabled." : "Enable USDC"
                 : active.status === "awaiting_customer_authorization"
@@ -1235,10 +1240,10 @@ function FinanceShell({ page, auth }: { page: string; auth?: Auth }) {
                 <div><span>Expires</span><code>{new Date(active.prepared_action.summary.expiresAt).toLocaleString()}</code></div>
                 <p className="small muted">This enables USDC in your wallet. The limit is the maximum amount you can hold; no USDC is transferred.</p>
               </div>
-            ) : active.prepared_action?.summary.action === "spot.swap" && supportedSpotPair(active.prepared_action.summary.fromAssetId, active.prepared_action.summary.toAssetId) ? (
+            ) : active.prepared_action?.summary.action === "spot.swap" ? (
               <div className="approval-summary">
-                <div><span>You send</span><code>{active.prepared_action.summary.amount} {assetCode(active.prepared_action.summary.fromAssetId)}</code></div>
-                <div><span>{active.prepared_action.summary.toAssetId === XLM_ASSET ? "You receive at least before fee" : "You receive at least"}</span><code>{active.prepared_action.summary.minReceive} {assetCode(active.prepared_action.summary.toAssetId)}</code></div>
+                <div><span>You send</span><code>{active.prepared_action.summary.amount} {swapCode(active.prepared_action.summary.fromAssetId)}</code></div>
+                <div><span>{active.prepared_action.summary.toAssetId === XLM_ASSET ? "You receive at least before fee" : "You receive at least"}</span><code>{active.prepared_action.summary.minReceive} {swapCode(active.prepared_action.summary.toAssetId)}</code></div>
                 <div><span>Maximum fee</span><code>{approvalFee(active.prepared_action.summary.maxFeeStroops)}</code></div>
                 <div><span>Expires</span><code>{new Date(active.prepared_action.summary.expiresAt).toLocaleString()}</code></div>
               </div>
@@ -1247,7 +1252,7 @@ function FinanceShell({ page, auth }: { page: string; auth?: Auth }) {
                 <div><span>Asset</span><code>{assetCode(active.prepared_action.summary.fromAssetId)}</code></div>
                 {["blend.supply", "blend.withdraw", "testnet.fund", "testnet.return", "wallet.test_payment"].includes(active.type) && <div><span>Destination</span><code>{active.type === "blend.supply" ? "Your Earn balance" : active.type === "testnet.return" || active.type === "wallet.test_payment" ? "Funds account" : "Your wallet"}</code></div>}
                 {active.prepared_action.summary.amount && <div><span>Amount</span><code>{active.prepared_action.summary.amount}</code></div>}
-                {active.prepared_action.summary.minReceive && <div><span>Minimum receive</span><code>{active.prepared_action.summary.minReceive} {assetCode(active.prepared_action.summary.toAssetId)}</code></div>}
+                {active.prepared_action.summary.minReceive && <div><span>Minimum receive</span><code>{active.prepared_action.summary.minReceive} {swapCode(active.prepared_action.summary.toAssetId)}</code></div>}
                 <div><span>Maximum fee</span><code>{approvalFee(active.prepared_action.summary.maxFeeStroops)}</code></div>
                 <div><span>Expires</span><code>{new Date(active.prepared_action.summary.expiresAt).toLocaleString()}</code></div>
               </div>
