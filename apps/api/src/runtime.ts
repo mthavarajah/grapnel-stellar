@@ -16,6 +16,7 @@ import { BLEND_USDC_ASSET_ID, inspectBlendUsdcDeltas } from './adapters/blend/us
 import {registerUsdcTrustline} from './modules/wallets/usdc.js';
 import {verifyPreparedUsdcTrustline,TESTNET_USDC_ISSUER} from './adapters/stellar/usdc-trustline.js';
 import { registerLendingRoutes } from './modules/lending/routes.js';
+import {LendingEarningsReader} from './modules/lending/earnings.js';
 import { SoroswapSpotAdapter } from './adapters/soroswap/index.js';
 import {SoroswapDirectInspector} from './adapters/soroswap/inspector.js';
 import {createSpotReservation,inspectSpotDeltas,SpotBaselineSchema,SPOT_USDC_ID} from './modules/spot/reservations.js';
@@ -68,6 +69,7 @@ export async function createRuntime(pool?:Pool) {
  const spotReadiness=new SpotProofReadiness(db,spot,spotInspector,chain.server);
  const soroban=new BlendSorobanPreparer({network:config.network,passphrase:NETWORK_PASSPHRASE,rpcUrl:process.env.STELLAR_RPC_URL,gate1Passed});
  const blend=new BlendAdapter({network:config.network,passphrase:NETWORK_PASSPHRASE,rpcUrl:process.env.STELLAR_RPC_URL,gate1Passed},{prepareAndSimulate:input=>soroban.prepare(input)});
+ const earningsReader=new LendingEarningsReader({pool:db,positions:customer=>blend.positions(customer)});
  let fundingVerified=false;let fundingProofAt=0;let fundingProofRunning=false;
  const readFundingReadiness=async()=>{
   if(!await hasGate1Proof(chain))return {execution_status:'blocked' as const,reason:'GATE_1_SIGNING_PROOF_REQUIRED',actions:[]};
@@ -103,6 +105,12 @@ export async function createRuntime(pool?:Pool) {
    'capital.testnet_funding':readFundingReadiness
   },
   registerAdapters:async app=>{
+   app.get('/v1/capital/lending/earnings',async request=>{
+    await requireBusiness(request,'capital.lending');
+    const query=z.object({customer_id:z.string().uuid(),wallet_id:z.string().uuid().optional()}).strict().parse(request.query);
+    const customer=await requireCustomer(request,query.customer_id,query.wallet_id);
+    return success(request,{earnings:await earningsReader.getEarnings(customer),as_of:new Date().toISOString()});
+   });
    await registerUsdcTrustline(app,{chain,operations,verifyGate1:()=>hasGate1Proof(chain)});
    // Revalidate the actual chain proof for every new provider intent. A
    // startup snapshot must not survive a Testnet reset or unavailable proof.
