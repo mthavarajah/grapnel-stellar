@@ -24,6 +24,7 @@ import {SoroswapConfiguredInspector} from './adapters/soroswap/configured-inspec
 import {STANDALONE_NATIVE_ROUTES,APPROVED_TOKEN_WASM} from './adapters/soroswap/direct-assets.js';
 import {SorobanTokenBalanceReader} from './adapters/stellar/token-balances.js';
 import {MarketDataService} from './modules/market-data/index.js';
+import {registerMarketHistoryRoutes} from './modules/market-data/routes.js';
 import {createSpotReservation,inspectSpotDeltas,SpotBaselineSchema,SPOT_USDC_ID} from './modules/spot/reservations.js';
 import {SpotProofReadiness} from './modules/spot/proof.js';
 import { SpotService } from './modules/spot/service.js';
@@ -143,12 +144,10 @@ export async function createRuntime(pool?:Pool) {
    'capital.testnet_funding':readFundingReadiness
   },
   registerAdapters:async app=>{
-   app.get('/v1/trade/markets/:id/history',async request=>{
-    const {id}=z.object({id:z.string().min(1).max(200)}).parse(request.params);
-    await requireBusiness(request,id.startsWith('stellar-testnet:noether:')?'trade.perps':'trade.spot');
-    const {range}=z.object({range:z.enum(['live','1d','1w','1m','1y','all']).default('live')}).strict().parse(request.query);
-    const profile=await marketProfile(id);
-    return success(request,{...await marketData.history(profile.history_market_id??id,range),market_id:id,base_asset_id:profile.base_asset_id,base_symbol:profile.base_symbol});
+   await registerMarketHistoryRoutes(app,{requireBusiness,success,
+    perps:(id,range)=>perps.history(id,range),
+    stocks:(id,range)=>stocks.history(id,range),
+    spot:async(id,range)=>{const profile=await marketProfile(id);return {...await marketData.history(profile.history_market_id??id,range),market_id:id,base_asset_id:profile.base_asset_id,base_symbol:profile.base_symbol};}
    });
    app.get('/v1/capital/lending/earnings',async request=>{
     await requireBusiness(request,'capital.lending');
@@ -189,7 +188,7 @@ export async function createRuntime(pool?:Pool) {
    });
    await registerLendingRoutes(app,{adapter:blend,operations,balanceReader:address=>chain.getClassicBalances(address)});
    await registerSpotRoutes(app,{service:new SpotService(spot,db,operations,createSpotReservation(operations,readSpotBalances)),refreshReadiness:()=>spotReadiness.refresh(),requireBusiness,requireCustomer,success,
-    readDiscoveryMarkets:async category=>category==='perps'?perps.marketDetails():category==='commodities'?commodities.markets():(await stocks.probe()).markets,
+    readDiscoveryMarkets:async category=>category==='perps'?perps.marketDetails():category==='commodities'?commodities.markets():(await stocks.catalog()).map(market=>({...market,history_available:true})),
     readPositions:async customer=>({wallet_holdings:await wallets.balances(customer.businessId,customer.walletId),venue_positions:[]})});
    await registerFundingRoutes(app,{service:new FundingService(funding,operations),requireBusiness,requireCustomer,success});
   }
