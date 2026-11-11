@@ -1,0 +1,584 @@
+{
+  "observed_at": "2026-11-11T19:03:30.750Z",
+  "mode": "read_only_diagnostic_not_signable",
+  "broadcast": false,
+  "signatures": 0,
+  "tx_hash": null,
+  "reports": [
+    {
+      "requests": [
+        {
+          "request_type": 2,
+          "address": "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC",
+          "amount": "10000000"
+        }
+      ],
+      "ledger": 5680033,
+      "success": true,
+      "auth": [
+        {
+          "credentials": "sorobanCredentialsSourceAccount",
+          "root": {
+            "function": {
+              "contract": "CB3447A446DY3USGWPIDXTNQHF5EX24XDQA2EN6TAZP62JTPBTNOA52Q",
+              "fn": "submit",
+              "args": [
+                "GB4PC65ZHBPVEZMAHY2K2KYMS3RFBIN2FQIE3LGTLEHT2DEWVMTD7JYQ",
+                "GB4PC65ZHBPVEZMAHY2K2KYMS3RFBIN2FQIE3LGTLEHT2DEWVMTD7JYQ",
+                "GB4PC65ZHBPVEZMAHY2K2KYMS3RFBIN2FQIE3LGTLEHT2DEWVMTD7JYQ",
+                [
+                  {
+                    "address": "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC",
+                    "amount": "10000000",
+                    "request_type": 2
+                  }
+                ]
+              ]
+            },
+            "children": [
+              {
+                "function": {
+                  "contract": "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC",
+                  "fn": "transfer",
+                  "args": [
+                    "GB4PC65ZHBPVEZMAHY2K2KYMS3RFBIN2FQIE3LGTLEHT2DEWVMTD7JYQ",
+                    "CB3447A446DY3USGWPIDXTNQHF5EX24XDQA2EN6TAZP62JTPBTNOA52Q",
+                    "10000000"
+                  ]
+                },
+                "children": []
+              }
+            ]
+          }
+        }
+      ],
+      "fee": "525492",
+      "resources": "AAAABgAAAAYAAAABd858HOeHjdJGs9A7zbA5ekvrlxwBojfTBl/tJm8M2uAAAAAQAAAAAQAAAAIAAAAPAAAAB0F1Y3Rpb24AAAAAEQAAAAEAAAACAAAADwAAAAlhdWN0X3R5cGUAAAAAAAADAAAAAAAAAA8AAAAEdXNlcgAAABIAAAAAAAAAAHjxe7k4X1JlgD40rSsMluJQobosEE2s01kPPQyWqyY/AAAAAAAAAAYAAAABd858HOeHjdJGs9A7zbA5ekvrlxwBojfTBl/tJm8M2uAAAAAQAAAAAQAAAAIAAAAPAAAACEVtaXNEYXRhAAAAAwAAAAEAAAABAAAABgAAAAF3znwc54eN0kaz0DvNsDl6S+uXHAGiN9MGX+0mbwza4AAAABAAAAABAAAAAgAAAA8AAAAJUmVzQ29uZmlnAAAAAAAAEgAAAAHXkotywnA8z+r365/0701QSlWouXn8m0UOoshCtNHOYQAAAAEAAAAGAAAAAXfOfBznh43SRrPQO82wOXpL65ccAaI30wZf7SZvDNrgAAAAFAAAAAEAAAAGAAAAAdeSi3LCcDzP6vfrn/TvTVBKVai5efybRQ6iyEK00c5hAAAAFAAAAAEAAAAHpB/FPWdTtsBOsVsCHFUFI2akyODiG8cnAPRhJk7BNQ4AAAAEAAAAAAAAAAB48Xu5OF9SZYA+NK0rDJbiUKG6LBBNrNNZDz0MlqsmPwAAAAYAAAABd858HOeHjdJGs9A7zbA5ekvrlxwBojfTBl/tJm8M2uAAAAAQAAAAAQAAAAIAAAAPAAAACVBvc2l0aW9ucwAAAAAAABIAAAAAAAAAAHjxe7k4X1JlgD40rSsMluJQobosEE2s01kPPQyWqyY/AAAAAQAAAAYAAAABd858HOeHjdJGs9A7zbA5ekvrlxwBojfTBl/tJm8M2uAAAAAQAAAAAQAAAAIAAAAPAAAAB1Jlc0RhdGEAAAAAEgAAAAHXkotywnA8z+r365/0701QSlWouXn8m0UOoshCtNHOYQAAAAEAAAAGAAAAAdeSi3LCcDzP6vfrn/TvTVBKVai5efybRQ6iyEK00c5hAAAAEAAAAAEAAAACAAAADwAAAAdCYWxhbmNlAAAAABIAAAABd858HOeHjdJGs9A7zbA5ekvrlxwBojfTBl/tJm8M2uAAAAABACMLcQAAAJAAAAQA",
+      "read_only": [
+        {
+          "kind": "contractData",
+          "contract": "CB3447A446DY3USGWPIDXTNQHF5EX24XDQA2EN6TAZP62JTPBTNOA52Q",
+          "key": [
+            "Auction",
+            {
+              "auct_type": 0,
+              "user": "GB4PC65ZHBPVEZMAHY2K2KYMS3RFBIN2FQIE3LGTLEHT2DEWVMTD7JYQ"
+            }
+          ],
+          "durability": "temporary"
+        },
+        {
+          "kind": "contractData",
+          "contract": "CB3447A446DY3USGWPIDXTNQHF5EX24XDQA2EN6TAZP62JTPBTNOA52Q",
+          "key": [
+            "EmisData",
+            1
+          ],
+          "durability": "persistent"
+        },
+        {
+          "kind": "contractData",
+          "contract": "CB3447A446DY3USGWPIDXTNQHF5EX24XDQA2EN6TAZP62JTPBTNOA52Q",
+          "key": [
+            "ResConfig",
+            "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC"
+          ],
+          "durability": "persistent"
+        },
+        {
+          "kind": "contractData",
+          "contract": "CB3447A446DY3USGWPIDXTNQHF5EX24XDQA2EN6TAZP62JTPBTNOA52Q",
+          "durability": "persistent"
+        },
+        {
+          "kind": "contractData",
+          "contract": "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC",
+          "durability": "persistent"
+        },
+        {
+          "kind": "contractCode",
+          "hash": "a41fc53d6753b6c04eb15b021c55052366a4c8e0e21bc72700f461264ec1350e"
+        }
+      ],
+      "read_write": [
+        {
+          "kind": "account",
+          "address": "GB4PC65ZHBPVEZMAHY2K2KYMS3RFBIN2FQIE3LGTLEHT2DEWVMTD7JYQ"
+        },
+        {
+          "kind": "contractData",
+          "contract": "CB3447A446DY3USGWPIDXTNQHF5EX24XDQA2EN6TAZP62JTPBTNOA52Q",
+          "key": [
+            "Positions",
+            "GB4PC65ZHBPVEZMAHY2K2KYMS3RFBIN2FQIE3LGTLEHT2DEWVMTD7JYQ"
+          ],
+          "durability": "persistent"
+        },
+        {
+          "kind": "contractData",
+          "contract": "CB3447A446DY3USGWPIDXTNQHF5EX24XDQA2EN6TAZP62JTPBTNOA52Q",
+          "key": [
+            "ResData",
+            "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC"
+          ],
+          "durability": "persistent"
+        },
+        {
+          "kind": "contractData",
+          "contract": "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC",
+          "key": [
+            "Balance",
+            "CB3447A446DY3USGWPIDXTNQHF5EX24XDQA2EN6TAZP62JTPBTNOA52Q"
+          ],
+          "durability": "persistent"
+        }
+      ]
+    },
+    {
+      "requests": [
+        {
+          "request_type": 2,
+          "address": "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC",
+          "amount": "100000000"
+        },
+        {
+          "request_type": 4,
+          "address": "CAQCFVLOBK5GIULPNZRGATJJMIZL5BSP7X5YJVMGCPTUEPFM4AVSRCJU",
+          "amount": "10000000"
+        }
+      ],
+      "ledger": 5680033,
+      "success": true,
+      "auth": [
+        {
+          "credentials": "sorobanCredentialsSourceAccount",
+          "root": {
+            "function": {
+              "contract": "CB3447A446DY3USGWPIDXTNQHF5EX24XDQA2EN6TAZP62JTPBTNOA52Q",
+              "fn": "submit",
+              "args": [
+                "GB4PC65ZHBPVEZMAHY2K2KYMS3RFBIN2FQIE3LGTLEHT2DEWVMTD7JYQ",
+                "GB4PC65ZHBPVEZMAHY2K2KYMS3RFBIN2FQIE3LGTLEHT2DEWVMTD7JYQ",
+                "GB4PC65ZHBPVEZMAHY2K2KYMS3RFBIN2FQIE3LGTLEHT2DEWVMTD7JYQ",
+                [
+                  {
+                    "address": "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC",
+                    "amount": "100000000",
+                    "request_type": 2
+                  },
+                  {
+                    "address": "CAQCFVLOBK5GIULPNZRGATJJMIZL5BSP7X5YJVMGCPTUEPFM4AVSRCJU",
+                    "amount": "10000000",
+                    "request_type": 4
+                  }
+                ]
+              ]
+            },
+            "children": [
+              {
+                "function": {
+                  "contract": "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC",
+                  "fn": "transfer",
+                  "args": [
+                    "GB4PC65ZHBPVEZMAHY2K2KYMS3RFBIN2FQIE3LGTLEHT2DEWVMTD7JYQ",
+                    "CB3447A446DY3USGWPIDXTNQHF5EX24XDQA2EN6TAZP62JTPBTNOA52Q",
+                    "100000000"
+                  ]
+                },
+                "children": []
+              }
+            ]
+          }
+        }
+      ],
+      "fee": "1100935",
+      "resources": "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",
+      "read_only": [
+        {
+          "kind": "contractData",
+          "contract": "CAQCFVLOBK5GIULPNZRGATJJMIZL5BSP7X5YJVMGCPTUEPFM4AVSRCJU",
+          "durability": "persistent"
+        },
+        {
+          "kind": "contractData",
+          "contract": "CAZOKR2Y5E2OSWSIBRVZMJ47RUTQPIGVWSAQ2UISGAVC46XKPGDG5PKI",
+          "key": "0",
+          "durability": "temporary"
+        },
+        {
+          "kind": "contractData",
+          "contract": "CAZOKR2Y5E2OSWSIBRVZMJ47RUTQPIGVWSAQ2UISGAVC46XKPGDG5PKI",
+          "key": "1",
+          "durability": "temporary"
+        },
+        {
+          "kind": "contractData",
+          "contract": "CAZOKR2Y5E2OSWSIBRVZMJ47RUTQPIGVWSAQ2UISGAVC46XKPGDG5PKI",
+          "key": "timestamp",
+          "durability": "temporary"
+        },
+        {
+          "kind": "contractData",
+          "contract": "CAZOKR2Y5E2OSWSIBRVZMJ47RUTQPIGVWSAQ2UISGAVC46XKPGDG5PKI",
+          "durability": "persistent"
+        },
+        {
+          "kind": "contractData",
+          "contract": "CB3447A446DY3USGWPIDXTNQHF5EX24XDQA2EN6TAZP62JTPBTNOA52Q",
+          "key": "ResList",
+          "durability": "persistent"
+        },
+        {
+          "kind": "contractData",
+          "contract": "CB3447A446DY3USGWPIDXTNQHF5EX24XDQA2EN6TAZP62JTPBTNOA52Q",
+          "key": [
+            "Auction",
+            {
+              "auct_type": 0,
+              "user": "GB4PC65ZHBPVEZMAHY2K2KYMS3RFBIN2FQIE3LGTLEHT2DEWVMTD7JYQ"
+            }
+          ],
+          "durability": "temporary"
+        },
+        {
+          "kind": "contractData",
+          "contract": "CB3447A446DY3USGWPIDXTNQHF5EX24XDQA2EN6TAZP62JTPBTNOA52Q",
+          "key": [
+            "EmisData",
+            1
+          ],
+          "durability": "persistent"
+        },
+        {
+          "kind": "contractData",
+          "contract": "CB3447A446DY3USGWPIDXTNQHF5EX24XDQA2EN6TAZP62JTPBTNOA52Q",
+          "key": [
+            "EmisData",
+            6
+          ],
+          "durability": "persistent"
+        },
+        {
+          "kind": "contractData",
+          "contract": "CB3447A446DY3USGWPIDXTNQHF5EX24XDQA2EN6TAZP62JTPBTNOA52Q",
+          "key": [
+            "ResConfig",
+            "CAQCFVLOBK5GIULPNZRGATJJMIZL5BSP7X5YJVMGCPTUEPFM4AVSRCJU"
+          ],
+          "durability": "persistent"
+        },
+        {
+          "kind": "contractData",
+          "contract": "CB3447A446DY3USGWPIDXTNQHF5EX24XDQA2EN6TAZP62JTPBTNOA52Q",
+          "key": [
+            "ResConfig",
+            "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC"
+          ],
+          "durability": "persistent"
+        },
+        {
+          "kind": "contractData",
+          "contract": "CB3447A446DY3USGWPIDXTNQHF5EX24XDQA2EN6TAZP62JTPBTNOA52Q",
+          "durability": "persistent"
+        },
+        {
+          "kind": "contractData",
+          "contract": "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC",
+          "durability": "persistent"
+        },
+        {
+          "kind": "contractCode",
+          "hash": "66c0b87b5eb481be594175d59e66ec9a9ac8945be0fec4e09f6c28bf7a1708be"
+        },
+        {
+          "kind": "contractCode",
+          "hash": "a41fc53d6753b6c04eb15b021c55052366a4c8e0e21bc72700f461264ec1350e"
+        }
+      ],
+      "read_write": [
+        {
+          "kind": "account",
+          "address": "GB4PC65ZHBPVEZMAHY2K2KYMS3RFBIN2FQIE3LGTLEHT2DEWVMTD7JYQ"
+        },
+        {
+          "kind": "trustline",
+          "xdr": "AAAAAQAAAAB48Xu5OF9SZYA+NK0rDJbiUKG6LBBNrNNZDz0MlqsmPwAAAAFVU0RDAAAAACYFzNOyHT8GgwiyzcOOhwLtCctwM/RiSnrFp7JOe8xe"
+        },
+        {
+          "kind": "contractData",
+          "contract": "CAQCFVLOBK5GIULPNZRGATJJMIZL5BSP7X5YJVMGCPTUEPFM4AVSRCJU",
+          "key": [
+            "Balance",
+            "CB3447A446DY3USGWPIDXTNQHF5EX24XDQA2EN6TAZP62JTPBTNOA52Q"
+          ],
+          "durability": "persistent"
+        },
+        {
+          "kind": "contractData",
+          "contract": "CB3447A446DY3USGWPIDXTNQHF5EX24XDQA2EN6TAZP62JTPBTNOA52Q",
+          "key": [
+            "Positions",
+            "GB4PC65ZHBPVEZMAHY2K2KYMS3RFBIN2FQIE3LGTLEHT2DEWVMTD7JYQ"
+          ],
+          "durability": "persistent"
+        },
+        {
+          "kind": "contractData",
+          "contract": "CB3447A446DY3USGWPIDXTNQHF5EX24XDQA2EN6TAZP62JTPBTNOA52Q",
+          "key": [
+            "ResData",
+            "CAQCFVLOBK5GIULPNZRGATJJMIZL5BSP7X5YJVMGCPTUEPFM4AVSRCJU"
+          ],
+          "durability": "persistent"
+        },
+        {
+          "kind": "contractData",
+          "contract": "CB3447A446DY3USGWPIDXTNQHF5EX24XDQA2EN6TAZP62JTPBTNOA52Q",
+          "key": [
+            "ResData",
+            "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC"
+          ],
+          "durability": "persistent"
+        },
+        {
+          "kind": "contractData",
+          "contract": "CB3447A446DY3USGWPIDXTNQHF5EX24XDQA2EN6TAZP62JTPBTNOA52Q",
+          "key": [
+            "UserEmis",
+            {
+              "reserve_id": 6,
+              "user": "GB4PC65ZHBPVEZMAHY2K2KYMS3RFBIN2FQIE3LGTLEHT2DEWVMTD7JYQ"
+            }
+          ],
+          "durability": "persistent"
+        },
+        {
+          "kind": "contractData",
+          "contract": "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC",
+          "key": [
+            "Balance",
+            "CB3447A446DY3USGWPIDXTNQHF5EX24XDQA2EN6TAZP62JTPBTNOA52Q"
+          ],
+          "durability": "persistent"
+        }
+      ]
+    },
+    {
+      "requests": [
+        {
+          "request_type": 2,
+          "address": "CAQCFVLOBK5GIULPNZRGATJJMIZL5BSP7X5YJVMGCPTUEPFM4AVSRCJU",
+          "amount": "50000000"
+        },
+        {
+          "request_type": 4,
+          "address": "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC",
+          "amount": "10000000"
+        }
+      ],
+      "ledger": 5680033,
+      "success": true,
+      "auth": [
+        {
+          "credentials": "sorobanCredentialsSourceAccount",
+          "root": {
+            "function": {
+              "contract": "CB3447A446DY3USGWPIDXTNQHF5EX24XDQA2EN6TAZP62JTPBTNOA52Q",
+              "fn": "submit",
+              "args": [
+                "GB4PC65ZHBPVEZMAHY2K2KYMS3RFBIN2FQIE3LGTLEHT2DEWVMTD7JYQ",
+                "GB4PC65ZHBPVEZMAHY2K2KYMS3RFBIN2FQIE3LGTLEHT2DEWVMTD7JYQ",
+                "GB4PC65ZHBPVEZMAHY2K2KYMS3RFBIN2FQIE3LGTLEHT2DEWVMTD7JYQ",
+                [
+                  {
+                    "address": "CAQCFVLOBK5GIULPNZRGATJJMIZL5BSP7X5YJVMGCPTUEPFM4AVSRCJU",
+                    "amount": "50000000",
+                    "request_type": 2
+                  },
+                  {
+                    "address": "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC",
+                    "amount": "10000000",
+                    "request_type": 4
+                  }
+                ]
+              ]
+            },
+            "children": [
+              {
+                "function": {
+                  "contract": "CAQCFVLOBK5GIULPNZRGATJJMIZL5BSP7X5YJVMGCPTUEPFM4AVSRCJU",
+                  "fn": "transfer",
+                  "args": [
+                    "GB4PC65ZHBPVEZMAHY2K2KYMS3RFBIN2FQIE3LGTLEHT2DEWVMTD7JYQ",
+                    "CB3447A446DY3USGWPIDXTNQHF5EX24XDQA2EN6TAZP62JTPBTNOA52Q",
+                    "50000000"
+                  ]
+                },
+                "children": []
+              }
+            ]
+          }
+        }
+      ],
+      "fee": "591685",
+      "resources": "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",
+      "read_only": [
+        {
+          "kind": "contractData",
+          "contract": "CAQCFVLOBK5GIULPNZRGATJJMIZL5BSP7X5YJVMGCPTUEPFM4AVSRCJU",
+          "durability": "persistent"
+        },
+        {
+          "kind": "contractData",
+          "contract": "CAZOKR2Y5E2OSWSIBRVZMJ47RUTQPIGVWSAQ2UISGAVC46XKPGDG5PKI",
+          "key": "0",
+          "durability": "temporary"
+        },
+        {
+          "kind": "contractData",
+          "contract": "CAZOKR2Y5E2OSWSIBRVZMJ47RUTQPIGVWSAQ2UISGAVC46XKPGDG5PKI",
+          "key": "1",
+          "durability": "temporary"
+        },
+        {
+          "kind": "contractData",
+          "contract": "CAZOKR2Y5E2OSWSIBRVZMJ47RUTQPIGVWSAQ2UISGAVC46XKPGDG5PKI",
+          "key": "timestamp",
+          "durability": "temporary"
+        },
+        {
+          "kind": "contractData",
+          "contract": "CAZOKR2Y5E2OSWSIBRVZMJ47RUTQPIGVWSAQ2UISGAVC46XKPGDG5PKI",
+          "durability": "persistent"
+        },
+        {
+          "kind": "contractData",
+          "contract": "CB3447A446DY3USGWPIDXTNQHF5EX24XDQA2EN6TAZP62JTPBTNOA52Q",
+          "key": "ResList",
+          "durability": "persistent"
+        },
+        {
+          "kind": "contractData",
+          "contract": "CB3447A446DY3USGWPIDXTNQHF5EX24XDQA2EN6TAZP62JTPBTNOA52Q",
+          "key": [
+            "Auction",
+            {
+              "auct_type": 0,
+              "user": "GB4PC65ZHBPVEZMAHY2K2KYMS3RFBIN2FQIE3LGTLEHT2DEWVMTD7JYQ"
+            }
+          ],
+          "durability": "temporary"
+        },
+        {
+          "kind": "contractData",
+          "contract": "CB3447A446DY3USGWPIDXTNQHF5EX24XDQA2EN6TAZP62JTPBTNOA52Q",
+          "key": [
+            "EmisData",
+            0
+          ],
+          "durability": "persistent"
+        },
+        {
+          "kind": "contractData",
+          "contract": "CB3447A446DY3USGWPIDXTNQHF5EX24XDQA2EN6TAZP62JTPBTNOA52Q",
+          "key": [
+            "EmisData",
+            7
+          ],
+          "durability": "persistent"
+        },
+        {
+          "kind": "contractData",
+          "contract": "CB3447A446DY3USGWPIDXTNQHF5EX24XDQA2EN6TAZP62JTPBTNOA52Q",
+          "key": [
+            "ResConfig",
+            "CAQCFVLOBK5GIULPNZRGATJJMIZL5BSP7X5YJVMGCPTUEPFM4AVSRCJU"
+          ],
+          "durability": "persistent"
+        },
+        {
+          "kind": "contractData",
+          "contract": "CB3447A446DY3USGWPIDXTNQHF5EX24XDQA2EN6TAZP62JTPBTNOA52Q",
+          "key": [
+            "ResConfig",
+            "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC"
+          ],
+          "durability": "persistent"
+        },
+        {
+          "kind": "contractData",
+          "contract": "CB3447A446DY3USGWPIDXTNQHF5EX24XDQA2EN6TAZP62JTPBTNOA52Q",
+          "durability": "persistent"
+        },
+        {
+          "kind": "contractData",
+          "contract": "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC",
+          "durability": "persistent"
+        },
+        {
+          "kind": "contractCode",
+          "hash": "66c0b87b5eb481be594175d59e66ec9a9ac8945be0fec4e09f6c28bf7a1708be"
+        },
+        {
+          "kind": "contractCode",
+          "hash": "a41fc53d6753b6c04eb15b021c55052366a4c8e0e21bc72700f461264ec1350e"
+        }
+      ],
+      "read_write": [
+        {
+          "kind": "account",
+          "address": "GB4PC65ZHBPVEZMAHY2K2KYMS3RFBIN2FQIE3LGTLEHT2DEWVMTD7JYQ"
+        },
+        {
+          "kind": "trustline",
+          "xdr": "AAAAAQAAAAB48Xu5OF9SZYA+NK0rDJbiUKG6LBBNrNNZDz0MlqsmPwAAAAFVU0RDAAAAACYFzNOyHT8GgwiyzcOOhwLtCctwM/RiSnrFp7JOe8xe"
+        },
+        {
+          "kind": "contractData",
+          "contract": "CAQCFVLOBK5GIULPNZRGATJJMIZL5BSP7X5YJVMGCPTUEPFM4AVSRCJU",
+          "key": [
+            "Balance",
+            "CB3447A446DY3USGWPIDXTNQHF5EX24XDQA2EN6TAZP62JTPBTNOA52Q"
+          ],
+          "durability": "persistent"
+        },
+        {
+          "kind": "contractData",
+          "contract": "CB3447A446DY3USGWPIDXTNQHF5EX24XDQA2EN6TAZP62JTPBTNOA52Q",
+          "key": [
+            "Positions",
+            "GB4PC65ZHBPVEZMAHY2K2KYMS3RFBIN2FQIE3LGTLEHT2DEWVMTD7JYQ"
+          ],
+          "durability": "persistent"
+        },
+        {
+          "kind": "contractData",
+          "contract": "CB3447A446DY3USGWPIDXTNQHF5EX24XDQA2EN6TAZP62JTPBTNOA52Q",
+          "key": [
+            "ResData",
+            "CAQCFVLOBK5GIULPNZRGATJJMIZL5BSP7X5YJVMGCPTUEPFM4AVSRCJU"
+          ],
+          "durability": "persistent"
+        },
+        {
+          "kind": "contractData",
+          "contract": "CB3447A446DY3USGWPIDXTNQHF5EX24XDQA2EN6TAZP62JTPBTNOA52Q",
+          "key": [
+            "ResData",
+            "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC"
+          ],
+          "durability": "persistent"
+        },
+        {
+          "kind": "contractData",
+          "contract": "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC",
+          "key": [
+            "Balance",
+            "CB3447A446DY3USGWPIDXTNQHF5EX24XDQA2EN6TAZP62JTPBTNOA52Q"
+          ],
+          "durability": "persistent"
+        }
+      ]
+    }
+  ]
+}

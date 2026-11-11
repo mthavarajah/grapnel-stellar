@@ -1,0 +1,15 @@
+import {writeFile} from 'node:fs/promises';
+import {PoolContractV2,RequestType} from '@blend-capital/blend-sdk';
+import {Address,TransactionBuilder,rpc,scValToNative,xdr} from '@stellar/stellar-sdk';
+import {NETWORK_PASSPHRASE} from '@grapnel/contracts';
+import {BORROW_POOL_ID,BORROW_XLM_RESERVE,BORROW_USDC_RESERVE} from '../borrow.js';
+const user='GB4PC65ZHBPVEZMAHY2K2KYMS3RFBIN2FQIE3LGTLEHT2DEWVMTD7JYQ',server=new rpc.Server('https://soroban-testnet.stellar.org');
+const reports=[];
+const decodeAuth=(node:xdr.SorobanAuthorizedInvocation):unknown=>({function:node.function().switch().name==='sorobanAuthorizedFunctionTypeContractFn'?{contract:Address.fromScAddress(node.function().contractFn().contractAddress()).toString(),fn:node.function().contractFn().functionName().toString(),args:node.function().contractFn().args().map(scValToNative)}:null,children:node.subInvocations().map(decodeAuth)});
+const decodeKey=(key:xdr.LedgerKey)=>key.switch().name==='contractData'?{kind:'contractData',contract:Address.fromScAddress(key.contractData().contract()).toString(),key:scValToNative(key.contractData().key()),durability:key.contractData().durability().name}:key.switch().name==='contractCode'?{kind:'contractCode',hash:key.contractCode().hash().toString('hex')}:key.switch().name==='account'?{kind:'account',address:Address.fromScAddress(xdr.ScAddress.scAddressTypeAccount(key.account().accountId())).toString()}:{kind:key.switch().name,xdr:key.toXDR('base64')};
+for(const requests of [[{request_type:RequestType.SupplyCollateral,address:BORROW_XLM_RESERVE,amount:10000000n}],[{request_type:RequestType.SupplyCollateral,address:BORROW_XLM_RESERVE,amount:100000000n},{request_type:RequestType.Borrow,address:BORROW_USDC_RESERVE,amount:10000000n}],[{request_type:RequestType.SupplyCollateral,address:BORROW_USDC_RESERVE,amount:50000000n},{request_type:RequestType.Borrow,address:BORROW_XLM_RESERVE,amount:10000000n}]]){
+ const op=new PoolContractV2(BORROW_POOL_ID).submit({from:user,spender:user,to:user,requests});
+ const tx=new TransactionBuilder(await server.getAccount(user),{fee:'100',networkPassphrase:NETWORK_PASSPHRASE}).addOperation(xdr.Operation.fromXDR(op,'base64')).setTimeout(120).build();const sim=await server.simulateTransaction(tx,{cpuInstructions:500000},'record');
+ reports.push({requests,ledger:sim.latestLedger,success:rpc.Api.isSimulationSuccess(sim),...(rpc.Api.isSimulationSuccess(sim)?{auth:sim.result?.auth.map(a=>({credentials:a.credentials().switch().name,root:decodeAuth(a.rootInvocation())})),fee:sim.minResourceFee,resources:sim.transactionData.build().resources().toXDR('base64'),read_only:sim.transactionData.build().resources().footprint().readOnly().map(decodeKey),read_write:sim.transactionData.build().resources().footprint().readWrite().map(decodeKey)}:{error:sim.error})});
+}
+const report={observed_at:new Date().toISOString(),mode:'read_only_diagnostic_not_signable',broadcast:false,signatures:0,tx_hash:null,reports};const s=JSON.stringify(report,(_k,v)=>typeof v==='bigint'?v.toString():v,2);await writeFile(new URL('./borrow-trace-read.json',import.meta.url),s+'\n');console.log(s);

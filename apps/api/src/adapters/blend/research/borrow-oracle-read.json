@@ -1,0 +1,43 @@
+{
+  "observed_at": "2026-11-11T18:58:53.632Z",
+  "network": "stellar-testnet",
+  "mode": "read_only",
+  "broadcast": false,
+  "oracle": "CAZOKR2Y5E2OSWSIBRVZMJ47RUTQPIGVWSAQ2UISGAVC46XKPGDG5PKI",
+  "wasm_hash": "66c0b87b5eb481be594175d59e66ec9a9ac8945be0fec4e09f6c28bf7a1708be",
+  "calls": [
+    {
+      "fn": "decimals",
+      "asset": null,
+      "ledger": 5679977,
+      "success": true,
+      "auth": 0,
+      "value": 7,
+      "retval": "AAAAAwAAAAc="
+    },
+    {
+      "fn": "lastprice",
+      "asset": "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC",
+      "ledger": 5679978,
+      "success": true,
+      "auth": 0,
+      "value": {
+        "price": "4200000",
+        "timestamp": "1794423533"
+      },
+      "retval": "AAAAEQAAAAEAAAACAAAADwAAAAVwcmljZQAAAAAAAAoAAAAAAAAAAAAAAAAAQBZAAAAADwAAAAl0aW1lc3RhbXAAAAAAAAAFAAAAAGr0uu0="
+    },
+    {
+      "fn": "lastprice",
+      "asset": "CAQCFVLOBK5GIULPNZRGATJJMIZL5BSP7X5YJVMGCPTUEPFM4AVSRCJU",
+      "ledger": 5679978,
+      "success": true,
+      "auth": 0,
+      "value": {
+        "price": "10000000",
+        "timestamp": "1794423533"
+      },
+      "retval": "AAAAEQAAAAEAAAACAAAADwAAAAVwcmljZQAAAAAAAAoAAAAAAAAAAAAAAAAAmJaAAAAADwAAAAl0aW1lc3RhbXAAAAAAAAAFAAAAAGr0uu0="
+    }
+  ]
+}

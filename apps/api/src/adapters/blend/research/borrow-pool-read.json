@@ -1,0 +1,482 @@
+{
+  "observed_at": "2026-11-11T18:57:53.912Z",
+  "mode": "read_only",
+  "network": {
+    "friendbotUrl": "https://friendbot.stellar.org/",
+    "passphrase": "Test SDF Network ; September 2015",
+    "protocolVersion": 30
+  },
+  "broadcast": false,
+  "signatures": 0,
+  "tx_hash": null,
+  "pools": [
+    {
+      "pool_id": "CB3447A446DY3USGWPIDXTNQHF5EX24XDQA2EN6TAZP62JTPBTNOA52Q",
+      "ledger": 4986064,
+      "wasm_hash": "a41fc53d6753b6c04eb15b021c55052366a4c8e0e21bc72700f461264ec1350e",
+      "wasm_sha256": "a41fc53d6753b6c04eb15b021c55052366a4c8e0e21bc72700f461264ec1350e",
+      "metadata": {
+        "wasmHash": "a41fc53d6753b6c04eb15b021c55052366a4c8e0e21bc72700f461264ec1350e",
+        "admin": "CCYSZJGLSDHUBNCOEGVXABONCFGYPTRJN2RH2GVWDSPP7E5HARMBCDJW",
+        "name": "Testnet v2.1",
+        "backstop": "CBGSFY6NR5TSCQJH5EGVMCFTHLZBCAO7YPIW426WSD46V3TESPA3U6DI",
+        "backstopRate": 1000000,
+        "maxPositions": 8,
+        "minCollateral": "0",
+        "oracle": "CAZOKR2Y5E2OSWSIBRVZMJ47RUTQPIGVWSAQ2UISGAVC46XKPGDG5PKI",
+        "status": 1,
+        "reserveList": [
+          "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC",
+          "CAZAQB3D7KSLSNOSQKYD2V4JP5V2Y3B4RDJZRLBFCCIXDCTE3WHSY3UE",
+          "CAP5AMC2OHNVREO66DFIN6DHJMPOBAJ2KCDDIMFBR7WWJH5RZBFM3UEI",
+          "CAQCFVLOBK5GIULPNZRGATJJMIZL5BSP7X5YJVMGCPTUEPFM4AVSRCJU"
+        ],
+        "latestLedger": 5679966
+      },
+      "user_positions": {
+        "liabilities": {},
+        "collateral": {},
+        "supply": {}
+      },
+      "reserves": [
+        {
+          "asset_id": "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC",
+          "symbol": "XLM",
+          "decimals": 7,
+          "classic_asset": {
+            "code": "XLM",
+            "issuer": null,
+            "sac": "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC"
+          },
+          "config": {
+            "index": 0,
+            "decimals": 7,
+            "c_factor": 9000000,
+            "l_factor": 9000000,
+            "util": 5000000,
+            "max_util": 9500000,
+            "r_base": 5000,
+            "r_one": 300000,
+            "r_two": 2000000,
+            "r_three": 10000000,
+            "reactivity": 50,
+            "supply_cap": "170141183460469231731687303715884105727",
+            "enabled": true
+          },
+          "data": {
+            "dRate": "1102723028837",
+            "bRate": "1084636398627",
+            "interestRateModifier": "84760673",
+            "dSupply": "9040176603717",
+            "bSupply": "9877831626361",
+            "backstopCredit": "92863431938",
+            "lastTime": 1794423474
+          },
+          "supply_apr": 1.573571,
+          "supply_apy": 3.7125623137733834,
+          "borrow_apr": 1.8791201,
+          "borrow_apy": 5.516253050300033,
+          "total_supplied": "1071385.5721460",
+          "total_borrowed": "996881.0925673",
+          "liquidity": {
+            "amount": "837908231059",
+            "ledger": 5679966,
+            "auth_count": 0
+          },
+          "customer": {
+            "supply": "0.0000000",
+            "collateral": "0.0000000",
+            "borrowed": "0.0000000"
+          }
+        },
+        {
+          "asset_id": "CAZAQB3D7KSLSNOSQKYD2V4JP5V2Y3B4RDJZRLBFCCIXDCTE3WHSY3UE",
+          "symbol": "wETH",
+          "decimals": 7,
+          "classic_asset": {
+            "code": "wETH",
+            "issuer": "GATALTGTWIOT6BUDBCZM3Q4OQ4BO2COLOAZ7IYSKPLC2PMSOPPGF5V56",
+            "sac": "CAZAQB3D7KSLSNOSQKYD2V4JP5V2Y3B4RDJZRLBFCCIXDCTE3WHSY3UE"
+          },
+          "config": {
+            "index": 1,
+            "decimals": 7,
+            "c_factor": 8500000,
+            "l_factor": 8000000,
+            "util": 6000000,
+            "max_util": 9500000,
+            "r_base": 7000,
+            "r_one": 500000,
+            "r_two": 3000000,
+            "r_three": 15000000,
+            "reactivity": 200,
+            "supply_cap": "170141183460469231731687303715884105727",
+            "enabled": true
+          },
+          "data": {
+            "dRate": "1105858397448",
+            "bRate": "1088382397880",
+            "interestRateModifier": "100000000",
+            "dSupply": "515765727",
+            "bSupply": "555997893",
+            "backstopCredit": "5459812",
+            "lastTime": 1794423474
+          },
+          "supply_apr": 0.8243286,
+          "supply_apy": 1.2656529993903272,
+          "borrow_apr": 0.9868063,
+          "borrow_apy": 1.6790834642750427,
+          "total_supplied": "60.5138319",
+          "total_borrowed": "57.0363861",
+          "liquidity": {
+            "amount": "40234273",
+            "ledger": 5679966,
+            "auth_count": 0
+          },
+          "customer": {
+            "supply": "0.0000000",
+            "collateral": "0.0000000",
+            "borrowed": "0.0000000"
+          }
+        },
+        {
+          "asset_id": "CAP5AMC2OHNVREO66DFIN6DHJMPOBAJ2KCDDIMFBR7WWJH5RZBFM3UEI",
+          "symbol": "wBTC",
+          "decimals": 7,
+          "classic_asset": {
+            "code": "wBTC",
+            "issuer": "GATALTGTWIOT6BUDBCZM3Q4OQ4BO2COLOAZ7IYSKPLC2PMSOPPGF5V56",
+            "sac": "CAP5AMC2OHNVREO66DFIN6DHJMPOBAJ2KCDDIMFBR7WWJH5RZBFM3UEI"
+          },
+          "config": {
+            "index": 2,
+            "decimals": 7,
+            "c_factor": 9000000,
+            "l_factor": 9000000,
+            "util": 6000000,
+            "max_util": 9500000,
+            "r_base": 7000,
+            "r_one": 500000,
+            "r_two": 2000000,
+            "r_three": 15000000,
+            "reactivity": 100,
+            "supply_cap": "170141183460469231731687303715884105727",
+            "enabled": true
+          },
+          "data": {
+            "dRate": "1001321312022",
+            "bRate": "1000557954284",
+            "interestRateModifier": "1000000",
+            "dSupply": "49352298",
+            "bSupply": "105652025",
+            "backstopCredit": "6518",
+            "lastTime": 1794423474
+          },
+          "supply_apr": 0.0016681,
+          "supply_apy": 0.0016694652532698306,
+          "borrow_apr": 0.0039653,
+          "borrow_apy": 0.003973150579216211,
+          "total_supplied": "10.5710973",
+          "total_borrowed": "4.9417508",
+          "liquidity": {
+            "amount": "56300001",
+            "ledger": 5679966,
+            "auth_count": 0
+          },
+          "customer": {
+            "supply": "0.0000000",
+            "collateral": "0.0000000",
+            "borrowed": "0.0000000"
+          }
+        },
+        {
+          "asset_id": "CAQCFVLOBK5GIULPNZRGATJJMIZL5BSP7X5YJVMGCPTUEPFM4AVSRCJU",
+          "symbol": "USDC",
+          "decimals": 7,
+          "classic_asset": {
+            "code": "USDC",
+            "issuer": "GATALTGTWIOT6BUDBCZM3Q4OQ4BO2COLOAZ7IYSKPLC2PMSOPPGF5V56",
+            "sac": "CAQCFVLOBK5GIULPNZRGATJJMIZL5BSP7X5YJVMGCPTUEPFM4AVSRCJU"
+          },
+          "config": {
+            "index": 3,
+            "decimals": 7,
+            "c_factor": 9500000,
+            "l_factor": 9500000,
+            "util": 7000000,
+            "max_util": 9500000,
+            "r_base": 5000,
+            "r_one": 300000,
+            "r_two": 1000000,
+            "r_three": 10000000,
+            "reactivity": 20,
+            "supply_cap": "170141183460469231731687303715884105727",
+            "enabled": true
+          },
+          "data": {
+            "dRate": "1010638249304",
+            "bRate": "1007671783560",
+            "interestRateModifier": "17149248",
+            "dSupply": "910357159552",
+            "bSupply": "1138729239190",
+            "backstopCredit": "958813605",
+            "lastTime": 1794423474
+          },
+          "supply_apr": 0.0881171,
+          "supply_apy": 0.09203455915208103,
+          "borrow_apr": 0.1221099,
+          "borrow_apy": 0.12985519530276313,
+          "total_supplied": "114746.5323446",
+          "total_borrowed": "92004.1765971",
+          "liquidity": {
+            "amount": "228382372579",
+            "ledger": 5679966,
+            "auth_count": 0
+          },
+          "customer": {
+            "supply": "0.0000000",
+            "collateral": "0.0000000",
+            "borrowed": "0.0000000"
+          }
+        }
+      ],
+      "oracle": {
+        "error": "Error: Unable to decode oracle price result"
+      }
+    },
+    {
+      "pool_id": "CCEBVDYM32YNYCVNRXQKDFFPISJJCV557CDZEIRBEE4NCV4KHPQ44HGF",
+      "ledger": 3408325,
+      "wasm_hash": "a41fc53d6753b6c04eb15b021c55052366a4c8e0e21bc72700f461264ec1350e",
+      "wasm_sha256": "a41fc53d6753b6c04eb15b021c55052366a4c8e0e21bc72700f461264ec1350e",
+      "metadata": {
+        "wasmHash": "a41fc53d6753b6c04eb15b021c55052366a4c8e0e21bc72700f461264ec1350e",
+        "admin": "GATALTGTWIOT6BUDBCZM3Q4OQ4BO2COLOAZ7IYSKPLC2PMSOPPGF5V56",
+        "name": "TestnetV2",
+        "backstop": "CBDVWXT433PRVTUNM56C3JREF3HIZHRBA64NB2C3B2UNCKIS65ZYCLZA",
+        "backstopRate": 1000000,
+        "maxPositions": 8,
+        "minCollateral": "0",
+        "oracle": "CAZOKR2Y5E2OSWSIBRVZMJ47RUTQPIGVWSAQ2UISGAVC46XKPGDG5PKI",
+        "status": 0,
+        "reserveList": [
+          "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC",
+          "CAZAQB3D7KSLSNOSQKYD2V4JP5V2Y3B4RDJZRLBFCCIXDCTE3WHSY3UE",
+          "CAP5AMC2OHNVREO66DFIN6DHJMPOBAJ2KCDDIMFBR7WWJH5RZBFM3UEI",
+          "CAQCFVLOBK5GIULPNZRGATJJMIZL5BSP7X5YJVMGCPTUEPFM4AVSRCJU"
+        ],
+        "latestLedger": 5679966
+      },
+      "user_positions": {
+        "liabilities": {},
+        "collateral": {},
+        "supply": {}
+      },
+      "reserves": [
+        {
+          "asset_id": "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC",
+          "symbol": "XLM",
+          "decimals": 7,
+          "classic_asset": {
+            "code": "XLM",
+            "issuer": null,
+            "sac": "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC"
+          },
+          "config": {
+            "index": 0,
+            "decimals": 7,
+            "c_factor": 9000000,
+            "l_factor": 9000000,
+            "util": 5000000,
+            "max_util": 9500000,
+            "r_base": 5000,
+            "r_one": 300000,
+            "r_two": 2000000,
+            "r_three": 10000000,
+            "reactivity": 50,
+            "supply_cap": "170141183460469231731687303715884105727",
+            "enabled": true
+          },
+          "data": {
+            "dRate": "3679278547881",
+            "bRate": "2702242434136",
+            "interestRateModifier": "100000000",
+            "dSupply": "368426503257758",
+            "bSupply": "529055796160653",
+            "backstopCredit": "43557795454591",
+            "lastTime": 1794423475
+          },
+          "supply_apr": 1.9599407,
+          "supply_apy": 5.847660885286026,
+          "borrow_apr": 2.296793,
+          "borrow_apy": 8.870956827727069,
+          "total_supplied": "142963702.2410922",
+          "total_borrowed": "135554372.9907079",
+          "liquidity": {
+            "amount": "117651087966166",
+            "ledger": 5679966,
+            "auth_count": 0
+          },
+          "customer": {
+            "supply": "0.0000000",
+            "collateral": "0.0502841",
+            "borrowed": "0.0000000"
+          }
+        },
+        {
+          "asset_id": "CAZAQB3D7KSLSNOSQKYD2V4JP5V2Y3B4RDJZRLBFCCIXDCTE3WHSY3UE",
+          "symbol": "wETH",
+          "decimals": 7,
+          "classic_asset": {
+            "code": "wETH",
+            "issuer": "GATALTGTWIOT6BUDBCZM3Q4OQ4BO2COLOAZ7IYSKPLC2PMSOPPGF5V56",
+            "sac": "CAZAQB3D7KSLSNOSQKYD2V4JP5V2Y3B4RDJZRLBFCCIXDCTE3WHSY3UE"
+          },
+          "config": {
+            "index": 1,
+            "decimals": 7,
+            "c_factor": 8500000,
+            "l_factor": 8000000,
+            "util": 6000000,
+            "max_util": 9500000,
+            "r_base": 7000,
+            "r_one": 500000,
+            "r_two": 3000000,
+            "r_three": 15000000,
+            "reactivity": 200,
+            "supply_cap": "170141183460469231731687303715884105727",
+            "enabled": true
+          },
+          "data": {
+            "dRate": "11646701269525",
+            "bRate": "7909757588110",
+            "interestRateModifier": "100000000",
+            "dSupply": "135066073",
+            "bSupply": "204344350",
+            "backstopCredit": "64115546",
+            "lastTime": 1794423475
+          },
+          "supply_apr": 2.8208571,
+          "supply_apy": 14.595842350526597,
+          "borrow_apr": 3.359932,
+          "borrow_apy": 27.348147214518857,
+          "total_supplied": "161.6314272",
+          "total_borrowed": "157.3074204",
+          "liquidity": {
+            "amount": "107355778",
+            "ledger": 5679966,
+            "auth_count": 0
+          },
+          "customer": {
+            "supply": "0.0000000",
+            "collateral": "0.0000000",
+            "borrowed": "0.0000000"
+          }
+        },
+        {
+          "asset_id": "CAP5AMC2OHNVREO66DFIN6DHJMPOBAJ2KCDDIMFBR7WWJH5RZBFM3UEI",
+          "symbol": "wBTC",
+          "decimals": 7,
+          "classic_asset": {
+            "code": "wBTC",
+            "issuer": "GATALTGTWIOT6BUDBCZM3Q4OQ4BO2COLOAZ7IYSKPLC2PMSOPPGF5V56",
+            "sac": "CAP5AMC2OHNVREO66DFIN6DHJMPOBAJ2KCDDIMFBR7WWJH5RZBFM3UEI"
+          },
+          "config": {
+            "index": 2,
+            "decimals": 7,
+            "c_factor": 9000000,
+            "l_factor": 9000000,
+            "util": 6000000,
+            "max_util": 9500000,
+            "r_base": 7000,
+            "r_one": 500000,
+            "r_two": 2000000,
+            "r_three": 15000000,
+            "reactivity": 100,
+            "supply_cap": "170141183460469231731687303715884105727",
+            "enabled": true
+          },
+          "data": {
+            "dRate": "5738633756558",
+            "bRate": "4381647808724",
+            "interestRateModifier": "100000000",
+            "dSupply": "16629838",
+            "bSupply": "22283715",
+            "backstopCredit": "3140355",
+            "lastTime": 1794423475
+          },
+          "supply_apr": 2.1172959,
+          "supply_apy": 6.9671446482847,
+          "borrow_apr": 2.485991,
+          "borrow_apy": 10.91220237985715,
+          "total_supplied": "9.7639390",
+          "total_borrowed": "9.5432550",
+          "liquidity": {
+            "amount": "5347303",
+            "ledger": 5679966,
+            "auth_count": 0
+          },
+          "customer": {
+            "supply": "0.0000000",
+            "collateral": "0.0000000",
+            "borrowed": "0.0000000"
+          }
+        },
+        {
+          "asset_id": "CAQCFVLOBK5GIULPNZRGATJJMIZL5BSP7X5YJVMGCPTUEPFM4AVSRCJU",
+          "symbol": "USDC",
+          "decimals": 7,
+          "classic_asset": {
+            "code": "USDC",
+            "issuer": "GATALTGTWIOT6BUDBCZM3Q4OQ4BO2COLOAZ7IYSKPLC2PMSOPPGF5V56",
+            "sac": "CAQCFVLOBK5GIULPNZRGATJJMIZL5BSP7X5YJVMGCPTUEPFM4AVSRCJU"
+          },
+          "config": {
+            "index": 3,
+            "decimals": 7,
+            "c_factor": 9500000,
+            "l_factor": 9500000,
+            "util": 7000000,
+            "max_util": 9500000,
+            "r_base": 5000,
+            "r_one": 300000,
+            "r_two": 1000000,
+            "r_three": 10000000,
+            "reactivity": 20,
+            "supply_cap": "170141183460469231731687303715884105727",
+            "enabled": true
+          },
+          "data": {
+            "dRate": "1079833356955",
+            "bRate": "1063824387368",
+            "interestRateModifier": "13992636",
+            "dSupply": "1327609537705",
+            "bSupply": "1506197059897",
+            "backstopCredit": "2617829429",
+            "lastTime": 1794423475
+          },
+          "supply_apr": 0.1221118,
+          "supply_apy": 0.1297186803234378,
+          "borrow_apr": 0.1516491,
+          "borrow_apy": 0.16371515291078187,
+          "total_supplied": "160232.9164500",
+          "total_borrowed": "143359.7063826",
+          "liquidity": {
+            "amount": "171349975828",
+            "ledger": 5679966,
+            "auth_count": 0
+          },
+          "customer": {
+            "supply": "0.0000000",
+            "collateral": "4.0001169",
+            "borrowed": "0.0000000"
+          }
+        }
+      ],
+      "oracle": {
+        "error": "Error: Unable to decode oracle price result"
+      }
+    }
+  ]
+}
