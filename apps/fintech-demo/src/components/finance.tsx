@@ -328,6 +328,8 @@ function FinanceShell({ page, auth }: { page: string; auth?: Auth }) {
     return () => clearInterval(timer);
   }, [active?.status, active?.operation_id]);
   const [error, setError] = useState("");
+  const [swapError, setSwapError] = useState("");
+  useEffect(() => { setSwapError(""); }, [session?.customer_id]);
   const [busy, setBusy] = useState(false);
   const [amount, setAmount] = useState("1");
   const [fundsDirection, setFundsDirection] = useState<"fund" | "return">("fund");
@@ -426,7 +428,7 @@ function FinanceShell({ page, auth }: { page: string; auth?: Auth }) {
   };
   const chooseSpotMarket = (next: any, clearAmount = true) => {
     if (!next) return;
-    setMarket(next.market_id ?? next.id); setAsset(next.asset_in_id); setQuote(null);
+    setMarket(next.market_id ?? next.id); setAsset(next.asset_in_id); setQuote(null); setSwapError("");
     if (clearAmount) setSwapAmount("");
   };
   useEffect(() => {
@@ -565,13 +567,19 @@ function FinanceShell({ page, auth }: { page: string; auth?: Auth }) {
       clearTimeout(timer);
     };
   }, [active, refresh]);
-  async function action(task: () => Promise<void>) {
+  async function action(task: () => Promise<void>, location: "page" | "swap" = "page") {
     setBusy(true);
     setError("");
+    setSwapError("");
     try {
       await task();
     } catch (e) {
-      setError(e instanceof Error ? e.message : "Request failed");
+      if (location === "swap") {
+        if (e instanceof ClientError && ["QUOTE_EXPIRED", "QUOTE_ALREADY_USED"].includes(e.code)) {
+          setQuote(null);
+          setSwapError(e.code === "QUOTE_EXPIRED" ? "This quote expired. Get a new quote to continue." : "This quote has already been used. Get a new quote to continue.");
+        } else setSwapError(e instanceof Error ? e.message : "Request failed");
+      } else setError(e instanceof Error ? e.message : "Request failed");
     } finally {
       setBusy(false);
     }
@@ -779,7 +787,7 @@ function FinanceShell({ page, auth }: { page: string; auth?: Auth }) {
               </button>
             </div>
           )}
-          {error && (
+          {error && !((page === "markets" || page === "trade") && swapError) && (
             <div className="notice error" role="alert">
               <strong>Request unavailable</strong>
               <span>{customerMessage(error)}</span>
@@ -1057,7 +1065,7 @@ function FinanceShell({ page, auth }: { page: string; auth?: Auth }) {
                     <span className="swap-panel-label">Sell</span>
                     <div className="swap-panel-main">
                       <input className="swap-amount" aria-label="Sell amount" inputMode="decimal" placeholder="0.00" value={swapAmount} disabled={busy}
-                        onChange={event => { setSwapAmount(event.target.value); setQuote(null); }} />
+                        onChange={event => { setSwapAmount(event.target.value); setQuote(null); setSwapError(""); }} />
                       <div className="swap-token-pill">
                         {swapLogo(selectedSpotMarket.asset_in_id) ? <img src={swapLogo(selectedSpotMarket.asset_in_id)!} alt="" width={28} height={28} /> : <span className="swap-token-fallback" aria-hidden="true">{spotInputCode.slice(0,1)}</span>}
                         <select aria-label="Sell asset" title={swapIdentity(selectedSpotMarket.asset_in_id)} value={selectedSpotMarket.asset_in_id} disabled={busy} onChange={event => {
@@ -1088,7 +1096,7 @@ function FinanceShell({ page, auth }: { page: string; auth?: Auth }) {
                   {pairUsesUsdc && usdcStatus?.enabled === false && <div className="spot-setup"><p>Enable USDC in your wallet to continue.</p><button className="button outline" disabled={busy || !canPrepareSpot}
                     onClick={() => { setQuote(null); void action(() => start("usdc-trustline", {limit:"1000"})); }}>Enable USDC</button></div>}
                   <div className="swap-settings"><label htmlFor="swap-slippage">Maximum slippage</label><select id="swap-slippage" value={slippageBps} disabled={busy}
-                    onChange={event => {setSlippageBps(Number(event.target.value));setQuote(null);}}><option value={10}>0.1%</option><option value={50}>0.5%</option><option value={100}>1%</option></select></div>
+                    onChange={event => {setSlippageBps(Number(event.target.value));setQuote(null);setSwapError("");}}><option value={10}>0.1%</option><option value={50}>0.5%</option><option value={100}>1%</option></select></div>
                   <details className="swap-details" key={`${market}:${quote?.quote_id ?? "none"}`}>
                     <summary><span>{quotedRate ? `1 ${spotInputCode} = ${quotedRate} ${spotOutputCode}` : "Quote details"}</span><svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.6" aria-hidden="true"><path d="m5 7 5 5 5-5" /></svg></summary>
                     <div className="swap-details-content">
@@ -1098,14 +1106,15 @@ function FinanceShell({ page, auth }: { page: string; auth?: Auth }) {
                       {quoteMatchesMarket && <div className="detail-row"><span>Quote expires</span><strong>{new Date(quote.expires_at).toLocaleTimeString()}</strong></div>}
                     </div>
                   </details>
-                  {quote && quoteExpired && <p className="inline-note" role="alert">This quote expired. Request a new quote before reviewing a swap.</p>}
+                  {swapError && <p className="swap-action-error" role="alert" id="swap-action-error">{customerMessage(swapError)}</p>}
+                  {quote && quoteExpired && !swapError && <p className="inline-note" role="alert">This quote expired. Request a new quote before reviewing a swap.</p>}
                   {!canPrepareSpot && <p className="small muted">This pair is currently unavailable.</p>}
-                  {quoteMatchesMarket && !quoteExpired ? <button className="button swap-submit" disabled={busy || !canPrepareSpot || !walletReadyForPair}
+                  {quoteMatchesMarket && !quoteExpired ? <button className="button swap-submit" aria-describedby={swapError ? "swap-action-error" : undefined} disabled={busy || !canPrepareSpot || !walletReadyForPair}
                     onClick={() => action(async () => {
                       if (!quoteMatchesMarket || Date.parse(quote.expires_at) <= Date.now()) {setQuoteClock(Date.now());throw Error("This quote expired. Request a new quote.");}
                       await start("order",{quote_id:quote.quote_id});setQuote(null);
-                    })}>{busy ? "Preparing…" : "Review swap"}</button>
-                    : <button className="button swap-submit" disabled={busy || !canPrepareSpot || !walletReadyForPair || !swapAmount}
+                    }, "swap")}>{busy ? "Preparing…" : "Review swap"}</button>
+                    : <button className="button swap-submit" aria-describedby={swapError ? "swap-action-error" : undefined} disabled={busy || !canPrepareSpot || !walletReadyForPair || !swapAmount}
                       onClick={() => action(async () => {
                         setQuote(null);
                         const customerId=session?.customer_id, expectedMarket=market, expectedInput=selectedSpotMarket.asset_in_id, expectedOutput=selectedSpotMarket.asset_out_id;
@@ -1113,7 +1122,7 @@ function FinanceShell({ page, auth }: { page: string; auth?: Auth }) {
                         if(spotCustomer.current!==customerId)return;
                         if(next.market_id!==expectedMarket||next.asset_in_id!==expectedInput||next.asset_out_id!==expectedOutput||!next.quote_id||!Number.isFinite(Date.parse(next.expires_at)))throw Error("The returned quote does not match your selected assets.");
                         setQuoteClock(Date.now());setQuote(next);
-                      })}>{busy ? "Getting quote…" : "Get quote"}</button>}
+                      }, "swap")}>{busy ? "Getting quote…" : "Get quote"}</button>}
                 </section>
                 </div>
                 </>

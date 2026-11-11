@@ -212,3 +212,44 @@ test('fully mocked fixture context blocks third-party HTTP before it leaves the 
  const result=await page.evaluate(url=>fetch(url).then(()=>false,()=>true),target);
  expect(result).toBe(true);expect((await failed).failure()?.errorText).toContain('ERR_BLOCKED_BY_CLIENT');
 });
+
+for(const code of ['QUOTE_EXPIRED','QUOTE_ALREADY_USED']){
+ test(`${code} is visible beside the swap action and requires an explicit fresh quote`,async({page})=>{
+  const calls=await fixture(page);let orders=0;
+  await page.route(origin+'/api/grapnel/order',route=>{orders++;return route.fulfill({status:409,json:{error:{code,message:'A stale quote was rejected'}}});});
+  await page.getByRole('textbox',{name:'Sell amount',exact:true}).fill('1');await page.getByRole('button',{name:'Get quote',exact:true}).click();
+  await page.getByRole('button',{name:'Review swap',exact:true}).click();
+  const swap=page.getByRole('region',{name:'Swap assets',exact:true});
+  await expect(swap.getByRole('alert')).toContainText('Get a new quote to continue.');
+  await expect(swap.getByRole('alert')).toBeInViewport();
+  await expect(page.locator('.notice.error')).toHaveCount(0);await expect(page.getByRole('dialog')).toHaveCount(0);
+  await expect(swap.getByRole('button',{name:'Get quote',exact:true})).toBeEnabled();
+  await expect(swap.getByRole('button',{name:'Review swap',exact:true})).toHaveCount(0);
+  expect(calls.quote).toHaveLength(1);expect(orders).toBe(1);
+  await swap.getByRole('button',{name:'Get quote',exact:true}).click();
+  await expect(swap.getByRole('alert')).toHaveCount(0);await expect(swap.getByRole('button',{name:'Review swap',exact:true})).toBeEnabled();expect(calls.quote).toHaveLength(2);
+ });
+}
+
+test('ambiguous swap preparation failure stays inline and retries the exact same idempotent intent',async({page})=>{
+ await fixture(page);const attempts:{body:any;key:string|undefined}[]=[];
+ await page.route(origin+'/api/grapnel/order',route=>{attempts.push({body:route.request().postDataJSON(),key:route.request().headers()['idempotency-key']});return route.fulfill({status:503,json:{error:{code:'EXECUTION_UNAVAILABLE',message:'Preparation is unavailable'}}});});
+ await page.getByRole('textbox',{name:'Sell amount',exact:true}).fill('1');await page.getByRole('button',{name:'Get quote',exact:true}).click();
+ const swap=page.getByRole('region',{name:'Swap assets',exact:true});
+ await swap.getByRole('button',{name:'Review swap',exact:true}).click();
+ await expect(swap.getByRole('alert')).toContainText('This action is unavailable right now.');await expect(swap.getByRole('alert')).toBeInViewport();
+ await expect(swap.getByRole('button',{name:'Review swap',exact:true})).toBeEnabled();await expect(page.locator('.notice.error')).toHaveCount(0);
+ await swap.getByRole('button',{name:'Review swap',exact:true}).click();await expect.poll(()=>attempts.length).toBe(2);
+ expect(attempts[0]!.body).toEqual(attempts[1]!.body);expect(attempts[0]!.key).toBeTruthy();expect(attempts[0]!.key).toBe(attempts[1]!.key);
+ await expect(page.getByRole('dialog')).toHaveCount(0);
+});
+
+test('quote request failure is visible inline and restores the explicit retry button',async({page})=>{
+ await fixture(page);let quotes=0;
+ await page.route(origin+'/api/grapnel/quote',route=>{quotes++;return route.fulfill({status:503,json:{error:{code:'EXECUTION_UNAVAILABLE',message:'Quote unavailable'}}});});
+ await page.getByRole('textbox',{name:'Sell amount',exact:true}).fill('1');
+ const swap=page.getByRole('region',{name:'Swap assets',exact:true});await swap.getByRole('button',{name:'Get quote',exact:true}).click();
+ await expect(swap.getByRole('alert')).toContainText('This action is unavailable right now.');await expect(swap.getByRole('button',{name:'Get quote',exact:true})).toBeEnabled();
+ await expect(page.locator('.notice.error')).toHaveCount(0);expect(quotes).toBe(1);
+ await swap.getByRole('button',{name:'Get quote',exact:true}).click();await expect.poll(()=>quotes).toBe(2);
+});

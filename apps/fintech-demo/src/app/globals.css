@@ -1603,3 +1603,5 @@ footer strong {
 .market-chart-dates span:last-child { text-align: right; }
 .market-price-observed { margin: 16px 0 0; }
 @media(max-width: 600px) { .market-chart-wrap { min-height: 220px; } }
+
+.swap-action-error { margin: 0 0 14px; padding: 12px 14px; border: 1px solid #f3cccc; border-radius: 10px; background: #fff3f1; color: #a4362f; font-size: 12px; line-height: 1.6; overflow-wrap: anywhere; }
