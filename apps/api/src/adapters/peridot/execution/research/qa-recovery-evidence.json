@@ -43,6 +43,17 @@
       "send_status": "PENDING",
       "ledger": 5681928,
       "return_value": null
+    },
+    {
+      "label": "qa_two_x_long_begin",
+      "hash": "b9bdc9a7232497eff5cb993cd7f867173948d73e635170d621b13e50a7dd9ffe",
+      "sequence": "24403398585483268",
+      "max_fee_stroops": "2830441",
+      "status": "SUCCESS",
+      "explorer": "https://stellar.expert/explorer/testnet/tx/b9bdc9a7232497eff5cb993cd7f867173948d73e635170d621b13e50a7dd9ffe",
+      "send_status": "PENDING",
+      "ledger": 5682682,
+      "return_value": "13843"
     }
   ],
   "snapshots": [
@@ -187,7 +198,116 @@
         "vault_receipt_atomic": "0",
         "margin_receipt_atomic": "9999780"
       }
+    },
+    {
+      "phase": "qa_open_begin",
+      "intent": {
+        "step": "open_begin",
+        "walletAddress": "GAJZ5PEECGFB46QXKFW2QTWRXHYL4SOBS5VE2JDGJ4TDUIAUWEAHKV34",
+        "marginReceiptAtomic": "9999780",
+        "leverage": 2,
+        "direction": "long",
+        "minimumOutputAtomic": "129282345"
+      },
+      "before": {
+        "native": "9985.0701390",
+        "mock_usdt_atomic": "5300316",
+        "vault_receipt_atomic": "0",
+        "margin_receipt_atomic": "9999780"
+      },
+      "after": {
+        "native": "9984.8459509",
+        "mock_usdt_atomic": "5300316",
+        "vault_receipt_atomic": "0",
+        "margin_receipt_atomic": "0"
+      },
+      "position": {
+        "walletAddress": "GAJZ5PEECGFB46QXKFW2QTWRXHYL4SOBS5VE2JDGJ4TDUIAUWEAHKV34",
+        "positionId": "13843",
+        "direction": "long",
+        "position": {
+          "collateral_asset": "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC",
+          "collateral_ptokens": "0",
+          "debt_asset": "CDPXNHHVSLX3HFAHV7XOISM23MZH36WSXTO45RNDOBIDFZBGTSOVD4OY",
+          "debt_shares": "0",
+          "entry_price_scaled": "0",
+          "opened_at": "1794437053",
+          "owner": "GAJZ5PEECGFB46QXKFW2QTWRXHYL4SOBS5VE2JDGJ4TDUIAUWEAHKV34",
+          "side": [
+            "Long"
+          ],
+          "status": [
+            "PendingOpen"
+          ]
+        },
+        "perps": null,
+        "pendingOpen": {
+          "base_asset": "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC",
+          "borrow_amount": "9999998",
+          "debt_vault": "CCEW6NSPCV7XUEQV75ZMII5HK5DGXK5JP2QOTGLV4UFLDBPEKRGO4Y4B",
+          "expires_at": "1794438853",
+          "margin_amount": "9999999",
+          "margin_asset": "CDPXNHHVSLX3HFAHV7XOISM23MZH36WSXTO45RNDOBIDFZBGTSOVD4OY",
+          "margin_ptokens": "9999780",
+          "margin_vault": "CCEW6NSPCV7XUEQV75ZMII5HK5DGXK5JP2QOTGLV4UFLDBPEKRGO4Y4B",
+          "min_position_amount": "129282345",
+          "notional_value": "19982870",
+          "owner": "GAJZ5PEECGFB46QXKFW2QTWRXHYL4SOBS5VE2JDGJ4TDUIAUWEAHKV34",
+          "pool": "CCMNSENXDBNJSY72BDIPH5CCXLLHBKZ4LXTRKDLKZN4UI2NJFQLWTLD6",
+          "pool_id": {
+            "type": "Buffer",
+            "data": [
+              154,
+              199,
+              169,
+              205,
+              226,
+              58,
+              194,
+              173,
+              161,
+              17,
+              5,
+              238,
+              170,
+              66,
+              228,
+              60,
+              46,
+              168,
+              51,
+              44,
+              160,
+              170,
+              143,
+              65,
+              245,
+              141,
+              113,
+              96,
+              39,
+              77,
+              113,
+              142
+            ]
+          },
+          "pool_tokens": [
+            "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC",
+            "CDPXNHHVSLX3HFAHV7XOISM23MZH36WSXTO45RNDOBIDFZBGTSOVD4OY"
+          ],
+          "position_vault": "CB32OVY4AADCHQT3DLKJYW5QVTWY5MOX7BBNZFT3SDHZ5HPSDDEA2THJ",
+          "side": [
+            "Long"
+          ]
+        },
+        "openExecution": null,
+        "pendingClose": null,
+        "observedLedger": 5682682,
+        "observedAt": "2026-11-11T22:44:15.824Z",
+        "status": "PendingOpen"
+      }
     }
   ],
-  "last_error": "The QA begin phase exceeds its exact reviewed Testnet scope"
+  "last_error": "The QA begin phase exceeds its exact reviewed Testnet scope",
+  "position_id": "13843"
 }
