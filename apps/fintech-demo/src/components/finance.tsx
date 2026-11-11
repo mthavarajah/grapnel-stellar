@@ -203,6 +203,9 @@ function FinanceShell({ page, auth }: { page: string; auth?: Auth }) {
   const executable = (module: string) =>
     capability(module)?.enabled &&
     capability(module)?.execution_status === "testnet_verified";
+  // Funding must allow the first real round trip after Gate 1. Capability stays
+  // discovery_only until the first grant and customer return are chain-verified.
+  const fundingCanStart = capability("capital.testnet_funding")?.enabled && assets.some((entry: any) => entry.available === true);
   const refresh = useCallback(async () => {
     const [configuration, identity, capabilities] = await Promise.allSettled([
       api("status"),
@@ -728,13 +731,13 @@ function FinanceShell({ page, auth }: { page: string; auth?: Auth }) {
                   </strong>
                 </div>
                 <div className="inline-note">
-                  {customerMessage((page === "fund" ? fundingError : "") || capability("capital.testnet_funding")?.reason ||
-                    (session ? "Requests use available treasury assets and configured grant limits." : "Sign in to view module availability and exact funding limits."))}
+                  {customerMessage((page === "fund" ? fundingError : "") || (fundingCanStart && capability("capital.testnet_funding")?.execution_status !== "testnet_verified" ? "Initial Testnet fund and return are enabled; capability promotion follows confirmed chain proof." : capability("capital.testnet_funding")?.reason) ||
+                    (session ? "Requests use available Testnet assets and configured limits." : "Sign in to view availability."))}
                 </div>
                 <button
                   className="button wide"
                   disabled={
-                    busy || !session || !executable("capital.testnet_funding")
+                    busy || !session || !(executable("capital.testnet_funding") || (page === "fund" || page === "return") && fundingCanStart)
                   }
                   onClick={() =>
                     action(() => start(page, { asset_id: asset, amount }))
