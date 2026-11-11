@@ -19,9 +19,9 @@ async function bounded<T>(task:Promise<T>):Promise<T>{
  finally{if(timer)clearTimeout(timer);}
 }
 /** Source-only exact-in native XLM -> issuer-pinned USDC. No aggregators, hops or fees. */
-export function inspectSwapTransaction(tx:Transaction,intent:SwapIntent,reg:SwapRegistry,original=false):void {
+export function inspectSwapTransaction(tx:Transaction,intent:SwapIntent,reg:SwapRegistry,original=false,observedNow=Date.now()):void {
  try {
-  const expires=Date.parse(intent.expiresAt),now=Date.now();
+  const expires=Date.parse(intent.expiresAt),now=observedNow;
   if(tx.networkPassphrase!==NETWORK_PASSPHRASE||tx.source!==intent.wallet||!StrKey.isValidEd25519PublicKey(intent.wallet)||BigInt(tx.sequence)<=0n||tx.memo.type!=='none'||tx.extraSigners?.length||tx.operations.length!==1||tx.signatures.length)throw Error();
   if(tx.toEnvelope().v1().tx().cond().switch().name!=='precondTime'||!tx.timeBounds||tx.timeBounds.minTime!=='0'||tx.timeBounds.maxTime==='0'||!Number.isFinite(expires)||expires<=now||expires>now+120000)throw Error();
   const end=Number(tx.timeBounds.maxTime)*1000;
@@ -94,11 +94,11 @@ export function reconstructSwapResources(tx:Transaction,sim:rpc.Api.SimulateTran
  return rebuild(tx,expiresAt,data,(BigInt(tx.fee)>resourceFee+100n?BigInt(tx.fee):resourceFee+100n).toString());
 }
 /** Callback for the common exact-envelope signature verifier; never verifies a signature itself. */
-export function inspectApprovedSwapTransaction(action:PreparedAction,tx:Transaction,reg:SwapRegistry):void {
+export function inspectApprovedSwapTransaction(action:PreparedAction,tx:Transaction,reg:SwapRegistry,observedNow=Date.now()):void {
  PreparedActionSchema.parse(action);
  if(action.network!==NETWORK||action.authorization.method!=='privy_stellar'||action.summary.action!=='spot.swap'||action.summary.fromAssetId!==XLM.id||action.summary.toAssetId!==`stellar-testnet:classic:USDC:${USDC_ISSUER}`||action.summary.recipient!==action.walletAddress||action.summary.contractId!==reg.router||action.summary.maxFeeStroops!==tx.fee||action.summary.expiresAt!==action.authorization.expiresAt||action.signingHashHex!==tx.hash().toString('hex'))fail('Approved summary differs from exact reviewed swap');
  const envelope=tx.toEnvelope();envelope.v1().signatures([]);
- inspectSwapTransaction(new Transaction(envelope,NETWORK_PASSPHRASE),{wallet:action.walletAddress,amount:toAtomic(action.summary.amount??'',7),minimum:toAtomic(action.summary.minReceive??'',7),expiresAt:action.summary.expiresAt},reg);
+ inspectSwapTransaction(new Transaction(envelope,NETWORK_PASSPHRASE),{wallet:action.walletAddress,amount:toAtomic(action.summary.amount??'',7),minimum:toAtomic(action.summary.minReceive??'',7),expiresAt:action.summary.expiresAt},reg,false,observedNow);
 }
 export interface InspectorDependencies {server?:Pick<rpc.Server,'getNetwork'|'getAccount'|'getContractData'|'simulateTransaction'>;fetcher?:typeof fetch;}
 /** Preparation and inspection only; contains no signing or broadcasting method. */

@@ -1,3 +1,4 @@
+import {isVerifiedSpotProof,type VerifiedSpotProof} from '../../modules/spot/proof.js';
 import { assertCanonicalSwapTransformation,USDC_ISSUER,USDC_SAC } from './inspector.js';
 import { StrKey } from '@stellar/stellar-sdk';
 import { GrapnelError, NETWORK, NETWORK_PASSPHRASE, PreparedActionSchema, fromAtomic, toAtomic, type AssetIdentity, type CustomerContext, type PreparedAction } from '@grapnel/contracts';
@@ -36,13 +37,14 @@ export class SoroswapSpotAdapter {
   private readonly baseUrl:string;
   readonly quoteTtlMs:number;
   private readonly registry:Map<string,SpotMarket>;
+  private readonly proof=new Map<string,VerifiedSpotProof>();
   constructor(readonly config:SpotConfig,private readonly fetcher:typeof fetch=fetch,private readonly inspect?:SpotXdrInspector) {
     if(config.network!=='testnet'||config.networkPassphrase!==NETWORK_PASSPHRASE)throw new GrapnelError(400,'NETWORK_MISMATCH','Only explicit Stellar Testnet is supported');
     this.baseUrl=(config.baseUrl??'https://api.soroswap.finance').replace(/\/$/,'');
     if(new URL(this.baseUrl).protocol!=='https:')throw new GrapnelError(400,'PROVIDER_CONFIGURATION_INVALID','Soroswap must use HTTPS');
     this.quoteTtlMs=config.quoteTtlMs??30000;
     if(this.quoteTtlMs<=0||this.quoteTtlMs>60000)throw new GrapnelError(400,'PROVIDER_CONFIGURATION_INVALID','Quote TTL must be at most sixty seconds');
-    this.registry=new Map((config.markets??[]).map(m=>[m.id,m]));
+    this.registry=new Map((config.markets??[]).map(m=>[m.id,{...m,execution_verified_at:null}]));
     for(const m of this.registry.values())this.validateMarket(m);
   }
   private validateMarket(m:SpotMarket):void {
@@ -52,12 +54,18 @@ export class SoroswapSpotAdapter {
       if(!Number.isInteger(asset.decimals)||asset.decimals<0||asset.decimals>38)throw new GrapnelError(422,'ASSET_UNVERIFIED','Invalid asset decimals');
     }
   }
+  clearExecutionProof():void {this.proof.clear();for(const m of this.registry.values())m.execution_verified_at=null;}
+  invalidateRoute():void {this.clearExecutionProof();for(const m of this.registry.values())m.route_verified_at=null;}
+  refreshVerifiedMarket(market:SpotMarket):void {this.validateMarket(market);this.registry.set(market.id,{...market,execution_verified_at:null});}
+  applyVerifiedExecution(value:VerifiedSpotProof):void {if(!isVerifiedSpotProof(value))return;const market=this.registry.get(value.market_id);if(!market||market.asset_in.id!==value.asset_in_id||market.asset_out.id!==value.asset_out_id||!market.route_verified_at)return;this.proof.set(market.id,value);market.execution_verified_at=value.verified_at;}
+  private verified(m:SpotMarket):boolean {return isVerifiedSpotProof(this.proof.get(m.id))&&!!this.config.apiKey&&this.config.gate1Passed&&!!this.inspect&&!!m.route_verified_at;}
   capability() {
+    if([...this.registry.values()].some(m=>this.verified(m)))return {module:'trade.spot' as const,provider:'soroswap',execution_status:'testnet_verified' as const,reason:null,actions:['quote','order']};
     const reason=!this.config.apiKey?'PROVIDER_ACCESS_REQUIRED':!this.config.gate1Passed?'GATE_1_SIGNING_PROOF_REQUIRED':!this.inspect?'SOROSWAP_XDR_INSPECTOR_REQUIRED':'SOROSWAP_SWAP_CHAIN_PROOF_REQUIRED';
     return {module:'trade.spot' as const,provider:'soroswap',execution_status:'blocked' as const,reason,actions:[] as string[]};
   }
   markets() {
-    return [...this.registry.values()].map(m=>({market_id:m.id,provider:'soroswap',network:NETWORK,asset_class:'crypto_spot',asset_in_id:m.asset_in.id,asset_out_id:m.asset_out.id,preparation_available:Boolean(this.config.apiKey&&this.config.gate1Passed&&this.inspect&&m.route_verified_at),executable:Boolean(this.config.apiKey&&this.config.gate1Passed&&this.inspect&&m.execution_verified_at),execution_status:m.execution_verified_at?'testnet_verified':'discovery_only',reason:m.execution_verified_at?null:this.capability().reason,as_of:m.route_verified_at}));
+    return [...this.registry.values()].map(m=>({market_id:m.id,provider:'soroswap',network:NETWORK,asset_class:'crypto_spot',asset_in_id:m.asset_in.id,asset_out_id:m.asset_out.id,preparation_available:Boolean(this.config.apiKey&&this.config.gate1Passed&&this.inspect&&m.route_verified_at),executable:this.verified(m),execution_status:this.verified(m)?'testnet_verified':'discovery_only',reason:this.verified(m)?null:this.capability().reason,as_of:m.route_verified_at}));
   }
   market(id:string):SpotMarket {
     const found=this.registry.get(id);if(!found)throw new GrapnelError(404,'NOT_FOUND','Verified spot market not found');return found;

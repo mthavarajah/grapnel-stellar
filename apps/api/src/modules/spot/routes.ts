@@ -4,6 +4,7 @@ import { GrapnelError, OrderInputSchema, QuoteInputSchema, type CustomerContext,
 import type { SpotService } from './service.js';
 export interface SpotRouteDependencies {
  service:SpotService;
+ refreshReadiness?():Promise<void>;
  requireBusiness(request:FastifyRequest,module:ModuleId):Promise<{businessId:string}>;
  requireCustomer(request:FastifyRequest,customerId:string,walletId?:string):Promise<CustomerContext>;
  success(request:FastifyRequest,data:unknown):unknown;
@@ -15,10 +16,12 @@ export async function registerSpotRoutes(app:FastifyInstance,deps:SpotRouteDepen
   const query=z.object({asset_class:z.enum(['crypto_spot','stocks','perps','commodities']).default('crypto_spot')}).parse(request.query);
   const module:ModuleId=query.asset_class==='crypto_spot'?'trade.spot':`trade.${query.asset_class}`;
   await deps.requireBusiness(request,module);
+  if(query.asset_class==='crypto_spot')await deps.refreshReadiness?.();
   return deps.success(request,query.asset_class==='crypto_spot'?deps.service.adapter.markets():[]);
  });
  app.get<{Params:{id:string}}>('/v1/trade/markets/:id',async request=>{
   await deps.requireBusiness(request,'trade.spot');
+  await deps.refreshReadiness?.();
   const market=deps.service.adapter.markets().find(m=>m.market_id===request.params.id);
   if(!market)throw new GrapnelError(404,'NOT_FOUND','Spot market not found');
   return deps.success(request,market);
@@ -26,11 +29,13 @@ export async function registerSpotRoutes(app:FastifyInstance,deps:SpotRouteDepen
  app.post('/v1/trade/quotes',async request=>{
   await deps.requireBusiness(request,'trade.spot');const body=QuoteInputSchema.parse(request.body);
   const customer=await deps.requireCustomer(request,body.customer_id);
+  await deps.refreshReadiness?.();
   return deps.success(request,await deps.service.quote(body,customer,key(request)));
  });
  app.post('/v1/trade/orders',async(request,reply)=>{
   await deps.requireBusiness(request,'trade.spot');const body=OrderInputSchema.parse(request.body);
   const customer=await deps.requireCustomer(request,body.customer_id,body.wallet_id);
+  await deps.refreshReadiness?.();
   const result=await deps.service.createOrder(body,customer,key(request));
   return reply.code(202).send(deps.success(request,result.operation));
  });
