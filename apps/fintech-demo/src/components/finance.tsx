@@ -9,7 +9,7 @@ import {
   useUser,
 } from "@privy-io/react-auth";
 import { useSignRawHash } from "@privy-io/react-auth/extended-chains";
-import { formatTokenAmount, type PreparedAction } from "@grapnel/contracts";
+import { formatTokenAmount, fromAtomic, type PreparedAction } from "@grapnel/contracts";
 import { api, ClientError, operationRequestKey, clearOperationRequest } from "@/lib/client";
 import { signPreparedAction } from "@/lib/privy-signer";
 type Capability = {
@@ -144,6 +144,7 @@ function customerMessage(message: string): string {
 const assetCode = (id?: string): string => id === XLM_ASSET ? "XLM" : id === USDC_ASSET ? "USDC" : "Asset";
 const supportedSpotPair = (input?: string, output?: string): boolean =>
   input === XLM_ASSET && output === USDC_ASSET || input === USDC_ASSET && output === XLM_ASSET;
+const approvalFee = (value?: string): string => value && /^\d+$/.test(value) ? `${fromAtomic(BigInt(value), 7)} XLM` : "Unavailable";
 const statusLabel = (status: string): string => ({completed:"Completed",awaiting_customer_authorization:"Needs approval",preparing:"Preparing",submitted:"Submitted",confirming:"Confirming",failed:"Failed",rejected:"Declined",expired:"Expired",recovery_required:"Check transaction"}[status] ?? "In progress");
 function activityLabel(op: Operation): string {
   if (op.type === "wallet.usdc_trustline") return op.status === "completed" ? "Enabled USDC" : "Enable USDC";
@@ -1233,9 +1234,9 @@ function FinanceShell({ page, auth }: { page: string; auth?: Auth }) {
             </span>
             {active.prepared_action && active.type === "wallet.usdc_trustline" ? (
               <div className="approval-summary">
-                <div><span>Trust limit</span><code>{active.prepared_action.summary.amount === "1000" ? "1,000" : active.prepared_action.summary.amount ?? "Unavailable"} USDC</code></div>
-                <div><span>Additional XLM account reserve</span><code>0.5 XLM</code></div>
-                <div><span>Maximum fee</span><code>{active.prepared_action.summary.maxFeeStroops} stroops</code></div>
+                <div><span>USDC holding limit</span><code>{active.prepared_action.summary.amount === "1000" ? "1,000" : active.prepared_action.summary.amount ?? "Unavailable"} USDC</code></div>
+                <div><span>XLM held for USDC</span><code>0.5 XLM</code></div>
+                <div><span>Maximum fee</span><code>{approvalFee(active.prepared_action.summary.maxFeeStroops)}</code></div>
                 <div><span>Expires</span><code>{new Date(active.prepared_action.summary.expiresAt).toLocaleString()}</code></div>
                 <p className="small muted">This enables USDC in your wallet. The limit is the maximum amount you can hold; no USDC is transferred.</p>
               </div>
@@ -1243,7 +1244,7 @@ function FinanceShell({ page, auth }: { page: string; auth?: Auth }) {
               <div className="approval-summary">
                 <div><span>You send</span><code>{active.prepared_action.summary.amount} {assetCode(active.prepared_action.summary.fromAssetId)}</code></div>
                 <div><span>You receive at least</span><code>{active.prepared_action.summary.minReceive} {assetCode(active.prepared_action.summary.toAssetId)}</code></div>
-                <div><span>Maximum fee</span><code>{active.prepared_action.summary.maxFeeStroops} stroops</code></div>
+                <div><span>Maximum fee</span><code>{approvalFee(active.prepared_action.summary.maxFeeStroops)}</code></div>
                 <div><span>Expires</span><code>{new Date(active.prepared_action.summary.expiresAt).toLocaleString()}</code></div>
               </div>
             ) : active.prepared_action && (
@@ -1252,7 +1253,7 @@ function FinanceShell({ page, auth }: { page: string; auth?: Auth }) {
                 {["blend.supply", "blend.withdraw", "testnet.fund", "testnet.return", "wallet.test_payment"].includes(active.type) && <div><span>Destination</span><code>{active.type === "blend.supply" ? "Your Earn balance" : active.type === "testnet.return" || active.type === "wallet.test_payment" ? "Funds account" : "Your wallet"}</code></div>}
                 {active.prepared_action.summary.amount && <div><span>Amount</span><code>{active.prepared_action.summary.amount}</code></div>}
                 {active.prepared_action.summary.minReceive && <div><span>Minimum receive</span><code>{active.prepared_action.summary.minReceive} {assetCode(active.prepared_action.summary.toAssetId)}</code></div>}
-                <div><span>Maximum fee</span><code>{active.prepared_action.summary.maxFeeStroops} stroops</code></div>
+                <div><span>Maximum fee</span><code>{approvalFee(active.prepared_action.summary.maxFeeStroops)}</code></div>
                 <div><span>Expires</span><code>{new Date(active.prepared_action.summary.expiresAt).toLocaleString()}</code></div>
               </div>
             )}
@@ -1287,7 +1288,7 @@ function FinanceShell({ page, auth }: { page: string; auth?: Auth }) {
                 <button className="button outline" disabled={busy} onClick={() => action(() => resumeOperation(active.operation_id))}>Check action status</button>
                 <p className="small muted">
                   {active.type === "wallet.usdc_trustline"
-                    ? "Review the limit, additional reserve, fee and expiry before approving."
+                    ? "Review the holding limit, XLM held, fee and expiry before approving."
                     : "Review the assets, amount, destination, fee and expiry before approving."}
                 </p>
                 <button
