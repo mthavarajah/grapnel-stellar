@@ -1,0 +1,31 @@
+{
+  "observed_at": "2026-11-11T03:29:54.858277+00:00",
+  "scope": "credentialed_read_only_access",
+  "privy": {
+    "sdk": "@privy-io/node@0.38.0",
+    "request": "users.list limit=1",
+    "authenticated": true,
+    "user_data_recorded": false,
+    "customer_login_verified": false,
+    "customer_signature_verified": false
+  },
+  "local_api": {
+    "health": {
+      "status": "ok",
+      "network": "stellar-testnet",
+      "db": "ok"
+    },
+    "business_key_capabilities_http": 200
+  },
+  "fintech": {
+    "server_environment_synchronized": true,
+    "production_build": "passed",
+    "status": {
+      "grapnel_configured": true,
+      "privy_configured": true,
+      "session_configured": true
+    }
+  },
+  "gate1_passed": false,
+  "financial_provider_broadcasts": false
+}
