@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { MODULE_IDS, NETWORK_PASSPHRASE, toAtomic, fromAtomic, formatTokenAmount, FundingInputSchema, ModulesInputSchema, SpotMarketAssetsSchema, XLM,MarginWorkflowInputSchema,MarginStepTermsSchema } from './index.js';
+import { MODULE_IDS, NETWORK_PASSPHRASE, toAtomic, fromAtomic, formatTokenAmount, FundingInputSchema, ModulesInputSchema, SpotMarketAssetsSchema, XLM,MarginWorkflowInputSchema,MarginStepTermsSchema,MarginCollateralFundingInputSchema } from './index.js';
 describe('frozen contracts', () => {
  it('retains exact precision above safe integer range', () => {expect(toAtomic('9007199254740993.0000001',7)).toBe(90071992547409930000001n); expect(fromAtomic(123400001n,7)).toBe('12.3400001');});
  it.each(['-1','0','1e7','1.00000001','NaN',' 1','01'])('rejects invalid Stellar amount %s',(v)=>expect(()=>toAtomic(v,7)).toThrow());
@@ -23,4 +23,10 @@ it('keeps Margin policy and custody fields server-owned',()=>{
  expect(MarginWorkflowInputSchema.safeParse({...input,slippage_bps:51}).success).toBe(false);
  expect(MarginStepTermsSchema.safeParse({minimumOutputAtomic:'1',owner:'caller'}).success).toBe(false);
  expect(MarginStepTermsSchema.safeParse({minimumOutputAtomic:'1.5'}).success).toBe(false);
+});
+it('bounds collateral acquisition to the exact native amount without caller asset overrides',()=>{
+ const input={customer_id:'00000000-0000-4000-8000-000000000001',amount:'10',minimum_output_atomic:'1'};
+ expect(MarginCollateralFundingInputSchema.safeParse(input).success).toBe(true);
+ for(const amount of ['0','10.0000001','1e1','0.00000001'])expect(MarginCollateralFundingInputSchema.safeParse({...input,amount}).success).toBe(false);
+ for(const key of ['to_asset_id','pool','recipient','network'])expect(MarginCollateralFundingInputSchema.safeParse({...input,[key]:'caller'}).success).toBe(false);
 });

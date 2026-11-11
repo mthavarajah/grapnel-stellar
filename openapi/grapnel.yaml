@@ -2,7 +2,7 @@
   "openapi": "3.1.0",
   "info": {
     "title": "Grapnel Testnet API",
-    "version": "0.2.1",
+    "version": "0.2.2",
     "description": "Stellar Testnet only. See docs/03_API.md and packages/contracts for frozen payload schemas."
   },
   "servers": [
@@ -3747,6 +3747,82 @@
           }
         }
       }
+    },
+    "/v1/trade/margin/collateral/quote": {
+      "post": {
+        "operationId": "margin_collateral_quote",
+        "security": [
+          {
+            "businessKey": []
+          }
+        ],
+        "description": "Requires trade.perps and exact verified customer/wallet. Fixed pinned native XLM to distinct MockUSDT pool, cap10XLM and1XLMfee; no caller-selected network/pool/asset/recipient. Default blocked without full round-trip execution proof. A swap202 is only a durable approval, not success.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MarginCollateralFundingQuoteInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Exact asset IDs, amount_in_atomic, expected_out_atomic, minimum_out_atomic and expires_at"
+          },
+          "403": {
+            "description": "Module disabled or customer authorization mismatch"
+          },
+          "409": {
+            "description": "Current proof unavailable or quote/operation conflict"
+          }
+        }
+      }
+    },
+    "/v1/trade/margin/collateral/swap": {
+      "post": {
+        "operationId": "margin_collateral_swap",
+        "security": [
+          {
+            "businessKey": []
+          }
+        ],
+        "description": "Requires trade.perps and exact verified customer/wallet. Fixed pinned native XLM to distinct MockUSDT pool, cap10XLM and1XLMfee; no caller-selected network/pool/asset/recipient. Default blocked without full round-trip execution proof. A swap202 is only a durable approval, not success.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MarginCollateralFundingInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "202": {
+            "description": "Operation requiring exact customer authorization and chain reconciliation"
+          },
+          "403": {
+            "description": "Module disabled or customer authorization mismatch"
+          },
+          "409": {
+            "description": "Current proof unavailable or quote/operation conflict"
+          }
+        },
+        "parameters": [
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 200
+            }
+          }
+        ]
+      }
     }
   },
   "components": {
@@ -4249,6 +4325,55 @@
           },
           "terms": {
             "$ref": "#/components/schemas/MarginStepTerms"
+          }
+        }
+      },
+      "MarginCollateralFundingQuoteInput": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "customer_id",
+          "amount"
+        ],
+        "properties": {
+          "customer_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "wallet_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "amount": {
+            "type": "string",
+            "description": "Positive exact native XLM amount, at most10XLM and seven decimals."
+          }
+        }
+      },
+      "MarginCollateralFundingInput": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "customer_id",
+          "amount",
+          "minimum_output_atomic"
+        ],
+        "properties": {
+          "customer_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "wallet_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "amount": {
+            "type": "string",
+            "description": "Positive exact native XLM amount, at most10XLM and seven decimals."
+          },
+          "minimum_output_atomic": {
+            "type": "string",
+            "pattern": "^[1-9][0-9]{0,37}$"
           }
         }
       }

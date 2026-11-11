@@ -18,6 +18,8 @@ export interface AccountValuationDependencies {
  walletBalances(customer:CustomerContext):Promise<WalletBalance[]>;
  earnPositions(customer:CustomerContext):Promise<AccountProtocolPosition[]>;
  borrowPositions(customer:CustomerContext):Promise<AccountProtocolPosition[]>;
+ /** True only when additional protocol holdings are absent or included in the valued sources. */
+ additionalSourcesComplete?(customer:CustomerContext):Promise<boolean>;
  priceFor(assetId:string):Promise<WalletUsdPrice|null>;
  assetFor?(assetId:string):AssetIdentity|undefined;
  now?():number;
@@ -55,6 +57,7 @@ export class AccountValuationService {
   const sources=await Promise.allSettled([Promise.resolve().then(()=>this.deps.walletBalances(customer)),Promise.resolve().then(()=>this.deps.earnPositions(customer)),Promise.resolve().then(()=>this.deps.borrowPositions(customer))]);
   const now=this.deps.now?.()??Date.now();
   let unknown=0;
+  if(this.deps.additionalSourcesComplete){try{if(await this.deps.additionalSourcesComplete(customer)!==true)unknown++;}catch{unknown++;}}
   const wallet=sources[0]!;
   if(wallet.status==='fulfilled'){
    try{

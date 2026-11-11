@@ -1,5 +1,5 @@
 import { z } from 'zod';
-export const CONTRACT_VERSION = '0.2.1' as const;
+export const CONTRACT_VERSION = '0.2.2' as const;
 export const NETWORK = 'stellar-testnet' as const;
 export const NETWORK_PASSPHRASE = 'Test SDF Network ; September 2015' as const;
 export const MODULE_IDS = ['capital.wallets','capital.testnet_funding','capital.lending','trade.spot','trade.stocks','trade.perps','trade.commodities'] as const;
@@ -63,6 +63,9 @@ export const MarginWorkflowPublicSchema=z.object({workflow_id:z.string().uuid(),
 export const MarginStepQuoteSchema=z.object({workflow_id:z.string().uuid(),step:MarginStepSchema,revision:z.number().int().nonnegative(),terms:MarginStepTermsSchema,expires_at:z.string().datetime()}).strict();
 export type MarginWorkflowPublic=z.infer<typeof MarginWorkflowPublicSchema>;
 export type MarginStepQuote=z.infer<typeof MarginStepQuoteSchema>;
+export const MarginCollateralFundingQuoteInputSchema=MarginCustomerBindingSchema.extend({amount:AmountSchema.refine(value=>{try{return toAtomic(value,7)<=100000000n;}catch{return false;}},'A positive amount of at most10XLM with seven decimals is required')}).strict();
+export const MarginCollateralFundingInputSchema=MarginCollateralFundingQuoteInputSchema.extend({minimum_output_atomic:MarginPositiveAtomicSchema}).strict();
+export const MarginCollateralFundingQuoteSchema=z.object({from_asset_id:z.string(),to_asset_id:z.string(),amount_in_atomic:MarginPositiveAtomicSchema,expected_out_atomic:MarginPositiveAtomicSchema,minimum_out_atomic:MarginPositiveAtomicSchema,expires_at:z.string().datetime()}).strict();
 export const QuoteInputSchema = z.object({customer_id:z.string().uuid(),market_id:z.string(),exact_in:z.object({asset_id:z.string(),amount:AmountSchema}).strict(),slippage_bps:z.number().int().min(0).max(500)}).strict();
 export const OrderInputSchema = z.object({customer_id:z.string().uuid(),quote_id:z.string().uuid(),wallet_id:z.string().uuid()}).strict();
 export const AuthorizeInputSchema = z.object({customer_action_token:z.string(),signed_xdr:z.string(),privy_identity_proof:z.string()}).strict();

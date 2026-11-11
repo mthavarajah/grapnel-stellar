@@ -37,13 +37,18 @@ import { SpotService } from './modules/spot/service.js';
 import { registerSpotRoutes } from './modules/spot/routes.js';
 import {StocksTestnetDiscovery} from './adapters/stocks/index.js';
 import {CommodityAdapter,COMMODITIES_BLOCK_REASON} from './adapters/commodities/index.js';
-import {PeridotMarginAdapter} from './adapters/peridot/index.js';
+import {PeridotMarginAdapter,PERIDOT_COLLATERAL,PERIDOT_TESTNET_PINS} from './adapters/peridot/index.js';
 import { WalletService } from './modules/wallets/service.js';
 import { hasFundingRoundTripProof, verifyNativeTransfer } from './modules/funding/readiness.js';
 import { FundingService } from './modules/funding/service.js';
 import { registerFundingRoutes } from './modules/funding/routes.js';
 import { OperationService } from './modules/operations/service.js';
 import { OperationWorker, type WorkerChain, type DeltaVerification } from './modules/operations/worker.js';
+import {registerMarginRoutes,type MarginRoutesDependencies} from './modules/margin/routes.js';
+import {MARGIN_STEP_ACTIONS} from './modules/margin/types.js';
+import type {MarginExecutionBridge} from './modules/margin/execution.js';
+import {registerMarginFundingRoutes,MARGIN_COLLATERAL_SWAP,type MarginFundingDependencies} from './modules/margin-funding/index.js';
+import type {MarginFundingExecutionBridge} from './modules/margin-funding/execution.js';
 
 /** A flag or credentials alone cannot establish a passed signing gate. */
 export async function hasGate1Proof(chain:StellarTestnetExecutor):Promise<boolean> {
@@ -64,7 +69,17 @@ export function financialRouteModule(path:string):'capital.testnet_funding'|'cap
  if(pathname.startsWith('/v1/trade/'))return 'trade.spot';
  return null;
 }
-export async function createRuntime(pool?:Pool) {
+export interface RuntimeMarginBindings extends MarginRoutesDependencies {
+ execution?:MarginExecutionBridge;
+ collateralFunding?:Omit<MarginFundingDependencies,'operations'>;
+ fundingExecution?:MarginFundingExecutionBridge;
+}
+export async function verifyRuntimeMarginAction(action:PreparedAction,signed:string,bindings:Pick<RuntimeMarginBindings,'execution'|'fundingExecution'>):Promise<void>{
+ const bridge=action.summary.action===MARGIN_COLLATERAL_SWAP?bindings.fundingExecution:Object.values(MARGIN_STEP_ACTIONS).includes(action.summary.action)?bindings.execution:undefined;
+ if(!bridge)throw new GrapnelError(409,'EXECUTION_UNAVAILABLE','No reviewed Margin signing path is configured');
+ await bridge.verifyForSubmission(action,signed);
+}
+export async function createRuntime(pool?:Pool,marginRoutes:RuntimeMarginBindings={}) {
  const config=loadConfig();
  const db=pool??createPool(config.databaseUrl);
  const chain=new StellarTestnetExecutor({network:config.network,passphrase:config.networkPassphrase,rpcUrl:process.env.STELLAR_RPC_URL,horizonUrl:process.env.STELLAR_HORIZON_URL,maxFeeStroops:'10000'});
@@ -72,8 +87,9 @@ export async function createRuntime(pool?:Pool) {
  const identity=new PrivyIdentityVerifier(privy);
  const signer=new PrivyWalletSigner(privy,async(customerId,userId)=>!!(await db.query('SELECT 1 FROM customers WHERE id=$1 AND privy_user_id=$2',[customerId,userId])).rowCount);
  let standaloneMarketAssets:()=>AssetIdentity[]=()=>[];
- const tokenBalances=new SorobanTokenBalanceReader('https://soroban-testnet.stellar.org',Object.fromEntries(STANDALONE_NATIVE_ROUTES.map(route=>[route.contract,APPROVED_TOKEN_WASM])));
- const readStandaloneBalances=(address:string)=>{const assets=standaloneMarketAssets();return assets.length?tokenBalances.getBalances(address,assets):Promise.resolve([]);};
+ const tokenBalances=new SorobanTokenBalanceReader('https://soroban-testnet.stellar.org',{...Object.fromEntries(STANDALONE_NATIVE_ROUTES.map(route=>[route.contract,APPROVED_TOKEN_WASM])),[PERIDOT_TESTNET_PINS.mock_usdt.address]:PERIDOT_TESTNET_PINS.mock_usdt.wasmHash});
+ // Margin collateral is a distinct pinned token, never the classic USDC or a presumed USD peg.
+ const readStandaloneBalances=(address:string)=>tokenBalances.getBalances(address,[...new Map([...standaloneMarketAssets(),PERIDOT_COLLATERAL].map(asset=>[asset.id,asset])).values()]);
  const readSpotBalances=async(address:string)=>{const [classic,tokens]=await Promise.all([chain.getClassicBalances(address),readStandaloneBalances(address)]);return [...classic,...tokens];};
  const wallets=new WalletService(db,identity,chain,signer,readStandaloneBalances);
  const operations=new OperationService(db);
@@ -136,7 +152,7 @@ export async function createRuntime(pool?:Pool) {
   return {value:fromAtomic(product,18),as_of:new Date(Math.min(Date.parse(native.as_of),Date.parse(quote.as_of))).toISOString()};
  };
  const valuationAsset=(id:string)=>BORROW_ASSETS.find(asset=>asset.id===id)??spot.markets().flatMap(market=>[market.asset_in,market.asset_out]).find(asset=>asset.id===id);
- const accountValuation=new AccountValuationService({walletBalances:customer=>wallets.balances(customer.businessId,customer.walletId),earnPositions:customer=>blend.positions(customer),borrowPositions:customer=>borrowing.positionsForValuation(customer),priceFor:priceForAsset,assetFor:valuationAsset});
+ const accountValuation=new AccountValuationService({walletBalances:customer=>wallets.balances(customer.businessId,customer.walletId),earnPositions:customer=>blend.positions(customer),borrowPositions:customer=>borrowing.positionsForValuation(customer),additionalSourcesComplete:async customer=>(await db.query("SELECT 1 FROM margin_workflows WHERE business_id=$1 AND customer_id=$2 AND wallet_id=$3 AND phase<>'recovered' LIMIT 1",[customer.businessId,customer.customerId,customer.walletId])).rowCount===0,priceFor:priceForAsset,assetFor:valuationAsset});
  let fundingVerified=false;let fundingProofAt=0;let fundingProofRunning=false;
  const readFundingReadiness=async()=>{
   if(!await hasGate1Proof(chain))return {execution_status:'blocked' as const,reason:'GATE_1_SIGNING_PROOF_REQUIRED',actions:[]};
@@ -155,7 +171,7 @@ export async function createRuntime(pool?:Pool) {
   return blendReadiness;
  };
  const app=await buildApp({pool:db,config,identityVerifier:identity,
-  verifySignedAction:async(action,signed)=>{if(action.summary.action==='wallet.usdc_trustline')verifyPreparedUsdcTrustline(action,signed);else if(action.summary.action==='spot.swap')await spotInspector.verifyForSubmission(action,signed);else if(borrowingAction(action.summary.action))await borrowPreparer.verifyForSubmission(action,signed);else if(action.summary.action==='blend.supply'||action.summary.action==='blend.withdraw')await soroban.verifyForSubmission(action,signed);else verifySignedAction(action,signed);return {txHash:parseTestnetTransaction(signed).hash().toString('hex')};},
+  verifySignedAction:async(action,signed)=>{if(action.summary.action.startsWith('margin.'))await verifyRuntimeMarginAction(action,signed,marginRoutes);else if(action.summary.action==='wallet.usdc_trustline')verifyPreparedUsdcTrustline(action,signed);else if(action.summary.action==='spot.swap')await spotInspector.verifyForSubmission(action,signed);else if(borrowingAction(action.summary.action))await borrowPreparer.verifyForSubmission(action,signed);else if(action.summary.action==='blend.supply'||action.summary.action==='blend.withdraw')await soroban.verifyForSubmission(action,signed);else verifySignedAction(action,signed);return {txHash:parseTestnetTransaction(signed).hash().toString('hex')};},
   balanceReader:address=>chain.getClassicBalances(address),
   dashboardCustomerBalances:(businessId,walletId)=>wallets.balances(businessId,walletId),
   dashboardCustomerPositions:async customer=>{
@@ -225,6 +241,9 @@ export async function createRuntime(pool?:Pool) {
     });
     return reply.code(202).send(success(request,result.operation));
    });
+   // Register after the provider gate hook. Missing reviewed bindings stay unavailable.
+   await registerMarginRoutes(app,marginRoutes);
+   await registerMarginFundingRoutes(app,{operations,...marginRoutes.collateralFunding});
    await registerLendingRoutes(app,{adapter:blend,borrowing,operations,balanceReader:address=>chain.getClassicBalances(address)});
    await registerSpotRoutes(app,{service:new SpotService(spot,db,operations,createSpotReservation(operations,readSpotBalances)),refreshReadiness:()=>spotReadiness.refresh(),requireBusiness,requireCustomer,success,
     readDiscoveryMarkets:async category=>category==='perps'?readMarginMarkets():category==='commodities'?commodities.markets():(await stocks.catalog()).map(market=>({...market,underlying:{symbol:market.symbol,name:market.name}})),
@@ -233,7 +252,7 @@ export async function createRuntime(pool?:Pool) {
   }
  });
  app.addHook('onClose',async()=>{if(!pool)await db.end();});
- const workerChain=createRuntimeWorkerChain({pool:db,chain,blend,soroban,borrowing,borrowPreparer,gate1Passed,verifyGate1:()=>hasGate1Proof(chain),spot:spotInspector,readSpotBalances});
+ const workerChain=createRuntimeWorkerChain({pool:db,chain,blend,soroban,borrowing,borrowPreparer,gate1Passed,verifyGate1:()=>hasGate1Proof(chain),spot:spotInspector,readSpotBalances,margin:marginRoutes.execution,marginFunding:marginRoutes.fundingExecution});
  return {app,config,pool:db,chain,wallets,operations,funding,gate1Passed,worker:new OperationWorker(db,workerChain)};
 }
 
@@ -291,7 +310,7 @@ function storedBorrowingAction(operation:Record<string,any>,hash:string):Prepare
   throw new GrapnelError(403,'INTENT_MISMATCH','Durable borrowing request, customer approval and position baseline differ');
  return action;
 }
-export interface RuntimeWorkerDependencies {borrowing?:Pick<BorrowingAdapter,'positions'>;borrowPreparer?:Pick<BlendBorrowSorobanPreparer,'verifyForSubmission'>;pool:Pool;chain:StellarTestnetExecutor;blend:Pick<BlendAdapter,'positions'>;soroban:Pick<BlendSorobanPreparer,'verifyForSubmission'>;gate1Passed:boolean;verifyGate1?:()=>Promise<boolean>;spot?:Pick<SoroswapDirectInspector,'verifyForSubmission'>;readSpotBalances?:(address:string)=>Promise<WalletBalance[]>;}
+export interface RuntimeWorkerDependencies {margin?:MarginExecutionBridge;marginFunding?:MarginFundingExecutionBridge;borrowing?:Pick<BorrowingAdapter,'positions'>;borrowPreparer?:Pick<BlendBorrowSorobanPreparer,'verifyForSubmission'>;pool:Pool;chain:StellarTestnetExecutor;blend:Pick<BlendAdapter,'positions'>;soroban:Pick<BlendSorobanPreparer,'verifyForSubmission'>;gate1Passed:boolean;verifyGate1?:()=>Promise<boolean>;spot?:Pick<SoroswapDirectInspector,'verifyForSubmission'>;readSpotBalances?:(address:string)=>Promise<WalletBalance[]>;}
 /** No network send exists outside the durable worker's recorded hash/envelope path. */
 export function createRuntimeWorkerChain(deps:RuntimeWorkerDependencies):WorkerChain {
  const {pool,chain,blend,soroban,gate1Passed}=deps;
@@ -301,6 +320,13 @@ export function createRuntimeWorkerChain(deps:RuntimeWorkerDependencies):WorkerC
    const parsed=parseTestnetTransaction(envelope);const hash=parsed.hash().toString('hex');
    const operation=(await pool.query('SELECT o.*,w.stellar_address,c.privy_user_id FROM operations o JOIN wallets w ON w.business_id=o.business_id AND w.customer_id=o.customer_id AND w.id=o.wallet_id JOIN customers c ON c.business_id=o.business_id AND c.id=o.customer_id WHERE o.tx_hash=$1 AND o.signed_xdr=$2',[hash,envelope])).rows[0];
    if(!operation || (operation.type!=='wallet.test_payment' && (!gate1Passed || !await (deps.verifyGate1?.()??Promise.resolve(false)))))throw new GrapnelError(409,'EXECUTION_UNAVAILABLE','Gate 1 proof is required before financial provider execution');
+   if(operation.type.startsWith('margin.')){
+    if(operation.module_code!=='trade.perps'||operation.provider!=='peridot'||operation.state!=='submitted'||typeof operation.privy_user_id!=='string'||!operation.privy_user_id.startsWith('did:privy:'))throw new GrapnelError(403,'INTENT_MISMATCH','Margin requires its recorded customer-approved first send');
+    const action=PreparedActionSchema.parse(operation.prepared_action);
+    if(action.operationId!==operation.id||action.customerId!==operation.customer_id||action.walletAddress!==operation.stellar_address||action.summary.action!==operation.type||action.signingHashHex!==hash)throw new GrapnelError(403,'INTENT_MISMATCH','Stored Margin operation and exact approval differ');
+    await verifyRuntimeMarginAction(action,envelope,{execution:deps.margin,fundingExecution:deps.marginFunding});await chain.verifyLiveNetwork();
+    try{const sent=await chain.server.sendTransaction(parsed);if(sent.hash!==hash)throw new GrapnelError(502,'PROVIDER_INVALID','RPC transaction hash mismatch');if(sent.status==='ERROR')throw new GrapnelError(409,'CHAIN_REJECTED','Stellar rejected the inspected Margin transaction');if(!['PENDING','DUPLICATE'].includes(sent.status))throw new GrapnelError(503,'SUBMISSION_UNCERTAIN','Reconcile the stored Margin hash before retry',true,{tx_hash:hash});return{txHash:hash};}catch(error){if(error instanceof GrapnelError)throw error;throw new GrapnelError(503,'SUBMISSION_UNCERTAIN','Reconcile the stored Margin hash before retry',true,{tx_hash:hash});}
+   }
    if(operation.type==='spot.swap'){
     if(operation.module_code!=='trade.spot'||operation.provider!=='soroswap'||typeof operation.privy_user_id!=='string'||!operation.privy_user_id.startsWith('did:privy:')||!deps.spot)throw new GrapnelError(403,'INTENT_MISMATCH','Stored operation is not an inspected customer spot swap');
     const action=await storedSpotAction(pool,operation);
@@ -357,6 +383,12 @@ export function createRuntimeWorkerChain(deps:RuntimeWorkerDependencies):WorkerC
   async verifyDeltas(id,hash){
    const op=(await pool.query('SELECT o.*,w.stellar_address,c.privy_user_id FROM operations o JOIN wallets w ON w.business_id=o.business_id AND w.customer_id=o.customer_id AND w.id=o.wallet_id JOIN customers c ON c.business_id=o.business_id AND c.id=o.customer_id WHERE o.id=$1 AND o.tx_hash=$2',[id,hash])).rows[0];
    if(!op)return false;
+   if(op.type.startsWith('margin.')){
+    if(op.module_code!=='trade.perps'||op.provider!=='peridot')return false;
+    const bridge=op.type===MARGIN_COLLATERAL_SWAP?deps.marginFunding:Object.values(MARGIN_STEP_ACTIONS).includes(op.type)?deps.margin:undefined;
+    if(!bridge)return{verified:false,result:{reason:'MARGIN_EXECUTION_PROOF_REQUIRED'}};
+    return bridge.verifyDeltas(id,hash);
+   }
    if(op.type==='spot.swap'){
     if(op.module_code!=='trade.spot'||op.provider!=='soroswap'||typeof op.privy_user_id!=='string'||!op.privy_user_id.startsWith('did:privy:'))return false;
     try{

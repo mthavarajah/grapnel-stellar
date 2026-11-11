@@ -14,6 +14,14 @@ const position=(pool=oldPool,asset_id=XLM.id,supplied='2',borrowed='0',collatera
 };
 const defaults=():AccountValuationDependencies=>({walletBalances:vi.fn(async()=>[wallet(XLM.id,'10'),wallet(usdc,'4')]),earnPositions:vi.fn(async()=>[position()]),borrowPositions:vi.fn(async()=>[position(newPool,XLM.id,'3','1')]),priceFor:vi.fn(async(id:string)=>({value:id===XLM.id?'0.5':'0.99',as_of:at})),now:()=>now});
 describe('Gross account valuation from separate wallet and protocol holdings',()=>{
+ it('retains a partial subtotal when another protocol has holdings not yet valued',async()=>{
+  const deps=defaults();deps.additionalSourcesComplete=async()=>false;
+  expect(await new AccountValuationService(deps).read(customer)).toMatchObject({total_usd:null,priced_subtotal_usd:'11.46',unknown_source_count:1,liabilities_usd:null,net_equity_usd:null});
+  deps.additionalSourcesComplete=async()=>{throw Error('Protocol inventory unavailable');};
+  expect((await new AccountValuationService(deps).read(customer)).unknown_source_count).toBe(1);
+  deps.additionalSourcesComplete=async()=>true;
+  expect((await new AccountValuationService(deps).read(customer)).total_usd).toBe('11.46');
+ });
  it('adds total supplied once, never adding collateral twice or subtracting debt from gross',async()=>{
   const service=new AccountValuationService(defaults());
   expect(await service.read(customer)).toEqual({total_usd:'11.46',priced_subtotal_usd:'11.46',unpriced_asset_count:0,unknown_source_count:0,liabilities_usd:'0.5',priced_liabilities_subtotal_usd:'0.5',unpriced_liability_asset_count:0,net_equity_usd:'10.96',as_of:at});
