@@ -37,6 +37,8 @@ Dedicated treasury `GCY4DPMIBYCQ352UDKVWDJFKRXOIB2YCOLF2PQFUZHZPYU4WD4PW3LBE` ac
 The earlier inspected Blend supply simulation was independently rechecked by the lead: record and enforce modes passed at ledger 5664220, with source-account authorization, total fee 525597 stroops and bounded footprint. Actual customer supply execution and position reconciliation are now recorded above.
 
 ## Next access step
+Current local services expose customer-approved USDC trustline setup, exact XLM-to-USDC swap preparation, and XLM/USDC Blend supply/withdraw preparation. The exact swap registry route is live-verified and reports `preparation_available:true`, while execution remains unverified. Independent direct swap enforce simulations passed at ledger5677859; USDC Blend record/enforce preparation passed for supply at ledger5677920 and withdrawal at ledger5677923. These public-account read-only diagnostics were not signed or broadcast and are not customer execution evidence. Customer consent is required for the trustline, swap, and subsequent USDC lending transactions. Local Finance combines Get/Return under `/funds`; the owner dashboard exposes actual wallet balances separately from Blend positions.
+
 Follow docs/16_CREDENTIAL_HANDOFF.md: configure Privy/Soroswap secrets server-side and identify/connect hosting. Then perform customer consent and real Testnet acceptance sequentially, followed by public deployment and functional demo recording. Recheck current provider state at that time.
 
 ## Follow-up hardening
