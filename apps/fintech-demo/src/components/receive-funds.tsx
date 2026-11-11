@@ -25,8 +25,8 @@ export function ReceiveFunds({ address, busy, onConnect, onRefresh }: {
       <div className="receive-heading">
         <div>
           <p className="eyebrow">FUND YOUR TESTNET WALLET</p>
-          <h2 id="receive-title">Two ways to get started.</h2>
-          <p>Send Testnet XLM from another wallet, or request assets from the demo treasury.</p>
+          <h2 id="receive-title">Receive Testnet XLM</h2>
+          <p>Send from another Testnet wallet or request treasury funds.</p>
         </div>
         <span className="badge">STELLAR TESTNET ONLY</span>
       </div>
@@ -40,7 +40,7 @@ export function ReceiveFunds({ address, busy, onConnect, onRefresh }: {
         </div>
         <div className="receive-instructions">
           <h3>Receive XLM in your wallet.</h3>
-          <p>Select <strong>Stellar Testnet</strong> in the sending wallet. This QR code contains your address only; it does not select a network or send a transaction.</p>
+          <p>Select <strong>Stellar Testnet</strong> in the sending wallet.</p>
           {address ? <>
             <label htmlFor="receive-wallet-address">Your customer wallet address</label>
             <textarea id="receive-wallet-address" className="receive-address" readOnly value={address} rows={2} spellCheck={false} onFocus={event => event.currentTarget.select()} />
@@ -50,8 +50,8 @@ export function ReceiveFunds({ address, busy, onConnect, onRefresh }: {
             </div>
             <p className="receive-copy-status small" role="status" aria-live="polite">{copyStatus}</p>
           </> : <button className="button" disabled={busy} onClick={onConnect}>Connect wallet</button>}
-          <div className="receive-network-note"><strong>Testnet XLM only.</strong> Do not send mainnet funds or assets from another network. Other Stellar tokens require an exact-issuer trustline and are not offered here.</div>
-          <p className="small muted">Sending funds is a separate action in the sending wallet. Refresh to read your latest onchain balances; copying the address does not confirm a transfer.</p>
+          <div className="receive-network-note"><strong>Testnet XLM only.</strong> No mainnet or other-network transfers.</div>
+          <p className="small muted">Refresh balances after sending.</p>
         </div>
       </div>
     </section>

@@ -125,8 +125,8 @@ const nav = [
   ["activity", "Activity"],
 ];
 function customerMessage(message: string): string {
-  if (message.includes("GATE_1_SIGNING_PROOF_REQUIRED") || /Gate 1.*proof/i.test(message)) return "Complete the wallet signing check on Overview to unlock Testnet execution.";
-  if (message.includes("MODULE_NOT_ENABLED") || /module.*(disabled|not enabled)/i.test(message)) return "This module is not enabled for your business. Its actions are unavailable.";
+  if (message.includes("GATE_1_SIGNING_PROOF_REQUIRED") || /Gate 1.*proof/i.test(message)) return "Complete the signing check on Overview.";
+  if (message.includes("MODULE_NOT_ENABLED") || /module.*(disabled|not enabled)/i.test(message)) return "This module is unavailable.";
   return message;
 }
 const short = (v: string) =>
@@ -541,8 +541,8 @@ function FinanceShell({ page, auth }: { page: string; auth?: Auth }) {
                   </h2>
                   <p>
                     {session
-                      ? "Real chain balances. Your keys authorize every spend."
-                      : "Connect with Privy to create your customer-owned Stellar wallet. No real money is involved."}
+                      ? "Your Stellar Testnet wallet."
+                      : "Sign in to connect your wallet."}
                   </p>
                   <div className="wallet-address">
                     {session ? (
@@ -588,33 +588,11 @@ function FinanceShell({ page, auth }: { page: string; auth?: Auth }) {
                   </div>
                 </div>
                 <div className="path-card">
-                  <span className="eyebrow">HOW IT WORKS</span>
-                  <h3>A wallet you control.</h3>
-                  {[
-                    [
-                      "01",
-                      "Connect your identity",
-                      "Secure login through Privy.",
-                    ],
-                    [
-                      "02",
-                      "Explore Testnet assets",
-                      "Live balances with exact asset identity.",
-                    ],
-                    [
-                      "03",
-                      "Approve every spend",
-                      "Review and sign your exact transaction.",
-                    ],
-                  ].map(([n, t, d]) => (
-                    <div className="step" key={n}>
-                      <span>{n}</span>
-                      <div>
-                        <strong>{t}</strong>
-                        <p>{d}</p>
-                      </div>
-                    </div>
-                  ))}
+                  <span className="eyebrow">WALLET DETAILS</span>
+                  <h3>Stellar Testnet</h3>
+                  <div className="detail-row"><span>Wallet provider</span><strong>Privy</strong></div>
+                  <div className="detail-row"><span>Network</span><strong>Testnet</strong></div>
+                  <div className="detail-row"><span>Status</span><strong>{session ? "Connected" : "Not connected"}</strong></div>
                 </div>
               </section>
               <section className="section">
@@ -639,8 +617,7 @@ function FinanceShell({ page, auth }: { page: string; auth?: Auth }) {
                   </span>
                   <h3>Find your next opportunity.</h3>
                   <p>
-                    Explore exact-asset Testnet markets. Trade only when a
-                    verified route is available.
+                    View available Testnet markets.
                   </p>
                   <strong>
                     Explore markets <Icon name="arrow" size={17} />
@@ -653,8 +630,7 @@ function FinanceShell({ page, auth }: { page: string; auth?: Auth }) {
                   <span className="status-pill">Blend lending</span>
                   <h3>Understand what you supply.</h3>
                   <p>
-                    View current variable rates and separate protocol positions
-                    from spendable assets.
+                    View Blend pools and your positions.
                   </p>
                   <strong>
                     Explore Earn <Icon name="arrow" size={17} />
@@ -666,9 +642,7 @@ function FinanceShell({ page, auth }: { page: string; auth?: Auth }) {
                   <div>
                     <strong>Verify Testnet signing</strong>
                     <p>
-                      Approve a 0.1 XLM payment to the fixed demo treasury. This
-                      verifies wallet signing; it is separate from funding and
-                      lending proof.
+                      Approve a 0.1 XLM Testnet payment to the demo treasury.
                     </p>
                   </div>
                   <button
@@ -687,7 +661,7 @@ function FinanceShell({ page, auth }: { page: string; auth?: Auth }) {
           {page === "fund" && <>
             <ReceiveFunds address={session?.stellar_address} busy={busy} onConnect={connect} onRefresh={() => void action(refresh)} />
             <section className="section" aria-label="Current wallet balances">
-              <div className="section-heading"><h2>Your wallet balances</h2><span className="muted small">Read from Stellar Testnet through Grapnel</span></div>
+              <div className="section-heading"><h2>Your wallet balances</h2><span className="muted small">Stellar Testnet</span></div>
               <BalanceTable balances={balances} connected={!!session} />
             </section>
           </>}
@@ -960,10 +934,7 @@ function FinanceShell({ page, auth }: { page: string; auth?: Auth }) {
               <div className="notice neutral">
                 <Icon name="shield" />
                 <p>
-                  Stocks and commodities have no verified eligible Testnet
-                  route. Perpetuals may be unavailable due to provider
-                  restrictions. An enabled business module does not establish
-                  executable trading.
+                  Stocks, perps and commodities are unavailable in this Testnet demo.
                 </p>
               </div>
             </>
@@ -973,10 +944,7 @@ function FinanceShell({ page, auth }: { page: string; auth?: Auth }) {
               <div className="notice neutral">
                 <Icon name="earn" />
                 <p>
-                  Blend supply APY varies and is not guaranteed. Supplied assets
-                  become protocol positions and are separate from spendable
-                  wallet balances. Collateral positions carry liquidation and
-                  smart-contract risks.
+                  Variable Testnet rates. Lending carries liquidation and smart-contract risk.
                 </p>
               </div>
               <section className="card">
@@ -1009,7 +977,7 @@ function FinanceShell({ page, auth }: { page: string; auth?: Auth }) {
                               }).format(m.supply_apy_variable)}
                         </strong>
                         <code>{m.asset_id ?? m.reserve_contract_id}</code>
-                        {m.as_of && <p className="small muted">Observed {new Date(m.as_of).toLocaleString()}. Pool estimate; no earnings are credited by this rate display.</p>}
+                        {m.as_of && <p className="small muted">Observed {new Date(m.as_of).toLocaleString()}. Variable pool estimate.</p>}
                         <p className="small">
                           {customerMessage(m.reason ?? m.readiness ?? "Live read; execution requires separate proof")}
                         </p>
