@@ -12,14 +12,17 @@ import {
  * Other contracts/routes require their own explicit approval inspector. */
 function inspectBlendApproval(action: PreparedAction, operation: Transaction['operations'][number]): void {
   try {
+    const issuer='GATALTGTWIOT6BUDBCZM3Q4OQ4BO2COLOAZ7IYSKPLC2PMSOPPGF5V56';
+    const usdcId=`${NETWORK}:classic:USDC:${issuer}`;
+    const reserve=action.summary.fromAssetId===usdcId?new Asset('USDC',issuer).contractId(NETWORK_PASSPHRASE):Asset.native().contractId(NETWORK_PASSPHRASE);
     if(operation.type!=='invokeHostFunction' || !['blend.supply','blend.withdraw'].includes(action.summary.action)
-      || action.summary.fromAssetId!==`${NETWORK}:native:XLM` || action.summary.toAssetId!==undefined
+      || ![`${NETWORK}:native:XLM`,usdcId].includes(action.summary.fromAssetId??'') || action.summary.toAssetId!==undefined
       || action.summary.minReceive!==undefined || action.summary.recipient!==action.walletAddress
-      || !action.summary.contractId || !action.summary.amount
+      || action.summary.contractId!=='CCEBVDYM32YNYCVNRXQKDFFPISJJCV557CDZEIRBEE4NCV4KHPQ44HGF' || !action.summary.amount
       || operation.func.switch().name!=='hostFunctionTypeInvokeContract')throw Error();
     const invocation=operation.func.invokeContract();
     const pool=action.summary.contractId;
-    const native=Asset.native().contractId(NETWORK_PASSPHRASE);
+    const native=reserve;
     const amount=toAtomic(action.summary.amount,7);
     const args=invocation.args().map(scValToNative);
     if(Address.fromScAddress(invocation.contractAddress()).toString()!==pool || invocation.functionName().toString()!=='submit'

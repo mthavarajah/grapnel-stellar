@@ -164,14 +164,16 @@ it('never prompts Privy to sign an opaque contract invocation with a payment sum
  expect(calls).toBe(0);
 });
 
-it('signs an exact Blend withdrawal and rejects a substituted action before prompting',async()=>{
+it.each(['XLM','USDC'])('signs an exact %s Blend withdrawal and rejects a substituted action before prompting',async(asset)=>{
  const {wallet,action}=fixture();
- const pool=StrKey.encodeContract(Buffer.alloc(32,31));
- const raw=xdr.Operation.fromXDR(buildBlendOperation({action:'withdraw',poolId:pool,reserveId:Asset.native().contractId(Networks.TESTNET),walletAddress:wallet.publicKey(),amountAtomic:1000000n}),'base64').body().invokeHostFunctionOp().hostFunction();
+ const pool='CCEBVDYM32YNYCVNRXQKDFFPISJJCV557CDZEIRBEE4NCV4KHPQ44HGF';
+ const issuer='GATALTGTWIOT6BUDBCZM3Q4OQ4BO2COLOAZ7IYSKPLC2PMSOPPGF5V56';
+ const reserve=asset==='XLM'?Asset.native():new Asset('USDC',issuer);
+ const raw=xdr.Operation.fromXDR(buildBlendOperation({action:'withdraw',poolId:pool,reserveId:reserve.contractId(Networks.TESTNET),walletAddress:wallet.publicKey(),amountAtomic:1000000n}),'base64').body().invokeHostFunctionOp().hostFunction();
  const root=new xdr.SorobanAuthorizedInvocation({function:xdr.SorobanAuthorizedFunction.sorobanAuthorizedFunctionTypeContractFn(raw.invokeContract()),subInvocations:[]});
  const auth=new xdr.SorobanAuthorizationEntry({credentials:xdr.SorobanCredentials.sorobanCredentialsSourceAccount(),rootInvocation:root});
  const tx=new TransactionBuilder(new Account(wallet.publicKey(),'1'),{fee:'100',networkPassphrase:Networks.TESTNET}).addOperation(Operation.invokeHostFunction({func:raw,auth:[auth]})).setTimeout(60).build();
- const approved={...action,unsignedXdr:tx.toXDR(),signingHashHex:tx.hash().toString('hex'),summary:{...action.summary,action:'blend.withdraw',recipient:wallet.publicKey(),contractId:pool}};
+ const approved={...action,unsignedXdr:tx.toXDR(),signingHashHex:tx.hash().toString('hex'),summary:{...action.summary,fromAssetId:asset==='XLM'?'stellar-testnet:native:XLM':`stellar-testnet:classic:USDC:${issuer}`,action:'blend.withdraw',recipient:wallet.publicKey(),contractId:pool}};
  let calls=0;
  const sign=async()=>{calls++;return {signature:`0x${wallet.sign(tx.hash()).toString('hex')}` as `0x${string}`};};
  await signPreparedAction(approved,sign,wallet.publicKey());
