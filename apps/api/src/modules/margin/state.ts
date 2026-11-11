@@ -1,5 +1,5 @@
 import {GrapnelError} from '@grapnel/contracts';
-import type {MarginEvidence,MarginPhase,MarginStep,MarginStepTerms,MarginTerms,MarginWorkflow,MarginPositionEvidence} from './types.js';
+import type {MarginEvidence,MarginFailureEvidence,MarginPhase,MarginStep,MarginStepTerms,MarginTerms,MarginWorkflow,MarginPositionEvidence} from './types.js';
 
 const fail=(reason:string):never=>{throw new GrapnelError(409,'MARGIN_STATE_MISMATCH','Verified Margin state does not permit the requested transition',false,{reason});};
 export function atomic(value:unknown,positive=false):bigint {
@@ -43,12 +43,12 @@ export function applyMarginEvidence(w:MarginWorkflow,step:MarginStep,intentHash:
   case 'margin_transfer':if(walletReceiptDelta!==-exactReceipts()||marginDelta!==exactReceipts()||e.before.walletUnderlyingAtomic!==e.after.walletUnderlyingAtomic)return fail('TRANSFER_DELTA');result.phase='awaiting_open_begin';break;
   case 'open_begin':{
    if(e.returnedPositionId===undefined)return fail('BEGIN_RESULT');atomic(e.returnedPositionId);const p=position(w,e.after.position,'PendingOpen',e.returnedPositionId);
-   if(e.before.position!==null||p.debtAtomic!=='0'||p.swapOutputAtomic!=='0'||p.pendingExpiresAt===null||Date.parse(p.pendingExpiresAt)<=now||marginDelta!==-exactReceipts())return fail('BEGIN_PHASE');
+   if(e.before.position!==null||p.debtAtomic!=='0'||p.swapOutputAtomic!=='0'||p.pendingExpiresAt===null||marginDelta!==-exactReceipts())return fail('BEGIN_PHASE');
    result.positionId=e.returnedPositionId;result.phase='opening_pending';break;
   }
   case 'open_swap':{const before=position(w,e.before.position,'PendingOpen'),after=position(w,e.after.position,'PendingOpen');if(atomic(before.swapOutputAtomic)!==0n||atomic(after.swapOutputAtomic)<=0n)return fail('OPEN_SWAP_DELTA');result.phase='opening_swapped';break;}
   case 'open_activate':{const before=position(w,e.before.position,'PendingOpen'),after=position(w,e.after.position,'Open');if(atomic(before.swapOutputAtomic)<=0n||atomic(after.debtAtomic)<=0n)return fail('ACTIVATE_DELTA');result.phase='open';break;}
-  case 'close_prepare':position(w,e.before.position,'Open');position(w,e.after.position,'Closing');if(e.after.position!.pendingExpiresAt===null||Date.parse(e.after.position!.pendingExpiresAt)<=now||atomic(e.after.position!.swapOutputAtomic)!==0n)return fail('CLOSE_PREPARE');result.phase='closing_prepared';break;
+  case 'close_prepare':position(w,e.before.position,'Open');position(w,e.after.position,'Closing');if(e.after.position!.pendingExpiresAt===null||atomic(e.after.position!.swapOutputAtomic)!==0n)return fail('CLOSE_PREPARE');result.phase='closing_prepared';break;
   case 'close_swap':case 'close_short_swap':{const before=position(w,e.before.position,'Closing'),after=position(w,e.after.position,'Closing');if(atomic(before.swapOutputAtomic)!==0n||atomic(after.swapOutputAtomic)<=0n)return fail('CLOSE_SWAP_DELTA');result.phase='closing_swapped';break;}
   case 'close_finish':{const before=position(w,e.before.position,'Closing'),after=position(w,e.after.position,'Closed');if(atomic(before.swapOutputAtomic)<=0n||atomic(after.debtAtomic)!==0n||marginDelta<0n)return fail('CLOSE_FINISH');result.receiptAtomic=marginDelta.toString();result.phase=marginDelta===0n?'recovered':'closed';break;}
   case 'open_cancel':{const p=position(w,e.before.position,'PendingOpen');if(atomic(p.swapOutputAtomic)!==0n||!e.cancellationVerified||e.after.position!==null||marginDelta<0n)return fail('OPEN_CANCEL');result.receiptAtomic=marginDelta.toString();result.phase=marginDelta===0n?'recovered':'closed';break;}
@@ -57,4 +57,8 @@ export function applyMarginEvidence(w:MarginWorkflow,step:MarginStep,intentHash:
   case 'vault_withdraw':if(walletReceiptDelta!==-exactReceipts()||atomic(e.after.walletUnderlyingAtomic)<=atomic(e.before.walletUnderlyingAtomic)||marginDelta!==0n)return fail('WITHDRAW_DELTA');result.receiptAtomic='0';result.phase='recovered';break;
  }
  return result;
+}
+/** Failed hash recovery never changes economic state and is not proof of a successful trade. */
+export function assertMarginFailureEvidence(w:MarginWorkflow,step:MarginStep,intentHash:string,txHash:string,e:MarginFailureEvidence,maxFeeStroops:string,now=Date.now()):void {
+ if(e.network!=='stellar-testnet'||e.chainStatus!=='FAILED'||e.txHash!==txHash||!/^[a-f0-9]{64}$/.test(txHash)||e.owner!==w.walletAddress||e.step!==step||e.intentHash!==intentHash||!Number.isSafeInteger(e.ledger)||e.ledger<=0||!Number.isFinite(Date.parse(e.observedAt))||Date.parse(e.observedAt)>now+1000||now-Date.parse(e.observedAt)>15000||e.principalAndPositionUnchanged!==true||e.sourceSequenceConsumed!==true||atomic(e.feeStroops,true)>atomic(maxFeeStroops,true))return fail('FAILED_TRANSACTION_EVIDENCE');
 }

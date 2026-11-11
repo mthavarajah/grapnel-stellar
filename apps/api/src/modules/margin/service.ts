@@ -4,7 +4,8 @@ import type {PoolClient,QueryResultRow} from 'pg';
 import {lock,transaction} from '../../db/index.js';
 import {canonicalJson,digest} from '../../lib/crypto.js';
 import {OperationService} from '../operations/service.js';
-import {applyMarginEvidence,assertNextMarginStep,atomic,validateMarginTerms} from './state.js';
+import {applyMarginEvidence,assertMarginFailureEvidence,assertNextMarginStep,atomic,validateMarginTerms} from './state.js';
+import {assertSignedMarginEnvelope} from './execution.js';
 import type {MarginAdapter,MarginChild,MarginStep,MarginStepContext,MarginStepTerms,MarginTerms,MarginWorkflow} from './types.js';
 import {MARGIN_STEP_ACTIONS} from './types.js';
 
@@ -71,14 +72,32 @@ export class MarginWorkflowService {
  /** No advance on accepted/submitted/timeout. Independently verify the same completed child hash, then atomically persist normalized evidence and parent transition. */
  async reconcile(customer:CustomerContext,id:string):Promise<MarginWorkflow>{
   const current=await this.get(customer,id);if(!current.activeOperationId)return current;
-  const childRow=(await this.operations.pool.query("SELECT s.*,o.state AS operation_state,o.tx_hash,o.signed_xdr FROM margin_workflow_steps s JOIN operations o ON(o.business_id=s.business_id AND o.customer_id=s.customer_id AND o.wallet_id=s.wallet_id AND o.id=s.operation_id AND o.module_code='trade.perps' AND o.provider='peridot') WHERE s.business_id=$1 AND s.customer_id=$2 AND s.wallet_id=$3 AND s.workflow_id=$4 AND s.operation_id=$5",[customer.businessId,customer.customerId,customer.walletId,id,current.activeOperationId])).rows[0];if(!childRow)return conflict('CHILD_NOT_FOUND');
+  const childRow=(await this.operations.pool.query("SELECT s.*,o.state AS operation_state,o.tx_hash,o.signed_xdr,o.prepared_action,o.approved_intent_hash,o.xdr_hash,o.request_json,o.type AS operation_type FROM margin_workflow_steps s JOIN operations o ON(o.business_id=s.business_id AND o.customer_id=s.customer_id AND o.wallet_id=s.wallet_id AND o.id=s.operation_id AND o.module_code='trade.perps' AND o.provider='peridot') WHERE s.business_id=$1 AND s.customer_id=$2 AND s.wallet_id=$3 AND s.workflow_id=$4 AND s.operation_id=$5",[customer.businessId,customer.customerId,customer.walletId,id,current.activeOperationId])).rows[0];if(!childRow)return conflict('CHILD_NOT_FOUND');
   const child=rowChild(childRow);
   if(['expired','rejected','failed'].includes(childRow.operation_state)&&!childRow.tx_hash&&!childRow.signed_xdr){
    return transaction(this.operations.pool,async client=>{const fresh=await this.read(client,customer,id,true);if(fresh.revision!==current.revision||fresh.activeOperationId!==child.operationId)return conflict('REVISION');await client.query('UPDATE margin_workflows SET active_operation_id=NULL,revision=revision+1,updated_at=now() WHERE business_id=$1 AND id=$2',[customer.businessId,id]);return this.read(client,customer,id);});
   }
+  const context:MarginStepContext={workflow:current,step:child.step,terms:child.terms,intentHash:child.intentHash,operationId:child.operationId};
+  if(childRow.operation_state==='failed'&&typeof childRow.tx_hash==='string'&&typeof childRow.signed_xdr==='string'&&childRow.signed_xdr){
+   if(!this.adapter.readFailedEvidence)return current;
+   assertNextMarginStep({...current,activeOperationId:null},child.step,child.terms);
+   const expectedIntent=digest(canonicalJson({workflowId:id,termsHash:current.termsHash,step:child.step,terms:child.terms,positionId:current.positionId,receiptAtomic:current.receiptAtomic}));
+   const prepared=PreparedActionSchema.parse(childRow.prepared_action);
+   if(child.intentHash!==expectedIntent||canonicalJson(childRow.request_json)!==canonicalJson({workflow_id:id,step:child.step,terms:child.terms})||childRow.operation_type!==MARGIN_STEP_ACTIONS[child.step]||prepared.operationId!==child.operationId||prepared.customerId!==customer.customerId||prepared.walletAddress!==customer.walletAddress||prepared.summary.action!==MARGIN_STEP_ACTIONS[child.step]||childRow.approved_intent_hash!==digest(canonicalJson(prepared.summary))||childRow.xdr_hash!==digest(prepared.unsignedXdr))return conflict('FAILED_CHILD_BINDING');
+   const signed=assertSignedMarginEnvelope(prepared,childRow.signed_xdr),cap=child.step==='vault_deposit'?current.terms.depositMaxFeeStroops:current.terms.maxFeeStroops;
+   if(signed.hash().toString('hex')!==childRow.tx_hash||atomic(signed.fee,true)>atomic(cap,true))return conflict('FAILED_CHILD_HASH_OR_FEE');
+   const failure=await this.adapter.readFailedEvidence({...context,baseline:child.baseline,txHash:childRow.tx_hash},customer);
+   assertMarginFailureEvidence(current,child.step,child.intentHash,childRow.tx_hash,failure,signed.fee,this.now());
+   return transaction(this.operations.pool,async client=>{
+    const fresh=await this.read(client,customer,id,true);if(fresh.revision!==current.revision||fresh.activeOperationId!==child.operationId)return conflict('REVISION');
+    const op=(await client.query('SELECT state,tx_hash,signed_xdr,prepared_action FROM operations WHERE business_id=$1 AND customer_id=$2 AND wallet_id=$3 AND id=$4 FOR UPDATE',[customer.businessId,customer.customerId,customer.walletId,child.operationId])).rows[0];
+    if(op?.state!=='failed'||op.tx_hash!==failure.txHash||op.signed_xdr!==childRow.signed_xdr||canonicalJson(op.prepared_action)!==canonicalJson(prepared))return conflict('CHAIN_STATUS_CHANGED');
+    const saved=await client.query('UPDATE margin_workflow_steps SET evidence_json=$5,confirmed_at=now() WHERE business_id=$1 AND customer_id=$2 AND workflow_id=$3 AND operation_id=$4 AND evidence_json IS NULL',[customer.businessId,customer.customerId,id,child.operationId,JSON.stringify(failure)]);if(saved.rowCount!==1)return conflict('FAILURE_ALREADY_RECORDED');
+    await client.query('UPDATE margin_workflows SET active_operation_id=NULL,revision=revision+1,updated_at=now() WHERE business_id=$1 AND id=$2',[customer.businessId,id]);return this.read(client,customer,id);
+   });
+  }
   if(childRow.operation_state!=='completed'||typeof childRow.tx_hash!=='string')return current;
   if(typeof childRow.signed_xdr!=='string'||!childRow.signed_xdr)return conflict('CUSTOMER_SIGNATURE_REQUIRED');
-  const context:MarginStepContext={workflow:current,step:child.step,terms:child.terms,intentHash:child.intentHash,operationId:child.operationId};
   const evidence=await this.adapter.readConfirmedEvidence({...context,baseline:child.baseline,txHash:childRow.tx_hash},customer);
   const next=applyMarginEvidence(current,child.step,child.intentHash,childRow.tx_hash,evidence,this.now());
   return transaction(this.operations.pool,async client=>{

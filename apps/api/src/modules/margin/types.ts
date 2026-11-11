@@ -26,7 +26,7 @@ export interface MarginStepTerms {
 export interface MarginChild {
  workflowId:string; businessId:string; customerId:string; walletId:string;
  operationId:string; step:MarginStep; attempt:number; terms:MarginStepTerms;
- intentHash:string; baseline:Record<string,unknown>; evidence:MarginEvidence|null;
+ intentHash:string; baseline:Record<string,unknown>; evidence:MarginEvidence|MarginFailureEvidence|null;
 }
 export interface MarginPositionEvidence {
  positionId:string; owner:string; marketId:string; direction:'long'|'short';
@@ -50,6 +50,11 @@ export interface MarginEvidence {
  /** True only after protocol-specific proof of cancelled reservations and removed pending record. */
  cancellationVerified?:boolean;
 }
+/** Trusted adapter output only: exact FAILED transaction with no principal/position changes, except the verified fee. */
+export interface MarginFailureEvidence {
+ network:'stellar-testnet';chainStatus:'FAILED';txHash:string;ledger:number;owner:string;step:MarginStep;intentHash:string;observedAt:string;
+ principalAndPositionUnchanged:true;sourceSequenceConsumed:true;feeStroops:string;
+}
 export interface MarginPreparation {
  prepared:PreparedAction; baseline:Record<string,unknown>;
  reservations:Omit<ReservationInput,'businessId'|'customerId'|'walletId'|'operationId'|'expiresAt'>[];
@@ -63,6 +68,7 @@ export interface MarginAdapter {
  prepareStep(context:MarginStepContext,customer:CustomerContext):Promise<MarginPreparation>;
  /** Must verify exact stored transaction hash and baseline; current aggregate state alone is insufficient. */
  readConfirmedEvidence(context:MarginStepContext & {baseline:Record<string,unknown>;txHash:string},customer:CustomerContext):Promise<MarginEvidence>;
+ readFailedEvidence?(context:MarginStepContext & {baseline:Record<string,unknown>;txHash:string},customer:CustomerContext):Promise<MarginFailureEvidence>;
 }
 export interface MarginExecutionAdapter extends MarginAdapter {
  verifyStepForSubmission(context:MarginStepContext & {baseline:Record<string,unknown>;prepared:PreparedAction},signedXdr:string,customer:CustomerContext):Promise<void>;
