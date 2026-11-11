@@ -64,7 +64,7 @@ export function sealSession(session: CustomerSession): string {
     throw new BffError(
       413,
       "CUSTOMER_SESSION_TOO_LARGE",
-      "This identity session is too large; reduce linked accounts or refresh your Privy session",
+      "Your session could not be saved. Please sign in again",
     );
   return sealed;
 }
