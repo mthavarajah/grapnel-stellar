@@ -3,7 +3,7 @@
   "signing_mode": "own_QA_ed25519_NOT_Privy_customer_flow",
   "customer_privy_proof": false,
   "prior_actions": 6,
-  "global_action_limit": 19,
+  "global_action_limit": 21,
   "qa_address": "GAJZ5PEECGFB46QXKFW2QTWRXHYL4SOBS5VE2JDGJ4TDUIAUWEAHKV34",
   "actions": [
     {
@@ -54,6 +54,28 @@
       "send_status": "PENDING",
       "ledger": 5682682,
       "return_value": "13843"
+    },
+    {
+      "label": "qa_unswapped_pending_open_cancel",
+      "hash": "c8523772688a0b5bea9fd4d6fc4a78434aa7cad6d7f530582e177c8979b901a4",
+      "sequence": "24403398585483269",
+      "max_fee_stroops": "48805",
+      "status": "SUCCESS",
+      "explorer": "https://stellar.expert/explorer/testnet/tx/c8523772688a0b5bea9fd4d6fc4a78434aa7cad6d7f530582e177c8979b901a4",
+      "send_status": "PENDING",
+      "ledger": 5682847,
+      "return_value": null
+    },
+    {
+      "label": "qa_replacement_two_x_long_begin",
+      "hash": "a4d7828550519d8f5bd5fc7778cf9806e9bc95c9a53aa91fab80b30942ae61d4",
+      "sequence": "24403398585483270",
+      "max_fee_stroops": "2627977",
+      "status": "SUCCESS",
+      "explorer": "https://stellar.expert/explorer/testnet/tx/a4d7828550519d8f5bd5fc7778cf9806e9bc95c9a53aa91fab80b30942ae61d4",
+      "send_status": "PENDING",
+      "ledger": 5682857,
+      "return_value": "13844"
     }
   ],
   "snapshots": [
@@ -306,14 +328,151 @@
         "observedAt": "2026-11-11T22:44:15.824Z",
         "status": "PendingOpen"
       }
+    },
+    {
+      "phase": "qa_open_cancel",
+      "intent": {
+        "step": "open_cancel",
+        "walletAddress": "GAJZ5PEECGFB46QXKFW2QTWRXHYL4SOBS5VE2JDGJ4TDUIAUWEAHKV34",
+        "positionId": "13843"
+      },
+      "before": {
+        "native": "9984.8459509",
+        "mock_usdt_atomic": "5300316",
+        "vault_receipt_atomic": "0",
+        "margin_receipt_atomic": "0"
+      },
+      "after": {
+        "native": "9984.8420408",
+        "mock_usdt_atomic": "5300316",
+        "vault_receipt_atomic": "0",
+        "margin_receipt_atomic": "9999780"
+      },
+      "position": null,
+      "pending": null,
+      "execution": null,
+      "perps": null,
+      "positions": [],
+      "debt_atomic": "0"
+    },
+    {
+      "phase": "qa_replacement_open_begin",
+      "intent": {
+        "step": "open_begin",
+        "walletAddress": "GAJZ5PEECGFB46QXKFW2QTWRXHYL4SOBS5VE2JDGJ4TDUIAUWEAHKV34",
+        "marginReceiptAtomic": "9999780",
+        "leverage": 2,
+        "direction": "long",
+        "minimumOutputAtomic": "129932005"
+      },
+      "before": {
+        "native": "9984.8420408",
+        "mock_usdt_atomic": "5300316",
+        "vault_receipt_atomic": "0",
+        "margin_receipt_atomic": "9999780"
+      },
+      "after": {
+        "native": "9984.6338907",
+        "mock_usdt_atomic": "5300316",
+        "vault_receipt_atomic": "0",
+        "margin_receipt_atomic": "0"
+      },
+      "position": {
+        "walletAddress": "GAJZ5PEECGFB46QXKFW2QTWRXHYL4SOBS5VE2JDGJ4TDUIAUWEAHKV34",
+        "positionId": "13844",
+        "direction": "long",
+        "position": {
+          "collateral_asset": "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC",
+          "collateral_ptokens": "0",
+          "debt_asset": "CDPXNHHVSLX3HFAHV7XOISM23MZH36WSXTO45RNDOBIDFZBGTSOVD4OY",
+          "debt_shares": "0",
+          "entry_price_scaled": "0",
+          "opened_at": "1794437928",
+          "owner": "GAJZ5PEECGFB46QXKFW2QTWRXHYL4SOBS5VE2JDGJ4TDUIAUWEAHKV34",
+          "side": [
+            "Long"
+          ],
+          "status": [
+            "PendingOpen"
+          ]
+        },
+        "perps": null,
+        "pendingOpen": {
+          "base_asset": "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC",
+          "borrow_amount": "9999998",
+          "debt_vault": "CCEW6NSPCV7XUEQV75ZMII5HK5DGXK5JP2QOTGLV4UFLDBPEKRGO4Y4B",
+          "expires_at": "1794439728",
+          "margin_amount": "9999999",
+          "margin_asset": "CDPXNHHVSLX3HFAHV7XOISM23MZH36WSXTO45RNDOBIDFZBGTSOVD4OY",
+          "margin_ptokens": "9999780",
+          "margin_vault": "CCEW6NSPCV7XUEQV75ZMII5HK5DGXK5JP2QOTGLV4UFLDBPEKRGO4Y4B",
+          "min_position_amount": "129932005",
+          "notional_value": "19982434",
+          "owner": "GAJZ5PEECGFB46QXKFW2QTWRXHYL4SOBS5VE2JDGJ4TDUIAUWEAHKV34",
+          "pool": "CCMNSENXDBNJSY72BDIPH5CCXLLHBKZ4LXTRKDLKZN4UI2NJFQLWTLD6",
+          "pool_id": {
+            "type": "Buffer",
+            "data": [
+              154,
+              199,
+              169,
+              205,
+              226,
+              58,
+              194,
+              173,
+              161,
+              17,
+              5,
+              238,
+              170,
+              66,
+              228,
+              60,
+              46,
+              168,
+              51,
+              44,
+              160,
+              170,
+              143,
+              65,
+              245,
+              141,
+              113,
+              96,
+              39,
+              77,
+              113,
+              142
+            ]
+          },
+          "pool_tokens": [
+            "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC",
+            "CDPXNHHVSLX3HFAHV7XOISM23MZH36WSXTO45RNDOBIDFZBGTSOVD4OY"
+          ],
+          "position_vault": "CB32OVY4AADCHQT3DLKJYW5QVTWY5MOX7BBNZFT3SDHZ5HPSDDEA2THJ",
+          "side": [
+            "Long"
+          ]
+        },
+        "openExecution": null,
+        "pendingClose": null,
+        "observedLedger": 5682857,
+        "observedAt": "2026-11-11T22:58:51.043Z",
+        "status": "PendingOpen"
+      }
     }
   ],
   "last_error": "The QA open swap exceeds its exact reviewed Testnet scope",
-  "position_id": "13843",
   "last_error_diagnostic": {
     "stage": "fresh_state",
     "code": "PERIDOT_OPEN_SWAP_SCOPE",
     "reason": "PERSISTED_MINIMUM_NOT_FRESH",
     "tx_hash": null
-  }
+  },
+  "limit_extension": "Lead approved one cancel plus one replacement begin recovery; other scopes unchanged",
+  "cancelled_position_id": "13843",
+  "position_id": "13844",
+  "active_begin_label": "qa_replacement_two_x_long_begin"
 }
