@@ -1,0 +1,506 @@
+[
+  {
+    "symbol": "AAPL",
+    "file": "/assets/logos/aapl.svg",
+    "source": "https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/apple.svg",
+    "collection": "Simple Icons",
+    "license": "CC0-1.0; brand trademark retained",
+    "sha256": "2a1509dccd25e6d2bc7a11a8e52941077e1a48555e192ce638699b9f083c2a7c"
+  },
+  {
+    "symbol": "ADA",
+    "file": "/assets/logos/ada.svg",
+    "source": "https://raw.githubusercontent.com/spothq/cryptocurrency-icons/master/svg/color/ada.svg",
+    "collection": "cryptocurrency-icons",
+    "license": "CC0-1.0; brand trademark retained",
+    "sha256": "db824768c06f9d2e7cfe0c361da4e67eb6106b9d962f4190068b778e7314894e"
+  },
+  {
+    "symbol": "AMC",
+    "file": "/assets/logos/amc.png",
+    "source": "https://d1io3yog0oux5.cloudfront.net/_6df3c60b44fabb2e9c2176aee37ec83f/amctheatres/files/theme/images/favicons/favicon.ico",
+    "collection": "First-party website linked icon",
+    "license": "Brand mark; no open license asserted",
+    "sha256": "4dcdb7c2a51a7cb84ab5e6fd4943ae13829447952e1c9c403de51b53b05aafed"
+  },
+  {
+    "symbol": "AMD",
+    "file": "/assets/logos/amd.svg",
+    "source": "https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/amd.svg",
+    "collection": "Simple Icons",
+    "license": "CC0-1.0; brand trademark retained",
+    "sha256": "c4c2f985dc1427aa7a54e3f80ef5ca35dba911bbed184a0dc6def148c1dfa420"
+  },
+  {
+    "symbol": "AMZN",
+    "file": "/assets/logos/amzn.png",
+    "source": "https://www.amazon.com/favicon.ico",
+    "collection": "First-party website favicon",
+    "license": "Brand mark; no open license asserted",
+    "sha256": "16e0cf788f38cc23c8bff63d2e6dd2db47ec703aee5de597022278d1804e0976"
+  },
+  {
+    "symbol": "BABA",
+    "file": "/assets/logos/baba.svg",
+    "source": "https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/alibabadotcom.svg",
+    "collection": "Simple Icons",
+    "license": "CC0-1.0; brand trademark retained",
+    "sha256": "332af9fa32a35a299cdce47d18f4384495314ac03c4caaae435a4ab270a15b14"
+  },
+  {
+    "symbol": "BCH",
+    "file": "/assets/logos/bch.svg",
+    "source": "https://raw.githubusercontent.com/spothq/cryptocurrency-icons/master/svg/color/bch.svg",
+    "collection": "cryptocurrency-icons",
+    "license": "CC0-1.0; brand trademark retained",
+    "sha256": "b4067ef1f7f07fbd0edeea44fbfce80aec7cf7ca80ea3c269ad654b601073267"
+  },
+  {
+    "symbol": "BNB",
+    "file": "/assets/logos/bnb.svg",
+    "source": "https://raw.githubusercontent.com/spothq/cryptocurrency-icons/master/svg/color/bnb.svg",
+    "collection": "cryptocurrency-icons",
+    "license": "CC0-1.0; brand trademark retained",
+    "sha256": "ce2befc91baa544c13b63d6c02a12cfcf84702a5ec29b650e358a8b4a96c4ce8"
+  },
+  {
+    "symbol": "BTC",
+    "file": "/assets/logos/btc.svg",
+    "source": "https://raw.githubusercontent.com/spothq/cryptocurrency-icons/master/svg/color/btc.svg",
+    "collection": "cryptocurrency-icons",
+    "license": "CC0-1.0; brand trademark retained",
+    "sha256": "5a8131ecdf855b12cb56080aeeeefea266976529c45b2d58c284a13b7519f4ca"
+  },
+  {
+    "symbol": "BULL",
+    "file": "/assets/logos/bull.png",
+    "source": "https://www.webull.com/favicon.ico",
+    "collection": "First-party website favicon",
+    "license": "Brand mark; no open license asserted",
+    "sha256": "b88b774348282b7e899daf1e27d6f443e99a613824e5987473773a8f0cedb241"
+  },
+  {
+    "symbol": "COIN",
+    "file": "/assets/logos/coin.svg",
+    "source": "https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/coinbase.svg",
+    "collection": "Simple Icons",
+    "license": "CC0-1.0; brand trademark retained",
+    "sha256": "94dd360e4a750ce3a902c8bd7c83d9db8078bf923e4a040b538d92e0967a9d4d"
+  },
+  {
+    "symbol": "COST",
+    "file": "/assets/logos/cost.svg",
+    "source": "https://www.costco.com/favicon.ico",
+    "collection": "First-party website favicon",
+    "license": "Brand mark; no open license asserted",
+    "sha256": "ed44bf117f977bcaa09ceac515ad5a019889441adda17bed9c760f4c6930ad7e"
+  },
+  {
+    "symbol": "CRCL",
+    "file": "/assets/logos/crcl.png",
+    "source": "https://cdn.prod.website-files.com/67116d0daddc92483c812e88/683f238c7540ce089af2ff6f_Favicon32x32.png",
+    "collection": "First-party Circle website linked favicon",
+    "license": "Brand mark; no open license asserted",
+    "sha256": "829a81b5410a55f9851592c180038a12efd418704986455e77054f7a7ced1add"
+  },
+  {
+    "symbol": "DJT",
+    "file": "/assets/logos/djt.png",
+    "source": "https://tmtgcorp.com/assets/images/seo/favicon.ico",
+    "collection": "First-party website linked icon",
+    "license": "Brand mark; no open license asserted",
+    "sha256": "44b39c8dcaafba31dc07da097a884e9af00d16deea60c8122c1afab9b39b939b"
+  },
+  {
+    "symbol": "DOGE",
+    "file": "/assets/logos/doge.svg",
+    "source": "https://raw.githubusercontent.com/spothq/cryptocurrency-icons/master/svg/color/doge.svg",
+    "collection": "cryptocurrency-icons",
+    "license": "CC0-1.0; brand trademark retained",
+    "sha256": "bad8366eea35df4e3185ba24aeaedf4b5ab702d1bb959de47085fb762916d16f"
+  },
+  {
+    "symbol": "ETH",
+    "file": "/assets/logos/eth.svg",
+    "source": "https://raw.githubusercontent.com/spothq/cryptocurrency-icons/master/svg/color/eth.svg",
+    "collection": "cryptocurrency-icons",
+    "license": "CC0-1.0; brand trademark retained",
+    "sha256": "1f94df8533f61806f7b17eaf9cd28678cdba66e1d82a9ca8f9fb38d35a907e9c"
+  },
+  {
+    "symbol": "EURC",
+    "file": "/assets/logos/eurc.png",
+    "source": "https://static.ultrastellar.com/media/assets/img/f8b00dbf-64b3-488f-bcd2-354f29e2cdc8.png",
+    "collection": "Official Soroswap Testnet registry icon URL",
+    "license": "Brand mark; no open license asserted",
+    "sha256": "7f625108923e6adda4dc59056137369e546e0af5508680bb81381f806b83a32a"
+  },
+  {
+    "symbol": "GLD",
+    "file": "/assets/logos/gld.png",
+    "source": "https://www.ssga.com/favicon.ico",
+    "collection": "First-party website favicon",
+    "license": "Brand mark; no open license asserted",
+    "sha256": "c2ab9a0905e9f4856110c6fe59c34fe5707adeb77441938276183e5e18501eca"
+  },
+  {
+    "symbol": "GME",
+    "file": "/assets/logos/gme.png",
+    "source": "https://www.gamestop.com/favicon.ico",
+    "collection": "First-party website favicon",
+    "license": "Brand mark; no open license asserted",
+    "sha256": "8e47869654f1d8386d148aa2d5a0431f8ca5d117ad0fcc42d357f5a9e5c904aa"
+  },
+  {
+    "symbol": "GOOGL",
+    "file": "/assets/logos/googl.svg",
+    "source": "https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/google.svg",
+    "collection": "Simple Icons",
+    "license": "CC0-1.0; brand trademark retained",
+    "sha256": "d8cf9fb2d5e234e03254f1d6400d8cc8160c309b010d031a64f37084b5a21d01"
+  },
+  {
+    "symbol": "HIMS",
+    "file": "/assets/logos/hims.svg",
+    "source": "https://cdn.prod.website-files.com/65b927fbae8278519e8484a0/65ba9ea2eeb69d36510c1929_hims-favicon.svg",
+    "collection": "First-party website linked icon",
+    "license": "Brand mark; no open license asserted",
+    "sha256": "56ac39ecc7137ed8a0d2ca92be7a687ab46162205c693575940664360a4ab9f7"
+  },
+  {
+    "symbol": "HYPE",
+    "file": "/assets/logos/hype.png",
+    "source": "https://hyperliquid.xyz/apple-touch-icon.png",
+    "collection": "First-party website linked icon",
+    "license": "Brand mark; no open license asserted",
+    "sha256": "e6f43d5b70eea088496b828da6285f5f2baedb2718d58b5012bf76ae8eb76ea2"
+  },
+  {
+    "symbol": "IBM",
+    "file": "/assets/logos/ibm.png",
+    "source": "https://www.ibm.com/favicon.ico",
+    "collection": "First-party website favicon",
+    "license": "Brand mark; no open license asserted",
+    "sha256": "a0bd0d5fd7215c761a9857fc85f4b3e2655c75f38e4b0fcfb7b7115d79795f88"
+  },
+  {
+    "symbol": "INTC",
+    "file": "/assets/logos/intc.svg",
+    "source": "https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/intel.svg",
+    "collection": "Simple Icons",
+    "license": "CC0-1.0; brand trademark retained",
+    "sha256": "25d0d4387af0999eb5dc79b165ecfd7b972ff43047406da533f3207ac92c0a57"
+  },
+  {
+    "symbol": "JNJ",
+    "file": "/assets/logos/jnj.png",
+    "source": "https://www.jnj.com/favicon.ico",
+    "collection": "First-party website favicon",
+    "license": "Brand mark; no open license asserted",
+    "sha256": "61a119897f695b1c288b6457f50e32c67171ebe6e56adb0aaf892d7de336087f"
+  },
+  {
+    "symbol": "LINK",
+    "file": "/assets/logos/link.svg",
+    "source": "https://raw.githubusercontent.com/spothq/cryptocurrency-icons/master/svg/color/link.svg",
+    "collection": "cryptocurrency-icons",
+    "license": "CC0-1.0; brand trademark retained",
+    "sha256": "2457990f68e333130633497d20456de38af8421aba8fdb4149900e4e051f10fa"
+  },
+  {
+    "symbol": "LLY",
+    "file": "/assets/logos/lly.png",
+    "source": "https://www.lilly.com/favicon.ico",
+    "collection": "First-party website favicon",
+    "license": "Brand mark; no open license asserted",
+    "sha256": "c8a6c60e7c8b7cbf1cc84198bc3d4464b1caa1b72156874172912240633f4669"
+  },
+  {
+    "symbol": "LTC",
+    "file": "/assets/logos/ltc.svg",
+    "source": "https://raw.githubusercontent.com/spothq/cryptocurrency-icons/master/svg/color/ltc.svg",
+    "collection": "cryptocurrency-icons",
+    "license": "CC0-1.0; brand trademark retained",
+    "sha256": "21b1ffe201826ba5d027f814baab9103938898c0be374d3cc948bd119b55ce66"
+  },
+  {
+    "symbol": "LULU",
+    "file": "/assets/logos/lulu.png",
+    "source": "https://corporate.lululemon.com/favicon.ico",
+    "collection": "First-party website favicon",
+    "license": "Brand mark; no open license asserted",
+    "sha256": "232c2eac760eae604f9dd43352c0b272396b7cfaf220081b54583b6d0cbc2320"
+  },
+  {
+    "symbol": "META",
+    "file": "/assets/logos/meta.svg",
+    "source": "https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/meta.svg",
+    "collection": "Simple Icons",
+    "license": "CC0-1.0; brand trademark retained",
+    "sha256": "e3e9db62f59dc477e5917687349b8aa9685b841d40300c1afad60ad85075cd2e"
+  },
+  {
+    "symbol": "MRNA",
+    "file": "/assets/logos/mrna.png",
+    "source": "https://www.modernatx.com/favicon.ico",
+    "collection": "First-party website favicon",
+    "license": "Brand mark; no open license asserted",
+    "sha256": "bbedde6d48f97e715bb363e8a338ba87921ba81b772264af61a478076101a6d1"
+  },
+  {
+    "symbol": "MSFT",
+    "file": "/assets/logos/msft.png",
+    "source": "https://www.microsoft.com/favicon.ico",
+    "collection": "First-party website favicon",
+    "license": "Brand mark; no open license asserted",
+    "sha256": "7a6488d9be5cf4f8c0104864d122c88005747d25560f5189b47201fe15922da1"
+  },
+  {
+    "symbol": "MSTR",
+    "file": "/assets/logos/mstr.png",
+    "source": "https://store.strategy.com/cdn/shop/files/Icon_black_orange.png?crop=center&height=32&v=1739476509&width=32",
+    "collection": "First-party website linked icon",
+    "license": "Brand mark; no open license asserted",
+    "sha256": "e6e98d97fbfd5e4bb10f4628ccba23a456f049cad875e2633bbb3ef8ca130ae5"
+  },
+  {
+    "symbol": "MU",
+    "file": "/assets/logos/mu.png",
+    "source": "https://www.micron.com/favicon.ico",
+    "collection": "First-party website favicon",
+    "license": "Brand mark; no open license asserted",
+    "sha256": "caad386b6310ee88284cf2f1fcbbfe5830bc7a506469e837cee8b147bfebc5d2"
+  },
+  {
+    "symbol": "NET",
+    "file": "/assets/logos/net.svg",
+    "source": "https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/cloudflare.svg",
+    "collection": "Simple Icons",
+    "license": "CC0-1.0; brand trademark retained",
+    "sha256": "408096d99907fd99e0863cb5d73f77a72537c6a85fd8d5e2704178a83a891f08"
+  },
+  {
+    "symbol": "NFLX",
+    "file": "/assets/logos/nflx.svg",
+    "source": "https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/netflix.svg",
+    "collection": "Simple Icons",
+    "license": "CC0-1.0; brand trademark retained",
+    "sha256": "67dbc495988bd5667a09ed4f56e14db4070a44c7a74e297b146c229f70fd6f6e"
+  },
+  {
+    "symbol": "NVDA",
+    "file": "/assets/logos/nvda.svg",
+    "source": "https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/nvidia.svg",
+    "collection": "Simple Icons",
+    "license": "CC0-1.0; brand trademark retained",
+    "sha256": "b0e4cfc12712c840d4d630c9a717200fbd09aeeadbd3faeac13bda2e2ed050b0"
+  },
+  {
+    "symbol": "PLTR",
+    "file": "/assets/logos/pltr.svg",
+    "source": "https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/palantir.svg",
+    "collection": "Simple Icons",
+    "license": "CC0-1.0; brand trademark retained",
+    "sha256": "0ea58cb945cc09a7edbb96ca6de7ee3854f16d0a559014e9d3fcb4bdbbbb1cc7"
+  },
+  {
+    "symbol": "PUMP",
+    "file": "/assets/logos/pump.png",
+    "source": "https://coin-images.coingecko.com/coins/images/67164/large/pump.jpg?1751949376",
+    "collection": "CoinGecko exact Pump.fun token artwork",
+    "license": "Token brand artwork; no open license asserted; metadata https://api.coingecko.com/api/v3/coins/pump-fun",
+    "sha256": "4b3844096e22d20b8b9a60058dcb5e84fa2d7e5d3fc425dc75119da42f487314"
+  },
+  {
+    "symbol": "QQQ",
+    "file": "/assets/logos/qqq.png",
+    "source": "https://www.invesco.com/favicon.ico",
+    "collection": "First-party website favicon",
+    "license": "Brand mark; no open license asserted",
+    "sha256": "8f616e290ea8755fc8412781b4304bd68e41a1cee924174a274b69e2a2670690"
+  },
+  {
+    "symbol": "QUBT",
+    "file": "/assets/logos/qubt.png",
+    "source": "https://quantumcomputinginc.com/favicon.ico",
+    "collection": "First-party website favicon",
+    "license": "Brand mark; no open license asserted",
+    "sha256": "fefac8bc480fb653ffe0ac95261ee82f25284b4d0980b1f0d3370d444bd76745"
+  },
+  {
+    "symbol": "RBLX",
+    "file": "/assets/logos/rblx.svg",
+    "source": "https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/roblox.svg",
+    "collection": "Simple Icons",
+    "license": "CC0-1.0; brand trademark retained",
+    "sha256": "9245b2f23fde91a5ef34f36aea32c1bf08a1a1254c08b86e7f060a4f72986234"
+  },
+  {
+    "symbol": "RDDT",
+    "file": "/assets/logos/rddt.svg",
+    "source": "https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/reddit.svg",
+    "collection": "Simple Icons",
+    "license": "CC0-1.0; brand trademark retained",
+    "sha256": "00e5008d56567543cf956561e61d5bf9bf629f520c7488a4d9a00164c29dd8ba"
+  },
+  {
+    "symbol": "RIVN",
+    "file": "/assets/logos/rivn.png",
+    "source": "https://rivian.com/favicon.ico",
+    "collection": "First-party website favicon",
+    "license": "Brand mark; no open license asserted",
+    "sha256": "752a3755329064d10e4e91113c2df7dbdbbfe964e7ff283e21a52f785192b906"
+  },
+  {
+    "symbol": "SGOV",
+    "file": "/assets/logos/sgov.png",
+    "source": "https://www.ishares.com/favicon.ico",
+    "collection": "First-party website favicon",
+    "license": "Brand mark; no open license asserted",
+    "sha256": "3aafa627533ddcafec831c38f4d492901f4239802d8feefa21fa19a006bdf0eb"
+  },
+  {
+    "symbol": "SKHY",
+    "file": "/assets/logos/skhy.png",
+    "source": "https://mis-prod-koce-skhynixhomepage-cdn-01-ep.azureedge.net/img/favicon.ico",
+    "collection": "First-party website linked icon",
+    "license": "Brand mark; no open license asserted",
+    "sha256": "de54fbf5b1016aa20fbc62269b67cc4b88ffc9084de84f161d6c7b1a975d7854"
+  },
+  {
+    "symbol": "SLV",
+    "file": "/assets/logos/slv.png",
+    "source": "https://www.ishares.com/favicon.ico",
+    "collection": "First-party website favicon",
+    "license": "Brand mark; no open license asserted",
+    "sha256": "3aafa627533ddcafec831c38f4d492901f4239802d8feefa21fa19a006bdf0eb"
+  },
+  {
+    "symbol": "SNAP",
+    "file": "/assets/logos/snap.svg",
+    "source": "https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/snapchat.svg",
+    "collection": "Simple Icons",
+    "license": "CC0-1.0; brand trademark retained",
+    "sha256": "fbbc31c5544954fbf7525dddbc0d3e79990bb89461f54a94917b6dffc2c5130e"
+  },
+  {
+    "symbol": "SNDK",
+    "file": "/assets/logos/sndk.png",
+    "source": "https://www.sandisk.com/favicon.ico",
+    "collection": "First-party website favicon",
+    "license": "Brand mark; no open license asserted",
+    "sha256": "d86129d4d0aad908e22c4c2317d7a9b550bdf54708ce02275d0b3e1c109d7d6b"
+  },
+  {
+    "symbol": "SOL",
+    "file": "/assets/logos/sol.svg",
+    "source": "https://raw.githubusercontent.com/spothq/cryptocurrency-icons/master/svg/color/sol.svg",
+    "collection": "cryptocurrency-icons",
+    "license": "CC0-1.0; brand trademark retained",
+    "sha256": "94e47e7c108a338cc4a79b82673d66cfbadfcf4c934ccb9c2ca8f13e8ea7dbb2"
+  },
+  {
+    "symbol": "SPCX",
+    "file": "/assets/logos/spcx.svg",
+    "source": "https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/spacex.svg",
+    "collection": "Simple Icons",
+    "license": "CC0-1.0; brand trademark retained",
+    "sha256": "b62123e05102ff4faa0a900d385c5312426f397a72ed9b6e4018821d9c18ac9a"
+  },
+  {
+    "symbol": "SPY",
+    "file": "/assets/logos/spy.png",
+    "source": "https://www.ssga.com/favicon.ico",
+    "collection": "First-party website favicon",
+    "license": "Brand mark; no open license asserted",
+    "sha256": "c2ab9a0905e9f4856110c6fe59c34fe5707adeb77441938276183e5e18501eca"
+  },
+  {
+    "symbol": "TRX",
+    "file": "/assets/logos/trx.svg",
+    "source": "https://raw.githubusercontent.com/spothq/cryptocurrency-icons/master/svg/color/trx.svg",
+    "collection": "cryptocurrency-icons",
+    "license": "CC0-1.0; brand trademark retained",
+    "sha256": "5b6b648320b6e99b8e60d447271f753dc9989183e3a07f0300ee44d0743130f0"
+  },
+  {
+    "symbol": "TSLA",
+    "file": "/assets/logos/tsla.svg",
+    "source": "https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/tesla.svg",
+    "collection": "Simple Icons",
+    "license": "CC0-1.0; brand trademark retained",
+    "sha256": "4b94d9eaf23849d6feec7a9c819e3699a35cbb76045ba7d482d17cbcc97414a5"
+  },
+  {
+    "symbol": "TSM",
+    "file": "/assets/logos/tsm.svg",
+    "source": "https://upload.wikimedia.org/wikipedia/commons/d/df/TSMC_wordmark.svg",
+    "collection": "Wikimedia Commons, TSMC wordmark",
+    "license": "Public domain (PD-textlogo); trademark retained; https://commons.wikimedia.org/wiki/File:TSMC_wordmark.svg",
+    "sha256": "5e843f0867a47a2f5effa0b73bee3b225651ee89da0e87ee07d6cbb01e1a5887"
+  },
+  {
+    "symbol": "TTWO",
+    "file": "/assets/logos/ttwo.svg",
+    "source": "https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/taketwointeractivesoftware.svg",
+    "collection": "Simple Icons",
+    "license": "CC0-1.0; brand trademark retained",
+    "sha256": "ee799a8ad4ec9de86f654c6f2217f252b54aaaed1ac834a8dd8fbfded4151752"
+  },
+  {
+    "symbol": "UNI",
+    "file": "/assets/logos/uni.svg",
+    "source": "https://raw.githubusercontent.com/spothq/cryptocurrency-icons/master/svg/color/uni.svg",
+    "collection": "cryptocurrency-icons",
+    "license": "CC0-1.0; brand trademark retained",
+    "sha256": "2a3192f07ade04f86a45b30de0b006400803b84488b2d4266a4dd33cda192773"
+  },
+  {
+    "symbol": "UPS",
+    "file": "/assets/logos/ups.svg",
+    "source": "https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/ups.svg",
+    "collection": "Simple Icons",
+    "license": "CC0-1.0; brand trademark retained",
+    "sha256": "175f7a34692e0539d3d52bc4ab69f8461ba68e2cab434345fb2516c6d094b1db"
+  },
+  {
+    "symbol": "USO",
+    "file": "/assets/logos/uso.png",
+    "source": "https://www.uscfinvestments.com/favicon.ico",
+    "collection": "First-party website favicon",
+    "license": "Brand mark; no open license asserted",
+    "sha256": "c68dbc8fb0c109ebf850a39c4e71c22714fd0f28373a091f8138c6110dc39269"
+  },
+  {
+    "symbol": "WYFI",
+    "file": "/assets/logos/wyfi.png",
+    "source": "https://cdn.prod.website-files.com/673bd4e39d0fb4773ffa1054/6785db5e909e230b18da30b2_Vector%20(1).png",
+    "collection": "First-party website linked icon",
+    "license": "Brand mark; no open license asserted",
+    "sha256": "fa522d112521a626ad34108c4501a0495d7a03f341bd38adc6b1d8d61d043d2b"
+  },
+  {
+    "symbol": "XRP",
+    "file": "/assets/logos/xrp.svg",
+    "source": "https://raw.githubusercontent.com/spothq/cryptocurrency-icons/master/svg/color/xrp.svg",
+    "collection": "cryptocurrency-icons",
+    "license": "CC0-1.0; brand trademark retained",
+    "sha256": "31fe41b6b3a4d98c9b46d7c37d60dea97fa5d9ebbd235ac5bfe23e4fd1eb8361"
+  },
+  {
+    "symbol": "XTAR",
+    "file": "/assets/logos/xtar.png",
+    "source": "https://www.dogstarcoin.com/assets/img/dogstarcoin-logo.png",
+    "collection": "Official Soroswap Testnet registry icon URL",
+    "license": "Brand mark; no open license asserted",
+    "sha256": "65b82523e2e894264feca579f1f1ada3225c74b992196990e0311748a47fc399"
+  },
+  {
+    "symbol": "ZEC",
+    "file": "/assets/logos/zec.svg",
+    "source": "https://raw.githubusercontent.com/spothq/cryptocurrency-icons/master/svg/color/zec.svg",
+    "collection": "cryptocurrency-icons",
+    "license": "CC0-1.0; brand trademark retained",
+    "sha256": "fa169a9b7a336a220cc233570e205a7a680796e856c62f835696682795ebb299"
+  }
+]
