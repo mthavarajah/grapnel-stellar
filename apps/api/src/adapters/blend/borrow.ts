@@ -33,6 +33,7 @@ export interface BorrowDependencies{
 }
 const unavailable=(reason:string,message='Borrowing is unavailable for this position'):never=>{throw new GrapnelError(409,'EXECUTION_UNAVAILABLE',message,false,{reason});};
 const invalid=(message:string):never=>{throw new GrapnelError(502,'BLEND_INVALID_RESPONSE',message);};
+export const borrowReadAtomic=(value:string):bigint=>/^0(?:\.0+)?$/.test(value)?0n:toAtomic(value,7);
 const min=(...values:bigint[])=>values.reduce((a,b)=>a<b?a:b);
 const ceil=(a:bigint,b:bigint)=>(a+b-1n)/b;
 const decimalRatio=(a:bigint,b:bigint):string=>{if(b<=0n)throw Error('Invalid ratio');const n=a*SCALE/b;return fromAtomic(n,7);};
@@ -114,7 +115,7 @@ export class BlendBorrowAdapter{
   if(!this.config.gate1Passed)return unavailable('GATE_1_SIGNING_PROOF_REQUIRED');if(!this.deps.prepareAndSimulate)return unavailable('BORROW_INSPECTOR_REQUIRED');
   const s=await this.snapshot(customer),row=this.rows(s).find(r=>r.market_id===input.marketId);if(!row)throw new GrapnelError(404,'NOT_FOUND','Borrow market not found');if(row.asset.id!==input.assetId)throw new GrapnelError(422,'ASSET_MISMATCH','Exact borrow reserve identity required');const amount=positiveAmount(input.amount),reserve=s.pool.reserves.get(row.asset.contractId!)!;
   if(action==='borrow'){if(!row.can_prepare_borrow)return unavailable(row.reason??'BORROW_CAPACITY_UNAVAILABLE');if(row.available_to_borrow===null||amount>toAtomic(row.available_to_borrow,7))return unavailable('BORROW_CAPACITY_EXCEEDED');}
-  if(action==='repay'&&(amount>toAtomic(row.repayable,7)||!row.can_prepare_repay))return unavailable('REPAY_AMOUNT_EXCEEDS_DEBT_OR_BALANCE');
+  if(action==='repay'&&(amount>borrowReadAtomic(row.repayable)||!row.can_prepare_repay))return unavailable('REPAY_AMOUNT_EXCEEDS_DEBT_OR_BALANCE');
   if(action==='collateral_supply'){if(!('enabled'in reserve.config)||!reserve.config.enabled)return unavailable('BORROW_RESERVE_DISABLED');if(![0,1].includes(s.pool.metadata.status))return unavailable('BORROW_POOL_NOT_ACTIVE');if((s.balances.get(row.asset.contractId!)??0n)<amount)throw new GrapnelError(409,'INSUFFICIENT_BALANCE','Collateral exceeds wallet balance');}
   if(action==='collateral_withdraw'){if(s.user.getCollateral(reserve)<amount)return unavailable('COLLATERAL_WITHDRAW_EXCEEDS_POSITION');if([...s.user.positions.liabilities.values()].some(v=>v>0n))return unavailable('COLLATERAL_WITHDRAW_WITH_DEBT_REQUIRES_REPAYMENT');if(row.available_liquidity===null||amount>toAtomic(row.available_liquidity,7))return unavailable('COLLATERAL_WITHDRAW_LIQUIDITY_UNAVAILABLE');}
   const intent:BorrowIntent={action,poolId:BORROW_POOL_ID,reserveId:row.asset.contractId!,walletAddress:customer.walletAddress,amountAtomic:amount},operationXdr=buildBorrowOperation(intent);inspectBorrowOperation(operationXdr,intent);
