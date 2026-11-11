@@ -1,0 +1,106 @@
+{
+  "observedAt": "2026-11-11T21:05:26.407Z",
+  "observation": {
+    "networkPassphrase": "Test SDF Network ; September 2015",
+    "vault": "CDQANGYCMZQKYSR6GQAXR7FEF3PALRMEDR65ONKSSJGAVDI23DM5YNQM",
+    "vaultWasm": "bbdd2079eea1ee289bc55e1ae5526b65772a390033f774acae0c5173d203f3fb",
+    "tier": "CC7EF4NGJDLQECANFXHXA32UAHYQKVU6Z57COFSR2WIB5TMQL3G4EKQF",
+    "tierWasm": "24feb0e4ceca7a8c10660f3927ff00179b96748e423bdcc248bc4ddca57d7374",
+    "usdc": "CBIELTK6YBZJU5UP2WWQEUCYKLPU6AUNZ2BQ4WWFEIE3USCIHMXQDAMA",
+    "vaultUsdcUnits": "5084898268",
+    "walletUsdcUnits": null,
+    "walletMaxLeverage": 0,
+    "vaultLastModifiedLedger": 3408963,
+    "observedLedger": 5681496
+  },
+  "assessment": {
+    "executionStatus": "blocked",
+    "executable": false,
+    "exposure": "collateralized_synthetic_position",
+    "blockers": [
+      "CIRCLE_USDC_TRUSTLINE_REQUIRED",
+      "VALID_ONCHAIN_TIER_REQUIRED",
+      "VERIFIED_ORACLE_UPDATE_REQUIRED",
+      "SOURCE_BUILD_EQUIVALENCE_REQUIRED",
+      "VERIFIED_ELIGIBILITY_BINDING_REQUIRED",
+      "PROVIDER_ROUTE_REVIEW_REQUIRED"
+    ],
+    "txHash": null,
+    "verifiedPositionDelta": null
+  },
+  "positionIds": [],
+  "prices": [
+    {
+      "ticker": "AAPL",
+      "assetId": 0,
+      "microUsd": "308630000",
+      "oracleTimestamp": null
+    },
+    {
+      "ticker": "TSLA",
+      "assetId": 1,
+      "microUsd": "393450000",
+      "oracleTimestamp": null
+    },
+    {
+      "ticker": "NVDA",
+      "assetId": 2,
+      "microUsd": "194830000",
+      "oracleTimestamp": null
+    },
+    {
+      "ticker": "MSFT",
+      "assetId": 3,
+      "microUsd": "390490000",
+      "oracleTimestamp": null
+    },
+    {
+      "ticker": "AMZN",
+      "assetId": 4,
+      "microUsd": "242670000",
+      "oracleTimestamp": null
+    },
+    {
+      "ticker": "GOOG",
+      "assetId": 5,
+      "microUsd": "356180000",
+      "oracleTimestamp": null
+    },
+    {
+      "ticker": "META",
+      "assetId": 6,
+      "microUsd": "582900000",
+      "oracleTimestamp": null
+    },
+    {
+      "ticker": "NFLX",
+      "assetId": 7,
+      "microUsd": "77650000",
+      "oracleTimestamp": null
+    },
+    {
+      "ticker": "AMD",
+      "assetId": 8,
+      "microUsd": "517820000",
+      "oracleTimestamp": null
+    },
+    {
+      "ticker": "JPM",
+      "assetId": 9,
+      "microUsd": "334470000",
+      "oracleTimestamp": null
+    },
+    {
+      "ticker": "SPY",
+      "assetId": 10,
+      "microUsd": "744780000",
+      "oracleTimestamp": null
+    },
+    {
+      "ticker": "PFE",
+      "assetId": 11,
+      "microUsd": "24320000",
+      "oracleTimestamp": null
+    }
+  ]
+}

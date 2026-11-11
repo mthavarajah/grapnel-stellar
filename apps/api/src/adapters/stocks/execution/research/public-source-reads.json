@@ -1,0 +1,28 @@
+{
+  "observed_at": "2026-11-11T20:43:03.430Z",
+  "requests": [
+    {
+      "url": "https://ztellar-edge.vercel.app/api/oracle",
+      "method": "GET",
+      "status": 200,
+      "body": "{\"prices\":{\"sAAPL\":355.14,\"sTSLA\":390.79,\"sNVDA\":174.7581,\"sMSFT\":519.92,\"sAMZN\":266.31,\"sGOOG\":291.39,\"sMETA\":634.8,\"sNFLX\":64.375,\"sAMD\":556.885,\"sJPM\":344.13,\"sSPY\":760.4,\"sPFE\":29.44},\"updatedAt\":1794429783108}"
+    },
+    {
+      "url": "https://horizon-testnet.stellar.org/ledgers/3408963",
+      "method": "GET",
+      "status": 200,
+      "body": "{\n  \"_links\": {\n    \"self\": {\n      \"href\": \"https://horizon-testnet.stellar.org/ledgers/3408963\"\n    },\n    \"transactions\": {\n      \"href\": \"https://horizon-testnet.stellar.org/ledgers/3408963/transactions{?cursor,limit,order}\",\n      \"templated\": true\n    },\n    \"operations\": {\n      \"href\": \"https://horizon-testnet.stellar.org/ledgers/3408963/operations{?cursor,limit,order}\",\n      \"templated\": true\n    },\n    \"payments\": {\n      \"href\": \"https://horizon-testnet.stellar.org/ledgers/3408963/payments{?cursor,limit,order}\",\n      \"templated\": true\n    },\n    \"effects\": {\n      \"href\": \"https://horizon-testnet.stellar.org/ledgers/3408963/effects{?cursor,limit,order}\",\n      \"templated\": true\n    }\n  },\n  \"id\": \"f0fe316cbab28b113a593d59a76bdf4e97378d69afe831ebdf048a5c35c57885\",\n  \"paging_token\": \"14641384598274048\",\n  \"hash\": \"f0fe316cbab28b113a593d59a76bdf4e97378d69afe831ebdf048a5c35c57885\",\n  \"prev_hash\": \"cf2d4bb1ec68e8520d9fffc8381236962a0c3f62a29dbe581550057d4311be8c\",\n  \"sequence\": 3408963,\n  \"successful_transaction_count\": 11,\n  \"failed_transaction_count\": 2,\n  \"operation_count\": 13,\n  \"tx_set_operation_count\": 16,\n  \"closed_at\": \"2026-07-03T06:23:05Z\",\n  \"total_coins\": \"100000000000.0000000\",\n  \"fee_pool\": \"326316.3664965\",\n  \"base_fee_in_stroops\": 100,\n  \"base_reserve_in_stroops\": 5000000,\n  \"max_tx_set_size\": 200,\n  \"protocol_version\": 27,\n  \"header_xdr\": \"AAAAG88tS7HsaOhSDZ//yDgSNpYqDD9iop2+WBVQBX1DEb6MwIN0Sy3EqlV7SyhrXe4C93VGHYDMWsItQNEdJ8OBJOgAAAAAakdVSQAAAAAAAAABAAAAANVyadliUPdJbQeb4ug1Ejbv/+jTnC4Gv6uxQh8X/GccAAAAQH5laAZkiV61uZXzzsWBtEnsu1GS4b2K4L84MxoKxpZnqPfG19Wp3g6CMKuDWuMpeGrzGBxbY7EeoX5aXMXh4goUPlY1G001VlTS2Y2lEAlWERxTpzarjtwNI7HFlOokBqsbvjdMUaZ5oV5DKydRtOgTslhTpnz65ewSXIBRDfLzADQEQw3gtrOnZAAAAAAC98O2CkUAAAAAAAAAAAACYJIAAABkAExLQAAAAMhcXqXmTooPigV1atuSR7Fb+07PWzcwCMcOByNwMpfArCCNu1FN00baijJNLsD1SUTrSgTcU/XrHGH9cdDhChK4mghtGYjMemEVNkfdcfRwpj7gjwtftI7niW9Lycm/tMFp6BcjTeTinEhFkgLLyaet9HxpsVoYU8LlAVEa3X966wAAAAA=\"\n}"
+    },
+    {
+      "url": "https://rpc.mainnet.chain.robinhood.com",
+      "method": "eth_chainId (read-only JSON-RPC)",
+      "status": 200,
+      "body": "{\"jsonrpc\":\"2.0\",\"id\":1,\"result\":\"0x1237\"}\n"
+    },
+    {
+      "url": "https://test.equitx.com/",
+      "error": "fetch failed",
+      "cause": "ERR_TLS_CERT_ALTNAME_INVALID"
+    }
+  ]
+}

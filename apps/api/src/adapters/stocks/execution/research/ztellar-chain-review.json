@@ -1,0 +1,1532 @@
+{
+  "observed_at": "2026-11-11T20:41:02.888Z",
+  "source": "https://github.com/Rohitamalraj/Ztellar-Edge/tree/7588e2ba33da8220fae8a0123377a70e747b2063",
+  "network": {
+    "friendbotUrl": "https://friendbot.stellar.org/",
+    "passphrase": "Test SDF Network ; September 2015",
+    "protocolVersion": 30
+  },
+  "mode": "read_only_stock_execution_review",
+  "wallet": "GB4PC65ZHBPVEZMAHY2K2KYMS3RFBIN2FQIE3LGTLEHT2DEWVMTD7JYQ",
+  "rows": [
+    {
+      "role": "vault",
+      "address": "CDQANGYCMZQKYSR6GQAXR7FEF3PALRMEDR65ONKSSJGAVDI23DM5YNQM",
+      "latest_ledger": 5681203,
+      "instance_count": 1,
+      "last_modified_ledger": 3408963,
+      "storage": [
+        {
+          "key": [
+            "Admin"
+          ],
+          "value": "GAUGHKOEYZ5BWVQJM4TZ76N6TUJUM76YIXLHHMM5CSMLBY2N5MNRXUYH"
+        },
+        {
+          "key": [
+            "NextId"
+          ],
+          "value": "4"
+        },
+        {
+          "key": [
+            "Price",
+            0
+          ],
+          "value": "308630000"
+        },
+        {
+          "key": [
+            "Price",
+            1
+          ],
+          "value": "393450000"
+        },
+        {
+          "key": [
+            "Price",
+            2
+          ],
+          "value": "194830000"
+        },
+        {
+          "key": [
+            "Price",
+            3
+          ],
+          "value": "390490000"
+        },
+        {
+          "key": [
+            "Price",
+            4
+          ],
+          "value": "242670000"
+        },
+        {
+          "key": [
+            "Price",
+            5
+          ],
+          "value": "356180000"
+        },
+        {
+          "key": [
+            "Price",
+            6
+          ],
+          "value": "582900000"
+        },
+        {
+          "key": [
+            "Price",
+            7
+          ],
+          "value": "77650000"
+        },
+        {
+          "key": [
+            "Price",
+            8
+          ],
+          "value": "517820000"
+        },
+        {
+          "key": [
+            "Price",
+            9
+          ],
+          "value": "334470000"
+        },
+        {
+          "key": [
+            "Price",
+            10
+          ],
+          "value": "744780000"
+        },
+        {
+          "key": [
+            "Price",
+            11
+          ],
+          "value": "24320000"
+        },
+        {
+          "key": [
+            "TierManager"
+          ],
+          "value": "CC7EF4NGJDLQECANFXHXA32UAHYQKVU6Z57COFSR2WIB5TMQL3G4EKQF"
+        },
+        {
+          "key": [
+            "UsdcToken"
+          ],
+          "value": "CBIELTK6YBZJU5UP2WWQEUCYKLPU6AUNZ2BQ4WWFEIE3USCIHMXQDAMA"
+        }
+      ],
+      "wasm_hash": "bbdd2079eea1ee289bc55e1ae5526b65772a390033f774acae0c5173d203f3fb",
+      "wasm_bytes": 11633,
+      "abi": [
+        "AAAAAQAAAAAAAAAAAAAACFBvc2l0aW9uAAAACAAAAAAAAAAFYXNzZXQAAAAAAAAEAAAAAAAAAApjb2xsYXRlcmFsAAAAAAALAAAAAAAAAAlkaXJlY3Rpb24AAAAAAAAEAAAAAAAAAAtlbnRyeV9wcmljZQAAAAALAAAAAAAAAAJpZAAAAAAABgAAAAAAAAAIbGV2ZXJhZ2UAAAAEAAAAAAAAAAlvcGVuZWRfYXQAAAAAAAAGAAAAAAAAAAZ3YWxsZXQAAAAAABM=",
+        "AAAAAAAAAAAAAAAEaW5pdAAAAAMAAAAAAAAABWFkbWluAAAAAAAAEwAAAAAAAAAMdGllcl9tYW5hZ2VyAAAAEwAAAAAAAAAKdXNkY190b2tlbgAAAAAAEwAAAAEAAAPpAAAAAgAAB9AAAAAKVmF1bHRFcnJvcgAA",
+        "AAAABAAAAAAAAAAAAAAAClZhdWx0RXJyb3IAAAAAAAoAAAAAAAAAEkFscmVhZHlJbml0aWFsaXplZAAAAAAAAQAAAAAAAAAOTm90SW5pdGlhbGl6ZWQAAAAAAAIAAAAAAAAADFVuYXV0aG9yaXplZAAAAAMAAAAAAAAAEVdhbGxldE5vdFZlcmlmaWVkAAAAAAAABAAAAAAAAAAWTGV2ZXJhZ2VFeGNlZWRzVGllckNhcAAAAAAABQAAAAAAAAAMSW52YWxpZEFzc2V0AAAABgAAAAAAAAAPSW52YWxpZExldmVyYWdlAAAAAAcAAAAAAAAAEUludmFsaWRDb2xsYXRlcmFsAAAAAAAACAAAAAAAAAAQUG9zaXRpb25Ob3RGb3VuZAAAAAkAAAAAAAAAEE5vdFBvc2l0aW9uT3duZXIAAAAK",
+        "AAAAAAAAAAAAAAAJZ2V0X3ByaWNlAAAAAAAAAQAAAAAAAAAFYXNzZXQAAAAAAAAEAAAAAQAAA+kAAAALAAAH0AAAAApWYXVsdEVycm9yAAA=",
+        "AAAAAAAAAD9BZG1pbiBvciBvcmFjbGUgdXBkYXRlcyBhbiBhc3NldCBwcmljZSAobWljcm8tVVNELCA2IGRlY2ltYWxzKS4AAAAACXNldF9wcmljZQAAAAAAAAIAAAAAAAAABWFzc2V0AAAAAAAABAAAAAAAAAAFcHJpY2UAAAAAAAALAAAAAQAAA+kAAAACAAAH0AAAAApWYXVsdEVycm9yAAA=",
+        "AAAAAAAAAIZCdWxrLXVwZGF0ZSBhbGwgMTIgYXNzZXQgcHJpY2VzIGluIG9uZSBUWCAodXNlZCBieSBwcmljZSBvcmFjbGUpLgpwcmljZXMgbXVzdCBiZSBleGFjdGx5IEFTU0VUX0NPVU5UIGVsZW1lbnRzLCBtaWNyby1VU0QgKDYgZGVjaW1hbHMpLgAAAAAACnNldF9wcmljZXMAAAAAAAEAAAAAAAAABnByaWNlcwAAAAAD6gAAAAsAAAABAAAD6QAAAAIAAAfQAAAAClZhdWx0RXJyb3IAAA==",
+        "AAAAAAAAAAAAAAAMZ2V0X3Bvc2l0aW9uAAAAAQAAAAAAAAALcG9zaXRpb25faWQAAAAABgAAAAEAAAPoAAAH0AAAAAhQb3NpdGlvbg==",
+        "AAAAAAAAAAAAAAANb3Blbl9wb3NpdGlvbgAAAAAAAAUAAAAAAAAABndhbGxldAAAAAAAEwAAAAAAAAAFYXNzZXQAAAAAAAAEAAAAAAAAAAlkaXJlY3Rpb24AAAAAAAAEAAAAAAAAAAhsZXZlcmFnZQAAAAQAAAAAAAAACmNvbGxhdGVyYWwAAAAAAAsAAAABAAAD6QAAAAYAAAfQAAAAClZhdWx0RXJyb3IAAA==",
+        "AAAAAAAAAAAAAAAOY2xvc2VfcG9zaXRpb24AAAAAAAIAAAAAAAAABndhbGxldAAAAAAAEwAAAAAAAAALcG9zaXRpb25faWQAAAAABgAAAAEAAAPpAAAACwAAB9AAAAAKVmF1bHRFcnJvcgAA",
+        "AAAAAAAAAAAAAAAOZ2V0X3VzZGNfdG9rZW4AAAAAAAAAAAABAAAD6AAAABM=",
+        "AAAAAAAAAAAAAAAQc2V0X3RpZXJfbWFuYWdlcgAAAAEAAAAAAAAAEG5ld190aWVyX21hbmFnZXIAAAATAAAAAQAAA+kAAAACAAAH0AAAAApWYXVsdEVycm9yAAA=",
+        "AAAAAAAAAAAAAAAUZ2V0X3dhbGxldF9wb3NpdGlvbnMAAAABAAAAAAAAAAZ3YWxsZXQAAAAAABMAAAABAAAD6gAAAAY=",
+        "AAAAAAAAAAAAAAAWZ2V0X3ZhdWx0X3VzZGNfYmFsYW5jZQAAAAAAAAAAAAEAAAAL"
+      ],
+      "methods": [
+        {
+          "name": "init",
+          "inputs": [
+            {
+              "name": "admin",
+              "type": "scSpecTypeAddress"
+            },
+            {
+              "name": "tier_manager",
+              "type": "scSpecTypeAddress"
+            },
+            {
+              "name": "usdc_token",
+              "type": "scSpecTypeAddress"
+            }
+          ],
+          "outputs": [
+            "scSpecTypeResult"
+          ]
+        },
+        {
+          "name": "get_price",
+          "inputs": [
+            {
+              "name": "asset",
+              "type": "scSpecTypeU32"
+            }
+          ],
+          "outputs": [
+            "scSpecTypeResult"
+          ]
+        },
+        {
+          "name": "set_price",
+          "inputs": [
+            {
+              "name": "asset",
+              "type": "scSpecTypeU32"
+            },
+            {
+              "name": "price",
+              "type": "scSpecTypeI128"
+            }
+          ],
+          "outputs": [
+            "scSpecTypeResult"
+          ]
+        },
+        {
+          "name": "set_prices",
+          "inputs": [
+            {
+              "name": "prices",
+              "type": "scSpecTypeVec"
+            }
+          ],
+          "outputs": [
+            "scSpecTypeResult"
+          ]
+        },
+        {
+          "name": "get_position",
+          "inputs": [
+            {
+              "name": "position_id",
+              "type": "scSpecTypeU64"
+            }
+          ],
+          "outputs": [
+            "scSpecTypeOption"
+          ]
+        },
+        {
+          "name": "open_position",
+          "inputs": [
+            {
+              "name": "wallet",
+              "type": "scSpecTypeAddress"
+            },
+            {
+              "name": "asset",
+              "type": "scSpecTypeU32"
+            },
+            {
+              "name": "direction",
+              "type": "scSpecTypeU32"
+            },
+            {
+              "name": "leverage",
+              "type": "scSpecTypeU32"
+            },
+            {
+              "name": "collateral",
+              "type": "scSpecTypeI128"
+            }
+          ],
+          "outputs": [
+            "scSpecTypeResult"
+          ]
+        },
+        {
+          "name": "close_position",
+          "inputs": [
+            {
+              "name": "wallet",
+              "type": "scSpecTypeAddress"
+            },
+            {
+              "name": "position_id",
+              "type": "scSpecTypeU64"
+            }
+          ],
+          "outputs": [
+            "scSpecTypeResult"
+          ]
+        },
+        {
+          "name": "get_usdc_token",
+          "inputs": [],
+          "outputs": [
+            "scSpecTypeOption"
+          ]
+        },
+        {
+          "name": "set_tier_manager",
+          "inputs": [
+            {
+              "name": "new_tier_manager",
+              "type": "scSpecTypeAddress"
+            }
+          ],
+          "outputs": [
+            "scSpecTypeResult"
+          ]
+        },
+        {
+          "name": "get_wallet_positions",
+          "inputs": [
+            {
+              "name": "wallet",
+              "type": "scSpecTypeAddress"
+            }
+          ],
+          "outputs": [
+            "scSpecTypeVec"
+          ]
+        },
+        {
+          "name": "get_vault_usdc_balance",
+          "inputs": [],
+          "outputs": [
+            "scSpecTypeI128"
+          ]
+        }
+      ],
+      "instance_xdr_sha256": "b672a35ed30ce7eada8ad594ee170636055312711089534cc9395eeedebe2c0b"
+    },
+    {
+      "role": "tier",
+      "address": "CC7EF4NGJDLQECANFXHXA32UAHYQKVU6Z57COFSR2WIB5TMQL3G4EKQF",
+      "latest_ledger": 5681203,
+      "instance_count": 1,
+      "last_modified_ledger": 3347064,
+      "storage": [
+        {
+          "key": [
+            "Admin"
+          ],
+          "value": "GAUGHKOEYZ5BWVQJM4TZ76N6TUJUM76YIXLHHMM5CSMLBY2N5MNRXUYH"
+        },
+        {
+          "key": [
+            "Verifier"
+          ],
+          "value": "CAO4EYDG7B5OXUUONZWY6AAUGYQPZD66D2E5NPMKCBIYRO2D6ZEO3HX7"
+        }
+      ],
+      "wasm_hash": "24feb0e4ceca7a8c10660f3927ff00179b96748e423bdcc248bc4ddca57d7374",
+      "wasm_bytes": 3637,
+      "abi": [
+        "AAAAAAAAAFNJbml0aWFsaXplIHdpdGggYWRtaW4gYW5kIHRoZSBaSyB2ZXJpZmllciBhZGRyZXNzIHRoYXQgaXMgYWxsb3dlZCB0bwpjYWxsIHNldF90aWVyLgAAAAAEaW5pdAAAAAIAAAAAAAAABWFkbWluAAAAAAAAEwAAAAAAAAAIdmVyaWZpZXIAAAATAAAAAQAAA+kAAAACAAAH0AAAABBUaWVyTWFuYWdlckVycm9y",
+        "AAAAAQAAAAAAAAAAAAAAClRpZXJSZWNvcmQAAAAAAAIAAAAAAAAABmV4cGlyeQAAAAAABgAAAAAAAAAEdGllcgAAAAQ=",
+        "AAAAAAAAADFSZXR1cm5zIHRoZSB0aWVyIG51bWJlciAoMCA9IHVudmVyaWZpZWQvZXhwaXJlZCkuAAAAAAAAB3RpZXJfb2YAAAAAAQAAAAAAAAAGd2FsbGV0AAAAAAATAAAAAQAAAAQ=",
+        "AAAAAAAAAD1SZXR1cm5zIHRoZSBUaWVyUmVjb3JkIGZvciBhIHdhbGxldCwgb3IgTm9uZSBpZiBub3QgdmVyaWZpZWQuAAAAAAAACGdldF90aWVyAAAAAQAAAAAAAAAGd2FsbGV0AAAAAAATAAAAAQAAA+gAAAfQAAAAClRpZXJSZWNvcmQAAA==",
+        "AAAAAAAAAG5DYWxsZWQgYnkgWmtWZXJpZmllciBhZnRlciBzdWNjZXNzZnVsIHByb29mIHZlcmlmaWNhdGlvbi4KT25seSB0aGUgcmVnaXN0ZXJlZCB2ZXJpZmllciBjb250cmFjdCBtYXkgY2FsbCB0aGlzLgAAAAAACHNldF90aWVyAAAAAwAAAAAAAAAGd2FsbGV0AAAAAAATAAAAAAAAAAR0aWVyAAAABAAAAAAAAAAGZXhwaXJ5AAAAAAAGAAAAAQAAA+kAAAACAAAH0AAAABBUaWVyTWFuYWdlckVycm9y",
+        "AAAABAAAAAAAAAAAAAAAEFRpZXJNYW5hZ2VyRXJyb3IAAAAFAAAAAAAAABJBbHJlYWR5SW5pdGlhbGl6ZWQAAAAAAAEAAAAAAAAADk5vdEluaXRpYWxpemVkAAAAAAACAAAAAAAAAAxVbmF1dGhvcml6ZWQAAAADAAAAAAAAAAtJbnZhbGlkVGllcgAAAAAEAAAAAAAAABFXYWxsZXROb3RWZXJpZmllZAAAAAAAAAU=",
+        "AAAAAAAAAEtBZG1pbiBjYW4gdXBkYXRlIHRoZSB2ZXJpZmllciBhZGRyZXNzIChlLmcuIGFmdGVyIHJlZGVwbG95aW5nIHprX3ZlcmlmaWVyKS4AAAAADHNldF92ZXJpZmllcgAAAAEAAAAAAAAADG5ld192ZXJpZmllcgAAABMAAAABAAAD6QAAAAIAAAfQAAAAEFRpZXJNYW5hZ2VyRXJyb3I=",
+        "AAAAAAAAADpSZXR1cm5zIHRydWUgaWYgdGhlIHdhbGxldCBoYXMgYSB2YWxpZCAobm9uLWV4cGlyZWQpIHRpZXIuAAAAAAANaXNfdGllcl92YWxpZAAAAAAAAAEAAAAAAAAABndhbGxldAAAAAAAEwAAAAEAAAAB",
+        "AAAAAAAAAIJSZXR1cm5zIHRoZSBtYXhpbXVtIGxldmVyYWdlIGNhcCBmb3IgYSB3YWxsZXQncyBjdXJyZW50IChub24tZXhwaXJlZCkgdGllci4KUmV0dXJucyAwIGlmIHdhbGxldCBpcyB1bnZlcmlmaWVkIG9yIHRpZXIgaGFzIGV4cGlyZWQuAAAAAAAQZ2V0X21heF9sZXZlcmFnZQAAAAEAAAAAAAAABndhbGxldAAAAAAAEwAAAAEAAAAE"
+      ],
+      "methods": [
+        {
+          "name": "init",
+          "inputs": [
+            {
+              "name": "admin",
+              "type": "scSpecTypeAddress"
+            },
+            {
+              "name": "verifier",
+              "type": "scSpecTypeAddress"
+            }
+          ],
+          "outputs": [
+            "scSpecTypeResult"
+          ]
+        },
+        {
+          "name": "tier_of",
+          "inputs": [
+            {
+              "name": "wallet",
+              "type": "scSpecTypeAddress"
+            }
+          ],
+          "outputs": [
+            "scSpecTypeU32"
+          ]
+        },
+        {
+          "name": "get_tier",
+          "inputs": [
+            {
+              "name": "wallet",
+              "type": "scSpecTypeAddress"
+            }
+          ],
+          "outputs": [
+            "scSpecTypeOption"
+          ]
+        },
+        {
+          "name": "set_tier",
+          "inputs": [
+            {
+              "name": "wallet",
+              "type": "scSpecTypeAddress"
+            },
+            {
+              "name": "tier",
+              "type": "scSpecTypeU32"
+            },
+            {
+              "name": "expiry",
+              "type": "scSpecTypeU64"
+            }
+          ],
+          "outputs": [
+            "scSpecTypeResult"
+          ]
+        },
+        {
+          "name": "set_verifier",
+          "inputs": [
+            {
+              "name": "new_verifier",
+              "type": "scSpecTypeAddress"
+            }
+          ],
+          "outputs": [
+            "scSpecTypeResult"
+          ]
+        },
+        {
+          "name": "is_tier_valid",
+          "inputs": [
+            {
+              "name": "wallet",
+              "type": "scSpecTypeAddress"
+            }
+          ],
+          "outputs": [
+            "scSpecTypeBool"
+          ]
+        },
+        {
+          "name": "get_max_leverage",
+          "inputs": [
+            {
+              "name": "wallet",
+              "type": "scSpecTypeAddress"
+            }
+          ],
+          "outputs": [
+            "scSpecTypeU32"
+          ]
+        }
+      ],
+      "instance_xdr_sha256": "927f6f054dd20bfd83dc2968d35e9a1fe148e423fc3999f777ad0d04f522c032"
+    },
+    {
+      "role": "verifier",
+      "address": "CAO4EYDG7B5OXUUONZWY6AAUGYQPZD66D2E5NPMKCBIYRO2D6ZEO3HX7",
+      "latest_ledger": 5681203,
+      "instance_count": 1,
+      "last_modified_ledger": 3347063,
+      "storage": [
+        {
+          "key": [
+            "Admin"
+          ],
+          "value": "GAUGHKOEYZ5BWVQJM4TZ76N6TUJUM76YIXLHHMM5CSMLBY2N5MNRXUYH"
+        },
+        {
+          "key": [
+            "TierManager"
+          ],
+          "value": "CC7EF4NGJDLQECANFXHXA32UAHYQKVU6Z57COFSR2WIB5TMQL3G4EKQF"
+        },
+        {
+          "key": [
+            "Vk"
+          ],
+          "value": {
+            "note": "Public verification key omitted from report; available in deployed contract storage"
+          }
+        }
+      ],
+      "wasm_hash": "4fa9aa3386c8530ddac90aa4aff37af442cfd6e8e404bdceaf4bc1874d106a51",
+      "wasm_bytes": 7809,
+      "abi": [
+        "AAAAAQAAAAAAAAAAAAAABVByb29mAAAAAAAAAwAAAAAAAAABYQAAAAAAA+4AAABgAAAAAAAAAAFiAAAAAAAD7gAAAMAAAAAAAAAAAWMAAAAAAAPuAAAAYA==",
+        "AAAAAAAAAH5Jbml0aWFsaXplIHRoZSB2ZXJpZmllciB3aXRoIHRoZSBHcm90aDE2IHZlcmlmaWNhdGlvbiBrZXkgYW5kIHRoZQphZGRyZXNzIG9mIHRoZSBUaWVyTWFuYWdlciBjb250cmFjdCBpdCB3aWxsIGNhbGwgb24gc3VjY2Vzcy4AAAAAAARpbml0AAAAAwAAAAAAAAAFYWRtaW4AAAAAAAATAAAAAAAAAAJ2awAAAAAH0AAAAA9WZXJpZmljYXRpb25LZXkAAAAAAAAAAAx0aWVyX21hbmFnZXIAAAATAAAAAQAAA+kAAAACAAAH0AAAAA9aa1ZlcmlmaWVyRXJyb3IA",
+        "AAAAAQAAAAAAAAAAAAAAD1ZlcmlmaWNhdGlvbktleQAAAAAFAAAAAAAAAAVhbHBoYQAAAAAAA+4AAABgAAAAAAAAAARiZXRhAAAD7gAAAMAAAAAAAAAABWRlbHRhAAAAAAAD7gAAAMAAAAAAAAAABWdhbW1hAAAAAAAD7gAAAMAAAAAAAAAAAmljAAAAAAPqAAAD7gAAAGA=",
+        "AAAABAAAAAAAAAAAAAAAD1prVmVyaWZpZXJFcnJvcgAAAAAHAAAAAAAAAA5Ob3RJbml0aWFsaXplZAAAAAAAAQAAAAAAAAASQWxyZWFkeUluaXRpYWxpemVkAAAAAAACAAAAAAAAABVNYWxmb3JtZWRWZXJpZnlpbmdLZXkAAAAAAAADAAAAAAAAAAxJbnZhbGlkUHJvb2YAAAAEAAAAAAAAABROdWxsaWZpZXJBbHJlYWR5VXNlZAAAAAUAAAAAAAAADFByb29mRXhwaXJlZAAAAAYAAAAAAAAADFVuYXV0aG9yaXplZAAAAAc=",
+        "AAAAAAAAAC1HZXQgdGhlIGN1cnJlbnQgVGllck1hbmFnZXIgY29udHJhY3QgYWRkcmVzcy4AAAAAAAAMdGllcl9tYW5hZ2VyAAAAAAAAAAEAAAPoAAAAEw==",
+        "AAAAAAAAAClBZG1pbiBjYW4gdXBkYXRlIHRoZSBUaWVyTWFuYWdlciBhZGRyZXNzLgAAAAAAABBzZXRfdGllcl9tYW5hZ2VyAAAAAQAAAAAAAAAQbmV3X3RpZXJfbWFuYWdlcgAAABMAAAABAAAD6QAAAAIAAAfQAAAAD1prVmVyaWZpZXJFcnJvcgA=",
+        "AAAAAAAAACxDaGVjayBpZiBhIG51bGxpZmllciBoYXMgYWxyZWFkeSBiZWVuIHNwZW50LgAAABFpc19udWxsaWZpZXJfdXNlZAAAAAAAAAEAAAAAAAAAD251bGxpZmllcl9ieXRlcwAAAAPuAAAAIAAAAAEAAAAB",
+        "AAAAAAAAAL5WZXJpZnkgYSBHcm90aDE2IFpLIHByb29mIGFuZCwgaWYgdmFsaWQsIHJlZ2lzdGVyIHRoZSB0aWVyIG9uIHRoZQpUaWVyTWFuYWdlciBjb250cmFjdC4KCmBwdWJfc2lnbmFsc2Agb3JkZXIgbXVzdCBtYXRjaCB0aGUgY2lyY3VpdCBvdXRwdXQgb3JkZXI6CltudWxsaWZpZXIsIHdhbGxldF9jb21taXRtZW50LCB0aWVyLCBleHBpcnldAAAAAAATdmVyaWZ5X2FuZF9yZWdpc3RlcgAAAAADAAAAAAAAAAZ3YWxsZXQAAAAAABMAAAAAAAAABXByb29mAAAAAAAH0AAAAAVQcm9vZgAAAAAAAAAAAAALcHViX3NpZ25hbHMAAAAD6gAAAAwAAAABAAAD6QAAAAQAAAfQAAAAD1prVmVyaWZpZXJFcnJvcgA="
+      ],
+      "methods": [
+        {
+          "name": "init",
+          "inputs": [
+            {
+              "name": "admin",
+              "type": "scSpecTypeAddress"
+            },
+            {
+              "name": "vk",
+              "type": "scSpecTypeUdt"
+            },
+            {
+              "name": "tier_manager",
+              "type": "scSpecTypeAddress"
+            }
+          ],
+          "outputs": [
+            "scSpecTypeResult"
+          ]
+        },
+        {
+          "name": "tier_manager",
+          "inputs": [],
+          "outputs": [
+            "scSpecTypeOption"
+          ]
+        },
+        {
+          "name": "set_tier_manager",
+          "inputs": [
+            {
+              "name": "new_tier_manager",
+              "type": "scSpecTypeAddress"
+            }
+          ],
+          "outputs": [
+            "scSpecTypeResult"
+          ]
+        },
+        {
+          "name": "is_nullifier_used",
+          "inputs": [
+            {
+              "name": "nullifier_bytes",
+              "type": "scSpecTypeBytesN"
+            }
+          ],
+          "outputs": [
+            "scSpecTypeBool"
+          ]
+        },
+        {
+          "name": "verify_and_register",
+          "inputs": [
+            {
+              "name": "wallet",
+              "type": "scSpecTypeAddress"
+            },
+            {
+              "name": "proof",
+              "type": "scSpecTypeUdt"
+            },
+            {
+              "name": "pub_signals",
+              "type": "scSpecTypeVec"
+            }
+          ],
+          "outputs": [
+            "scSpecTypeResult"
+          ]
+        }
+      ],
+      "instance_xdr_sha256": "f37bcd69e8e3cbfa32159abf7f57de21fcaeba6281a7ee4ac775af84f8a3d906"
+    },
+    {
+      "role": "usdc",
+      "address": "CBIELTK6YBZJU5UP2WWQEUCYKLPU6AUNZ2BQ4WWFEIE3USCIHMXQDAMA",
+      "latest_ledger": 5681203,
+      "instance_count": 1,
+      "last_modified_ledger": 4609662,
+      "storage": [
+        {
+          "key": "METADATA",
+          "value": {
+            "decimal": 7,
+            "name": "USDC:GBBD47IF6LWK7P7MDEVSCWR7DPUWV3NY3DTQEVFL4NAT4AQH3ZLLFLA5",
+            "symbol": "USDC"
+          }
+        },
+        {
+          "key": [
+            "Admin"
+          ],
+          "value": "CCELIKMY7RQ3BQERWSOQHLIVYC5E3UHLTLDYIO2NVS5XGFEXYER5UWSB"
+        },
+        {
+          "key": [
+            "AssetInfo"
+          ],
+          "value": [
+            "AlphaNum4",
+            {
+              "asset_code": "USDC",
+              "issuer": {
+                "type": "Buffer",
+                "data": [
+                  66,
+                  62,
+                  125,
+                  5,
+                  242,
+                  236,
+                  175,
+                  191,
+                  236,
+                  25,
+                  43,
+                  33,
+                  90,
+                  63,
+                  27,
+                  233,
+                  106,
+                  237,
+                  184,
+                  216,
+                  231,
+                  2,
+                  84,
+                  171,
+                  227,
+                  65,
+                  62,
+                  2,
+                  7,
+                  222,
+                  86,
+                  178
+                ]
+              }
+            }
+          ]
+        }
+      ],
+      "instance_xdr_sha256": "9fc44f23650723d671b836fe3b061a131e9de0adc02e9afa90d4dacd1ebf0765"
+    },
+    {
+      "role": "aapl",
+      "address": "CCJ2FSS234EZB7LE2JZLLRZXEVDX4QIN2GMK7EDA5XXNCNPYSQYOGYXX",
+      "latest_ledger": 5681203,
+      "instance_count": 1,
+      "last_modified_ledger": 3297395,
+      "storage": [
+        {
+          "key": [
+            "Admin"
+          ],
+          "value": "GAUGHKOEYZ5BWVQJM4TZ76N6TUJUM76YIXLHHMM5CSMLBY2N5MNRXUYH"
+        },
+        {
+          "key": [
+            "Decimals"
+          ],
+          "value": 6
+        },
+        {
+          "key": [
+            "TokenName"
+          ],
+          "value": "Synthetic Apple"
+        },
+        {
+          "key": [
+            "TokenSymbol"
+          ],
+          "value": "sAAPL"
+        },
+        {
+          "key": [
+            "TotalSupply"
+          ],
+          "value": "0"
+        },
+        {
+          "key": [
+            "Vault"
+          ],
+          "value": "CDJUUXRCKJFLOGTQ77Z4VOZRPTZG2X5VB3IQAZRG6CSCONJAK57TU45X"
+        }
+      ],
+      "wasm_hash": "cdd07dae7e8e5d9545590150904cf616a63a69c8f0eda0a8e7fe45d4f0493871",
+      "wasm_bytes": 6562,
+      "abi": [
+        "AAAAAAAAAAAAAAAEYnVybgAAAAIAAAAAAAAABGZyb20AAAATAAAAAAAAAAZhbW91bnQAAAAAAAsAAAABAAAD6QAAAAIAAAfQAAAAClRva2VuRXJyb3IAAA==",
+        "AAAAAAAAACtEZXBsb3kgYW5kIGluaXRpYWxpemUgdGhlIHRva2VuIChTRVAtMDA0MSkuAAAAAARpbml0AAAABQAAAAAAAAAFYWRtaW4AAAAAAAATAAAAAAAAAAV2YXVsdAAAAAAAABMAAAAAAAAABG5hbWUAAAAQAAAAAAAAAAZzeW1ib2wAAAAAABAAAAAAAAAACGRlY2ltYWxzAAAABAAAAAEAAAPpAAAAAgAAB9AAAAAKVG9rZW5FcnJvcgAA",
+        "AAAAAAAAAAAAAAAEbWludAAAAAIAAAAAAAAAAnRvAAAAAAATAAAAAAAAAAZhbW91bnQAAAAAAAsAAAABAAAD6QAAAAIAAAfQAAAAClRva2VuRXJyb3IAAA==",
+        "AAAAAAAAAAAAAAAEbmFtZQAAAAAAAAABAAAAEA==",
+        "AAAABAAAAAAAAAAAAAAAClRva2VuRXJyb3IAAAAAAAcAAAAAAAAAEkFscmVhZHlJbml0aWFsaXplZAAAAAAAAQAAAAAAAAAOTm90SW5pdGlhbGl6ZWQAAAAAAAIAAAAAAAAADFVuYXV0aG9yaXplZAAAAAMAAAAAAAAAE0luc3VmZmljaWVudEJhbGFuY2UAAAAABAAAAAAAAAAVSW5zdWZmaWNpZW50QWxsb3dhbmNlAAAAAAAABQAAAAAAAAAOTmVnYXRpdmVBbW91bnQAAAAAAAYAAAAAAAAAEEFsbG93YW5jZUV4cGlyZWQAAAAH",
+        "AAAAAAAAAAAAAAAGc3ltYm9sAAAAAAAAAAAAAQAAABA=",
+        "AAAAAAAAAAAAAAAHYXBwcm92ZQAAAAAEAAAAAAAAAARmcm9tAAAAEwAAAAAAAAAHc3BlbmRlcgAAAAATAAAAAAAAAAZhbW91bnQAAAAAAAsAAAAAAAAAEWV4cGlyYXRpb25fbGVkZ2VyAAAAAAAABAAAAAEAAAPpAAAAAgAAB9AAAAAKVG9rZW5FcnJvcgAA",
+        "AAAAAAAAAAAAAAAHYmFsYW5jZQAAAAABAAAAAAAAAAJpZAAAAAAAEwAAAAEAAAAL",
+        "AAAAAAAAAAAAAAAIZGVjaW1hbHMAAAAAAAAAAQAAAAQ=",
+        "AAAAAAAAAAAAAAAIdHJhbnNmZXIAAAADAAAAAAAAAARmcm9tAAAAEwAAAAAAAAACdG8AAAAAABMAAAAAAAAABmFtb3VudAAAAAAACwAAAAEAAAPpAAAAAgAAB9AAAAAKVG9rZW5FcnJvcgAA",
+        "AAAAAAAAAAAAAAAJYWxsb3dhbmNlAAAAAAAAAgAAAAAAAAAEZnJvbQAAABMAAAAAAAAAB3NwZW5kZXIAAAAAEwAAAAEAAAAL",
+        "AAAAAAAAAAAAAAAJYnVybl9mcm9tAAAAAAAAAwAAAAAAAAAHc3BlbmRlcgAAAAATAAAAAAAAAARmcm9tAAAAEwAAAAAAAAAGYW1vdW50AAAAAAALAAAAAQAAA+kAAAACAAAH0AAAAApUb2tlbkVycm9yAAA=",
+        "AAAAAAAAAAAAAAAJc2V0X3ZhdWx0AAAAAAAAAQAAAAAAAAAJbmV3X3ZhdWx0AAAAAAAAEwAAAAEAAAPpAAAAAgAAB9AAAAAKVG9rZW5FcnJvcgAA",
+        "AAAAAAAAAAAAAAAMdG90YWxfc3VwcGx5AAAAAAAAAAEAAAAL",
+        "AAAAAAAAAAAAAAANdHJhbnNmZXJfZnJvbQAAAAAAAAQAAAAAAAAAB3NwZW5kZXIAAAAAEwAAAAAAAAAEZnJvbQAAABMAAAAAAAAAAnRvAAAAAAATAAAAAAAAAAZhbW91bnQAAAAAAAsAAAABAAAD6QAAAAIAAAfQAAAAClRva2VuRXJyb3IAAA=="
+      ],
+      "methods": [
+        {
+          "name": "burn",
+          "inputs": [
+            {
+              "name": "from",
+              "type": "scSpecTypeAddress"
+            },
+            {
+              "name": "amount",
+              "type": "scSpecTypeI128"
+            }
+          ],
+          "outputs": [
+            "scSpecTypeResult"
+          ]
+        },
+        {
+          "name": "init",
+          "inputs": [
+            {
+              "name": "admin",
+              "type": "scSpecTypeAddress"
+            },
+            {
+              "name": "vault",
+              "type": "scSpecTypeAddress"
+            },
+            {
+              "name": "name",
+              "type": "scSpecTypeString"
+            },
+            {
+              "name": "symbol",
+              "type": "scSpecTypeString"
+            },
+            {
+              "name": "decimals",
+              "type": "scSpecTypeU32"
+            }
+          ],
+          "outputs": [
+            "scSpecTypeResult"
+          ]
+        },
+        {
+          "name": "mint",
+          "inputs": [
+            {
+              "name": "to",
+              "type": "scSpecTypeAddress"
+            },
+            {
+              "name": "amount",
+              "type": "scSpecTypeI128"
+            }
+          ],
+          "outputs": [
+            "scSpecTypeResult"
+          ]
+        },
+        {
+          "name": "name",
+          "inputs": [],
+          "outputs": [
+            "scSpecTypeString"
+          ]
+        },
+        {
+          "name": "symbol",
+          "inputs": [],
+          "outputs": [
+            "scSpecTypeString"
+          ]
+        },
+        {
+          "name": "approve",
+          "inputs": [
+            {
+              "name": "from",
+              "type": "scSpecTypeAddress"
+            },
+            {
+              "name": "spender",
+              "type": "scSpecTypeAddress"
+            },
+            {
+              "name": "amount",
+              "type": "scSpecTypeI128"
+            },
+            {
+              "name": "expiration_ledger",
+              "type": "scSpecTypeU32"
+            }
+          ],
+          "outputs": [
+            "scSpecTypeResult"
+          ]
+        },
+        {
+          "name": "balance",
+          "inputs": [
+            {
+              "name": "id",
+              "type": "scSpecTypeAddress"
+            }
+          ],
+          "outputs": [
+            "scSpecTypeI128"
+          ]
+        },
+        {
+          "name": "decimals",
+          "inputs": [],
+          "outputs": [
+            "scSpecTypeU32"
+          ]
+        },
+        {
+          "name": "transfer",
+          "inputs": [
+            {
+              "name": "from",
+              "type": "scSpecTypeAddress"
+            },
+            {
+              "name": "to",
+              "type": "scSpecTypeAddress"
+            },
+            {
+              "name": "amount",
+              "type": "scSpecTypeI128"
+            }
+          ],
+          "outputs": [
+            "scSpecTypeResult"
+          ]
+        },
+        {
+          "name": "allowance",
+          "inputs": [
+            {
+              "name": "from",
+              "type": "scSpecTypeAddress"
+            },
+            {
+              "name": "spender",
+              "type": "scSpecTypeAddress"
+            }
+          ],
+          "outputs": [
+            "scSpecTypeI128"
+          ]
+        },
+        {
+          "name": "burn_from",
+          "inputs": [
+            {
+              "name": "spender",
+              "type": "scSpecTypeAddress"
+            },
+            {
+              "name": "from",
+              "type": "scSpecTypeAddress"
+            },
+            {
+              "name": "amount",
+              "type": "scSpecTypeI128"
+            }
+          ],
+          "outputs": [
+            "scSpecTypeResult"
+          ]
+        },
+        {
+          "name": "set_vault",
+          "inputs": [
+            {
+              "name": "new_vault",
+              "type": "scSpecTypeAddress"
+            }
+          ],
+          "outputs": [
+            "scSpecTypeResult"
+          ]
+        },
+        {
+          "name": "total_supply",
+          "inputs": [],
+          "outputs": [
+            "scSpecTypeI128"
+          ]
+        },
+        {
+          "name": "transfer_from",
+          "inputs": [
+            {
+              "name": "spender",
+              "type": "scSpecTypeAddress"
+            },
+            {
+              "name": "from",
+              "type": "scSpecTypeAddress"
+            },
+            {
+              "name": "to",
+              "type": "scSpecTypeAddress"
+            },
+            {
+              "name": "amount",
+              "type": "scSpecTypeI128"
+            }
+          ],
+          "outputs": [
+            "scSpecTypeResult"
+          ]
+        }
+      ],
+      "instance_xdr_sha256": "77f6c092f2c8e0ca7b143ab331dbd33de116e3246c9c3d8f84bde22800183106"
+    },
+    {
+      "role": "tsla",
+      "address": "CD4HYGTAL7EZRYCGAPIXILCFZDN4RYLGJN4SYYIVHY56OAFWDVADDQZ4",
+      "latest_ledger": 5681203,
+      "instance_count": 1,
+      "last_modified_ledger": 3297421,
+      "storage": [
+        {
+          "key": [
+            "Admin"
+          ],
+          "value": "GAUGHKOEYZ5BWVQJM4TZ76N6TUJUM76YIXLHHMM5CSMLBY2N5MNRXUYH"
+        },
+        {
+          "key": [
+            "Decimals"
+          ],
+          "value": 6
+        },
+        {
+          "key": [
+            "TokenName"
+          ],
+          "value": "Synthetic Tesla"
+        },
+        {
+          "key": [
+            "TokenSymbol"
+          ],
+          "value": "sTSLA"
+        },
+        {
+          "key": [
+            "TotalSupply"
+          ],
+          "value": "0"
+        },
+        {
+          "key": [
+            "Vault"
+          ],
+          "value": "CDJUUXRCKJFLOGTQ77Z4VOZRPTZG2X5VB3IQAZRG6CSCONJAK57TU45X"
+        }
+      ],
+      "wasm_hash": "cdd07dae7e8e5d9545590150904cf616a63a69c8f0eda0a8e7fe45d4f0493871",
+      "wasm_bytes": 6562,
+      "abi": [
+        "AAAAAAAAAAAAAAAEYnVybgAAAAIAAAAAAAAABGZyb20AAAATAAAAAAAAAAZhbW91bnQAAAAAAAsAAAABAAAD6QAAAAIAAAfQAAAAClRva2VuRXJyb3IAAA==",
+        "AAAAAAAAACtEZXBsb3kgYW5kIGluaXRpYWxpemUgdGhlIHRva2VuIChTRVAtMDA0MSkuAAAAAARpbml0AAAABQAAAAAAAAAFYWRtaW4AAAAAAAATAAAAAAAAAAV2YXVsdAAAAAAAABMAAAAAAAAABG5hbWUAAAAQAAAAAAAAAAZzeW1ib2wAAAAAABAAAAAAAAAACGRlY2ltYWxzAAAABAAAAAEAAAPpAAAAAgAAB9AAAAAKVG9rZW5FcnJvcgAA",
+        "AAAAAAAAAAAAAAAEbWludAAAAAIAAAAAAAAAAnRvAAAAAAATAAAAAAAAAAZhbW91bnQAAAAAAAsAAAABAAAD6QAAAAIAAAfQAAAAClRva2VuRXJyb3IAAA==",
+        "AAAAAAAAAAAAAAAEbmFtZQAAAAAAAAABAAAAEA==",
+        "AAAABAAAAAAAAAAAAAAAClRva2VuRXJyb3IAAAAAAAcAAAAAAAAAEkFscmVhZHlJbml0aWFsaXplZAAAAAAAAQAAAAAAAAAOTm90SW5pdGlhbGl6ZWQAAAAAAAIAAAAAAAAADFVuYXV0aG9yaXplZAAAAAMAAAAAAAAAE0luc3VmZmljaWVudEJhbGFuY2UAAAAABAAAAAAAAAAVSW5zdWZmaWNpZW50QWxsb3dhbmNlAAAAAAAABQAAAAAAAAAOTmVnYXRpdmVBbW91bnQAAAAAAAYAAAAAAAAAEEFsbG93YW5jZUV4cGlyZWQAAAAH",
+        "AAAAAAAAAAAAAAAGc3ltYm9sAAAAAAAAAAAAAQAAABA=",
+        "AAAAAAAAAAAAAAAHYXBwcm92ZQAAAAAEAAAAAAAAAARmcm9tAAAAEwAAAAAAAAAHc3BlbmRlcgAAAAATAAAAAAAAAAZhbW91bnQAAAAAAAsAAAAAAAAAEWV4cGlyYXRpb25fbGVkZ2VyAAAAAAAABAAAAAEAAAPpAAAAAgAAB9AAAAAKVG9rZW5FcnJvcgAA",
+        "AAAAAAAAAAAAAAAHYmFsYW5jZQAAAAABAAAAAAAAAAJpZAAAAAAAEwAAAAEAAAAL",
+        "AAAAAAAAAAAAAAAIZGVjaW1hbHMAAAAAAAAAAQAAAAQ=",
+        "AAAAAAAAAAAAAAAIdHJhbnNmZXIAAAADAAAAAAAAAARmcm9tAAAAEwAAAAAAAAACdG8AAAAAABMAAAAAAAAABmFtb3VudAAAAAAACwAAAAEAAAPpAAAAAgAAB9AAAAAKVG9rZW5FcnJvcgAA",
+        "AAAAAAAAAAAAAAAJYWxsb3dhbmNlAAAAAAAAAgAAAAAAAAAEZnJvbQAAABMAAAAAAAAAB3NwZW5kZXIAAAAAEwAAAAEAAAAL",
+        "AAAAAAAAAAAAAAAJYnVybl9mcm9tAAAAAAAAAwAAAAAAAAAHc3BlbmRlcgAAAAATAAAAAAAAAARmcm9tAAAAEwAAAAAAAAAGYW1vdW50AAAAAAALAAAAAQAAA+kAAAACAAAH0AAAAApUb2tlbkVycm9yAAA=",
+        "AAAAAAAAAAAAAAAJc2V0X3ZhdWx0AAAAAAAAAQAAAAAAAAAJbmV3X3ZhdWx0AAAAAAAAEwAAAAEAAAPpAAAAAgAAB9AAAAAKVG9rZW5FcnJvcgAA",
+        "AAAAAAAAAAAAAAAMdG90YWxfc3VwcGx5AAAAAAAAAAEAAAAL",
+        "AAAAAAAAAAAAAAANdHJhbnNmZXJfZnJvbQAAAAAAAAQAAAAAAAAAB3NwZW5kZXIAAAAAEwAAAAAAAAAEZnJvbQAAABMAAAAAAAAAAnRvAAAAAAATAAAAAAAAAAZhbW91bnQAAAAAAAsAAAABAAAD6QAAAAIAAAfQAAAAClRva2VuRXJyb3IAAA=="
+      ],
+      "methods": [
+        {
+          "name": "burn",
+          "inputs": [
+            {
+              "name": "from",
+              "type": "scSpecTypeAddress"
+            },
+            {
+              "name": "amount",
+              "type": "scSpecTypeI128"
+            }
+          ],
+          "outputs": [
+            "scSpecTypeResult"
+          ]
+        },
+        {
+          "name": "init",
+          "inputs": [
+            {
+              "name": "admin",
+              "type": "scSpecTypeAddress"
+            },
+            {
+              "name": "vault",
+              "type": "scSpecTypeAddress"
+            },
+            {
+              "name": "name",
+              "type": "scSpecTypeString"
+            },
+            {
+              "name": "symbol",
+              "type": "scSpecTypeString"
+            },
+            {
+              "name": "decimals",
+              "type": "scSpecTypeU32"
+            }
+          ],
+          "outputs": [
+            "scSpecTypeResult"
+          ]
+        },
+        {
+          "name": "mint",
+          "inputs": [
+            {
+              "name": "to",
+              "type": "scSpecTypeAddress"
+            },
+            {
+              "name": "amount",
+              "type": "scSpecTypeI128"
+            }
+          ],
+          "outputs": [
+            "scSpecTypeResult"
+          ]
+        },
+        {
+          "name": "name",
+          "inputs": [],
+          "outputs": [
+            "scSpecTypeString"
+          ]
+        },
+        {
+          "name": "symbol",
+          "inputs": [],
+          "outputs": [
+            "scSpecTypeString"
+          ]
+        },
+        {
+          "name": "approve",
+          "inputs": [
+            {
+              "name": "from",
+              "type": "scSpecTypeAddress"
+            },
+            {
+              "name": "spender",
+              "type": "scSpecTypeAddress"
+            },
+            {
+              "name": "amount",
+              "type": "scSpecTypeI128"
+            },
+            {
+              "name": "expiration_ledger",
+              "type": "scSpecTypeU32"
+            }
+          ],
+          "outputs": [
+            "scSpecTypeResult"
+          ]
+        },
+        {
+          "name": "balance",
+          "inputs": [
+            {
+              "name": "id",
+              "type": "scSpecTypeAddress"
+            }
+          ],
+          "outputs": [
+            "scSpecTypeI128"
+          ]
+        },
+        {
+          "name": "decimals",
+          "inputs": [],
+          "outputs": [
+            "scSpecTypeU32"
+          ]
+        },
+        {
+          "name": "transfer",
+          "inputs": [
+            {
+              "name": "from",
+              "type": "scSpecTypeAddress"
+            },
+            {
+              "name": "to",
+              "type": "scSpecTypeAddress"
+            },
+            {
+              "name": "amount",
+              "type": "scSpecTypeI128"
+            }
+          ],
+          "outputs": [
+            "scSpecTypeResult"
+          ]
+        },
+        {
+          "name": "allowance",
+          "inputs": [
+            {
+              "name": "from",
+              "type": "scSpecTypeAddress"
+            },
+            {
+              "name": "spender",
+              "type": "scSpecTypeAddress"
+            }
+          ],
+          "outputs": [
+            "scSpecTypeI128"
+          ]
+        },
+        {
+          "name": "burn_from",
+          "inputs": [
+            {
+              "name": "spender",
+              "type": "scSpecTypeAddress"
+            },
+            {
+              "name": "from",
+              "type": "scSpecTypeAddress"
+            },
+            {
+              "name": "amount",
+              "type": "scSpecTypeI128"
+            }
+          ],
+          "outputs": [
+            "scSpecTypeResult"
+          ]
+        },
+        {
+          "name": "set_vault",
+          "inputs": [
+            {
+              "name": "new_vault",
+              "type": "scSpecTypeAddress"
+            }
+          ],
+          "outputs": [
+            "scSpecTypeResult"
+          ]
+        },
+        {
+          "name": "total_supply",
+          "inputs": [],
+          "outputs": [
+            "scSpecTypeI128"
+          ]
+        },
+        {
+          "name": "transfer_from",
+          "inputs": [
+            {
+              "name": "spender",
+              "type": "scSpecTypeAddress"
+            },
+            {
+              "name": "from",
+              "type": "scSpecTypeAddress"
+            },
+            {
+              "name": "to",
+              "type": "scSpecTypeAddress"
+            },
+            {
+              "name": "amount",
+              "type": "scSpecTypeI128"
+            }
+          ],
+          "outputs": [
+            "scSpecTypeResult"
+          ]
+        }
+      ],
+      "instance_xdr_sha256": "e019cb17099d96a27aff2bba37f5873862cb6ccc8b2decee0301867c98f551d4"
+    },
+    {
+      "role": "nvda",
+      "address": "CBHBEHJD2GSHSQY2MVJ464KZDL3QOZWZBQABP2VSFVRJQ4BUBXVJLTTK",
+      "latest_ledger": 5681203,
+      "instance_count": 1,
+      "last_modified_ledger": 3297406,
+      "storage": [
+        {
+          "key": [
+            "Admin"
+          ],
+          "value": "GAUGHKOEYZ5BWVQJM4TZ76N6TUJUM76YIXLHHMM5CSMLBY2N5MNRXUYH"
+        },
+        {
+          "key": [
+            "Decimals"
+          ],
+          "value": 6
+        },
+        {
+          "key": [
+            "TokenName"
+          ],
+          "value": "Synthetic NVIDIA"
+        },
+        {
+          "key": [
+            "TokenSymbol"
+          ],
+          "value": "sNVDA"
+        },
+        {
+          "key": [
+            "TotalSupply"
+          ],
+          "value": "0"
+        },
+        {
+          "key": [
+            "Vault"
+          ],
+          "value": "CDJUUXRCKJFLOGTQ77Z4VOZRPTZG2X5VB3IQAZRG6CSCONJAK57TU45X"
+        }
+      ],
+      "wasm_hash": "cdd07dae7e8e5d9545590150904cf616a63a69c8f0eda0a8e7fe45d4f0493871",
+      "wasm_bytes": 6562,
+      "abi": [
+        "AAAAAAAAAAAAAAAEYnVybgAAAAIAAAAAAAAABGZyb20AAAATAAAAAAAAAAZhbW91bnQAAAAAAAsAAAABAAAD6QAAAAIAAAfQAAAAClRva2VuRXJyb3IAAA==",
+        "AAAAAAAAACtEZXBsb3kgYW5kIGluaXRpYWxpemUgdGhlIHRva2VuIChTRVAtMDA0MSkuAAAAAARpbml0AAAABQAAAAAAAAAFYWRtaW4AAAAAAAATAAAAAAAAAAV2YXVsdAAAAAAAABMAAAAAAAAABG5hbWUAAAAQAAAAAAAAAAZzeW1ib2wAAAAAABAAAAAAAAAACGRlY2ltYWxzAAAABAAAAAEAAAPpAAAAAgAAB9AAAAAKVG9rZW5FcnJvcgAA",
+        "AAAAAAAAAAAAAAAEbWludAAAAAIAAAAAAAAAAnRvAAAAAAATAAAAAAAAAAZhbW91bnQAAAAAAAsAAAABAAAD6QAAAAIAAAfQAAAAClRva2VuRXJyb3IAAA==",
+        "AAAAAAAAAAAAAAAEbmFtZQAAAAAAAAABAAAAEA==",
+        "AAAABAAAAAAAAAAAAAAAClRva2VuRXJyb3IAAAAAAAcAAAAAAAAAEkFscmVhZHlJbml0aWFsaXplZAAAAAAAAQAAAAAAAAAOTm90SW5pdGlhbGl6ZWQAAAAAAAIAAAAAAAAADFVuYXV0aG9yaXplZAAAAAMAAAAAAAAAE0luc3VmZmljaWVudEJhbGFuY2UAAAAABAAAAAAAAAAVSW5zdWZmaWNpZW50QWxsb3dhbmNlAAAAAAAABQAAAAAAAAAOTmVnYXRpdmVBbW91bnQAAAAAAAYAAAAAAAAAEEFsbG93YW5jZUV4cGlyZWQAAAAH",
+        "AAAAAAAAAAAAAAAGc3ltYm9sAAAAAAAAAAAAAQAAABA=",
+        "AAAAAAAAAAAAAAAHYXBwcm92ZQAAAAAEAAAAAAAAAARmcm9tAAAAEwAAAAAAAAAHc3BlbmRlcgAAAAATAAAAAAAAAAZhbW91bnQAAAAAAAsAAAAAAAAAEWV4cGlyYXRpb25fbGVkZ2VyAAAAAAAABAAAAAEAAAPpAAAAAgAAB9AAAAAKVG9rZW5FcnJvcgAA",
+        "AAAAAAAAAAAAAAAHYmFsYW5jZQAAAAABAAAAAAAAAAJpZAAAAAAAEwAAAAEAAAAL",
+        "AAAAAAAAAAAAAAAIZGVjaW1hbHMAAAAAAAAAAQAAAAQ=",
+        "AAAAAAAAAAAAAAAIdHJhbnNmZXIAAAADAAAAAAAAAARmcm9tAAAAEwAAAAAAAAACdG8AAAAAABMAAAAAAAAABmFtb3VudAAAAAAACwAAAAEAAAPpAAAAAgAAB9AAAAAKVG9rZW5FcnJvcgAA",
+        "AAAAAAAAAAAAAAAJYWxsb3dhbmNlAAAAAAAAAgAAAAAAAAAEZnJvbQAAABMAAAAAAAAAB3NwZW5kZXIAAAAAEwAAAAEAAAAL",
+        "AAAAAAAAAAAAAAAJYnVybl9mcm9tAAAAAAAAAwAAAAAAAAAHc3BlbmRlcgAAAAATAAAAAAAAAARmcm9tAAAAEwAAAAAAAAAGYW1vdW50AAAAAAALAAAAAQAAA+kAAAACAAAH0AAAAApUb2tlbkVycm9yAAA=",
+        "AAAAAAAAAAAAAAAJc2V0X3ZhdWx0AAAAAAAAAQAAAAAAAAAJbmV3X3ZhdWx0AAAAAAAAEwAAAAEAAAPpAAAAAgAAB9AAAAAKVG9rZW5FcnJvcgAA",
+        "AAAAAAAAAAAAAAAMdG90YWxfc3VwcGx5AAAAAAAAAAEAAAAL",
+        "AAAAAAAAAAAAAAANdHJhbnNmZXJfZnJvbQAAAAAAAAQAAAAAAAAAB3NwZW5kZXIAAAAAEwAAAAAAAAAEZnJvbQAAABMAAAAAAAAAAnRvAAAAAAATAAAAAAAAAAZhbW91bnQAAAAAAAsAAAABAAAD6QAAAAIAAAfQAAAAClRva2VuRXJyb3IAAA=="
+      ],
+      "methods": [
+        {
+          "name": "burn",
+          "inputs": [
+            {
+              "name": "from",
+              "type": "scSpecTypeAddress"
+            },
+            {
+              "name": "amount",
+              "type": "scSpecTypeI128"
+            }
+          ],
+          "outputs": [
+            "scSpecTypeResult"
+          ]
+        },
+        {
+          "name": "init",
+          "inputs": [
+            {
+              "name": "admin",
+              "type": "scSpecTypeAddress"
+            },
+            {
+              "name": "vault",
+              "type": "scSpecTypeAddress"
+            },
+            {
+              "name": "name",
+              "type": "scSpecTypeString"
+            },
+            {
+              "name": "symbol",
+              "type": "scSpecTypeString"
+            },
+            {
+              "name": "decimals",
+              "type": "scSpecTypeU32"
+            }
+          ],
+          "outputs": [
+            "scSpecTypeResult"
+          ]
+        },
+        {
+          "name": "mint",
+          "inputs": [
+            {
+              "name": "to",
+              "type": "scSpecTypeAddress"
+            },
+            {
+              "name": "amount",
+              "type": "scSpecTypeI128"
+            }
+          ],
+          "outputs": [
+            "scSpecTypeResult"
+          ]
+        },
+        {
+          "name": "name",
+          "inputs": [],
+          "outputs": [
+            "scSpecTypeString"
+          ]
+        },
+        {
+          "name": "symbol",
+          "inputs": [],
+          "outputs": [
+            "scSpecTypeString"
+          ]
+        },
+        {
+          "name": "approve",
+          "inputs": [
+            {
+              "name": "from",
+              "type": "scSpecTypeAddress"
+            },
+            {
+              "name": "spender",
+              "type": "scSpecTypeAddress"
+            },
+            {
+              "name": "amount",
+              "type": "scSpecTypeI128"
+            },
+            {
+              "name": "expiration_ledger",
+              "type": "scSpecTypeU32"
+            }
+          ],
+          "outputs": [
+            "scSpecTypeResult"
+          ]
+        },
+        {
+          "name": "balance",
+          "inputs": [
+            {
+              "name": "id",
+              "type": "scSpecTypeAddress"
+            }
+          ],
+          "outputs": [
+            "scSpecTypeI128"
+          ]
+        },
+        {
+          "name": "decimals",
+          "inputs": [],
+          "outputs": [
+            "scSpecTypeU32"
+          ]
+        },
+        {
+          "name": "transfer",
+          "inputs": [
+            {
+              "name": "from",
+              "type": "scSpecTypeAddress"
+            },
+            {
+              "name": "to",
+              "type": "scSpecTypeAddress"
+            },
+            {
+              "name": "amount",
+              "type": "scSpecTypeI128"
+            }
+          ],
+          "outputs": [
+            "scSpecTypeResult"
+          ]
+        },
+        {
+          "name": "allowance",
+          "inputs": [
+            {
+              "name": "from",
+              "type": "scSpecTypeAddress"
+            },
+            {
+              "name": "spender",
+              "type": "scSpecTypeAddress"
+            }
+          ],
+          "outputs": [
+            "scSpecTypeI128"
+          ]
+        },
+        {
+          "name": "burn_from",
+          "inputs": [
+            {
+              "name": "spender",
+              "type": "scSpecTypeAddress"
+            },
+            {
+              "name": "from",
+              "type": "scSpecTypeAddress"
+            },
+            {
+              "name": "amount",
+              "type": "scSpecTypeI128"
+            }
+          ],
+          "outputs": [
+            "scSpecTypeResult"
+          ]
+        },
+        {
+          "name": "set_vault",
+          "inputs": [
+            {
+              "name": "new_vault",
+              "type": "scSpecTypeAddress"
+            }
+          ],
+          "outputs": [
+            "scSpecTypeResult"
+          ]
+        },
+        {
+          "name": "total_supply",
+          "inputs": [],
+          "outputs": [
+            "scSpecTypeI128"
+          ]
+        },
+        {
+          "name": "transfer_from",
+          "inputs": [
+            {
+              "name": "spender",
+              "type": "scSpecTypeAddress"
+            },
+            {
+              "name": "from",
+              "type": "scSpecTypeAddress"
+            },
+            {
+              "name": "to",
+              "type": "scSpecTypeAddress"
+            },
+            {
+              "name": "amount",
+              "type": "scSpecTypeI128"
+            }
+          ],
+          "outputs": [
+            "scSpecTypeResult"
+          ]
+        }
+      ],
+      "instance_xdr_sha256": "c3afad1b42ffe272d6bd2f6385f09f4e8d5ae21409a25f753f474185a9cc6149"
+    }
+  ],
+  "views": [
+    {
+      "role": "vault",
+      "method": "get_price",
+      "ledger": 5681203,
+      "success": true,
+      "authorization_count": 0,
+      "value": "308630000"
+    },
+    {
+      "role": "vault",
+      "method": "get_vault_usdc_balance",
+      "ledger": 5681203,
+      "success": true,
+      "authorization_count": 0,
+      "value": "5084898268"
+    },
+    {
+      "role": "vault",
+      "method": "get_wallet_positions",
+      "ledger": 5681203,
+      "success": true,
+      "authorization_count": 0,
+      "value": []
+    },
+    {
+      "role": "tier",
+      "method": "get_max_leverage",
+      "ledger": 5681203,
+      "success": true,
+      "authorization_count": 0,
+      "value": 0
+    },
+    {
+      "role": "tier",
+      "method": "get_tier",
+      "ledger": 5681203,
+      "success": true,
+      "authorization_count": 0,
+      "value": null
+    },
+    {
+      "role": "usdc",
+      "method": "balance",
+      "ledger": 5681203,
+      "success": true,
+      "authorization_count": 0,
+      "value": "5084898268"
+    },
+    {
+      "role": "usdc",
+      "method": "balance",
+      "ledger": 5681203,
+      "success": false,
+      "error": "HostError: Error(Contract, #13)\n\nEvent log (newest first):\n   0: [Diagnostic Event] contract:CBIELTK6YBZJU5UP2WWQEUCYKLPU6AUNZ2BQ4WWFEIE3USCIHMXQDAMA, topics:[error, Error(Contract, #13)], data:[\"trustline entry is missing for account\", GB4PC65ZHBPVEZMAHY2K2KYMS3RFBIN2FQIE3LGTLEHT2DEWVMTD7JYQ]\n   1: [Diagnostic Event] topics:[fn_call, CBIELTK6YBZJU5UP2WWQEUCYKLPU6AUNZ2BQ4WWFEIE3USCIHMXQDAMA, balance], data:GB4PC65ZHBPVEZMAHY2K2KYMS3RFBIN2FQIE3LGTLEHT2DEWVMTD7JYQ\n"
+    }
+  ],
+  "tx_hash": null,
+  "execution_verified": false
+}

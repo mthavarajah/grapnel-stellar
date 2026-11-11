@@ -1,0 +1,70 @@
+{
+  "source": "https://github.com/Rohitamalraj/Ztellar-Edge",
+  "revision": "7588e2ba33da8220fae8a0123377a70e747b2063",
+  "files": [
+    {
+      "role": "oracle_route",
+      "path": "frontend/app/api/oracle/route.ts",
+      "sha256": "de4116bdf456b70ef7f9be834681f82ba13b948c85aeda4032a62935b898731d"
+    },
+    {
+      "role": "trade_consumer",
+      "path": "frontend/app/trade/page.tsx",
+      "sha256": "9d467f1c34a773f4774ae66dda9042a0b6a6a3b0657dfa7c7811d3e8fa6b9587"
+    },
+    {
+      "role": "score",
+      "path": "frontend/app/api/score/route.ts",
+      "sha256": "490931588a919253148e26ed3940638c091876f3b2aefa1a15139e0967562fbe"
+    },
+    {
+      "role": "proof_flow",
+      "path": "frontend/components/zk/prove-access-flow.tsx",
+      "sha256": "03b3b795b7fd6c12bc779dcc5037081488b105407ea69fb54d93a1f82e78a2a0"
+    },
+    {
+      "role": "circuit",
+      "path": "circuits/tier_proof.circom",
+      "sha256": "1f0ca36dc0f7014f5814eccd2a598481242022b730ba2b773cb69866a9b655a5"
+    },
+    {
+      "role": "verifier",
+      "path": "contracts/zk_verifier/src/lib.rs",
+      "sha256": "18aaa41f5f32ac45ff20814f019e54d7068999ab5f7a2dbd845f5c9dbb5aba67"
+    }
+  ],
+  "observations": [
+    {
+      "finding": "Oracle POST is intentionally called by normal consumer trade UI, on mount and every 60000 ms; no request authentication in source route.",
+      "source": "frontend/app/trade/page.tsx:28-43; frontend/app/api/oracle/route.ts:68-76",
+      "permission": "Provider server owns configured administrator signer. Agent did not invoke this POST or access/use the credential."
+    },
+    {
+      "finding": "GET oracle merely returns public Yahoo reference quotes; POST fetches them and invokes configured vault set_prices using provider signer.",
+      "source": "frontend/app/api/oracle/route.ts:68-141",
+      "permission": "Caller cannot provide prices/vault/key in request body; configuration is server-side. Nonetheless external integration requires lead review."
+    },
+    {
+      "finding": "The score API computes public account activity heuristic, no KYC/credit/collateral proof. Account-age heuristic uses hardcoded current ledger 55000000, mismatching actual observed Testnet ledger5681203.",
+      "source": "frontend/app/api/score/route.ts:1-8,74-82",
+      "permission": "Do not manufacture identity or claim this score is verified credit/KYC."
+    },
+    {
+      "finding": "Circuit constrains supplied private score range0-100 and derives tier, but contains no oracle signature or verifiable commitment to Horizon account data.",
+      "source": "circuits/tier_proof.circom:45-132",
+      "permission": "Proof validity establishes circuit computation, not truth/provenance of account credit score."
+    },
+    {
+      "finding": "Verifier source declares SIG_WALLET_ADDRESS but verification routine does not compare it to wallet argument. No wallet.require_auth in verify_and_register.",
+      "source": "contracts/zk_verifier/src/lib.rs:17-23,107-184",
+      "permission": "Customer-bound session/intent checks cannot be delegated to this verifier."
+    },
+    {
+      "finding": "Frontend derives wallet_secret from SHA256(public address + week) without actual signMessage/signTransaction call. On verification errors it marks local tier verified through localStorage fallback.",
+      "source": "frontend/components/zk/prove-access-flow.tsx:117-139,180-190",
+      "permission": "Do not copy these fallback paths or count local storage as onchain tier proof."
+    }
+  ],
+  "onchain_writes_performed": false,
+  "provider_post_performed": false
+}
