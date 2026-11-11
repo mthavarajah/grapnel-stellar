@@ -14,6 +14,7 @@ export interface SpotQuote {
   slippage_bps:number; provider:'soroswap'; network:typeof NETWORK;
   provider_quote:Record<string,unknown>;
 }
+export type SpotExactQuoteReader=(input:{market:SpotMarket;amountInAtomic:string})=>Promise<{amount_in_atomic:string;amount_out_atomic:string;observed_at:string;ledger:number}>;
 export interface SpotConfig {
   network:string; networkPassphrase:string; apiKey?:string; baseUrl?:string;
   gate1Passed:boolean; markets?:SpotMarket[]; quoteTtlMs?:number;
@@ -38,7 +39,7 @@ export class SoroswapSpotAdapter {
   readonly quoteTtlMs:number;
   private readonly registry:Map<string,SpotMarket>;
   private readonly proof=new Map<string,VerifiedSpotProof>();
-  constructor(readonly config:SpotConfig,private readonly fetcher:typeof fetch=fetch,private readonly inspect?:SpotXdrInspector) {
+  constructor(readonly config:SpotConfig,private readonly fetcher:typeof fetch=fetch,private readonly inspect?:SpotXdrInspector,private readonly readExactQuote?:SpotExactQuoteReader) {
     if(config.network!=='testnet'||config.networkPassphrase!==NETWORK_PASSPHRASE)throw new GrapnelError(400,'NETWORK_MISMATCH','Only explicit Stellar Testnet is supported');
     this.baseUrl=(config.baseUrl??'https://api.soroswap.finance').replace(/\/$/,'');
     if(new URL(this.baseUrl).protocol!=='https:')throw new GrapnelError(400,'PROVIDER_CONFIGURATION_INVALID','Soroswap must use HTTPS');
@@ -126,17 +127,25 @@ export class SoroswapSpotAdapter {
     // For low atomic output one basis point cannot cover floor rounding.
     // Retry once with the exact tighter integer tolerance; the approved bound
     // and all final validation remain unchanged, even if output moves meanwhile.
-    if(out>0n&&minimum<=out&&input.slippageBps>0&&minimum<(out*BigInt(10000-input.slippageBps)+9999n)/10000n){
+    if(!this.readExactQuote&&out>0n&&minimum<=out&&input.slippageBps>0&&minimum<(out*BigInt(10000-input.slippageBps)+9999n)/10000n){
       const required=(out*BigInt(10000-input.slippageBps)+9999n)/10000n;
       const tighter=Number((out-required)*10000n/out);
       if(tighter>=0&&tighter<providerSlippageBps){response=await requestQuote(tighter);checkInput(response);out=atomic(response.amountOut);minimum=atomic(response.otherAmountThreshold);}
     }
-    if(out<=0n||minimum<=0n||minimum>out||minimum<(out*BigInt(10000-input.slippageBps)+9999n)/10000n)return invalid('Quote output violates approved slippage');
+    if(out<=0n||minimum<=0n||minimum>out||(!this.readExactQuote&&minimum<(out*BigInt(10000-input.slippageBps)+9999n)/10000n))return invalid('Quote output violates approved slippage');
     if(response.gaslessTrustline!==undefined||response.trustlineInfo!==undefined||response.platformFee!==undefined)return unavailable('UNINSPECTED_TRUSTLINE_OR_FEE_ROUTE');
     if(!Array.isArray(response.routePlan)||!response.routePlan.length)return unavailable('NO_TESTNET_LIQUIDITY_OR_ROUTE');
     for(const route of response.routePlan) {
       const swap=record(record(route).swapInfo);
       if(typeof swap.protocol!=='string'||!market.protocols.includes(swap.protocol)||!Array.isArray(swap.path)||swap.path.length<2||swap.path[0]!==market.asset_in.contractId||swap.path.at(-1)!==market.asset_out.contractId||swap.path.some(c=>typeof c!=='string'||!StrKey.isValidContract(c)))return invalid('Provider route differs from approved Testnet market');
+    }
+    if(this.readExactQuote){
+      const start=Date.now(),observed=await this.readExactQuote({market,amountInAtomic:amount.toString()});
+      const time=Date.parse(observed.observed_at);
+      if(observed.amount_in_atomic!==amount.toString()||!Number.isSafeInteger(observed.ledger)||observed.ledger<=0||!Number.isFinite(time)||time<start-1000||time>Date.now()+1000||Date.now()-time>5000)return unavailable('EXACT_QUOTE_FRESHNESS_INVALID');
+      out=atomic(observed.amount_out_atomic);if(out<=0n)return unavailable('NO_TESTNET_LIQUIDITY_OR_ROUTE');
+      minimum=(out*BigInt(10000-input.slippageBps)+9999n)/10000n;
+      response=correctExactQuoteAmounts(response,market,amount,out,minimum);
     }
     return {quote_id:input.quoteId,market_id:market.id,asset_in_id:market.asset_in.id,asset_out_id:market.asset_out.id,amount_in:fromAtomic(amount,market.asset_in.decimals),expected_out:fromAtomic(out,market.asset_out.decimals),min_receive:fromAtomic(minimum,market.asset_out.decimals),expires_at:new Date(Date.now()+this.quoteTtlMs).toISOString(),amount_in_atomic:amount.toString(),expected_out_atomic:out.toString(),min_out_atomic:minimum.toString(),slippage_bps:input.slippageBps,provider:'soroswap',network:NETWORK,provider_quote:response};
   }
@@ -154,4 +163,13 @@ export class SoroswapSpotAdapter {
     if(action.customerId!==customer.customerId||action.walletAddress!==customer.walletAddress||action.operationId!==operationId||action.network!==NETWORK||action.summary.fromAssetId!==quote.asset_in_id||action.summary.toAssetId!==quote.asset_out_id||action.summary.amount!==quote.amount_in||action.summary.minReceive!==quote.min_receive||Date.parse(action.summary.expiresAt)>Date.parse(quote.expires_at))throw new GrapnelError(403,'PREPARED_ACTION_MISMATCH','Inspected action does not match immutable quote');
     return action;
   }
+}
+
+/** Lead-approved preapproval transformation: only these three numeric output fields. */
+export function correctExactQuoteAmounts(original:Record<string,unknown>,market:SpotMarket,amount:bigint,out:bigint,minimum:bigint):Record<string,unknown>{
+ const plan=original.routePlan,raw=record(original.rawTrade),distribution=raw.distribution;
+ if(original.platform!=='router'||original.tradeType!=='EXACT_IN'||original.assetIn!==market.asset_in.contractId||original.assetOut!==market.asset_out.contractId||original.amountIn!==amount.toString()||!Array.isArray(plan)||plan.length!==1||!Array.isArray(distribution)||distribution.length!==1||raw.amountIn!==amount.toString()||typeof raw.amountOutMin!=='string'||out<=0n||minimum<=0n||minimum>out)return unavailable('EXACT_QUOTE_ROUTE_UNSUPPORTED');
+ const route=record(plan[0]),swap=record(route.swapInfo),dist=record(distribution[0]),expected=[market.asset_in.contractId,market.asset_out.contractId];
+ if(market.protocols.length!==1||market.protocols[0]!=='soroswap'||route.percent!=='100.00'||swap.protocol!=='soroswap'||dist.protocol_id!=='soroswap'||dist.parts!==10||dist.is_exact_in!==true||JSON.stringify(swap.path)!==JSON.stringify(expected)||JSON.stringify(dist.path)!==JSON.stringify(expected))return unavailable('EXACT_QUOTE_ROUTE_UNSUPPORTED');
+ const corrected=structuredClone(original);corrected.amountOut=out.toString();corrected.otherAmountThreshold=minimum.toString();(corrected.rawTrade as Record<string,unknown>).amountOutMin=minimum.toString();return corrected;
 }

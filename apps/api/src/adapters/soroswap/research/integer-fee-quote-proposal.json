@@ -1,0 +1,143 @@
+{
+  "observed_at": "2026-11-11T18:22:02.835Z",
+  "mode": "read_only_preapproval_proposal",
+  "network": "stellar-testnet",
+  "broadcast": false,
+  "customer_authorization": false,
+  "tx_hash": null,
+  "operation_id": null,
+  "source": "GB4PC65ZHBPVEZMAHY2K2KYMS3RFBIN2FQIE3LGTLEHT2DEWVMTD7JYQ",
+  "registry": {
+    "router": "CCJUD55AG6W5HAI5LRVNKAE5WDP5XGZBUDS5WNTIVDU7O264UZZE7BRD",
+    "factory": "CDP3HMUH6SMS3S7NPGNDJLULCOXXEPSHY4JKUKMBNQMATHDHWXRRJTBY",
+    "pair": "CDZL65OIXMVK63DCIWKJ7ULKVHZ7V4B4OM3XQHRNHR4OCFADIUV4FL64",
+    "routerHash": "4b95bbf9caec2c6e00c786f53c5f392c2fcdb8435ac0a862ab5e0645eb65824c",
+    "pairHash": "8447525edd62f72ffaf52136358034657ea0511a8fec1cd0ebde649f86cca464",
+    "protocolVersion": 30,
+    "tokenId": "CB7ICEHVRIRMF3CF6SIP2C2R3Z4E7WRPATT552QSVLIXZ5RSN6KLUDAE",
+    "tokenWasmHash": "263d165c1a1bf5a0dddbd0f21744a55cd8cacedf96ade78f53c570df11490e46",
+    "tokenAsset": {
+      "id": "stellar-testnet:soroban:CB7ICEHVRIRMF3CF6SIP2C2R3Z4E7WRPATT552QSVLIXZ5RSN6KLUDAE",
+      "network": "stellar-testnet",
+      "kind": "soroban",
+      "code": "BTC",
+      "name": "Bitcoin",
+      "contractId": "CB7ICEHVRIRMF3CF6SIP2C2R3Z4E7WRPATT552QSVLIXZ5RSN6KLUDAE",
+      "decimals": 7,
+      "verified": true,
+      "sourceUrl": "https://raw.githubusercontent.com/soroswap/core/main/public/tokens.json"
+    }
+  },
+  "router_view": {
+    "function": "router_get_amounts_out",
+    "ledger": 5679535,
+    "input": "100",
+    "output": "2528093",
+    "auth_count": 0
+  },
+  "request": {
+    "assetIn": "CB7ICEHVRIRMF3CF6SIP2C2R3Z4E7WRPATT552QSVLIXZ5RSN6KLUDAE",
+    "assetOut": "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC",
+    "amount": "100",
+    "tradeType": "EXACT_IN",
+    "protocols": [
+      "soroswap"
+    ],
+    "slippageBps": 49
+  },
+  "original_quote": {
+    "assetIn": "CB7ICEHVRIRMF3CF6SIP2C2R3Z4E7WRPATT552QSVLIXZ5RSN6KLUDAE",
+    "assetOut": "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC",
+    "tradeType": "EXACT_IN",
+    "amountIn": "100",
+    "amountOut": "2545968",
+    "otherAmountThreshold": "2533492",
+    "priceImpactPct": "0.00",
+    "platform": "router",
+    "routePlan": [
+      {
+        "swapInfo": {
+          "protocol": "soroswap",
+          "path": [
+            "CB7ICEHVRIRMF3CF6SIP2C2R3Z4E7WRPATT552QSVLIXZ5RSN6KLUDAE",
+            "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC"
+          ]
+        },
+        "percent": "100.00"
+      }
+    ],
+    "rawTrade": {
+      "amountIn": "100",
+      "amountOutMin": "2533492",
+      "distribution": [
+        {
+          "protocol_id": "soroswap",
+          "path": [
+            "CB7ICEHVRIRMF3CF6SIP2C2R3Z4E7WRPATT552QSVLIXZ5RSN6KLUDAE",
+            "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC"
+          ],
+          "parts": 10,
+          "is_exact_in": true
+        }
+      ]
+    }
+  },
+  "proposed_quote": {
+    "assetIn": "CB7ICEHVRIRMF3CF6SIP2C2R3Z4E7WRPATT552QSVLIXZ5RSN6KLUDAE",
+    "assetOut": "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC",
+    "tradeType": "EXACT_IN",
+    "amountIn": "100",
+    "amountOut": "2528093",
+    "otherAmountThreshold": "2515453",
+    "priceImpactPct": "0.00",
+    "platform": "router",
+    "routePlan": [
+      {
+        "swapInfo": {
+          "protocol": "soroswap",
+          "path": [
+            "CB7ICEHVRIRMF3CF6SIP2C2R3Z4E7WRPATT552QSVLIXZ5RSN6KLUDAE",
+            "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC"
+          ]
+        },
+        "percent": "100.00"
+      }
+    ],
+    "rawTrade": {
+      "amountIn": "100",
+      "amountOutMin": "2515453",
+      "distribution": [
+        {
+          "protocol_id": "soroswap",
+          "path": [
+            "CB7ICEHVRIRMF3CF6SIP2C2R3Z4E7WRPATT552QSVLIXZ5RSN6KLUDAE",
+            "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC"
+          ],
+          "parts": 10,
+          "is_exact_in": true
+        }
+      ]
+    }
+  },
+  "build_status": 201,
+  "build": {
+    "xdr": "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",
+    "action": "SIGN_TRANSACTION",
+    "description": "Sign the transaction with the user wallet and send the signed XDR to /send endpoint or your own rpc"
+  },
+  "inspected": {
+    "success": true,
+    "summary": {
+      "action": "spot.swap",
+      "fromAssetId": "stellar-testnet:soroban:CB7ICEHVRIRMF3CF6SIP2C2R3Z4E7WRPATT552QSVLIXZ5RSN6KLUDAE",
+      "toAssetId": "stellar-testnet:native:XLM",
+      "amount": "0.0000100",
+      "recipient": "GB4PC65ZHBPVEZMAHY2K2KYMS3RFBIN2FQIE3LGTLEHT2DEWVMTD7JYQ",
+      "contractId": "CCJUD55AG6W5HAI5LRVNKAE5WDP5XGZBUDS5WNTIVDU7O264UZZE7BRD",
+      "maxFeeStroops": "140800",
+      "minReceive": "0.2515453",
+      "expiresAt": "2026-11-11T18:22:32.000Z"
+    },
+    "signatures": 0
+  }
+}

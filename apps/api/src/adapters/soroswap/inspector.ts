@@ -1,8 +1,8 @@
 import {STANDALONE_NATIVE_ROUTES,APPROVED_TOKEN_WASM,standaloneAsset,standaloneAssetId,CORE_TESTNET_TOKENS} from './direct-assets.js';
 import { verifySignedAction } from '../stellar/index.js';
-import {Address, Asset, Transaction, TransactionBuilder, SorobanDataBuilder, StrKey, rpc, scValToNative, xdr} from '@stellar/stellar-sdk';
+import {Address, Asset, Transaction, TransactionBuilder, SorobanDataBuilder, StrKey, Contract, nativeToScVal, rpc, scValToNative, xdr} from '@stellar/stellar-sdk';
 import {GrapnelError, NETWORK, NETWORK_PASSPHRASE, PreparedActionSchema, XLM, toAtomic, type PreparedAction,type AssetIdentity} from '@grapnel/contracts';
-import type {SpotMarket,SpotXdrInspector} from './index.js';
+import type {SpotMarket,SpotXdrInspector,SpotExactQuoteReader} from './index.js';
 export const SOROSWAP_TESTNET_REGISTRY='https://raw.githubusercontent.com/soroswap/core/main/public/testnet.contracts.json';
 export const USDC_ISSUER='GATALTGTWIOT6BUDBCZM3Q4OQ4BO2COLOAZ7IYSKPLC2PMSOPPGF5V56';
 export const NATIVE_SAC=Asset.native().contractId(NETWORK_PASSPHRASE);
@@ -117,11 +117,11 @@ export function inspectApprovedSwapTransaction(action:PreparedAction,tx:Transact
  const envelope=tx.toEnvelope();envelope.v1().signatures([]);
  inspectSwapTransaction(new Transaction(envelope,NETWORK_PASSPHRASE),{wallet:action.walletAddress,amount:toAtomic(action.summary.amount??'',7),minimum:toAtomic(action.summary.minReceive??'',7),expiresAt:action.summary.expiresAt,assetIn:action.summary.fromAssetId===XLM.id?NATIVE_SAC:(reg.tokenId??USDC_SAC),assetOut:action.summary.toAssetId===XLM.id?NATIVE_SAC:(reg.tokenId??USDC_SAC)},reg,false,observedNow);
 }
-export interface InspectorDependencies {server?:Pick<rpc.Server,'getNetwork'|'getAccount'|'getContractData'|'simulateTransaction'>;fetcher?:typeof fetch;}
+export interface InspectorDependencies {quoteReadSource?:string;server?:Pick<rpc.Server,'getNetwork'|'getAccount'|'getContractData'|'simulateTransaction'>;fetcher?:typeof fetch;}
 /** Preparation and inspection only; contains no signing or broadcasting method. */
 export class SoroswapDirectInspector {
  private server:NonNullable<InspectorDependencies['server']>;private fetcher:typeof fetch;
- constructor(private pair:string,deps:InspectorDependencies={}){this.server=deps.server??new rpc.Server('https://soroban-testnet.stellar.org');this.fetcher=deps.fetcher??fetch;}
+ constructor(private pair:string,private readonly deps:InspectorDependencies={}){this.server=deps.server??new rpc.Server('https://soroban-testnet.stellar.org');this.fetcher=deps.fetcher??fetch;}
  async registry():Promise<SwapRegistry>{
   const network=await bounded(this.server.getNetwork());if(network.passphrase!==NETWORK_PASSPHRASE)fail('RPC must report explicit Stellar Testnet');
   const response=await this.fetcher(SOROSWAP_TESTNET_REGISTRY,{signal:AbortSignal.timeout(15000)});if(!response.ok)fail('Official Testnet registry unavailable');
@@ -137,6 +137,25 @@ export class SoroswapDirectInspector {
   if(route){const metadata=(entries[3]!.val.contractData().val().instance().storage()??[]).find(e=>scValToNative(e.key())==='METADATA');const m=metadata?scValToNative(metadata.val()) as {decimal?:unknown;symbol?:unknown;name?:unknown}:undefined;if(m?.decimal!==7||m.symbol!==route.code||m.name!==route.name)fail('Standalone token metadata differs from official Testnet identity');reg.tokenAsset=standaloneAsset(route);}
   return reg;
  }
+ /** Read-only official router view. Never signed/submitted; source must already exist. */
+ readonly readExactQuote:SpotExactQuoteReader=async({market,amountInAtomic})=>{
+  const observed_at=new Date().toISOString(),source=this.deps.quoteReadSource;
+  if(!source||!StrKey.isValidEd25519PublicKey(source))throw new GrapnelError(409,'EXECUTION_UNAVAILABLE','A configured existing Testnet public quote account is required',false,{reason:'EXACT_QUOTE_SOURCE_REQUIRED'});
+  if(!/^[1-9]\d{0,38}$/.test(amountInAtomic)||BigInt(amountInAtomic)>((1n<<127n)-1n))fail('Invalid exact quote input');
+  const reg=await this.registry(),token=reg.tokenId??USDC_SAC,tokenAsset=reg.tokenAsset?.id??`stellar-testnet:classic:USDC:${USDC_ISSUER}`;
+  const reverse=market.asset_in.id===tokenAsset&&market.asset_out.id===XLM.id,forward=market.asset_in.id===XLM.id&&market.asset_out.id===tokenAsset;
+  const expectedId=`stellar-testnet:soroswap:${reg.pair}:${reverse?(reg.tokenAsset?.code??'USDC')+'-XLM':'XLM-'+(reg.tokenAsset?.code??'USDC')}`;
+  if((!forward&&!reverse)||market.id!==expectedId||market.asset_in.contractId!==(reverse?token:NATIVE_SAC)||market.asset_out.contractId!==(reverse?NATIVE_SAC:token)||[market.asset_in,market.asset_out].some(a=>a.network!==NETWORK||a.decimals!==7||!a.verified)||market.protocols.length!==1||market.protocols[0]!=='soroswap')fail('Exact quote market differs from verified direct route');
+  const tx=new TransactionBuilder(await bounded(this.server.getAccount(source)),{fee:'100',networkPassphrase:NETWORK_PASSPHRASE}).addOperation(new Contract(reg.router).call('router_get_amounts_out',nativeToScVal(BigInt(amountInAtomic),{type:'i128'}),xdr.ScVal.scvVec([new Address(market.asset_in.contractId!).toScVal(),new Address(market.asset_out.contractId!).toScVal()]))).setTimeout(30).build();
+  const sim=await bounded(this.server.simulateTransaction(tx));
+  if(!rpc.Api.isSimulationSuccess(sim))return fail('Exact router view failed');
+  if(rpc.Api.isSimulationRestore(sim)||!sim.result||sim.result.auth.length||Date.now()-Date.parse(observed_at)>5000||!Number.isSafeInteger(sim.latestLedger)||sim.latestLedger<=0)return fail('Fresh exact router view unavailable or requires authorization/restoration');
+  const values=sim.result.retval;
+  if(values.switch().name!=='scvVec'||values.vec()?.length!==2||values.vec()!.some(v=>v.switch().name!=='scvI128'))fail('Router view returned invalid exact amounts');
+  const [input,output]=values.vec()!.map(scValToNative);
+  if(input!==BigInt(amountInAtomic)||typeof output!=='bigint'||output<=0n)fail('Router view input/output differs from exact quote');
+  return {amount_in_atomic:amountInAtomic,amount_out_atomic:output.toString(),observed_at,ledger:sim.latestLedger};
+ };
  async market():Promise<SpotMarket>{
   const reg=await this.registry();
   return {id:`stellar-testnet:soroswap:${reg.pair}:XLM-${reg.tokenAsset?.code??'USDC'}`,asset_in:{...XLM,name:'Stellar Lumens',contractId:NATIVE_SAC},asset_out:reg.tokenAsset??{id:`stellar-testnet:classic:USDC:${USDC_ISSUER}`,network:NETWORK,kind:'classic',code:'USDC',issuer:USDC_ISSUER,contractId:USDC_SAC,decimals:7,verified:true,sourceUrl:'https://raw.githubusercontent.com/blend-capital/blend-utils/main/testnet.contracts.json'},protocols:['soroswap'],route_verified_at:new Date().toISOString(),execution_verified_at:null};
