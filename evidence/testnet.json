@@ -50,7 +50,27 @@
     "fee_stroops": "100"
   },
   "soroswap": null,
-  "blend_supply": null,
+  "blend_supply": {
+    "observed_at": "2026-11-11T04:30:26.961Z",
+    "network": "stellar-testnet",
+    "provider": "Blend TestnetV2",
+    "asset_id": "stellar-testnet:native:XLM",
+    "requested_amount": "0.1000000",
+    "tx_hash": "eed88945a8c1327f260a1808136d3c3e8c2dd2f62607628fe8ce95d04d54af35",
+    "explorer_url": "https://stellar.expert/explorer/testnet/tx/eed88945a8c1327f260a1808136d3c3e8c2dd2f62607628fe8ce95d04d54af35",
+    "operation_id": "0a0310fc-a3b5-4189-bd4d-ec9e52758e55",
+    "customer_wallet": "GB4PC65ZHBPVEZMAHY2K2KYMS3RFBIN2FQIE3LGTLEHT2DEWVMTD7JYQ",
+    "pool_contract_id": "CCEBVDYM32YNYCVNRXQKDFFPISJJCV557CDZEIRBEE4NCV4KHPQ44HGF",
+    "reserve_contract_id": "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC",
+    "ledger": 5669556,
+    "successful": true,
+    "fee_stroops": "454406",
+    "wallet_debit": "0.1454406",
+    "position_before": "0.0000000",
+    "position_after": "0.0999997",
+    "position_delta": "0.0999997",
+    "reconciled": true
+  },
   "blend_withdraw": null,
   "deployments": {
     "api": null,
