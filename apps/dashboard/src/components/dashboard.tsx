@@ -40,8 +40,32 @@ type Business = {
   environment: string;
   revision: number;
 };
+type Customer = {
+  customer_id: string;
+  external_customer_id: string;
+  created_at: string;
+  wallet: { wallet_id: string; address: string; status: string } | null;
+};
+type LendingPosition = {
+  provider: string;
+  network: string;
+  asset_id: string;
+  asset: { code: string; decimals: number };
+  market_id: string;
+  pool_contract_id: string;
+  reserve_contract_id: string;
+  supplied: string;
+  collateral: string;
+  borrowed: string;
+  wallet_spendable: false;
+  supply_apy_variable: number | null;
+  as_of: string;
+  as_of_ledger: number;
+  readiness: string;
+};
 const nav = [
   ["overview", "Overview", "grid"],
+  ["customers", "Customers", "wallet"],
   ["modules", "API modules", "layers"],
   ["api-keys", "API keys", "key"],
   ["logs", "Request logs", "activity"],
@@ -49,6 +73,7 @@ const nav = [
 ] as const;
 const titles: Record<string, string> = {
   overview: "Overview",
+  customers: "Customers",
   modules: "API modules",
   "api-keys": "API keys",
   logs: "Request logs",
@@ -210,6 +235,13 @@ export default function Dashboard({ section }: { section: string }) {
   const [revision, setRevision] = useState(0);
   const [keys, setKeys] = useState<ApiKey[]>([]);
   const [logs, setLogs] = useState<Log[]>([]);
+  const [customers, setCustomers] = useState<Customer[]>([]);
+  const [selectedCustomerId, setSelectedCustomerId] = useState("");
+  const [positions, setPositions] = useState<LendingPosition[]>([]);
+  const [positionsAsOf, setPositionsAsOf] = useState("");
+  const [customersLoading, setCustomersLoading] = useState(false);
+  const [positionsLoading, setPositionsLoading] = useState(false);
+  const [customersError, setCustomersError] = useState("");
   const [secret, setSecret] = useState("");
   const [loginSecret, setLoginSecret] = useState("");
   const [keyName, setKeyName] = useState("");
@@ -280,6 +312,53 @@ export default function Dashboard({ section }: { section: string }) {
         .finally(() => setLoading(false));
     }
   }, [session, reload]);
+  useEffect(() => {
+    if (!session || section !== "customers") return;
+    let active = true;
+    setCustomersLoading(true);
+    setCustomersError("");
+    api("customers")
+      .then((data) => {
+        if (!active) return;
+        const rows = Array.isArray(data.customers) ? data.customers : [];
+        setCustomers(rows);
+        setSelectedCustomerId((current) =>
+          rows.some((customer: Customer) => customer.customer_id === current)
+            ? current
+            : rows[0]?.customer_id ?? "",
+        );
+      })
+      .catch((e) => {
+        if (active) setCustomersError(e instanceof Error ? e.message : "Customer records could not be loaded");
+      })
+      .finally(() => {
+        if (active) setCustomersLoading(false);
+      });
+    return () => { active = false; };
+  }, [api, section, session]);
+  useEffect(() => {
+    if (!session || section !== "customers" || !selectedCustomerId) {
+      setPositions([]);
+      setPositionsAsOf("");
+      return;
+    }
+    let active = true;
+    setPositionsLoading(true);
+    setCustomersError("");
+    api(`customers/${encodeURIComponent(selectedCustomerId)}/lending-positions`)
+      .then((data) => {
+        if (!active) return;
+        setPositions(Array.isArray(data.positions) ? data.positions : []);
+        setPositionsAsOf(typeof data.as_of === "string" ? data.as_of : "");
+      })
+      .catch((e) => {
+        if (active) setCustomersError(e instanceof Error ? e.message : "Live positions could not be loaded");
+      })
+      .finally(() => {
+        if (active) setPositionsLoading(false);
+      });
+    return () => { active = false; };
+  }, [api, section, selectedCustomerId, session]);
   useEffect(() => {
     setSecret("");
     setNotice("");
@@ -557,6 +636,8 @@ export default function Dashboard({ section }: { section: string }) {
               <p>
                 {section === "modules"
                   ? "Your infrastructure, one module at a time."
+                  : section === "customers"
+                    ? "Review tenant customers and their live protocol positions."
                   : section === "api-keys"
                     ? "Connect your backend with secure business credentials."
                     : section === "logs"
@@ -688,6 +769,114 @@ export default function Dashboard({ section }: { section: string }) {
                       <Icon name="arrow" size={17} />
                     </button>
                   </div>
+                </>
+              ) : section === "customers" ? (
+                <>
+                  <div className="info-strip">
+                    <span className="info-symbol">i</span>
+                    <p>
+                      Customer protocol positions are read from Stellar Testnet
+                      and shown here for your business operations. These are
+                      held in the protocol, not spendable wallet balances.
+                    </p>
+                  </div>
+                  {customersError && (
+                    <div role="alert" className="message error">{customersError}</div>
+                  )}
+                  {customersLoading ? (
+                    <div className="loading">Loading customer records<span /></div>
+                  ) : customers.length ? (
+                    <div className="overview-grid">
+                      <section className="panel table-panel">
+                        <div className="panel-heading">
+                          <h2>Customer records <span className="count">{customers.length}</span></h2>
+                          <span className="muted">Tenant scoped</span>
+                        </div>
+                        <div className="table-scroll">
+                          <table>
+                            <thead><tr><th>Customer</th><th>Wallet</th><th>Created</th></tr></thead>
+                            <tbody>
+                              {customers.map((customer) => (
+                                <tr
+                                  key={customer.customer_id}
+                                  className={selectedCustomerId === customer.customer_id ? "selected-row" : ""}
+                                >
+                                  <td>
+                                    <button className="customer-select" onClick={() => setSelectedCustomerId(customer.customer_id)}>
+                                      {customer.external_customer_id}
+                                    </button>
+                                    <small>{customer.customer_id}</small>
+                                  </td>
+                                  <td>{customer.wallet ? <code>{customer.wallet.address.slice(0, 8)}…{customer.wallet.address.slice(-6)}</code> : <span className="muted">No wallet</span>}</td>
+                                  <td>{time(customer.created_at)}</td>
+                                </tr>
+                              ))}
+                            </tbody>
+                          </table>
+                        </div>
+                      </section>
+                      <section className="panel table-panel">
+                        <div className="panel-heading">
+                          <div>
+                            <span className="eyebrow">BLEND · STELLAR TESTNET</span>
+                            <h2>Protocol positions</h2>
+                          </div>
+                          {selectedCustomerId && (
+                            <button
+                              className="secondary refresh"
+                              disabled={positionsLoading}
+                              onClick={() => {
+                                setPositionsLoading(true);
+                                setCustomersError("");
+                                api(`customers/${encodeURIComponent(selectedCustomerId)}/lending-positions`)
+                                  .then((data) => {
+                                    setPositions(Array.isArray(data.positions) ? data.positions : []);
+                                    setPositionsAsOf(typeof data.as_of === "string" ? data.as_of : "");
+                                  })
+                                  .catch((e) => setCustomersError(e instanceof Error ? e.message : "Live positions could not be loaded"))
+                                  .finally(() => setPositionsLoading(false));
+                              }}
+                            >
+                              <Icon name="refresh" size={16} /> Refresh positions
+                            </button>
+                          )}
+                        </div>
+                        {positionsLoading ? (
+                          <div className="loading">Reading live Blend position<span /></div>
+                        ) : positions.length ? (
+                          <>
+                            <div className="table-scroll">
+                              <table>
+                                <thead><tr><th>Asset</th><th>Supplied</th><th>Collateral</th><th>Borrowed</th><th>Withdraw</th></tr></thead>
+                                <tbody>
+                                  {positions.map((position) => (
+                                    <tr key={position.market_id}>
+                                      <td><strong>{position.asset.code}</strong><small>{position.network} · Blend</small></td>
+                                      <td>{position.supplied}</td>
+                                      <td>{position.collateral}</td>
+                                      <td>{position.borrowed}</td>
+                                      <td><span className="muted">Requires live health and liquidity check</span></td>
+                                    </tr>
+                                  ))}
+                                </tbody>
+                              </table>
+                            </div>
+                            <div className="table-footnote">
+                              {positionsAsOf ? `Observed ${time(positionsAsOf)}${Date.now() - Date.parse(positionsAsOf) > 60_000 ? " · refresh for current data" : " · current read"}` : "Position read time unavailable"}. Supplied assets are protocol held and are not wallet spendable. Withdrawal amount is checked against current position health and pool liquidity when requested.
+                            </div>
+                          </>
+                        ) : (
+                          <Empty title="No Blend position recorded">
+                            This customer has no supplied Blend balance in the current live Testnet read.
+                          </Empty>
+                        )}
+                      </section>
+                    </div>
+                  ) : (
+                    <Empty title="No customer records yet" icon="wallet">
+                      Customers created through your Grapnel API key will appear here. Protocol balances are displayed per customer after live Testnet reads.
+                    </Empty>
+                  )}
                 </>
               ) : section === "api-keys" ? (
                 <>
