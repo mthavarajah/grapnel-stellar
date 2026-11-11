@@ -1,6 +1,7 @@
 "use client";
 import Link from "next/link";
 import { AssetLogo } from "./asset-logo";
+import { MarginWorkflowCard } from "./margin-workflow";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
@@ -358,6 +359,7 @@ function FinanceShell({ page, auth, initialCategory }: { page: string; auth?: Au
   }, [sessionChecked, auth?.ready]);
   const [status, setStatus] = useState<any>(null);
   const [session, setSession] = useState<Session | null>(null);
+  const marginSession=useRef(session);marginSession.current=session;
   const [profileOpen,setProfileOpen]=useState(false);
   const [walletValuation,setWalletValuation]=useState<WalletValuation|null>(null);
   const [valuationLoading,setValuationLoading]=useState(false);
@@ -802,6 +804,13 @@ function FinanceShell({ page, auth, initialCategory }: { page: string; auth?: Au
     if (!session || !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id)) throw Error("Wallet action could not be found.");
     const op = await api("grapnel/operations/" + id);
     if (op.customer_id !== session.customer_id || op.wallet_id !== session.wallet_id) throw Error("Wallet action could not be found.");
+    openOperation(op);
+  }
+  async function reviewMarginOperation(id:string,owner:{customer_id:string;wallet_id:string}) {
+    const current=marginSession.current;
+    if(!current||current.customer_id!==owner.customer_id||current.wallet_id!==owner.wallet_id||!/^[0-9a-f-]{36}$/i.test(id))throw Error("Wallet action could not be found.");
+    const op=await api("grapnel/operations/"+id);
+    if(marginSession.current?.customer_id!==owner.customer_id||marginSession.current.wallet_id!==owner.wallet_id||op.customer_id!==owner.customer_id||op.wallet_id!==owner.wallet_id)throw Error("Wallet action could not be found.");
     openOperation(op);
   }
   async function recoverPendingWalletAction(cause: ClientError) {
@@ -1289,14 +1298,14 @@ function FinanceShell({ page, auth, initialCategory }: { page: string; auth?: Au
                         {(selectedSpotMarket.stats.pool?.stale===true||selectedSpotMarket.stats.custody?.stale===true)&&<p className="small muted">Market activity delayed</p>}
                       </>}
                     </section>
-                    <section className="market-order-card" aria-label="Trade market" data-testid="market-order-card">
+                    {category==="perps"&&selectedSpotMarket.market_id==="stellar-testnet:peridot:XLM-USDT-MARGIN"&&session ? <MarginWorkflowCard market={selectedSpotMarket} session={session} marginVerified={capability("trade.perps")?.execution_status==="testnet_verified"} walletVerified={capability("capital.wallets")?.execution_status==="testnet_verified"} onReviewOperation={reviewMarginOperation} guardReason={selectedSpotMarket.risk?.oracle_band_exceeded===true?`Price deviation exceeds the ${marginPercent(selectedSpotMarket.risk.oracle_band_scaled,selectedSpotMarket.risk.scale)} limit.`:undefined}/> : <section className="market-order-card" aria-label="Trade market" data-testid="market-order-card">
                       <h2>Trade {selectedSpotMarket.underlying?.symbol}</h2>
                       <div className="public-order-direction" role="group" aria-label={category==="perps"?"Position direction":"Order direction"}><button type="button" disabled>{category==="perps"?"Long":"Buy"}</button><button type="button" disabled>{category==="perps"?"Short":"Sell"}</button></div>
                       <label>Amount<input aria-label="Order amount" placeholder="0.00" inputMode="decimal" disabled /></label>
                       <div className="detail-row"><span>Market price</span><strong>{category==="stocks" ? (activePublicHistory?.latest_price==null?"—":`${formatTokenAmount(activePublicHistory.latest_price)} ${activePublicHistory.quote_symbol}`) : selectedSpotMarket.reference_price==null?"—":`${formatTokenAmount(selectedSpotMarket.reference_price)} USD`}</strong></div>
                       {category==="perps"&&selectedSpotMarket.risk?.oracle_band_exceeded===true&&<p className="margin-trading-reason" role="status">Price deviation exceeds the {marginPercent(selectedSpotMarket.risk.oracle_band_scaled,selectedSpotMarket.risk.scale)} limit.</p>}
                       <button className="button wide" disabled>Trading unavailable</button>
-                    </section>
+                    </section>}
                   </div>
                 </>
               ) : category === "crypto_spot" && markets.length && selectedSpotMarket ? (
@@ -1617,6 +1626,14 @@ function FinanceShell({ page, auth, initialCategory }: { page: string; auth?: Au
                 <div><span>{active.prepared_action.summary.toAssetId === XLM_ASSET ? "You receive at least before fee" : "You receive at least"}</span><code>{active.prepared_action.summary.minReceive} {swapIdentity(active.prepared_action.summary.toAssetId)}</code></div>
                 <div><span>Maximum fee</span><code>{approvalFee(active.prepared_action.summary.maxFeeStroops)}</code></div>
                 <div><span>Expires</span><code>{new Date(active.prepared_action.summary.expiresAt).toLocaleString()}</code></div>
+              </div>
+            ) : active.prepared_action?.summary.action.startsWith("margin.") ? (
+              <div className="approval-summary">
+                <div><span>Action</span><code>{({"margin.vault_deposit":"Deposit collateral","margin.vault_withdraw":"Withdraw collateral","margin.transfer":"Move collateral","margin.return":"Return collateral","margin.open_begin":"Start opening","margin.open_swap":"Swap opening assets","margin.open_activate":"Activate position","margin.open_cancel":"Cancel opening","margin.close_prepare":"Start closing","margin.close_swap":"Swap closing assets","margin.close_short_swap":"Repay closing debt","margin.close_finish":"Finish closing","margin.close_cancel":"Cancel closing"} as Record<string,string>)[active.prepared_action.summary.action]??"Margin transaction"}</code></div>
+                {active.prepared_action.summary.amount&&<div><span>Amount</span><code>{active.prepared_action.summary.amount} {markets.flatMap(entry=>[entry.base,entry.collateral]).find(entry=>entry?.id===active.prepared_action?.summary.fromAssetId)?.name??assetCode(active.prepared_action.summary.fromAssetId)}</code></div>}
+                {active.prepared_action.summary.minReceive&&<div><span>Minimum receive</span><code>{active.prepared_action.summary.minReceive} {markets.flatMap(entry=>[entry.base,entry.collateral]).find(entry=>entry?.id===active.prepared_action?.summary.toAssetId)?.name??assetCode(active.prepared_action.summary.toAssetId)}</code></div>}
+                <div><span>Maximum fee</span><code>{approvalFee(active.prepared_action.summary.maxFeeStroops)}</code></div>
+                <div><span>Expires</span><code>{marketDate(active.prepared_action.summary.expiresAt,true,true)}</code></div>
               </div>
             ) : active.prepared_action && ["blend.borrow","blend.repay","blend.borrow_collateral_supply","blend.borrow_collateral_withdraw"].includes(active.type) ? (
               <div className="approval-summary">

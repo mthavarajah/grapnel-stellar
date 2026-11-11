@@ -1,5 +1,7 @@
 import { NextRequest } from "next/server";
 import { z } from "zod";
+import {MarginWorkflowInputSchema,MarginCustomerBindingSchema,MarginWorkflowPublicSchema,MarginStepQuoteSchema,MarginStepSchema,MarginStepInputSchema,OperationSchema,toAtomic} from '@grapnel/contracts';
+import {MARGIN_MARKET_ID,MarginBrowserInputSchema,MarginBrowserPrepareSchema,MarginEmptyInputSchema} from '../../../../lib/margin-workflow';
 import {
   assertOrigin,
   BffError,
@@ -30,6 +32,27 @@ async function ownOperation(
     throw new BffError(404, "NOT_FOUND", "Operation not found");
   return op;
 }
+async function ownMarginWorkflow(id:string,s:Awaited<ReturnType<typeof requireSession>>){
+  if(!z.string().uuid().safeParse(id).success)throw new BffError(404,"NOT_FOUND","Margin setup not found");
+  const result=MarginWorkflowPublicSchema.safeParse(await grapnel(`/trade/margin/workflows/${id}?customer_id=${s.customerId}&wallet_id=${s.walletId}`,s));
+  if(!result.success)throw new BffError(502,"INVALID_RESPONSE","Margin status is unavailable");
+  const row=result.data;
+  if(row.customer_id!==s.customerId||row.wallet_id!==s.walletId||row.market_id!==MARGIN_MARKET_ID)throw new BffError(404,"NOT_FOUND","Margin setup not found");
+  return row;
+}
+async function marginStepAllowed(id:string,step:string,s:Awaited<ReturnType<typeof requireSession>>){
+  await requireModule("trade.perps",s);await requireModule("capital.wallets",s,true);
+  const selected=MarginStepSchema.safeParse(step);if(!selected.success)throw new BffError(404,"NOT_FOUND","Margin action not found");
+  const workflow=await ownMarginWorkflow(id,s);
+  if(!workflow.preparation_available||!workflow.next_steps.includes(selected.data))throw new BffError(409,"EXECUTION_UNAVAILABLE","This margin action is unavailable right now");
+  return {workflow,step:selected.data};
+}
+function publicMarginQuote(value:unknown,id:string,step:string,revision:number){
+  const parsed=MarginStepQuoteSchema.safeParse(value);
+  if(!parsed.success||parsed.data.workflow_id!==id||parsed.data.step!==step||parsed.data.revision!==revision)throw new BffError(409,"QUOTE_CHANGED","Margin status changed. Check progress and request a fresh quote");
+  if(Date.parse(parsed.data.expires_at)<=Date.now()||Date.parse(parsed.data.expires_at)>Date.now()+120000)throw new BffError(409,"QUOTE_EXPIRED","Request a fresh margin quote");
+  return parsed.data;
+}
 export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ path: string[] }> },
@@ -40,6 +63,17 @@ export async function GET(
       return json(await grapnel("/capabilities"));
     const s = await requireSession();
     const key = path.join("/");
+    if(key==="margin/workflows"){
+      await requireModule("trade.perps",s);
+      const response=await grapnel(`/trade/margin/workflows?customer_id=${s.customerId}&wallet_id=${s.walletId}`,s);
+      const parsed=z.object({workflows:z.array(MarginWorkflowPublicSchema).max(20)}).strict().safeParse(response);
+      if(!parsed.success)throw new BffError(502,"INVALID_RESPONSE","Margin status is unavailable");
+      if(parsed.data.workflows.some(row=>row.customer_id!==s.customerId||row.wallet_id!==s.walletId||row.market_id!==MARGIN_MARKET_ID))throw new BffError(404,"NOT_FOUND","Margin setup not found");
+      return json(parsed.data);
+    }
+    if(path.length===3&&path[0]==="margin"&&path[1]==="workflows"){
+      await requireModule("trade.perps",s);return json(await ownMarginWorkflow(path[2]!,s));
+    }
     if(key==="market-overview"){
       await requireModule("capital.wallets",s);
       return json(await grapnel("/market-overview",s));
@@ -142,6 +176,41 @@ export async function POST(
         "A request identifier is required",
       );
     const binding = { customer_id: s.customerId, wallet_id: s.walletId };
+    if(route==="margin/workflows"){
+      await requireModule("trade.perps",s,true);await requireModule("capital.wallets",s,true);
+      const body=MarginBrowserInputSchema.parse(raw);
+      if(body.market_id!==MARGIN_MARKET_ID)throw new BffError(422,"VALIDATION_ERROR","Select the supported margin market");
+      const rows=await grapnel("/trade/markets?asset_class=perps",s),market=(Array.isArray(rows)?rows:rows.markets??[]).find((entry:{market_id:string})=>entry.market_id===MARGIN_MARKET_ID);
+      if(market?.preparation_available!==true||market?.network!=="stellar-testnet"||market?.instrument_type!=="leveraged_margin")throw new BffError(409,"EXECUTION_UNAVAILABLE","Margin setup is unavailable right now");
+      const response=MarginWorkflowPublicSchema.safeParse(await grapnel("/trade/margin/workflows",s,{method:"POST",body:MarginWorkflowInputSchema.parse({...body,...binding}),idempotencyKey:key}));
+      if(!response.success)throw new BffError(502,"INVALID_RESPONSE","Margin status is unavailable");
+      if(response.data.customer_id!==s.customerId||response.data.wallet_id!==s.walletId||response.data.market_id!==MARGIN_MARKET_ID)throw new BffError(404,"NOT_FOUND","Margin setup not found");
+      if(response.data.direction!==body.direction||response.data.leverage!==body.leverage||response.data.amount_atomic!==toAtomic(body.amount,7).toString())throw new BffError(409,"INTENT_MISMATCH","Margin setup does not match your request");
+      return json(response.data,202);
+    }
+    if(path.length===4&&path[0]==="margin"&&path[1]==="workflows"&&path[3]==="reconcile"){
+      MarginEmptyInputSchema.parse(raw);await requireModule("trade.perps",s);await ownMarginWorkflow(path[2]!,s);
+      await grapnel(`/trade/margin/workflows/${path[2]}/reconcile`,s,{method:"POST",body:MarginCustomerBindingSchema.parse(binding),idempotencyKey:key});
+      return json(await ownMarginWorkflow(path[2]!,s));
+    }
+    if(path.length>=5&&path[0]==="margin"&&path[1]==="workflows"&&path[3]==="steps"){
+      if(path.length>6||(path.length===6&&path[5]!=="quote"))throw new BffError(404,"NOT_FOUND","Margin action not found");
+      const {workflow,step}=await marginStepAllowed(path[2]!,path[4]!,s);
+      if(path.length===6){
+        MarginEmptyInputSchema.parse(raw);
+        const quote=await grapnel(`/trade/margin/workflows/${workflow.workflow_id}/steps/${step}/quote`,s,{method:"POST",body:MarginCustomerBindingSchema.parse(binding),idempotencyKey:key});
+        return json(publicMarginQuote(quote,workflow.workflow_id,step,workflow.revision));
+      }
+      const submitted=MarginBrowserPrepareSchema.parse(raw);
+      publicMarginQuote(submitted.quote,workflow.workflow_id,step,workflow.revision);
+      const fresh=publicMarginQuote(await grapnel(`/trade/margin/workflows/${workflow.workflow_id}/steps/${step}/quote`,s,{method:"POST",body:MarginCustomerBindingSchema.parse(binding),idempotencyKey:key}),workflow.workflow_id,step,workflow.revision);
+      if(JSON.stringify(fresh.terms)!==JSON.stringify(submitted.quote.terms))throw new BffError(409,"QUOTE_CHANGED","The margin limit changed. Request a fresh quote");
+      const operation=await grapnel(`/trade/margin/workflows/${workflow.workflow_id}/steps/${step}`,s,{method:"POST",body:MarginStepInputSchema.parse({...binding,terms:submitted.quote.terms}),idempotencyKey:key});
+      const publicOperation=OperationSchema.safeParse(operation);
+      if(!publicOperation.success)throw new BffError(502,"INVALID_RESPONSE","Wallet action is unavailable");
+      if(publicOperation.data.customer_id!==s.customerId||publicOperation.data.wallet_id!==s.walletId||!z.string().uuid().safeParse(publicOperation.data.operation_id).success)throw new BffError(404,"NOT_FOUND","Wallet action not found");
+      return json(publicOperation.data,202);
+    }
     if (route === "fund" || route === "return") {
       // First fund/return creates the chain evidence that promotes this module.
       // Permit only native XLM while Gate 1 and actual treasury inventory pass;
