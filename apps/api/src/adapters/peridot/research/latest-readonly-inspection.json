@@ -1,0 +1,107 @@
+{
+  "observed_at": "2026-11-11T20:27:24.984Z",
+  "network": "stellar-testnet",
+  "mode": "read_only_adapter_verification",
+  "broadcast": false,
+  "execution_proof": null,
+  "tx_hash": null,
+  "capabilities": {
+    "module": "trade.perps",
+    "provider": "peridot",
+    "execution_status": "discovery_only",
+    "actions": [],
+    "reason": "PERIDOT_THREE_STEP_INSPECTOR_REQUIRED",
+    "instrument_type": "leveraged_margin"
+  },
+  "markets": [
+    {
+      "market_id": "stellar-testnet:peridot:XLM-USDT-MARGIN",
+      "label": "XLM / Mock USDT Margin",
+      "asset_class": "perps",
+      "instrument_type": "leveraged_margin",
+      "module": "trade.perps",
+      "provider": "peridot",
+      "network": "stellar-testnet",
+      "underlying": {
+        "symbol": "XLM",
+        "name": "Stellar Lumens",
+        "display_decimals": 7
+      },
+      "base": {
+        "id": "stellar-testnet:native:XLM",
+        "network": "stellar-testnet",
+        "kind": "native",
+        "code": "XLM",
+        "name": "Stellar Lumens",
+        "decimals": 7,
+        "contractId": "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC",
+        "verified": true,
+        "sourceUrl": "https://peridot.finance/app/margin"
+      },
+      "collateral": {
+        "id": "stellar-testnet:soroban:CDPXNHHVSLX3HFAHV7XOISM23MZH36WSXTO45RNDOBIDFZBGTSOVD4OY",
+        "network": "stellar-testnet",
+        "kind": "soroban",
+        "code": "USDT",
+        "name": "Mock USDT",
+        "decimals": 7,
+        "contractId": "CDPXNHHVSLX3HFAHV7XOISM23MZH36WSXTO45RNDOBIDFZBGTSOVD4OY",
+        "verified": true,
+        "sourceUrl": "https://peridot.finance/app/margin"
+      },
+      "directions": [
+        "long",
+        "short"
+      ],
+      "min_leverage": 2,
+      "max_leverage": 5,
+      "reference_price_atomic": "1490152",
+      "reference_price": "0.1490152",
+      "price_decimals": 7,
+      "oracle_timestamp": "2026-11-11T20:25:00.000Z",
+      "oracle_age_seconds": 141,
+      "price_status": "current",
+      "observed_at": "2026-11-11T20:27:21.422Z",
+      "source_url": "https://peridot.finance/app/margin",
+      "ledger": 5681039,
+      "execution_status": "discovery_only",
+      "executable": false,
+      "preparation_available": false,
+      "reason": "ORACLE_POOL_DEVIATION",
+      "reason_message": "The Testnet pool price exceeds the strict 5% oracle band. Opening is blocked; slippage cannot override it.",
+      "stats": null,
+      "risk": {
+        "oracle_band_scaled": "50000",
+        "scale": "1000000",
+        "pool_price_mock_usdt_per_xlm": "0.1808280",
+        "oracle_price_mock_usdt_per_xlm": "0.1491276",
+        "deviation_scaled": "212572",
+        "oracle_band_exceeded": true,
+        "onchain_long_parameters": {
+          "liquidation_incentive_scaled": "10000",
+          "maintenance_margin_scaled": "50000",
+          "max_leverage": "5"
+        },
+        "onchain_short_parameters": null,
+        "onchain_execution_parameters": {
+          "close_slippage_scaled": "50000",
+          "liquidation_slippage_scaled": "100000",
+          "max_open_deviation_scaled": "100000",
+          "open_slippage_scaled": "50000"
+        },
+        "native_available_liquidity_atomic": "9371653653",
+        "mock_usdt_available_liquidity_atomic": "623483682306",
+        "pool_swap_paused": false
+      }
+    }
+  ],
+  "history_summary": {
+    "provider": "peridot",
+    "source": "binance",
+    "source_url": "https://peridot.finance/api/markets/xlm-price?range=1D",
+    "provider_range": "1D",
+    "points": 96,
+    "as_of": "2026-11-11T20:15:00.000Z",
+    "latest_price": "0.1493"
+  }
+}

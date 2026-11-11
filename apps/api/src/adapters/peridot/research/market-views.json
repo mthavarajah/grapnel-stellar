@@ -1,0 +1,302 @@
+{
+  "observed_at": "2026-11-11T19:34:09.127Z",
+  "network": "stellar-testnet",
+  "mode": "read_only_view_simulations",
+  "broadcast": false,
+  "source": "GA237QIWQI6TUI3DTTWQELRHCGNMB3WWMSKY7LLXW3B4FBQJN3TN6IP4",
+  "tx_hash": null,
+  "execution_proof": null,
+  "results": [
+    {
+      "role": "troller",
+      "method": "get_price_usd",
+      "args": [
+        "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC"
+      ],
+      "ledger": 5680400,
+      "success": true,
+      "result": [
+        "14938802041303",
+        "100000000000000"
+      ],
+      "authorization_count": 0
+    },
+    {
+      "role": "troller",
+      "method": "get_price_usd",
+      "args": [
+        "CDPXNHHVSLX3HFAHV7XOISM23MZH36WSXTO45RNDOBIDFZBGTSOVD4OY"
+      ],
+      "ledger": 5680400,
+      "success": true,
+      "result": [
+        "99925685942377",
+        "100000000000000"
+      ],
+      "authorization_count": 0
+    },
+    {
+      "role": "troller",
+      "method": "is_market_supported",
+      "args": [
+        "CB32OVY4AADCHQT3DLKJYW5QVTWY5MOX7BBNZFT3SDHZ5HPSDDEA2THJ"
+      ],
+      "ledger": 5680400,
+      "success": true,
+      "result": true,
+      "authorization_count": 0
+    },
+    {
+      "role": "troller",
+      "method": "is_borrow_paused",
+      "args": [
+        "CB32OVY4AADCHQT3DLKJYW5QVTWY5MOX7BBNZFT3SDHZ5HPSDDEA2THJ"
+      ],
+      "ledger": 5680400,
+      "success": true,
+      "result": false,
+      "authorization_count": 0
+    },
+    {
+      "role": "native_vault",
+      "method": "get_available_liquidity",
+      "args": [],
+      "ledger": 5680400,
+      "success": true,
+      "result": "9371653653",
+      "authorization_count": 0
+    },
+    {
+      "role": "native_vault",
+      "method": "get_exchange_rate",
+      "args": [],
+      "ledger": 5680400,
+      "success": true,
+      "result": "1000000",
+      "authorization_count": 0
+    },
+    {
+      "role": "native_vault",
+      "method": "get_underlying_token",
+      "args": [],
+      "ledger": 5680400,
+      "success": true,
+      "result": "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC",
+      "authorization_count": 0
+    },
+    {
+      "role": "native_vault",
+      "method": "get_margin_controller",
+      "args": [],
+      "ledger": 5680400,
+      "success": true,
+      "result": "CAKKHUGHP67UA4F42QOYPKNGRSBJEOE62MGDXA2UURTEYFOQGSMIRUFO",
+      "authorization_count": 0
+    },
+    {
+      "role": "troller",
+      "method": "is_market_supported",
+      "args": [
+        "CCEW6NSPCV7XUEQV75ZMII5HK5DGXK5JP2QOTGLV4UFLDBPEKRGO4Y4B"
+      ],
+      "ledger": 5680400,
+      "success": true,
+      "result": true,
+      "authorization_count": 0
+    },
+    {
+      "role": "troller",
+      "method": "is_borrow_paused",
+      "args": [
+        "CCEW6NSPCV7XUEQV75ZMII5HK5DGXK5JP2QOTGLV4UFLDBPEKRGO4Y4B"
+      ],
+      "ledger": 5680400,
+      "success": true,
+      "result": false,
+      "authorization_count": 0
+    },
+    {
+      "role": "mock_usdt_vault",
+      "method": "get_available_liquidity",
+      "args": [],
+      "ledger": 5680400,
+      "success": true,
+      "result": "623483682306",
+      "authorization_count": 0
+    },
+    {
+      "role": "mock_usdt_vault",
+      "method": "get_exchange_rate",
+      "args": [],
+      "ledger": 5680400,
+      "success": true,
+      "result": "1000022",
+      "authorization_count": 0
+    },
+    {
+      "role": "mock_usdt_vault",
+      "method": "get_underlying_token",
+      "args": [],
+      "ledger": 5680400,
+      "success": true,
+      "result": "CDPXNHHVSLX3HFAHV7XOISM23MZH36WSXTO45RNDOBIDFZBGTSOVD4OY",
+      "authorization_count": 0
+    },
+    {
+      "role": "mock_usdt_vault",
+      "method": "get_margin_controller",
+      "args": [],
+      "ledger": 5680400,
+      "success": true,
+      "result": "CAKKHUGHP67UA4F42QOYPKNGRSBJEOE62MGDXA2UURTEYFOQGSMIRUFO",
+      "authorization_count": 0
+    },
+    {
+      "role": "margin",
+      "method": "get_perps_pair_config",
+      "args": [
+        "CDPXNHHVSLX3HFAHV7XOISM23MZH36WSXTO45RNDOBIDFZBGTSOVD4OY",
+        "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC",
+        [
+          "Long"
+        ]
+      ],
+      "ledger": 5680400,
+      "success": true,
+      "result": {
+        "liquidation_incentive_scaled": "10000",
+        "maintenance_margin_scaled": "50000",
+        "max_leverage": "5"
+      },
+      "authorization_count": 0
+    },
+    {
+      "role": "margin",
+      "method": "get_perps_pair_execution_config",
+      "args": [
+        "CDPXNHHVSLX3HFAHV7XOISM23MZH36WSXTO45RNDOBIDFZBGTSOVD4OY",
+        "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC",
+        [
+          "Long"
+        ]
+      ],
+      "ledger": 5680400,
+      "success": true,
+      "result": {
+        "close_slippage_scaled": "50000",
+        "liquidation_slippage_scaled": "100000",
+        "max_open_deviation_scaled": "100000",
+        "open_slippage_scaled": "50000"
+      },
+      "authorization_count": 0
+    },
+    {
+      "role": "margin",
+      "method": "get_perps_pair_config",
+      "args": [
+        "CDPXNHHVSLX3HFAHV7XOISM23MZH36WSXTO45RNDOBIDFZBGTSOVD4OY",
+        "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC",
+        [
+          "Short"
+        ]
+      ],
+      "ledger": 5680400,
+      "success": true,
+      "result": null,
+      "authorization_count": 0
+    },
+    {
+      "role": "margin",
+      "method": "get_perps_pair_execution_config",
+      "args": [
+        "CDPXNHHVSLX3HFAHV7XOISM23MZH36WSXTO45RNDOBIDFZBGTSOVD4OY",
+        "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC",
+        [
+          "Short"
+        ]
+      ],
+      "ledger": 5680400,
+      "success": true,
+      "result": {
+        "close_slippage_scaled": "50000",
+        "liquidation_slippage_scaled": "100000",
+        "max_open_deviation_scaled": "100000",
+        "open_slippage_scaled": "50000"
+      },
+      "authorization_count": 0
+    },
+    {
+      "role": "aquarius_pool",
+      "method": "get_tokens",
+      "args": [],
+      "ledger": 5680400,
+      "success": true,
+      "result": [
+        "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC",
+        "CDPXNHHVSLX3HFAHV7XOISM23MZH36WSXTO45RNDOBIDFZBGTSOVD4OY"
+      ],
+      "authorization_count": 0
+    },
+    {
+      "role": "aquarius_pool",
+      "method": "get_reserves",
+      "args": [],
+      "ledger": 5680401,
+      "success": true,
+      "result": [
+        "3268020913341",
+        "590950002703"
+      ],
+      "authorization_count": 0
+    },
+    {
+      "role": "aquarius_pool",
+      "method": "estimate_swap",
+      "args": [
+        0,
+        1,
+        "10000000"
+      ],
+      "ledger": 5680401,
+      "success": true,
+      "result": "1802850",
+      "authorization_count": 0
+    },
+    {
+      "role": "aquarius_pool",
+      "method": "get_is_killed_swap",
+      "args": [],
+      "ledger": 5680401,
+      "success": true,
+      "result": false,
+      "authorization_count": 0
+    },
+    {
+      "role": "mock_usdt",
+      "method": "decimals",
+      "args": [],
+      "ledger": 5680401,
+      "success": true,
+      "result": 7,
+      "authorization_count": 0
+    },
+    {
+      "role": "mock_usdt",
+      "method": "name",
+      "args": [],
+      "ledger": 5680401,
+      "success": true,
+      "result": "Mock USDT",
+      "authorization_count": 0
+    },
+    {
+      "role": "mock_usdt",
+      "method": "symbol",
+      "args": [],
+      "ledger": 5680401,
+      "success": true,
+      "result": "USDT",
+      "authorization_count": 0
+    }
+  ]
+}

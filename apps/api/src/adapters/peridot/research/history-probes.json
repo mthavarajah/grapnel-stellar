@@ -1,0 +1,50 @@
+{
+  "observed_at": "2026-11-11T19:35:54.811748+00:00",
+  "requests": [
+    {
+      "range": "1H",
+      "status": "200",
+      "provider_range": "1H",
+      "source": "binance",
+      "candles": 60,
+      "first": 1794422160,
+      "last": 1794425700
+    },
+    {
+      "range": "1D",
+      "status": "200",
+      "provider_range": "1D",
+      "source": "binance",
+      "candles": 96,
+      "first": 1794339900,
+      "last": 1794425400
+    },
+    {
+      "range": "1W",
+      "status": "200",
+      "provider_range": "1W",
+      "source": "binance",
+      "candles": 168,
+      "first": 1793822400,
+      "last": 1794423600
+    },
+    {
+      "range": "1M",
+      "status": "200",
+      "provider_range": "1M",
+      "source": "binance",
+      "candles": 180,
+      "first": 1791835200,
+      "last": 1794412800
+    },
+    {
+      "range": "Max",
+      "status": "200",
+      "provider_range": "Max",
+      "source": "binance",
+      "candles": 365,
+      "first": 1762905600,
+      "last": 1794355200
+    }
+  ]
+}
