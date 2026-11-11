@@ -178,6 +178,7 @@ function PriceChart({history,loading}:{history:MarketHistory|null;loading:boolea
 }
 type SwapAsset = {id:string;code:string;name?:string;decimals?:number};
 function displayAssetIdentity(item: SwapAsset, identities: SwapAsset[]): string {
+  if(item.id===USDC_ASSET&&!item.name)return item.code;
   const matchingCode=identities.filter(other=>other.code===item.code);
   if(matchingCode.length<2)return item.code;
   const idLabel=identities.some(other=>other.id!==item.id&&short(other.id)===short(item.id))?item.id:short(item.id);
