@@ -1506,3 +1506,4 @@ footer strong {
 .login-card > .button { width: 100%; margin: 16px 0; justify-content: center; }
 .login-card .login-error { color: #a43636; }
 @media (max-width: 480px) { .login-card { padding: 28px; } }
+.asset-logo { display: block; width: 48px; height: 48px; object-fit: contain; margin-bottom: 18px; }

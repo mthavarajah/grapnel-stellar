@@ -294,7 +294,10 @@ function FinanceShell({ page, auth }: { page: string; auth?: Auth }) {
         }
         if (page === "earn") {
           const m = await api("grapnel/lending-markets");
-          if (alive) setLending(Array.isArray(m) ? m : (m.markets ?? []));
+          if (alive) setLending((Array.isArray(m) ? m : (m.markets ?? [])).filter((market: {asset_id:string}) => [
+            "stellar-testnet:native:XLM",
+            "stellar-testnet:classic:USDC:GATALTGTWIOT6BUDBCZM3Q4OQ4BO2COLOAZ7IYSKPLC2PMSOPPGF5V56",
+          ].includes(market.asset_id)));
         }
       } catch (e) {
         if (alive) setError(e instanceof Error ? e.message : "Request failed");
@@ -1010,9 +1013,10 @@ function FinanceShell({ page, auth }: { page: string; auth?: Auth }) {
                   <div className="pool-grid">
                     {lending.map((m) => (
                       <div className="pool" key={m.market_id ?? m.id}>
-                        <span className="feature-icon green">
-                          <Icon name="earn" />
-                        </span>
+                        <img className="asset-logo"
+                          src={m.asset_id === "stellar-testnet:native:XLM" ? "/assets/xlm.svg" : "/assets/usdc.svg"}
+                          alt={m.asset_id === "stellar-testnet:native:XLM" ? "XLM logo" : "USDC logo"}
+                          width={48} height={48} />
                         <h3>
                           {m.asset?.code ?? m.code ?? m.symbol ?? "Reserve"}
                         </h3>
