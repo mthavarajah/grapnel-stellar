@@ -3,7 +3,7 @@
 Provider credentials and customer signing are integrated. **Onchain Gate 2 is passed; public deployment remains incomplete and is deferred at the user's request.** Actual payment, funding/return, both classic-USDC Soroswap directions, XLM Blend supply/withdraw, and USDC supply are verified. USDC withdrawal and execution of the additional standalone token routes remain unverified.
 
 ## Gate 0 — passed
-Foundation committed before delegation as `6ed12fd`. Monorepo, seven module IDs, auth boundaries, Zod/TypeScript interfaces, OpenAPI and Postgres baseline frozen. Current additive API contract is 0.1.1; see docs/14_GATE0_FREEZE.md. Agents worked in isolated scoped worktrees; lead integrated commits.
+Foundation committed before delegation as `6ed12fd`. Monorepo, seven module IDs, auth boundaries, Zod/TypeScript interfaces, OpenAPI and Postgres baseline frozen. Current additive API contract is 0.1.5; see docs/14_GATE0_FREEZE.md. Agents worked in isolated scoped worktrees; lead integrated commits.
 
 ## Implementation and verification
 
