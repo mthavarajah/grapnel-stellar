@@ -1,0 +1,80 @@
+{
+  "observed_at": "2026-11-11T03:47:25.954Z",
+  "network": "stellar-testnet",
+  "mode": "read_only",
+  "broadcast": false,
+  "pool_id": "CCEBVDYM32YNYCVNRXQKDFFPISJJCV557CDZEIRBEE4NCV4KHPQ44HGF",
+  "reserve_id": "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC",
+  "sdk_version": "4.0.0",
+  "pool_metadata": {
+    "wasmHash": "a41fc53d6753b6c04eb15b021c55052366a4c8e0e21bc72700f461264ec1350e",
+    "admin": "GATALTGTWIOT6BUDBCZM3Q4OQ4BO2COLOAZ7IYSKPLC2PMSOPPGF5V56",
+    "name": "TestnetV2",
+    "backstop": "CBDVWXT433PRVTUNM56C3JREF3HIZHRBA64NB2C3B2UNCKIS65ZYCLZA",
+    "backstopRate": 1000000,
+    "maxPositions": 8,
+    "minCollateral": "0",
+    "oracle": "CAZOKR2Y5E2OSWSIBRVZMJ47RUTQPIGVWSAQ2UISGAVC46XKPGDG5PKI",
+    "status": 0,
+    "reserveList": [
+      "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC",
+      "CAZAQB3D7KSLSNOSQKYD2V4JP5V2Y3B4RDJZRLBFCCIXDCTE3WHSY3UE",
+      "CAP5AMC2OHNVREO66DFIN6DHJMPOBAJ2KCDDIMFBR7WWJH5RZBFM3UEI",
+      "CAQCFVLOBK5GIULPNZRGATJJMIZL5BSP7X5YJVMGCPTUEPFM4AVSRCJU"
+    ],
+    "latestLedger": 5669040
+  },
+  "reserve_config": {
+    "index": 0,
+    "decimals": 7,
+    "c_factor": 9000000,
+    "l_factor": 9000000,
+    "util": 5000000,
+    "max_util": 9500000,
+    "r_base": 5000,
+    "r_one": 300000,
+    "r_two": 2000000,
+    "r_three": 10000000,
+    "reactivity": 50,
+    "supply_cap": "170141183460469231731687303715884105727",
+    "enabled": true
+  },
+  "raw_reserve_data": {
+    "b_rate": "2692715046695",
+    "b_supply": "529055795974496",
+    "backstop_credit": "42997737633461",
+    "d_rate": "3664077205818",
+    "d_supply": "368426503257758",
+    "ir_mod": "100000000",
+    "last_time": "1794366583"
+  },
+  "accrued_reserve_data": {
+    "dRate": "3664680188168",
+    "bRate": "2693092963754",
+    "interestRateModifier": "100000000",
+    "dSupply": "368426503257758",
+    "bSupply": "529055795974496",
+    "backstopCredit": "43019953101334",
+    "lastTime": 1794368845
+  },
+  "utilization_atomic": "9476198",
+  "supply_apr_fraction": 1.9566814,
+  "borrow_apr_fraction": 2.29432,
+  "supply_apy_fraction": 5.826186057257479,
+  "borrow_apy_fraction": 8.846728300292165,
+  "display_supply_apy": "582.62%",
+  "calculated_supply_apy": 5.826186057257479,
+  "raw_utilization_atomic": "9475969",
+  "raw_total_supply_atomic": "1424596502361725",
+  "raw_total_liabilities_atomic": "1349943152605983",
+  "rate_notes": {
+    "rate_scalar_decimals": 12,
+    "interest_rate_modifier_scalar_decimals": 7,
+    "interest_rate_modifier_multiple": 10,
+    "backstop_take_fraction": 0.1,
+    "supply_apy_formula": "(1 + supply_apr_fraction / 52) ** 52 - 1",
+    "display_formula": "Intl.NumberFormat(style=percent).format(supply_apy_fraction)",
+    "format_scaling_bug": false,
+    "data_kind": "SDK estimate from live Testnet reserve state; SDK locally accrues reserve to current time, no onchain write"
+  }
+}
