@@ -502,5 +502,12 @@
     "collection": "cryptocurrency-icons",
     "license": "CC0-1.0; brand trademark retained",
     "sha256": "fa169a9b7a336a220cc233570e205a7a680796e856c62f835696682795ebb299"
+  },
+  {
+    "symbol": "USDT",
+    "file": "/assets/logos/usdt.svg",
+    "source": "https://raw.githubusercontent.com/spothq/cryptocurrency-icons/master/svg/color/usdt.svg",
+    "license": "Cryptocurrency Icons CC0; reference symbol only, Peridot collateral is Mock USDT",
+    "sha256": "cddba428a029844888b59bae59c6400ee684b0d51dfc490a4374eef6bb63ea16"
   }
 ]
