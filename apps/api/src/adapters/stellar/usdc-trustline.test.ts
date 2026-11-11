@@ -1,7 +1,7 @@
 import { Account, Asset, Keypair, Networks, Operation, TransactionBuilder } from '@stellar/stellar-sdk';
 import { describe,it,expect } from 'vitest';
 import { NETWORK_PASSPHRASE } from '@grapnel/contracts';
-import { buildUsdcTrustline,verifyUsdcTrustline,TESTNET_USDC_ISSUER,type UsdcTrustlineIntent } from './usdc-trustline.js';
+import { buildUsdcTrustline,verifyUsdcTrustline,verifyPreparedUsdcTrustline,TESTNET_USDC_ISSUER,type UsdcTrustlineIntent } from './usdc-trustline.js';
 import { parseTestnetTransaction,verifySignedAction } from './index.js';
 const customer=Keypair.random(),other=Keypair.random();
 const config={network:'testnet',passphrase:NETWORK_PASSPHRASE};
@@ -9,6 +9,13 @@ const budget={spendableXlmAtomic:5000100n,additionalReserveAtomic:5000000n};
 function intent():UsdcTrustlineIntent{return {network:'stellar-testnet',action:'wallet.usdc_trustline',walletAddress:customer.publicKey(),assetCode:'USDC',issuer:TESTNET_USDC_ISSUER,limit:'100',sequence:'9',maxFeeStroops:'100',expiresAt:new Date((Math.floor(Date.now()/1000)+110)*1000).toISOString()};}
 function signed(xdr:string,key=customer){const tx=parseTestnetTransaction(xdr);tx.sign(key);return tx.toXDR();}
 describe('USDC trustline helper: offline only, never broadcast',()=>{
+ it('binds frozen approval summary to exact signed trustline, including displayed limit',()=>{
+  const p=buildUsdcTrustline(config,{...intent(),limit:'1000'},budget);
+  const action={operationId:'op',customerId:'customer',network:'stellar-testnet' as const,walletAddress:customer.publicKey(),unsignedXdr:p.unsignedXdr,signingHashHex:p.signingHashHex,summary:{action:'wallet.usdc_trustline',fromAssetId:`stellar-testnet:classic:USDC:${TESTNET_USDC_ISSUER}`,recipient:customer.publicKey(),amount:'1000',maxFeeStroops:'100',expiresAt:p.intent.expiresAt},authorization:{method:'privy_stellar' as const,expiresAt:p.intent.expiresAt}};
+  const envelope=signed(p.unsignedXdr);
+  expect(()=>verifyPreparedUsdcTrustline(action,envelope)).not.toThrow();
+  for(const patch of [{amount:'100'},{recipient:other.publicKey()},{maxFeeStroops:'200'},{toAssetId:'stellar-testnet:native:XLM'}])expect(()=>verifyPreparedUsdcTrustline({...action,summary:{...action.summary,...patch}},envelope)).toThrow();
+ });
  it('builds only exact bounded Testnet changeTrust and verifies customer signature',()=>{const p=buildUsdcTrustline(config,intent(),budget);const tx=parseTestnetTransaction(p.unsignedXdr);expect(tx.sequence).toBe('9');expect(tx.signatures).toHaveLength(0);expect(tx.operations).toHaveLength(1);expect(tx.operations[0]).toMatchObject({type:'changeTrust',limit:'100.0000000'});const op=tx.operations[0];expect(op?.type==='changeTrust'&&op.line instanceof Asset&&op.line.getIssuer()).toBe(TESTNET_USDC_ISSUER);expect(()=>verifyUsdcTrustline(p,signed(p.unsignedXdr))).not.toThrow();});
  it('requires additional reserve plus fee without spending active reservations',()=>{expect(()=>buildUsdcTrustline(config,intent(),{...budget,spendableXlmAtomic:5000099n})).toThrow('reserve');expect(()=>buildUsdcTrustline(config,intent(),{...budget,additionalReserveAtomic:0n})).toThrow('reserve');});
  it.each(['0','1000.0000001','1.00000001','-1','1e2'])('rejects unsupported trust limit %s',limit=>{expect(()=>buildUsdcTrustline(config,{...intent(),limit},budget)).toThrow();});
