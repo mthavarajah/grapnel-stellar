@@ -1,0 +1,44 @@
+{
+  "observed_at": "2026-11-11T21:03:26.980Z",
+  "mode": "read_only_unsigned_diagnostic",
+  "source": "GATHIAI4EWQVGZTU23EYBOAH4GDS2E4BLRCAU7I5V3OKA2GFSARYRUBO",
+  "broadcast": false,
+  "key_available": false,
+  "quote": {
+    "amount": "2.0000000",
+    "expected": "0.3017543",
+    "minimum": "0.3002456",
+    "expires_at": "2026-11-11T21:03:55.552Z"
+  },
+  "provider_build_status": 201,
+  "source_sequence": "24400641216479234",
+  "timebounds": {
+    "minTime": "0",
+    "maxTime": "1794431035"
+  },
+  "observations": [
+    {
+      "mode": "record",
+      "success": false,
+      "restore": false,
+      "ledger": 0,
+      "error": "cannot set authMode to 'record' with an auth footprint"
+    },
+    {
+      "mode": "enforce",
+      "success": true,
+      "restore": false,
+      "ledger": 5681472,
+      "auth_count": 1,
+      "fee": "21515",
+      "result_present": true
+    }
+  ],
+  "record_auth_free_diagnostic": {
+    "record_success": true,
+    "same_auth_bytes": true,
+    "same_footprint": true,
+    "enforce_success": true,
+    "ledger": 5681472
+  }
+}

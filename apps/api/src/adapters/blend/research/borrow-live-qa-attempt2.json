@@ -1,0 +1,225 @@
+{
+  "started_at": "2026-11-11T20:42:04.410Z",
+  "network": "stellar-testnet",
+  "network_passphrase": "Test SDF Network ; September 2015",
+  "signer": "ephemeral_qa_ed25519_NOT_Privy_customer_flow",
+  "qa_account": "GATHIAI4EWQVGZTU23EYBOAH4GDS2E4BLRCAU7I5V3OKA2GFSARYRUBO",
+  "customer_privy_acceptance": false,
+  "database_operations_created": false,
+  "private_key_persisted": false,
+  "scope": {
+    "collateral_max_xlm": "10",
+    "borrow_max_xlm": "1",
+    "borrow_max_usdc": "0.1",
+    "swap_max_xlm": "2",
+    "fee_max_per_tx_stroops": "10000000",
+    "max_total_transactions": 12
+  },
+  "transactions": [
+    {
+      "action": "qa_friendbot_activation",
+      "tx_hash": "1f4ff31b4e7fa685c6ae9a14e20fc5eb0a011453e8541d8adc65de45153a8532",
+      "status": "friendbot_reported",
+      "signer": "Stellar_Friendbot_NOT_customer_or_treasury"
+    },
+    {
+      "action": "qa_classic_usdc_trustline",
+      "signer": "ephemeral_qa_ed25519_NOT_Privy_customer_flow",
+      "tx_hash": "68fed588bf50ade35ab227b8a7e80679e3a6679f3efeef4ae0ffb724b1e68972",
+      "explorer": "https://stellar.expert/explorer/testnet/tx/68fed588bf50ade35ab227b8a7e80679e3a6679f3efeef4ae0ffb724b1e68972",
+      "status": "SUCCESS",
+      "declared_fee_stroops": "100",
+      "before": {
+        "wallet": {
+          "native": "10000.0000000",
+          "usdc": null,
+          "sequence": "24400641216479232"
+        },
+        "positions": [
+          {
+            "market_id": "stellar-testnet:blend:CB3447A446DY3USGWPIDXTNQHF5EX24XDQA2EN6TAZP62JTPBTNOA52Q:CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC",
+            "pool_contract_id": "CB3447A446DY3USGWPIDXTNQHF5EX24XDQA2EN6TAZP62JTPBTNOA52Q",
+            "reserve_contract_id": "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC",
+            "asset_id": "stellar-testnet:native:XLM",
+            "supplied": "0.0000000",
+            "collateral": "0.0000000",
+            "borrowed": "0.0000000",
+            "as_of": "2026-11-11T20:42:10.663Z",
+            "as_of_ledger": 5681217,
+            "debt_tokens": "0",
+            "debt_rate": "1103134046390",
+            "rate_decimals": 12,
+            "reserve_index": 0,
+            "collateral_tokens": "0",
+            "collateral_rate": "1084974945007"
+          },
+          {
+            "market_id": "stellar-testnet:blend:CB3447A446DY3USGWPIDXTNQHF5EX24XDQA2EN6TAZP62JTPBTNOA52Q:CAQCFVLOBK5GIULPNZRGATJJMIZL5BSP7X5YJVMGCPTUEPFM4AVSRCJU",
+            "pool_contract_id": "CB3447A446DY3USGWPIDXTNQHF5EX24XDQA2EN6TAZP62JTPBTNOA52Q",
+            "reserve_contract_id": "CAQCFVLOBK5GIULPNZRGATJJMIZL5BSP7X5YJVMGCPTUEPFM4AVSRCJU",
+            "asset_id": "stellar-testnet:classic:USDC:GATALTGTWIOT6BUDBCZM3Q4OQ4BO2COLOAZ7IYSKPLC2PMSOPPGF5V56",
+            "supplied": "0.0000000",
+            "collateral": "0.0000000",
+            "borrowed": "0.0000000",
+            "as_of": "2026-11-11T20:42:10.663Z",
+            "as_of_ledger": 5681217,
+            "debt_tokens": "0",
+            "debt_rate": "1010662730546",
+            "rate_decimals": 12,
+            "reserve_index": 3,
+            "collateral_tokens": "0",
+            "collateral_rate": "1007689397938"
+          }
+        ],
+        "as_of": "2026-11-11T20:42:10.663Z"
+      },
+      "classic_exception": {
+        "lead_approved": true,
+        "simulation_status": "not_applicable_classic_operation",
+        "rpc_unsupported": "transaction contains unsupported operation type: OperationTypeChangeTrust",
+        "exact_limit": "1000",
+        "exact_fee_stroops": "100",
+        "base_reserve_stroops": "5000000"
+      },
+      "send_status": "PENDING",
+      "confirmed_ledger": 5681218,
+      "result_xdr": "AAAAAAAAAGQAAAAAAAAAAQAAAAAAAAAGAAAAAAAAAAA=",
+      "result_meta_xdr": "AAAABAAAAAAAAAACAAAAAwBWsEIAAAAAAAAAACZ0ARwloVNmdNbJgLgH4YctE4FcRAp9Ha7coGjFkCOIAAAAF0h255wAVrBBAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAQBWsEIAAAAAAAAAACZ0ARwloVNmdNbJgLgH4YctE4FcRAp9Ha7coGjFkCOIAAAAF0h255wAVrBBAAAAAQAAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAAMAAAAAAFawQgAAAABq9NMlAAAAAAAAAAEAAAAAAAAAAwAAAAAAVrBCAAAAAQAAAAAmdAEcJaFTZnTWyYC4B+GHLROBXEQKfR2u3KBoxZAjiAAAAAFVU0RDAAAAACYFzNOyHT8GgwiyzcOOhwLtCctwM/RiSnrFp7JOe8xeAAAAAAAAAAAAAAACVAvkAAAAAAEAAAAAAAAAAAAAAAMAVrBCAAAAAAAAAAAmdAEcJaFTZnTWyYC4B+GHLROBXEQKfR2u3KBoxZAjiAAAABdIduecAFawQQAAAAEAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAAAAAAADAAAAAABWsEIAAAAAavTTJQAAAAAAAAABAFawQgAAAAAAAAAAJnQBHCWhU2Z01smAuAfhhy0TgVxECn0drtygaMWQI4gAAAAXSHbnnABWsEEAAAABAAAAAQAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAACAAAAAAAAAAAAAAAAAAAAAwAAAAAAVrBCAAAAAGr00yUAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAdeSi3LCcDzP6vfrn/TvTVBKVai5efybRQ6iyEK00c5hAAAAAQAAAAAAAAACAAAADwAAAANmZWUAAAAAEgAAAAAAAAAAJnQBHCWhU2Z01smAuAfhhy0TgVxECn0drtygaMWQI4gAAAAKAAAAAAAAAAAAAAAAAAAAZAAAAAA=",
+      "result_fee_charged_stroops": "100",
+      "actual_fee_metadata_stroops": "100",
+      "horizon_fee_charged_stroops": "100",
+      "pool_changes": [],
+      "after": {
+        "wallet": {
+          "native": "9999.9999900",
+          "usdc": "0.0000000",
+          "sequence": "24400641216479233"
+        },
+        "positions": [
+          {
+            "market_id": "stellar-testnet:blend:CB3447A446DY3USGWPIDXTNQHF5EX24XDQA2EN6TAZP62JTPBTNOA52Q:CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC",
+            "pool_contract_id": "CB3447A446DY3USGWPIDXTNQHF5EX24XDQA2EN6TAZP62JTPBTNOA52Q",
+            "reserve_contract_id": "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC",
+            "asset_id": "stellar-testnet:native:XLM",
+            "supplied": "0.0000000",
+            "collateral": "0.0000000",
+            "borrowed": "0.0000000",
+            "as_of": "2026-11-11T20:42:15.094Z",
+            "as_of_ledger": 5681218,
+            "debt_tokens": "0",
+            "debt_rate": "1103134309189",
+            "rate_decimals": 12,
+            "reserve_index": 0,
+            "collateral_tokens": "0",
+            "collateral_rate": "1084975161469"
+          },
+          {
+            "market_id": "stellar-testnet:blend:CB3447A446DY3USGWPIDXTNQHF5EX24XDQA2EN6TAZP62JTPBTNOA52Q:CAQCFVLOBK5GIULPNZRGATJJMIZL5BSP7X5YJVMGCPTUEPFM4AVSRCJU",
+            "pool_contract_id": "CB3447A446DY3USGWPIDXTNQHF5EX24XDQA2EN6TAZP62JTPBTNOA52Q",
+            "reserve_contract_id": "CAQCFVLOBK5GIULPNZRGATJJMIZL5BSP7X5YJVMGCPTUEPFM4AVSRCJU",
+            "asset_id": "stellar-testnet:classic:USDC:GATALTGTWIOT6BUDBCZM3Q4OQ4BO2COLOAZ7IYSKPLC2PMSOPPGF5V56",
+            "supplied": "0.0000000",
+            "collateral": "0.0000000",
+            "borrowed": "0.0000000",
+            "as_of": "2026-11-11T20:42:15.094Z",
+            "as_of_ledger": 5681218,
+            "debt_tokens": "0",
+            "debt_rate": "1010662746199",
+            "rate_decimals": 12,
+            "reserve_index": 3,
+            "collateral_tokens": "0",
+            "collateral_rate": "1007689409200"
+          }
+        ],
+        "as_of": "2026-11-11T20:42:15.094Z"
+      },
+      "verification": {
+        "verified": true,
+        "exact_issuer": "GATALTGTWIOT6BUDBCZM3Q4OQ4BO2COLOAZ7IYSKPLC2PMSOPPGF5V56",
+        "limit": "1000",
+        "classic_not_soroban_simulated": true
+      }
+    }
+  ],
+  "complete": false,
+  "prior_transactions": [
+    {
+      "action": "qa_friendbot_activation",
+      "tx_hash": "44e9ca283d1afd1abd6ed7929372a16b25564cd397c981a54f670b973b38eaed",
+      "status": "SUCCESS"
+    },
+    {
+      "action": "qa_classic_usdc_trustline",
+      "tx_hash": "1ef6a88d317fac3834ca6e4fbee98f375c5f1dcef581cc9ea2ce35df6418fec6",
+      "status": "SUCCESS"
+    }
+  ],
+  "fee_semantics_reference": {
+    "observed_at": "2026-11-11T20:42:05.256Z",
+    "read_only": true,
+    "customer_transaction_used_only_as_public_fee_reference": true,
+    "tx_hash": "1ad63c4281c7fd6a730a914c6f182beb60b6a9872103882b4a9506caa572a09a",
+    "ledger": 5678454,
+    "fee_event_sum_stroops": "59910",
+    "result_fee_charged_stroops": "59910",
+    "horizon_fee_charged_stroops": "59910",
+    "declared_fee_stroops": "71912",
+    "resource_components": {
+      "non_refundable": "11829",
+      "refundable": "47981",
+      "rent": "46467",
+      "inclusion": "100"
+    },
+    "source": "CAP0067 and Stellar-ledger.x final feeCharged semantics"
+  },
+  "initial": {
+    "wallet": {
+      "native": "10000.0000000",
+      "usdc": null,
+      "sequence": "24400641216479232"
+    },
+    "positions": [
+      {
+        "market_id": "stellar-testnet:blend:CB3447A446DY3USGWPIDXTNQHF5EX24XDQA2EN6TAZP62JTPBTNOA52Q:CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC",
+        "pool_contract_id": "CB3447A446DY3USGWPIDXTNQHF5EX24XDQA2EN6TAZP62JTPBTNOA52Q",
+        "reserve_contract_id": "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC",
+        "asset_id": "stellar-testnet:native:XLM",
+        "supplied": "0.0000000",
+        "collateral": "0.0000000",
+        "borrowed": "0.0000000",
+        "as_of": "2026-11-11T20:42:09.864Z",
+        "as_of_ledger": 5681217,
+        "debt_tokens": "0",
+        "debt_rate": "1103133980689",
+        "rate_decimals": 12,
+        "reserve_index": 0,
+        "collateral_tokens": "0",
+        "collateral_rate": "1084974890890"
+      },
+      {
+        "market_id": "stellar-testnet:blend:CB3447A446DY3USGWPIDXTNQHF5EX24XDQA2EN6TAZP62JTPBTNOA52Q:CAQCFVLOBK5GIULPNZRGATJJMIZL5BSP7X5YJVMGCPTUEPFM4AVSRCJU",
+        "pool_contract_id": "CB3447A446DY3USGWPIDXTNQHF5EX24XDQA2EN6TAZP62JTPBTNOA52Q",
+        "reserve_contract_id": "CAQCFVLOBK5GIULPNZRGATJJMIZL5BSP7X5YJVMGCPTUEPFM4AVSRCJU",
+        "asset_id": "stellar-testnet:classic:USDC:GATALTGTWIOT6BUDBCZM3Q4OQ4BO2COLOAZ7IYSKPLC2PMSOPPGF5V56",
+        "supplied": "0.0000000",
+        "collateral": "0.0000000",
+        "borrowed": "0.0000000",
+        "as_of": "2026-11-11T20:42:09.864Z",
+        "as_of_ledger": 5681217,
+        "debt_tokens": "0",
+        "debt_rate": "1010662726633",
+        "rate_decimals": 12,
+        "reserve_index": 3,
+        "collateral_tokens": "0",
+        "collateral_rate": "1007689395122"
+      }
+    ],
+    "as_of": "2026-11-11T20:42:09.865Z"
+  },
+  "error": {
+    "name": "Error",
+    "code": "SOROSWAP_INTENT_MISMATCH",
+    "message": "Exact narrowed transaction failed enforce simulation",
+    "observed_at": "2026-11-11T20:42:19.315Z"
+  }
+}

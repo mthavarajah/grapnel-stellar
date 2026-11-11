@@ -1,0 +1,19 @@
+{
+  "observed_at": "2026-11-11T21:12:05.887Z",
+  "signer": "ephemeral_qa_ed25519_NOT_Privy_customer_flow",
+  "customer_privy_acceptance": false,
+  "account": "GAE2LMU74DRUAA3ZIQKJ2SI4ZQX7E4FK4ZLIGNDC35X6VXPLUREOIVPJ",
+  "collateral_supply_hash": "87306f5f27f85d15fc388e48dcfa4591534aec46ae64a0d9e4ef14d4e10dfd06",
+  "ledger": 5681494,
+  "requested_xlm_atomic": "100000000",
+  "execution_b_rate": "1085049786703",
+  "rate_decimals": 12,
+  "minted_collateral_tokens": "92161669",
+  "expected_minted_collateral_tokens": "92161669",
+  "actual_fee_stroops": "454401",
+  "fee_event_rpc_horizon_equal": true,
+  "gross_wallet_debit_atomic": "-100000000",
+  "verified": true,
+  "borrow_sent": false,
+  "repay_sent": false
+}
