@@ -3,7 +3,7 @@ import{Address,Contract,Keypair,Operation,StrKey,Transaction,TransactionBuilder,
 import{GrapnelError,NETWORK_PASSPHRASE}from'@grapnel/contracts';
 import{PERIDOT_TESTNET_PINS as P}from'../config.js';
 
-export interface PeridotQaPoolSwapIntent{purpose:'qa_rebalance';walletAddress:string;inputXlmAtomic:string;minimumMockUsdtAtomic:string;}
+export interface PeridotQaPoolSwapIntent{purpose:'qa_rebalance'|'qa_funding';walletAddress:string;inputXlmAtomic:string;minimumMockUsdtAtomic:string;}
 export interface PoolSwapPolicy{allowPinnedMockCodeRestore?:boolean;}
 export interface QaPreparedPoolSwap{intent:PeridotQaPoolSwapIntent;unsignedXdr:string;signingHashHex:string;expiresAt:string;feeStroops:string;networkPassphrase:typeof NETWORK_PASSPHRASE;signingMode:'ephemeral_qa_ed25519_NOT_Privy_customer_flow';}
 const MAX_INPUT=28000n*10000000n,MAX_FEE=10000000n;
@@ -20,7 +20,7 @@ const keys=(list:xdr.LedgerKey[])=>list.map(bytes).sort().join(':');
 const sameKeys=(a:xdr.LedgerKey[],b:xdr.LedgerKey[])=>a.length===b.length&&keys(a)===keys(b);
 const nonnegativeFee=(v:string)=>{if(!/^\d{1,12}$/.test(v))return fail('FEE_INVALID');return BigInt(v);};
 export function buildPeridotQaPoolSwap(intent:PeridotQaPoolSwapIntent):string{
- if(intent.purpose!=='qa_rebalance'||!StrKey.isValidEd25519PublicKey(intent.walletAddress)||unsigned(intent.inputXlmAtomic)>MAX_INPUT) return fail('QA_BUDGET_EXCEEDED');
+ if(!['qa_rebalance','qa_funding'].includes(intent.purpose)||!StrKey.isValidEd25519PublicKey(intent.walletAddress)||unsigned(intent.inputXlmAtomic)>(intent.purpose==='qa_funding'?100000000n:MAX_INPUT)) return fail('QA_BUDGET_EXCEEDED');
  unsigned(intent.minimumMockUsdtAtomic);
  return new Contract(P.aquarius_pool.address).call('swap',addr(intent.walletAddress),nativeToScVal(0,{type:'u32'}),nativeToScVal(1,{type:'u32'}),nativeToScVal(BigInt(intent.inputXlmAtomic),{type:'u128'}),nativeToScVal(BigInt(intent.minimumMockUsdtAtomic),{type:'u128'})).toXDR('base64');
 }
