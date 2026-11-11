@@ -1,4 +1,17 @@
 {
+  "latest_followup": {
+    "observed_at": "2026-11-11T18:05:22Z",
+    "scope": "integrated_local_testnet_mvp",
+    "offline_suite": {"passed":358,"failed":0,"skipped":68},
+    "typecheck": "passed",
+    "frontend_production_build": "passed",
+    "isolated_browser_fixtures": {"passed":12,"scope":"Mocked UI only; SDK-free isolated build with third-party requests blocked. Not chain execution evidence."},
+    "live_browser": {"session_recovery":"passed after cooldown and one reconnect","earned_amounts":"verified XLM and USDC values displayed","market_price_history":"real onchain reserve observations displayed","xlm_btc_quote":{"amount_in":"1.0000000","expected_out":"0.0000390","min_receive":"0.0000389","signed":false,"broadcast":false}},
+    "spot_catalog": {"verified_asset_identities":7,"reviewed_direct_directions":12,"new_standalone_execution_proof":null},
+    "onchain_proof": "See evidence/testnet.json for customer payment, funding/return, both classic USDC swap directions, XLM Blend supply/withdraw and USDC Blend supply.",
+    "provider_limits": {"stocks":"SODAX published assets are mainnet-only","perps":"Noether Ontario trading restriction; public data only","commodities":"No qualifying Testnet issuer and liquid route verified","cross_token_multihop":"Provider returned No path found, including documented maxHops:3 probe"},
+    "public_deployment": "deferred_by_user_until_local_finalized"
+  },
   "observed_at": "2026-11-10T21:05:06.893501+00:00",
   "scope": "local_credential_free_implementation",
   "offline_suite": {
