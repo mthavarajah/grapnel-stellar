@@ -27,7 +27,7 @@ const metadata:Record<ModuleId,{name:string;provider:string;description:string}>
  'capital.lending':{name:'Lending, Borrowing & Yield',provider:'blend',description:'Variable-rate Testnet lending positions'},
  'trade.spot':{name:'Crypto',provider:'soroswap',description:'Stellar Testnet swaps'},
  'trade.stocks':{name:'Stocks',provider:'robinhood',description:'Canonical Robinhood Testnet stock tokens with USDG settlement'},
- 'trade.perps':{name:'Perpetuals',provider:'hyperliquid',description:'USDC-funded perpetual futures on Hyperliquid Testnet'},
+ 'trade.perps':{name:'Perpetuals',provider:'gmx',description:'USDC-collateralized perpetual futures on GMX Arbitrum Sepolia Testnet'},
 };
 export async function buildApp(options:AppOptions={}):Promise<FastifyInstance>{
  const config=options.config??loadConfig();const ownPool=!options.pool;const pool=options.pool??createPool(config.databaseUrl);

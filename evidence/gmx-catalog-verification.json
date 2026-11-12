@@ -1,0 +1,130 @@
+{
+  "checked_at": "2026-11-12T22:39:44.851Z",
+  "network": "arbitrum-sepolia",
+  "chain_id": 421614,
+  "block_number": "328639127",
+  "source": "https://arbitrum-sepolia-test.gmxapi.ai/v1/markets",
+  "reader": "0x1543f5e73b9d329d7de25adc98120f13d29bc53b",
+  "onchain_market_count": 10,
+  "listed_market_count": 6,
+  "listed_markets": [
+    {
+      "symbol": "CRV/USD [WETH-USDC.SG]",
+      "marketTokenAddress": "0xAde9D177B9E060D2064ee9F798125e6539fDaA1c",
+      "indexTokenAddress": "0xD5DdAED48B09fa1D7944bd662CB05265FCD7077C",
+      "longTokenAddress": "0x980B62Da83eFf3D4576C647993b0c1D7faf17c73",
+      "shortTokenAddress": "0x3253a335E7bFfB4790Aa4C25C4250d206E9b9773",
+      "isListed": true,
+      "isSpotOnly": false,
+      "leverageTiers": [
+        {
+          "maxLeverage": "1000000",
+          "minCollateralFactor": "10000000000000000000000000000"
+        }
+      ],
+      "minPositionSizeUsd": "1000000000000000000000000000000",
+      "minCollateralUsd": "1000000000000000000000000000000",
+      "indexDecimals": null,
+      "indexDecimalsBasis": "not_an_erc20_or_unavailable"
+    },
+    {
+      "symbol": "XAG/USD [WETH-USDC.SG]",
+      "marketTokenAddress": "0x8490D84c29134dA93f434210D76721179C382471",
+      "indexTokenAddress": "0xAc0CeE37770FdC16732C1f591a6B90A4Ea580643",
+      "longTokenAddress": "0x980B62Da83eFf3D4576C647993b0c1D7faf17c73",
+      "shortTokenAddress": "0x3253a335E7bFfB4790Aa4C25C4250d206E9b9773",
+      "isListed": true,
+      "isSpotOnly": false,
+      "leverageTiers": [
+        {
+          "maxLeverage": "1000000",
+          "minCollateralFactor": "10000000000000000000000000000"
+        }
+      ],
+      "minPositionSizeUsd": "1000000000000000000000000000000",
+      "minCollateralUsd": "1000000000000000000000000000000",
+      "indexDecimals": null,
+      "indexDecimalsBasis": "not_an_erc20_or_unavailable"
+    },
+    {
+      "symbol": "ETH/USD [WETH-USDC.SG]",
+      "marketTokenAddress": "0xb6fC4C9eB02C35A134044526C62bb15014Ac0Bcc",
+      "indexTokenAddress": "0x980B62Da83eFf3D4576C647993b0c1D7faf17c73",
+      "longTokenAddress": "0x980B62Da83eFf3D4576C647993b0c1D7faf17c73",
+      "shortTokenAddress": "0x3253a335E7bFfB4790Aa4C25C4250d206E9b9773",
+      "isListed": true,
+      "isSpotOnly": false,
+      "leverageTiers": [
+        {
+          "maxLeverage": "2000000",
+          "minCollateralFactor": "5000000000000000000000000000"
+        }
+      ],
+      "minPositionSizeUsd": "1000000000000000000000000000000",
+      "minCollateralUsd": "1000000000000000000000000000000",
+      "indexDecimals": 18,
+      "indexDecimalsBasis": "onchain_erc20"
+    },
+    {
+      "symbol": "XPT/USD [WETH-USDC.SG]",
+      "marketTokenAddress": "0x02f0D10977f044d59460B2e71afB8c07Dc7b5E1F",
+      "indexTokenAddress": "0xF3a3486de22725d8d762671AC4479d8ab9C21173",
+      "longTokenAddress": "0x980B62Da83eFf3D4576C647993b0c1D7faf17c73",
+      "shortTokenAddress": "0x3253a335E7bFfB4790Aa4C25C4250d206E9b9773",
+      "isListed": true,
+      "isSpotOnly": false,
+      "leverageTiers": [
+        {
+          "maxLeverage": "500000",
+          "minCollateralFactor": "20000000000000000000000000000"
+        }
+      ],
+      "minPositionSizeUsd": "1000000000000000000000000000000",
+      "minCollateralUsd": "1000000000000000000000000000000",
+      "indexDecimals": null,
+      "indexDecimalsBasis": "not_an_erc20_or_unavailable"
+    },
+    {
+      "symbol": "BTC/USD [BTC-USDC.SG]",
+      "marketTokenAddress": "0x3A83246bDDD60c4e71c91c10D9A66Fd64399bBCf",
+      "indexTokenAddress": "0xF79cE1Cf38A09D572b021B4C5548b75A14082F12",
+      "longTokenAddress": "0xF79cE1Cf38A09D572b021B4C5548b75A14082F12",
+      "shortTokenAddress": "0x3253a335E7bFfB4790Aa4C25C4250d206E9b9773",
+      "isListed": true,
+      "isSpotOnly": false,
+      "leverageTiers": [
+        {
+          "maxLeverage": "2000000",
+          "minCollateralFactor": "5000000000000000000000000000"
+        }
+      ],
+      "minPositionSizeUsd": "1000000000000000000000000000000",
+      "minCollateralUsd": "1000000000000000000000000000000",
+      "indexDecimals": 8,
+      "indexDecimalsBasis": "onchain_erc20"
+    },
+    {
+      "symbol": "XAU/USD [WETH-USDC.SG]",
+      "marketTokenAddress": "0x860F6B4B2F218885935C306B1c782a864ed2d67f",
+      "indexTokenAddress": "0x0f16dFBA0242F23F4a5faDE95Cd138139DD7592F",
+      "longTokenAddress": "0x980B62Da83eFf3D4576C647993b0c1D7faf17c73",
+      "shortTokenAddress": "0x3253a335E7bFfB4790Aa4C25C4250d206E9b9773",
+      "isListed": true,
+      "isSpotOnly": false,
+      "leverageTiers": [
+        {
+          "maxLeverage": "500000",
+          "minCollateralFactor": "20000000000000000000000000000"
+        }
+      ],
+      "minPositionSizeUsd": "1000000000000000000000000000000",
+      "minCollateralUsd": "1000000000000000000000000000000",
+      "indexDecimals": null,
+      "indexDecimalsBasis": "not_an_erc20_or_unavailable"
+    }
+  ],
+  "execution_verified_symbols": [
+    "ETH"
+  ],
+  "note": "Catalog and matching onchain market identities are verified; listing alone is not trade execution acceptance."
+}

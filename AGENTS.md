@@ -62,4 +62,4 @@ The proposed custom Stellar mock-stock/perpetual engine is canceled. Do not impl
 
 ## Owner coordination update — November12, 2026
 
-All subagents are stopped at the owner’s request. The owner has now moved the sequential focus to Hyperliquid Testnet Perpetuals, including its complete active Testnet catalog. Do not spawn or resume agents. Preserve the completed Robinhood Stocks flow; GMX remains historical fallback code, not the customer Perpetuals provider. Preserve completed work and Testnet-only/exact-authorization/proof invariants.
+All subagents are stopped at the owner’s request. The owner has now selected GMX Arbitrum Sepolia Testnet for Perpetuals after Hyperliquid funding remained unavailable. Continue sequentially; do not spawn or resume agents. Preserve Robinhood Stocks. Verify the actual listed Testnet catalog; do not assume mainnet categories or tokens are available. Preserve Hyperliquid records for historical recovery. Preserve completed work and Testnet-only/exact-authorization/proof invariants.
