@@ -100,5 +100,14 @@ export class PerpetualCustomerService {
   try{result=await adapter.send(signed);}catch{result={state:'unknown',orderId:null,clientOrderId:signed.clientOrderId,filledSize:'0',averagePrice:null,fillIds:[],rawStatus:'Submission requires reconciliation'};}
   await this.d.store.saveResult(scope,id,result);return this.get(scope,id);
  }
+ async resume(scope:PerpetualScope,id:string){
+  const order=await this.d.store.order(scope,id),account=await this.d.store.account(scope);
+  if(!order||!account||order.accountId!==account.id||!order.signedAction)return false;
+  const adapter=this.adapter(scope,account);
+  // Sending an approved immutable payload still uses the one-use database claim.
+  // An uncertain/sending record is reconciled, never transmitted again.
+  const result=order.state==='approved'?await adapter.send(order.signedAction):await adapter.reconcile(order.signedAction);
+  await this.d.store.saveResult(scope,id,result);return true;
+ }
  async reconcile(scope:PerpetualScope,id:string){const order=await this.d.store.order(scope,id),account=await this.d.store.account(scope);if(!order||!account||order.accountId!==account.id)throw new GrapnelError(404,'NOT_FOUND','Order not found');if(order.signedAction){const result=await this.adapter(scope,account).reconcile(order.signedAction);await this.d.store.saveResult(scope,id,result);}return this.get(scope,id);}
 }

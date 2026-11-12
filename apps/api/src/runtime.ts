@@ -323,7 +323,21 @@ export async function createRuntime(pool?:Pool,marginRoutes:RuntimeMarginBinding
  });
  app.addHook('onClose',async()=>{if(!pool)await db.end();});
  const workerChain=createRuntimeWorkerChain({pool:db,chain,blend,soroban,borrowing,borrowPreparer,gate1Passed,verifyGate1:()=>hasGate1Proof(chain),spot:spotInspector,readSpotBalances,margin:marginBindings.execution,marginFunding:marginBindings.fundingExecution});
- return {app,config,pool:db,chain,wallets,operations,funding,gate1Passed,perpetualService,worker:new OperationWorker(db,workerChain)};
+ const tickPerpetuals=async()=>{
+  const rows=(await db.query("SELECT o.* FROM perpetual_orders o JOIN wallets w ON w.business_id=o.business_id AND w.customer_id=o.customer_id AND w.id=o.wallet_id AND w.stellar_address=o.stellar_address WHERE o.state IN ('approved','sending','unknown') AND o.signed_action IS NOT NULL AND o.updated_at<now()-interval '5 seconds' ORDER BY o.updated_at LIMIT 3")).rows;
+  for(const row of rows){
+   try{const scope={businessId:row.business_id,customerId:row.customer_id,walletId:row.wallet_id,stellarAddress:row.stellar_address};
+    if(row.state==='approved'){
+     const module=row.intent.marketId.startsWith('hyperliquid-testnet:stocks:')?'trade.stocks':'trade.perps';
+     const allowed=await db.query("SELECT count(*)::int AS n FROM business_modules WHERE business_id=$1 AND enabled AND module_code IN ('capital.wallets',$2)",[row.business_id,module]);
+     if(allowed.rows[0]?.n!==2||!await hasGate1Proof(chain))continue;
+     await perpetualService.resume(scope,row.id);
+    }else await perpetualService.reconcile(scope,row.id);
+   }catch{/* Pending/unknown remains durable; a fresh intent is never generated here. */}
+  }
+  return rows.length>0;
+ };
+ return {app,config,pool:db,chain,wallets,operations,funding,gate1Passed,perpetualService,tickPerpetuals,worker:new OperationWorker(db,workerChain)};
 }
 
 
