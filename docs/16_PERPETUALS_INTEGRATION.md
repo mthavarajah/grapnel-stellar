@@ -41,3 +41,10 @@ Lead owns shared contracts, HTTP routes, DB migrations, runtime integration and 
 ## Frozen execution adapter ownership
 
 `modules/perpetuals/execution-contract.ts` freezes the internal account/approved-intent/signed-payload/reconciliation interface. Only a separately validated exact customer approval may create an `ApprovedPerpetualIntent`; browser/body booleans cannot authorize it. Account bindings are tenant/customer/wallet specific and globally segregated by actual provider address. A signed payload, nonce and client order ID must be durably stored before sending. The adapter may not create accounts, bridge funds, silently update leverage, use mainnet endpoints, or treat an acknowledgement as a fill. Setting leverage is a separate customer-approved stage before the bounded order. Execution adapter implementation owns only `adapters/hyperliquid/execution/**`; discovery owns sibling reader/catalog files. Tests are offline until an eligible funded Testnet account and signing authority are configured.
+
+
+## Customer workflow freeze v0.3.1
+
+Migration0007 and `workflow-contract.ts` segregate each EVM account globally and scope all challenges/orders to tenant/customer/Stellar wallet. EVM signing remains in the customer's browser. Account binding requires a one-use five-minute server challenge signed by the Stellar wallet (SHA256 UTF8 message, Ed25519) and EVM wallet (personal_sign). Order approval requires the exact SHA256 human-readable intent signature and the independently reconstructed Hyperliquid Testnet EIP712 order signature. No server-exported customer key or shared treasury-mirror credit is permitted. The immutable signed payload is persisted before an atomic send claim; after ambiguity, only reconciliation is allowed.
+
+PreparedAction summary adds optional `allowanceExpirationLedger` (positive decimal integer string) for a separately reviewed exact canonical Circle-USDC allowance. Existing callers are compatible. This ledger is an authorization limit, not a fee or a transfer amount. Scope and UI approval must preserve it unchanged.

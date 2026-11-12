@@ -1,5 +1,5 @@
 import { z } from 'zod';
-export const CONTRACT_VERSION = '0.3.0' as const;
+export const CONTRACT_VERSION = '0.3.1' as const;
 export const NETWORK = 'stellar-testnet' as const;
 export const NETWORK_PASSPHRASE = 'Test SDF Network ; September 2015' as const;
 export const MODULE_IDS = ['capital.wallets','capital.testnet_funding','capital.lending','trade.spot','trade.stocks','trade.perps'] as const;
@@ -40,7 +40,7 @@ export const CapabilitySchema = z.object({module:ModuleIdSchema,enabled:z.boolea
 export type Capability = z.infer<typeof CapabilitySchema>;
 export const OperationStatusSchema = z.enum(['accepted','validating','preparing','awaiting_customer_authorization','submitted','confirming','completed','rejected','expired','failed','recovery_required']);
 export type OperationStatus = z.infer<typeof OperationStatusSchema>;
-export const PreparedActionSchema = z.object({operationId:z.string(),customerId:z.string(),network:z.literal(NETWORK),walletAddress:z.string(),unsignedXdr:z.string(),signingHashHex:z.string().regex(/^[a-f0-9]{64}$/),summary:z.object({action:z.string(),positionId:z.string().regex(/^[1-9]\d{0,19}$/).optional(),fromAssetId:z.string().optional(),toAssetId:z.string().optional(),amount:z.string().optional(),recipient:z.string().optional(),contractId:z.string().optional(),maxFeeStroops:z.string().optional(),minReceive:z.string().optional(),expiresAt:z.string().datetime()}),authorization:z.object({method:z.literal('privy_stellar'),expiresAt:z.string().datetime()})});
+export const PreparedActionSchema = z.object({operationId:z.string(),customerId:z.string(),network:z.literal(NETWORK),walletAddress:z.string(),unsignedXdr:z.string(),signingHashHex:z.string().regex(/^[a-f0-9]{64}$/),summary:z.object({action:z.string(),positionId:z.string().regex(/^[1-9]\d{0,19}$/).optional(),fromAssetId:z.string().optional(),toAssetId:z.string().optional(),amount:z.string().optional(),recipient:z.string().optional(),contractId:z.string().optional(),maxFeeStroops:z.string().optional(),allowanceExpirationLedger:z.string().regex(/^[1-9]\d{0,9}$/).optional(),minReceive:z.string().optional(),expiresAt:z.string().datetime()}),authorization:z.object({method:z.literal('privy_stellar'),expiresAt:z.string().datetime()})});
 export type PreparedAction = z.infer<typeof PreparedActionSchema>;
 export const OperationSchema = z.object({operation_id:z.string(),customer_id:z.string(),wallet_id:z.string(),module:ModuleIdSchema,type:z.string(),status:OperationStatusSchema,network:z.literal(NETWORK),tx_hash:z.string().nullable(),provider:z.string(),created_at:z.string(),updated_at:z.string(),error:z.object({code:z.string(),message:z.string()}).nullable(),prepared_action:PreparedActionSchema.optional(),customer_action_token:z.string().optional(),display_amount:AmountSchema.optional(),display_asset_id:z.string().optional()});
 export type Operation = z.infer<typeof OperationSchema>;
