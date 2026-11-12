@@ -110,7 +110,18 @@
     "wallet_in_after": "9905.1687349",
     "wallet_out_before": "0.0000000",
     "wallet_out_after": "0.0000390",
-    "automatic_restoration": {"operations":1,"archived_indices":[2,3,4,5],"targets":"persistent contractData only","read_only_keys":5,"read_write_keys":6},
+    "automatic_restoration": {
+      "operations": 1,
+      "archived_indices": [
+        2,
+        3,
+        4,
+        5
+      ],
+      "targets": "persistent contractData only",
+      "read_only_keys": 5,
+      "read_write_keys": 6
+    },
     "reconciled": true,
     "independent_horizon_transaction_and_rpc_balance_verified": true
   },
@@ -314,5 +325,34 @@
     "pool_contract_id": "CCEBVDYM32YNYCVNRXQKDFFPISJJCV557CDZEIRBEE4NCV4KHPQ44HGF",
     "reserve_contract_id": "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC",
     "tx_hash": null
+  },
+  "blend_usdc_withdraw": {
+    "network": "stellar-testnet",
+    "signer": "privy_stellar",
+    "operation_id": "ff4b31a4-eab9-4b18-836c-d1857a9a6075",
+    "tx_hash": "12ec0c2e584b344cde01c51f03342d2ae39dba90a3a111fefc2410462771b5cd",
+    "explorer_url": "https://stellar.expert/explorer/testnet/tx/12ec0c2e584b344cde01c51f03342d2ae39dba90a3a111fefc2410462771b5cd",
+    "chain_result": "success",
+    "verification": {
+      "asset_id": "stellar-testnet:classic:USDC:GATALTGTWIOT6BUDBCZM3Q4OQ4BO2COLOAZ7IYSKPLC2PMSOPPGF5V56",
+      "verified": true,
+      "market_id": "stellar-testnet:blend:CCEBVDYM32YNYCVNRXQKDFFPISJJCV557CDZEIRBEE4NCV4KHPQ44HGF:CAQCFVLOBK5GIULPNZRGATJJMIZL5BSP7X5YJVMGCPTUEPFM4AVSRCJU",
+      "operation": "withdraw",
+      "observed_at": "2026-11-12T04:30:59.976Z",
+      "wallet_after": "650.7419161",
+      "wallet_as_of": "2026-11-12T04:30:59.390Z",
+      "wallet_delta": "4.0000000",
+      "wallet_before": "646.7419161",
+      "position_as_of": "2026-11-12T04:30:59.473Z",
+      "observed_ledger": 5686843,
+      "collateral_after": "0.0006383",
+      "collateral_delta": "-3.9999998",
+      "confirmed_ledger": 5686843,
+      "pool_contract_id": "CCEBVDYM32YNYCVNRXQKDFFPISJJCV557CDZEIRBEE4NCV4KHPQ44HGF",
+      "requested_atomic": "40000000",
+      "collateral_before": "4.0006381",
+      "reserve_contract_id": "CAQCFVLOBK5GIULPNZRGATJJMIZL5BSP7X5YJVMGCPTUEPFM4AVSRCJU",
+      "soroban_fee_asset_id": "stellar-testnet:native:XLM"
+    }
   }
 }
