@@ -18,6 +18,7 @@ export interface CctpFundingRecord {
 }
 export interface CctpStageRecord {
  id:string;fundingId:string;step:CctpFundingStep;action:UnsignedCctpEvmAction;
+ baseline:Record<string,unknown>|null;
  signedTransaction:`0x${string}`|null;txHash:`0x${string}`|null;
  state:'prepared'|'signed'|'sending'|'unknown'|'confirmed'|'reverted';proof:Record<string,unknown>|null;
 }
@@ -29,7 +30,7 @@ export interface CctpFundingStore {
  /** Trusted service supplies independently verified chain proof only; immutable once recorded. */
  saveProof(scope:PerpetualScope,id:string,patch:Partial<Pick<CctpFundingRecord,'state'|'sourceTxHash'|'sourceProof'|'messageHex'|'attestationHex'|'mintProof'|'depositProof'|'coreProof'>>):Promise<void>;
  stages(scope:PerpetualScope,id:string):Promise<CctpStageRecord[]>;
- prepareStage(scope:PerpetualScope,id:string,action:UnsignedCctpEvmAction):Promise<CctpStageRecord>;
+ prepareStage(scope:PerpetualScope,id:string,action:UnsignedCctpEvmAction,baseline?:Record<string,unknown>):Promise<CctpStageRecord>;
  /** Recover signer and exact EIP1559 body before durable immutable storage; globally reserve account+nonce. */
  signStage(scope:PerpetualScope,id:string,stageId:string,signed:`0x${string}`):Promise<CctpStageRecord>;
  claimSend(scope:PerpetualScope,id:string,stageId:string):Promise<boolean>;
