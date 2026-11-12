@@ -24,6 +24,7 @@ export interface SolverRepository{
  assignSubaccount(scope:SolverScope,walletId:string,proof:SolverSubaccountProof):Promise<void>;
  createRequest(value:SolverRequest):Promise<SolverRequest>;
  request(scope:SolverScope,id:string):Promise<SolverRequest|null>;
+ pendingRequest(scope:SolverScope):Promise<SolverRequest|null>;
  setPrepared(scope:SolverScope,id:string,value:SolverPreparedTransaction):Promise<void>;
  authorizeDeposit(scope:SolverScope,id:string,signedXdr:string,txHash:string):Promise<void>;
  authorizeMessage(scope:SolverScope,id:string,proof:SolverFreighterProof):Promise<void>;

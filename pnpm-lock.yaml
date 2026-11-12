@@ -127,6 +127,9 @@ importers:
       '@solana/kit':
         specifier: 8.6.0
         version: 8.6.0(bufferutil@4.2.0)(typescript@5.9.3)(utf-8-validate@5.0.10)
+      '@stellar/freighter-api':
+        specifier: 6.0.1
+        version: 6.0.1
       '@stellar/stellar-sdk':
         specifier: 14.3.0
         version: 14.3.0
@@ -2219,6 +2222,9 @@ packages:
   '@stablelib/base64@1.0.1':
     resolution: {integrity: sha512-1bnPQqSxSuc3Ii6MhBysoWCg58j97aUjuCSZrGSmDxNqtytIi0k8utUenAwTZN4V5mXXYGsVUI9zeBqy+jBOSQ==}
 
+  '@stellar/freighter-api@6.0.1':
+    resolution: {integrity: sha512-eqwakEqSg+zoLuPpSbKyrX0pG8DQFzL/J5GtbfuMCmJI+h+oiC9pQ5C6QLc80xopZQKdGt8dUAFCmDMNdAG95w==}
+
   '@stellar/js-xdr@3.1.2':
     resolution: {integrity: sha512-VVolPL5goVEIsvuGqDc5uiKxV03lzfWdvYg1KikvwheDmTBO68CKDji3bAZ/kppZrx5iTA8z3Ld5yuytcvhvOQ==}
 
@@ -3919,6 +3925,11 @@ packages:
 
   secure-password-utilities@0.2.1:
     resolution: {integrity: sha512-znUg8ae3cpuAaogiFBhP82gD2daVkSz4Qv/L7OWjB7wWvfbCdeqqQuJkm2/IvhKQPOV0T739YPR6rb7vs0uWaw==}
+
+  semver@7.7.1:
+    resolution: {integrity: sha512-hlq8tAfn0m/61p4BVRcPzIGr6LKiMwo4VM6dGi6pt4qcRkmNzTcWq6eCEjEh+qXjkMDvPlOFFSGwQjoEa6gyMA==}
+    engines: {node: '>=10'}
+    hasBin: true
 
   semver@7.7.2:
     resolution: {integrity: sha512-RF0Fw+rO5AMf9MAyaRXI4AV0Ulj5lMHqVxxdSgiVbixSCXoEmmX/jk0CuJw4+3SqroYO9VoUh+HcuJivvtJemA==}
@@ -7346,6 +7357,11 @@ snapshots:
 
   '@stablelib/base64@1.0.1': {}
 
+  '@stellar/freighter-api@6.0.1':
+    dependencies:
+      buffer: 6.0.3
+      semver: 7.7.1
+
   '@stellar/js-xdr@3.1.2': {}
 
   '@stellar/js-xdr@5.0.0': {}
@@ -9982,6 +9998,8 @@ snapshots:
   secure-json-parse@4.1.1: {}
 
   secure-password-utilities@0.2.1: {}
+
+  semver@7.7.1: {}
 
   semver@7.7.2: {}
 
