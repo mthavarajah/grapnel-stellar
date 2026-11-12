@@ -34,6 +34,7 @@ export interface SolverRepository{
  providerAction(scope:SolverScope,id:string):Promise<SolverProviderAction|null>;
  saveProviderPayload(scope:SolverScope,id:string,payload:unknown):Promise<void>;
  claimProviderSend(scope:SolverScope,id:string,payloadHash:string):Promise<boolean>;
+ recordProviderResult(scope:SolverScope,id:string,state:'unknown'|'verified'|'failed',result:Record<string,unknown>):Promise<void>;
  confirmFunding(scope:SolverScope,requestId:string,proof:SolverCashProof):Promise<void>;
  reserveWithdrawal(scope:SolverScope,id:string,availableAtomic7:string,treasuryAvailableAtomic7:string):Promise<void>;
  confirmReturn(scope:SolverScope,requestId:string,proof:SolverCashProof):Promise<void>;
