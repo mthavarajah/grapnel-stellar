@@ -48,7 +48,8 @@ function sessionKey(): Buffer {
       "SETUP_REQUIRED",
       "Customer sessions require FINTECH_SESSION_SECRET",
     );
-  return createHash("sha256").update(secret).digest();
+  // A session issued for one Privy application cannot survive an app switch.
+  return createHash("sha256").update(JSON.stringify(["velocity-session-v2", secret, process.env.PRIVY_APP_ID ?? ""])).digest();
 }
 export function sealSession(session: CustomerSession): string {
   const iv = randomBytes(12);

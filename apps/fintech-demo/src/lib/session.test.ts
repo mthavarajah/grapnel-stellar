@@ -37,6 +37,13 @@ describe("encrypted bounded customer sessions", () => {
     const tampered = sealed.slice(0, -12) + "AAAAAAAAAAAA";
     expect(() => openSession(tampered)).toThrow("Sign in again");
   });
+  it("invalidates a saved session when the configured Privy app changes", () => {
+    vi.stubEnv("PRIVY_APP_ID", "test-app-one");
+    const sealed = sealSession(fixture());
+    expect(openSession(sealed).walletId).toBe("own-wallet");
+    vi.stubEnv("PRIVY_APP_ID", "test-app-two");
+    expect(() => openSession(sealed)).toThrow("Sign in again");
+  });
   it("rejects expired sessions", () => {
     const sealed = sealSession({ ...fixture(), expiresAt: Date.now() - 1000 });
     expect(() => openSession(sealed)).toThrow("Sign in again");
