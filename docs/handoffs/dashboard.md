@@ -8,7 +8,7 @@
 
 Uses the user-supplied original PNG wordmark in sidebar/login and supplied icon for favicon; assets copied unchanged into apps/dashboard/public/brand. The black-background white-art wordmark is visually blended with the dark surface using screen and its source margins are cropped in CSS without distortion.
 
-Independent Next.js 16.4.6/React 19.3.1 dashboard with responsive navy sidebar, cream workspace, teal controls, Testnet labeling, meaningful error/loading/empty states and actual API metrics. Pages: owner login, overview, seven module cards grouped Capital/Trade, API key issue-once/hide/copy/revoke, real request log with errors filter, REST quickstart/reference pointers, and workspace creation.
+Independent Next.js 16.4.6/React 19.3.1 dashboard with responsive navy sidebar, cream workspace, teal controls, Testnet labeling, meaningful error/loading/empty states and actual API metrics. Pages: owner login, overview, six module cards grouped Capital/Trade, API key issue-once/hide/copy/revoke, real request log with errors filter, REST quickstart/reference pointers, and workspace creation.
 
 All owner data comes from the Grapnel API. Module descriptions/provider/readiness/reasons are backend catalog fields. Enabling another financial module adds wallets in the form; backend remains authoritative and validates dependency. Save sends the exact frozen PATCH shape and shows returned revision. No onchain completion, positions, balances or successful protocol routes are fabricated. Readiness badges explicitly show blocked/discovery/simulation/verified statuses.
 

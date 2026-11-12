@@ -5,7 +5,7 @@ Role: Core API / feat/core-api. Gate 0 consumed at 6ed12fd. Gate 1 auth portion 
 ## Implemented
 
 - Fastify health, public OpenAPI/Swagger docs; strict Testnet startup configuration; safe JSON envelopes and request IDs.
-- Independent owner login/session/logout, HttpOnly cookie, strict owner Origin/CSRF for changes, rate limiting; owner tenant creation, seven-module catalog and atomic revision updates.
+- Independent owner login/session/logout, HttpOnly cookie, strict owner Origin/CSRF for changes, rate limiting; owner tenant creation, six-module catalog and atomic revision updates.
 - Cryptographic high-entropy business API keys, SHA-256-only storage, one-time secret response, metadata listing, immediate revoke; per-request live module reads.
 - Tenant-scoped customer mapping/lookup and Privy identity/wallet ownership guards; production defaults fail closed without injected verified identity provider.
 - Durable Postgres idempotency, operations, wallet reservations, prepared action storage, single-use customer authorization; hash+signed envelope persisted before broadcast job.

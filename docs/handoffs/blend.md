@@ -54,3 +54,6 @@ Withdrawal requires active pool/reserve, sufficient current collateral, actual t
 - Actual `BlendAdapter.markets()` live probe: succeeded; complete normalized JSON preserved in research/testnet-read.json.
 
 No supply/withdraw transaction hash, no signed customer action, no position delta, no Gate2 success. Missing credentials and canonical Soroban execution inspector are explicit blockers. Parent may integrate read endpoints now; outgoing operations remain gated. No new environment variable names beyond existing Stellar/Privy config.
+
+## Superseding customer Borrow acceptance — November 12 UTC
+The earlier gated Borrow statement describes the initial implementation. The dedicated borrowing pool now has actual customer Privy USDC borrow, full Repay All and collateral-withdrawal acceptance. See [borrow](../../evidence/borrow-usdc-customer.json), [repay](../../evidence/repay-usdc-customer.json) and [withdrawal](../../evidence/withdraw-usdc-collateral-customer.json). Debt tokens are zero after repayment; 30 collateral receipt units remain after withdrawal as rounding dust. The separate Earn-pool USDC withdrawal acceptance is not implied.

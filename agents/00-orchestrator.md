@@ -29,7 +29,7 @@ AG08 tests/deploy ----------------------+--> Gate 3 live public URLs/submission
 ## Orchestrator acceptance decisions
 1. G0 accepts shared types and basic business auth; no competing schemas.
 2. G1 requires actual Privy signed Testnet tx, entitlement tests and tenant checks. If signing blocked, make a **recorded explicit fallback decision**, not a secret switch.
-3. G2 full-MVP target requires a **confirmed treasury grant, customer-authorized return, Soroswap swap, and Blend supply/withdraw**, with real hashes and position/balance changes. Missing steps must be recorded as failed/incomplete, not passed. SODAX, commodity and Noether may remain discovery-only. Never let optional work delay deployment.
+3. G2 full-MVP target requires a **confirmed treasury grant, customer-authorized return, Soroswap swap, and Blend supply/withdraw**, with real hashes and position/balance changes. Missing steps must be recorded as failed/incomplete, not passed. Stock discovery and retired Noether research are not execution proof. Never let optional work delay deployment.
 4. G3 independently opens deployed pages in incognito, runs smoke, verifies transaction hash on explorer and submits URL/repo/video.
 
 ## Reports

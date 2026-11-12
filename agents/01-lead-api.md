@@ -12,7 +12,7 @@
 - Publish frozen schemas and example JSON for other agents. Own all root/shared changes and merges.
 
 ## Implementation sequence
-1. Initialize workspace and strict TS lint/typecheck. Define stable module IDs and error codes. Module catalog has exactly 7: `capital.wallets`, `capital.testnet_funding`, `capital.lending`, `trade.spot`, `trade.stocks`, `trade.perps`, `trade.commodities`. Remove fiat on/off-ramp routes/DB fields.
+1. Initialize workspace and strict TS lint/typecheck. Define stable module IDs and error codes. Module catalog has exactly 6: `capital.wallets`, `capital.testnet_funding`, `capital.lending`, `trade.spot`, `trade.stocks`, `trade.perps`. Remove fiat on/off-ramp routes/DB fields.
 2. Implement DB and auth middleware including owner session distinct from business key.
 3. Write tests for API key secret lifecycle, same-key entitlement updates, cross-tenant requests and idempotency.
 4. Define `PreparedAction`, `AssetIdentity`, `FinancialOperation`, capabilities, quote and lending responses from doc 02/03.

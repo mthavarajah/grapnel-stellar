@@ -7,7 +7,7 @@
 Screens:
 1. `/login` and `/onboarding`: secure owner email/demo login; create Testnet `business`, show no mainnet option.
 2. `/overview`: tenant ID, environment `stellar-testnet`, enabled modules count, API recent activity, quickstart cURL.
-3. `/modules`: two sections Capital/Trade, seven cards with description, provider and operational readiness badge (e.g. Testnet verified or discovery only). Checkbox selection and **Save changes**. API `GET/PATCH /v1/dashboard/modules`. If Spot disabled, existing key loses access immediately. Wallet dependency auto-added or explicit validation; preserve state after refresh.
+3. `/modules`: two sections Capital/Trade, six cards with description, provider and operational readiness badge (e.g. Testnet verified or discovery only). Checkbox selection and **Save changes**. API `GET/PATCH /v1/dashboard/modules`. If Spot disabled, existing key loses access immediately. Wallet dependency auto-added or explicit validation; preserve state after refresh.
 4. `/api-keys`: list key metadata, issue `gr_test_...` secret once, copy to clipboard, redacted thereafter, revoke confirmation. Never display previous full secret.
 5. `/logs`: list request_id, path, module, status, timestamp, duration; filter errors; no raw PII or credentials.
 6. `/docs`: OpenAPI explorer or quickstart showing key usage, endpoints and one curl for an enabled module. Docs may live under API `/docs` with link.
@@ -26,7 +26,7 @@ Screens:
 1. `/login`: customer signs in via Privy, obtains verified identity session; fintech server maps session to its own user and Grapnel `external_customer_id`.
 2. `/home`: wallet G-address; XLM and each verified asset with issuer/contract; `wallet_amount`, `reserved`, `spendable`; lending positions separately. Show Testnet explorer link and account-activation state. Never label Blend position as available wallet USDC.
 3. `/fund` (or `/deposit` labelled **Get Testnet Funds**): enabled by `capital.testnet_funding`; select allowlisted asset from `GET /v1/capital/testnet/funding-assets`, show configured grant quota, call `POST /v1/capital/testnet/fund`, poll real chain confirmation and show explorer link. Never show a fiat amount or MoneyGram widget.
-4. `/markets`: visible cards Spot, Stocks, Perps, Commodities filtered by entitlement and readiness. Search and actual market quote; disabled execution with explanatory reason.
+4. `/markets`: visible cards Crypto, Stocks, Margin filtered by entitlement and readiness. Search and actual market quote; disabled execution with explanatory reason.
 5. `/trade/:market`: exact-in amount, quote, min receive, fees/slippage, consent/Privy signing modal, operation progress, final actual amounts and hash.
 6. `/earn`: Blend pool list current variable supply APY, reserve and liquidity/position details; supply/withdraw, optional borrow/repay if verified. Customer sees collateral implications and liquidation risks.
 7. `/return` (or `/withdraw` labelled **Return Testnet Funds**): `POST /v1/capital/testnet/return` prepares a real wallet-authorized transaction to fixed treasury; display freely spendable only, preserve XLM reserve, no fiat payout claim.

@@ -2,7 +2,7 @@
 
 Grapnel is a **Stellar Testnet B2B infrastructure API** with a business dashboard and a separate sample fintech frontend/backend. Businesses enable modules and keep their API key on their server; customers separately authorize wallet spending through Privy.
 
-**The core onchain Gate 2 MVP is verified locally; public deployment is pending.** Gate 0 foundation and Gate 1 customer signing are committed and verified. Real customer transactions prove treasury funding/return, Soroswap swaps and Blend XLM supply/withdraw. USDC supply is also verified. Borrow/repay has separate protocol QA proof; its customer signing acceptance and Peridot Margin integration remain in progress. See [gate status](docs/15_GATE_STATUS.md) and [evidence](evidence/testnet.json). No fiat rails, mainnet writes or custom Grapnel contracts.
+**The core onchain Gate 2 MVP is verified locally; public deployment is pending.** Gate 0 foundation and Gate 1 customer signing are committed and verified. Real customer transactions prove treasury funding/return, Soroswap swaps and Blend XLM supply/withdraw. USDC supply is also verified. The customer Privy USDC borrow, full repayment and borrowing-collateral withdrawal are verified; Peridot Margin customer integration remains in progress. See [gate status](docs/15_GATE_STATUS.md) and [evidence](evidence/testnet.json). No fiat rails, mainnet writes or custom Grapnel contracts.
 
 Public source: [mthavarajah/grapnel-stellar](https://github.com/mthavarajah/grapnel-stellar). Local verification: [test/build results](evidence/local-verification.json).
 
@@ -36,7 +36,7 @@ API server variables and names are in [.env.example](.env.example). Dashboard an
 
 ## Modules and authorization
 
-Capital: `capital.wallets`, `capital.testnet_funding`, `capital.lending`. Trade: `trade.spot`, `trade.stocks`, `trade.perps`, `trade.commodities`.
+Capital: `capital.wallets`, `capital.testnet_funding`, `capital.lending`. Trade: `trade.spot`, `trade.stocks`, `trade.perps`.
 
 Owner cookies and CSRF protect dashboard administration. A hashed/revocable API key identifies the business; its scopes follow current entitlement records on every request. Customer wallet actions additionally require verified Privy identity, current wallet ownership, exact signed transaction and a one-use authorization token. Tenant-scoped Postgres constraints, idempotency, reservations and durable worker records protect state.
 
@@ -59,9 +59,11 @@ Live Blend pool/reserve reads and a **customer-signed 0.1 XLM collateral supply*
 
 Authenticated Soroswap Testnet discovery, exact quotes, inspected transactions and customer-signed swaps work. Both classic USDC directions and XLM→standalone BTC have actual transaction proof. Additional catalog routes remain preparation-only until individually executed and reconciled. Mainnet asset lists and unverified multihop routes are excluded. See [sanitized discovery](apps/api/src/adapters/soroswap/research/README.md).
 
-The restricted `/v1/capital/wallets/:id/test-payment` endpoint prepares a customer-authorized payment of at most 1 XLM to the fixed treasury for Gate 1. Actual Privy-signed payment, treasury funding/return, both classic-USDC Soroswap directions, XLM Blend supply/withdraw and USDC supply are verified; see [recorded evidence](evidence/testnet.json). USDC withdrawal and the remaining standalone-token swap directions await customer execution proof. No Freighter fallback has been used.
+The restricted `/v1/capital/wallets/:id/test-payment` endpoint prepares a customer-authorized payment of at most 1 XLM to the fixed treasury for Gate 1. Actual Privy-signed payment, treasury funding/return, both classic-USDC Soroswap directions, XLM Blend supply/withdraw and USDC supply are verified; see [recorded evidence](evidence/testnet.json). USDC withdrawal from the separate Earn pool and the remaining standalone-token swap directions await customer execution proof. No Freighter fallback has been used.
 
-Local Finance includes real observed price history, asset-driven Sell/Buy panels, compact Earn controls and verified accrued interest. The catalog has seven verified token identities and twelve reviewed direct XLM directions. Margin now uses Peridot Testnet with one verified XLM/MockUSDT market; the customer trading workflow is still being integrated. SODAX stocks are mainnet-only; an alternative Testnet stock candidate remains blocked by stale onchain pricing and eligibility provenance. No qualifying commodity Testnet route is verified. Unverified execution remains blocked. Public hosting and the submission video remain pending; deployment is deferred until the user finalizes localhost.
+The separate borrowing pool has a verified customer Privy roundtrip: [0.1 USDC borrow](evidence/borrow-usdc-customer.json), [full repayment](evidence/repay-usdc-customer.json) and [2 USDC collateral withdrawal](evidence/withdraw-usdc-collateral-customer.json). Repayment cleared debt tokens to zero; the withdrawal left **30 collateral receipt units of rounding dust**, so collateral is not claimed to be zero. This borrowing-pool withdrawal does not establish withdrawal acceptance for the separate Earn pool.
+
+Local Finance includes real observed price history, asset-driven Sell/Buy panels, compact Earn controls and verified accrued interest. The catalog has seven verified token identities and twelve reviewed direct XLM directions. Margin now uses Peridot Testnet with one verified XLM/MockUSDT market; the customer trading workflow is still being integrated. SODAX stocks are mainnet-only; an alternative Testnet stock candidate remains blocked by stale onchain pricing and eligibility provenance. Unverified execution remains blocked. Public hosting and the submission video remain pending; deployment is deferred until the user finalizes localhost.
 
 ## Validation and deployment
 

@@ -15,21 +15,20 @@ Grapnel is a modular **B2B2C REST financial infrastructure platform**, not a con
 9. Customer chooses **Return Testnet Funds**. Grapnel prepares an actual customer-authorized Stellar transfer of available, unencumbered test assets to the verified demo treasury address, confirms chain result. This is **not a fiat off-ramp**.
 10. Activity and dashboard request logs show true provider and chain states. Public frontend/API URLs, public repo, video and transaction evidence are gathered for Devpost.
 
-## Seven business-selectable demo modules, two API groups
+## Six business-selectable demo modules, two API groups
 | Module ID | Name | Provider / execution | Priority |
 |---|---|---|---|
 | `capital.wallets` | Wallet Infrastructure | Privy Stellar Tier 2 + Stellar SDK | P0 account, balance, real signing |
 | `capital.testnet_funding` | Testnet Funding & Return | Stellar Friendbot for activation, Grapnel Testnet treasury for transfers | P0 fund and authorized return |
 | `capital.lending` | Lending, Borrowing & Yield | Blend v2 on Stellar Testnet | P0 actual supply/withdraw; P1 borrow/repay |
-| `trade.spot` | Crypto Spot | Soroswap + Stellar DEX / Aquarius as routed | P0 real testnet swap |
+| `trade.spot` | Crypto | Soroswap + Stellar DEX / Aquarius as routed | P0 real testnet swap |
 | `trade.stocks` | Tokenized Stocks | Testnet-only reference asset if approved; future SODAX route | P2; no real shares implied |
-| `trade.perps` | Perpetual Futures | Noether only where permitted | P2; no restricted access workaround |
-| `trade.commodities` | Commodity-linked Assets | Verified testnet token / issuer, spot routing | P2; demonstrative, not real bullion claims |
+| `trade.perps` | Margin Trading | Peridot Stellar Testnet XLM/MockUSDT | P2; customer workflow remains gated until accepted |
 
 **Dependency rule:** `capital.wallets` is required for Testnet funding/return, lending and trade writes. UI may auto-enable wallets; backend must enforce the dependency. Internal coordinator, reserve management and portfolio reconciliation remain noncommercial internals. No on/off-ramp, cross-chain, extended bridging, venue-funding, capital-router product or separate Ledger product for this hackathon.
 
 ## Availability and truthful demo representation
-Each module has tenant entitlement and actual provider execution state: `testnet_verified` | `discovery_only` | `blocked` | `simulation`. Real testnet funding is `testnet_verified` **only after a confirmed treasury transfer**; Friendbot XLM ≠ issued USDC. Business may enable an unready feature, but order buttons stay unavailable with a reason. P2 reference stock/commodity tokens must never be presented as real ownership/claims. No fake transaction hashes or positions.
+Each module has tenant entitlement and actual provider execution state: `testnet_verified` | `discovery_only` | `blocked` | `simulation`. Real testnet funding is `testnet_verified` **only after a confirmed treasury transfer**; Friendbot XLM ≠ issued USDC. Business may enable an unready feature, but order buttons stay unavailable with a reason. P2 reference stock tokens must never be presented as real ownership/claims. No fake transaction hashes or positions.
 
 ## Out of scope
 **No fiat on-ramp/off-ramp implementation**, MoneyGram, Privy Fiat Funding, banks/cards, simulated fiat balance/payout, live deposits, KYB/KYC integrations, real securities, production custodial services, mainnet transfers, cross-chain bridges, SDK/CLI/MCP, billing, broad blockchain wallet abstraction or custom smart contracts unless demonstrably needed. Testnet assets have no redemption or investment value. Variable yield is not guaranteed. Perps and investments involve real-world legal constraints outside this educational Testnet demo; I'm not a lawyer.

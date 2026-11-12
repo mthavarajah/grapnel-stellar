@@ -79,7 +79,7 @@ Read `docs/06_FUNDING.md` for operation state, test and threat controls.
 ## Spot and market discovery
 | Method | Path | Entitlement | Body/result |
 |---|---|---|---|
-| `GET` | `/v1/trade/markets?asset_class=crypto_spot|stocks|perps|commodities` | matching module | per market provider, asset IDs, executable boolean, reason |
+| `GET` | `/v1/trade/markets?asset_class=crypto_spot|stocks|perps` | matching module | per market provider, asset IDs, executable boolean, reason |
 | `GET` | `/v1/trade/markets/:id` | matching module | verified metadata, liquidity status |
 | `POST` | `/v1/trade/quotes` | matching module | `{customer_id, market_id, exact_in:{asset_id,amount}, slippage_bps:50}`; returns quote id, immutable amount/route, expiry |
 | `POST` | `/v1/trade/orders` | matching module | `{customer_id, quote_id, wallet_id}` with Idempotency-Key; creates operation awaiting signature |

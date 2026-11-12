@@ -55,7 +55,7 @@
 | Testnet funding | Friendbot XLM + confirmed treasury inventory | Implement real Testnet funding/return; no fiat feature is exposed |
 | Soroswap executable testnet | SDK advertises Testnet | Need real quote and confirmed trade, no automatic success |
 | Blend deploy IDs | Official repository lists IDs | Validate live RPC + reserve; test XLM/USDC asset distinction |
-| Tokenized stocks/perps/commodities | Protocol/product claims | Keep discovery-only and restrictions unless proven legal Testnet execution |
+| Tokenized stocks/margin | Protocol/product claims | Keep discovery-only and restrictions unless proven legal Testnet execution |
 | Notion detailed criteria | Not available | Reconcile only if user provides export; no invented rules |
 
 ## Change management for agents
@@ -78,5 +78,4 @@ Authenticated read of the current customer Stellar wallet returned a 66-characte
 ## Parallel provider recheck — Nov. 11, 2026, evening local time
 - Soroswap: fresh unsigned BTC→XLM customer-address quote/build/enforce passed at ledger 5685899. No signature or submission; actual reverse execution remains a customer acceptance item. See `apps/api/src/adapters/soroswap/research/CRYPTO_FINISH_AUDIT.md`.
 - Stocks: public Testnet reads at ledger 5685880 confirmed the funded candidate vault but stale onchain pricing and unresolved eligibility provenance; SODAX stock routes remain mainnet-only. Verifier bytecode/configuration bindings are now checked. See `apps/api/src/adapters/stocks/execution/HANDOFF.md`.
-- Commodities: current authenticated catalog is mainnet; Testnet XAUM had no live contract instance at ledger 5685902 and the exact quote returned HTTP 400 with zero routes. See `apps/api/src/adapters/commodities/research/current-review.json`.
 - Peridot: the separate generated QA signer completed the actual normal Margin roundtrip, including atomic close, collateral return and receipt withdrawal. Final transaction `96fee4b166a406bebff02cd1791c1da0898ec6b913bc3e3e4912d42bbbe94ae3` independently returned `successful:true` from Testnet Horizon at ledger 5685880, fee 35963 stroops. The full manifest verifier passes; this is not customer Privy proof. New customer exposure remains blocked pending expired-swapped recovery and pre-begin/cancel-only exit handling. See `apps/api/src/adapters/peridot/customer/research/real-roundtrip-verification.json`.

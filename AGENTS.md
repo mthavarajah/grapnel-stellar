@@ -26,7 +26,7 @@ An AI coding assistant with no multi-agent runner must execute these waves in de
 7. `docs/11_TESTS_SECURITY.md`, `docs/12_DEPLOY_SUBMISSION.md`, `docs/13_SOURCES.md`
 
 ## Fixed product boundaries
-**Capital selectable modules:** `capital.wallets`, `capital.testnet_funding` (real treasury-backed Testnet fund/return), `capital.lending` (Blend supply/withdraw/borrow/repay). **Trade selectable modules:** `trade.spot`, `trade.stocks`, `trade.perps`, `trade.commodities`. Internal operation coordinator, reservations, portfolio reconciler and Stellar execution service are NOT separate products. No cross-chain module, extended bridge, or standalone venue-funding module for this demo. No SDK, CLI, MCP, billing, fiat on/off-ramps, MoneyGram/Privy Funding, production KYC, mainnet transfers or custom Grapnel smart contracts unless submission is otherwise impossible.
+**Capital selectable modules:** `capital.wallets`, `capital.testnet_funding` (real treasury-backed Testnet fund/return), `capital.lending` (Blend supply/withdraw/borrow/repay). **Trade selectable modules:** `trade.spot`, `trade.stocks`, `trade.perps`. Internal operation coordinator, reservations, portfolio reconciler and Stellar execution service are NOT separate products. No cross-chain module, extended bridge, or standalone venue-funding module for this demo. No SDK, CLI, MCP, billing, fiat on/off-ramps, MoneyGram/Privy Funding, production KYC, mainnet transfers or custom Grapnel smart contracts unless submission is otherwise impossible.
 
 ## Mandatory behavioral invariants
 1. **Testnet only** for any onchain write. Explicit network passphrase `Test SDF Network ; September 2015`; fail closed on mismatched network or issuer. No mainnet secret or transaction path.

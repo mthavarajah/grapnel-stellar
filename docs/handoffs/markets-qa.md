@@ -16,7 +16,7 @@ Coverage:
 - `202` creates an awaiting-approval operation, and identical idempotent order requests recover the same ID. A second order using the same quote is rejected.
 - Approval binds exact transaction hash to the customer's Ed25519 signature and a one-use action token; a foreign signature and replay are rejected.
 - Pending RPC state never yields a completed order or a fill; the same persisted hash is polled without a second send. Even mocked RPC success remains confirming if balance-delta verification fails.
-- Stocks, perps and commodities return no fabricated market records or fills.
+- Unconfigured stocks and perps return no fabricated market records or fills.
 
 ## Commands
 
@@ -51,6 +51,6 @@ This is quote/build availability only. It does not establish safe provider-XDR a
 
 ## Other market categories
 
-The current REST routes return empty lists for stocks, perps and commodities. Repository source review (`docs/09_OTHER_ASSETS.md`, `docs/13_SOURCES.md`) records no verified eligible Stellar Testnet stock/SODAX or commodity route, while Noether trading needs beta access and records an Ontario restriction. This QA task did not attempt access circumvention or claim a fresh legal/eligibility determination. These categories should remain unavailable until a separately approved and verified route exists.
+The current REST routes return empty lists for stocks and perps. Repository source review (`docs/09_OTHER_ASSETS.md`, `docs/13_SOURCES.md`) records no verified eligible Stellar Testnet stock/SODAX route, while Noether trading needs beta access and records an Ontario restriction. This QA task did not attempt access circumvention or claim a fresh legal/eligibility determination. These categories should remain unavailable until a separately approved and verified route exists.
 
 No production defects were found in the covered HTTP/service boundaries. Re-run the harness after lead integration, and add the Spot inspector's focused tests when its exported API lands. Fixture success never fills `evidence/testnet.json`.
