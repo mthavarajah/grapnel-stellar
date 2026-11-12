@@ -9,11 +9,12 @@ test.beforeEach(async({context})=>{
  await context.route('**/*',route=>new URL(route.request().url()).origin===allowed?route.continue():route.abort('blockedbyclient'));
 });
 const now=new Date().toISOString();
+const perpsId=(symbol:string)=>`hyperliquid-testnet:perps:${({BTC:0,ETH:1,SOL:2} as Record<string,number>)[symbol]}`;
 const market=(symbol:string,price:string|null,status:'current'|'stale'|'unavailable')=>({
- market_id:`stellar-testnet:noether:${symbol}-PERP`,label:`${symbol}-PERP`,asset_class:'perps',module:'trade.perps',provider:'noether',network:'stellar-testnet',
+ market_id:perpsId(symbol),label:`${symbol}-PERP`,asset_class:'perps',module:'trade.perps',provider:'hyperliquid',network:'hyperliquid-testnet',
  underlying:{symbol,name:symbol==='BTC'?'Bitcoin':symbol==='ETH'?'Ethereum':'Solana',display_decimals:8},reference_price:price,reference_price_atomic:price===null?null:price.replace('.',''),price_decimals:7,price_status:status,
- oracle_timestamp:price===null?null:new Date(Date.now()-(status==='stale'?600000:1000)).toISOString(),oracle_age_seconds:status==='stale'?600:status==='current'?1:null,observed_at:now,source_url:'https://example.invalid/isolated-public-reference',execution_status:'discovery_only',executable:false,reason:'REGION_RESTRICTED',reason_message:'Trading is unavailable for this account.',
- stats:{open_interest_long_atomic:'100000000',open_interest_short_atomic:'50000000',open_interest_net_atomic:'50000000',open_positions:3,volume_24h_atomic:'2000000000',capacity:null},
+ oracle_timestamp:price===null?null:new Date(Date.now()-(status==='stale'?600000:1000)).toISOString(),oracle_age_seconds:status==='stale'?600:status==='current'?1:null,observed_at:now,source_url:'https://example.invalid/isolated-public-reference',execution_status:'discovery_only',executable:false,reason:'HYPERLIQUID_TESTNET_EXECUTION_UNVERIFIED',reason_message:'Trading is not available yet.',
+ min_leverage:1,max_leverage:40,settlement_asset:{code:'USDC',decimals:6,network:'hyperliquid-testnet'},perpetuals_stats:{mark_price:price,oracle_price:price,mid_price:price,previous_day_price:'74000',funding_rate:'0.0000125',open_interest:'25.5',day_notional_volume:'20000',day_base_volume:'250',premium:'0.0001'},
 });
 const markets=[market('BTC','74500.1234567','current'),market('ETH','2400.7500000','stale'),market('SOL',null,'unavailable')];
 // Captured public SODAX catalog identities only; these are mainnet metadata,
@@ -26,15 +27,15 @@ async function selectMarket(page:Page,symbol:string){
 }
 
 const history=(id:string,range:string)=>{
- const symbol=id.includes('BTC')?'BTC':id.includes('ETH')?'ETH':id.includes('CAZSFD')?'AAPL':'NVDA';
+ const symbol=id===perpsId('BTC')?'BTC':id===perpsId('ETH')?'ETH':id===perpsId('SOL')?'SOL':id.includes('CAZSFD')?'AAPL':'NVDA';
  const price=({BTC:'74500.1234567',ETH:'2400.7500000',AAPL:'190.12',NVDA:'150.34'} as Record<string,string>)[symbol];
  const span=({live:60000,'1d':86400000,'1w':604800000,'1m':2592000000,'1y':31536000000,all:63072000000} as Record<string,number>)[range]??60000;
  const stock=id.startsWith('sodax:catalog:');
- return {market_id:id,base_asset_id:id,base_symbol:symbol,quote_symbol:'USD',latest_price:price,as_of:now,price_basis:stock?'underlying_equity_reference':'oracle_reference',source_url:'https://example.invalid/isolated-price-history',interval:range,
+ return {market_id:id,base_asset_id:id,base_symbol:symbol,quote_symbol:stock?'USD':'USDC',latest_price:price,as_of:now,price_basis:stock?'underlying_equity_reference':'oracle_reference',source_url:'https://example.invalid/isolated-price-history',interval:range,
  points:[{timestamp:new Date(Date.parse(now)-span).toISOString(),price:stock?'140':'2390'},{timestamp:new Date(Date.parse(now)-Math.round(span*0.73)).toISOString(),price:stock?'147.1234567':'2401.1234567'},{timestamp:now,price}],change_absolute:'10.34',change_percent:'0.67',
  ...(stock?{metrics:{day_high:'194.12',day_low:'140.5',day_volume:'20000',fifty_two_week_high:'230.5',fifty_two_week_low:'100.25',previous_close:'148.95',market_time:now}}:{})};
 };
-async function fixture(page:Page,{allCategories=false,historyFailure=false,holdBtc=false,stockCatalog=false,stockHistory=false}={}){
+async function fixture(page:Page,{allCategories=false,historyFailure=false,holdBtc=false,stockCatalog=false,stockHistory=false,retiredVenues=false}={}){
  const calls={writes:[] as string[],histories:[] as {market_id:string;range:string}[],categories:[] as string[]};
  let pendingBtc:Route|undefined;let marketFailure=false;
  await page.route(origin+'/api/**',async route=>{
@@ -45,20 +46,21 @@ async function fixture(page:Page,{allCategories=false,historyFailure=false,holdB
   else if(path.endsWith('/status'))data={grapnel_configured:true,privy_configured:true,session_configured:true};
   else if(path.endsWith('/capabilities'))data={capabilities:[{module:'capital.wallets',enabled:true,execution_status:'testnet_verified'},{module:'trade.perps',enabled:true,execution_status:'discovery_only'},...['spot','stocks'].map(module=>({module:'trade.'+module,enabled:allCategories,execution_status:'blocked'}))]};
   else if(path.endsWith('/operations'))data={operations:[]};
-  else if(path.endsWith('/markets')){const category=url.searchParams.get('asset_class')??'crypto_spot';calls.categories.push(category);if(category==='perps'&&marketFailure)return route.fulfill({status:503,json:{error:{code:'MARKET_UNAVAILABLE',message:'Current market read failed'}}});data=category==='perps'?markets:category==='stocks'&&stockCatalog?stocks.map(stock=>({...stock,history_available:stockHistory})):[];}
+  else if(path.endsWith('/balances'))data=[{asset_id:'stellar-testnet:classic:USDC:GATALTGTWIOT6BUDBCZM3Q4OQ4BO2COLOAZ7IYSKPLC2PMSOPPGF5V56',wallet_amount:'999',spendable:'998'},{asset_id:'stellar-testnet:soroban:retired-mock-usdt',wallet_amount:'888',spendable:'887'}];
+  else if(path.endsWith('/markets')){const category=url.searchParams.get('asset_class')??'crypto_spot';calls.categories.push(category);if(category==='perps'&&marketFailure)return route.fulfill({status:503,json:{error:{code:'MARKET_UNAVAILABLE',message:'Current market read failed'}}});data=category==='perps'?[...markets,...retiredVenues?[{...market('SOL','0.15','current'),market_id:'stellar-testnet:peridot:XLM-USDT-MARGIN',provider:'peridot',network:'stellar-testnet',underlying:{symbol:'XLM',name:'Stellar Lumens'},executable:true},{...market('SOL','1','current'),market_id:'stellar-testnet:noether:DOGE-PERP',provider:'noether',network:'stellar-testnet',underlying:{symbol:'DOGE',name:'Dogecoin'},executable:true}]:[]]:category==='stocks'&&stockCatalog?stocks.map(stock=>({...stock,history_available:stockHistory})):[];}
   else if(path.endsWith('/market-history')){
    const id=url.searchParams.get('market_id')!,range=url.searchParams.get('range')!;calls.histories.push({market_id:id,range});
    if(historyFailure)return route.fulfill({status:503,json:{error:{code:'HISTORY_UNAVAILABLE',message:'History is temporarily unavailable'}}});
-   if(holdBtc&&id.includes('BTC')){pendingBtc=route;return;}
+   if(holdBtc&&id===perpsId('BTC')){pendingBtc=route;return;}
    data=history(id,range);
   }
   return route.fulfill({json:{data}});
  });
  await page.goto(origin+'/markets');
- await expect(page.getByTestId('markets-category-perps')).toBeVisible();
+ await expect(page.getByTestId('markets-category-perps')).toHaveText('Perpetuals');
  if(!await page.getByTestId('markets-category-perps').evaluate(button=>button.classList.contains('selected')))await page.getByTestId('markets-category-perps').click();
  await expect(page.getByTestId('perps-market-detail')).toBeVisible();
- return {calls,setMarketFailure:(value:boolean)=>{marketFailure=value;},releaseBtc:async()=>{if(pendingBtc)await pendingBtc.fulfill({json:{data:history('stellar-testnet:noether:BTC-PERP','live')}});}};
+ return {calls,setMarketFailure:(value:boolean)=>{marketFailure=value;},releaseBtc:async()=>{if(pendingBtc)await pendingBtc.fulfill({json:{data:history(perpsId('BTC'),'live')}});}};
 }
 
 test('entitlements hide unavailable categories while public perps remain view-only',async({page})=>{
@@ -70,20 +72,20 @@ test('entitlements hide unavailable categories while public perps remain view-on
  await expect(page.getByTestId('markets-category-commodities')).toHaveCount(0);
  await selectMarket(page,'BTC');
  const detail=page.getByTestId('perps-market-detail');await expect(detail).toContainText('BTC');await expect(detail).toContainText('74,500');await expect(detail).toContainText('Current price');
- const order=page.getByTestId('market-order-card');await expect(order.getByRole('button',{name:'Trading unavailable',exact:true})).toBeDisabled();
+ const order=page.getByTestId('market-order-card');await expect(order.getByRole('button',{name:'Review BTC perpetual order',exact:true})).toBeDisabled();
  await expect(page.getByRole('button',{name:'Get quote',exact:true})).toHaveCount(0);
- await order.getByRole('button',{name:'Trading unavailable',exact:true}).evaluate((button:HTMLButtonElement)=>button.click());
+ await order.getByRole('button',{name:'Review BTC perpetual order',exact:true}).evaluate((button:HTMLButtonElement)=>button.click());
  expect(calls.writes).toEqual([]);expect(calls.categories.every(category=>category==='perps')).toBe(true);
 });
 
 test('selection and history ranges stay bound to the chosen perpetual market',async({page})=>{
  const {calls}=await fixture(page);await selectMarket(page,'BTC');
  await page.getByRole('group',{name:'Price timeframe'}).getByRole('button',{name:'1D',exact:true}).click();
- await expect.poll(()=>calls.histories.some(h=>h.market_id==='stellar-testnet:noether:BTC-PERP'&&h.range==='1d')).toBe(true);
+ await expect.poll(()=>calls.histories.some(h=>h.market_id===perpsId('BTC')&&h.range==='1d')).toBe(true);
  await expect(page.getByRole('img',{name:'Price history',exact:true})).toBeVisible();
  await selectMarket(page,'ETH');
  await expect(page.getByTestId('perps-market-detail')).toContainText('ETH');await expect(page.getByTestId('perps-market-detail')).toContainText('Price delayed');
- await expect.poll(()=>calls.histories.some(h=>h.market_id==='stellar-testnet:noether:ETH-PERP')).toBe(true);
+ await expect.poll(()=>calls.histories.some(h=>h.market_id===perpsId('ETH'))).toBe(true);
  if(!await page.getByTestId('market-search').isVisible())await page.getByTestId('market-browse-toggle').click();
  await page.getByTestId('market-search').fill('BTC');await expect(page.getByTestId('market-option-ETH')).toHaveCount(0);await expect(page.getByTestId('market-option-BTC')).toBeVisible();
  expect(calls.writes).toEqual([]);
@@ -93,13 +95,13 @@ test('missing public prices and failed history never fabricate a chart or execut
  const {calls}=await fixture(page,{historyFailure:true});await selectMarket(page,'SOL');
  await expect(page.getByTestId('perps-market-detail')).toContainText('Price unavailable');
  await expect(page.getByRole('img',{name:'Price history',exact:true})).toHaveCount(0);
- await expect(page.getByTestId('market-order-card').getByRole('button',{name:'Trading unavailable',exact:true})).toBeDisabled();
+ await expect(page.getByTestId('market-order-card').getByRole('button',{name:'Review SOL perpetual order',exact:true})).toBeDisabled();
  expect(calls.writes).toEqual([]);
 });
 
 test('late history from a previous selection cannot overwrite the selected market',async({page})=>{
  const {calls,releaseBtc}=await fixture(page,{holdBtc:true});await selectMarket(page,'BTC');
- await expect.poll(()=>calls.histories.some(h=>h.market_id.includes('BTC'))).toBe(true);
+ await expect.poll(()=>calls.histories.some(h=>h.market_id===perpsId('BTC'))).toBe(true);
  await selectMarket(page,'ETH');await expect(page.getByTestId('perps-market-detail')).toContainText('ETH');
  await releaseBtc();await expect(page.getByTestId('perps-market-detail')).toContainText('ETH');await expect(page.getByTestId('perps-market-detail')).not.toContainText('74,500');
  expect(calls.writes).toEqual([]);
@@ -199,11 +201,11 @@ test('stock chart pointer snaps to an exact irregular source sample and a new ho
 test('perpetual chart keyboard traverses only exact samples including first and last',async({page})=>{
  const {calls}=await fixture(page);await selectMarket(page,'ETH');
  const chart=page.getByTestId('price-chart');await expect(chart).toBeVisible();await chart.focus();
- const samples=history('stellar-testnet:noether:ETH-PERP','live').points;
- await chart.press('Home');await expectChartSample(page,samples[0]!);
- await chart.press('ArrowRight');await expectChartSample(page,samples[1]!);
- await chart.press('End');await expectChartSample(page,samples[2]!);
- await chart.press('ArrowLeft');await expectChartSample(page,samples[1]!);
+ const samples=history(perpsId('ETH'),'live').points;
+ await chart.press('Home');await expectChartSample(page,samples[0]!,'USDC');
+ await chart.press('ArrowRight');await expectChartSample(page,samples[1]!,'USDC');
+ await chart.press('End');await expectChartSample(page,samples[2]!,'USDC');
+ await chart.press('ArrowLeft');await expectChartSample(page,samples[1]!,'USDC');
  await page.getByTestId('market-search').focus();await expect(page.getByTestId('price-chart-tooltip')).toHaveCount(0);
  expect(calls.writes).toEqual([]);
 });
@@ -219,4 +221,14 @@ test.describe('touch chart interaction',()=>{
   await expect.poll(()=>page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
   await page.screenshot({path:test.info().outputPath('stock-chart-touch.png'),fullPage:true});expect(calls.writes).toEqual([]);
  });
+});
+
+// Retirement regression replaces the removed Peridot setup/funding page fixtures.
+test('retired margin venues cannot render new setups or reuse Stellar token balances',async({page})=>{
+ const {calls}=await fixture(page,{retiredVenues:true});await page.getByTestId('market-browse-toggle').click();
+ await expect(page.getByTestId('market-option-BTC')).toBeVisible();await expect(page.getByTestId('market-option-XLM')).toHaveCount(0);await expect(page.getByTestId('market-option-DOGE')).toHaveCount(0);
+ await expect(page.getByTestId('margin-workflow-card')).toHaveCount(0);await expect(page.getByTestId('margin-collateral-wallet')).toHaveCount(0);
+ const order=page.getByTestId('market-order-card');await expect(order).toContainText('Available trading balance: — USDC');await expect(order).not.toContainText('999');await expect(order).not.toContainText('888');await expect(order.getByRole('textbox',{name:'Order amount'})).toBeDisabled();
+ const review=order.getByRole('button',{name:'Review BTC perpetual order'});await expect(review).toHaveText('Review');await expect(review).toBeDisabled();await review.evaluate((button:HTMLButtonElement)=>button.click());
+ await expect(page.getByRole('dialog')).toHaveCount(0);expect(calls.writes).toEqual([]);expect(calls.histories.every(call=>call.market_id.startsWith('hyperliquid-testnet:perps:'))).toBe(true);await expect(page.locator('body')).not.toContainText(/Mock USDT|Peridot|Noether|Margin setup/);
 });
