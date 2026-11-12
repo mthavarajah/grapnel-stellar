@@ -3,12 +3,17 @@ import type {PreparedAction} from '@grapnel/contracts';
 import type {UnsignedCctpEvmAction,CctpSourceBurnProof,CctpDestinationMintProof,CctpCoreDepositTransferProof} from '../../adapters/cctp/destination.js';
 import type {PerpetualScope} from './workflow-contract.js';
 export type CctpFundingStep='cctp.receive'|'core.approve'|'core.deposit';
+export interface CctpCoreCreditProof {
+ network:'hyperliquid-testnet';operationId:string;businessId:string;customerId:string;walletId:string;
+ accountAddress:`0x${string}`;depositTxHash:`0x${string}`;amountAtomic6:string;ledgerHash:`0x${string}`;
+ balanceBeforeAtomic6:string;balanceAfterAtomic6:string;confirmed:true;
+}
 export interface CctpFundingRecord {
  id:string;scope:PerpetualScope;accountId:string;accountAddress:`0x${string}`;amountAtomic7:string;
  state:'awaiting_source'|'source_pending'|'attesting'|'destination_pending'|'core_pending'|'completed'|'recovery_required';
  source:PreparedAction;sourceTxHash:string|null;sourceProof:CctpSourceBurnProof|null;
  messageHex:`0x${string}`|null;attestationHex:`0x${string}`|null;mintProof:CctpDestinationMintProof|null;
- depositProof:CctpCoreDepositTransferProof|null;coreProof:Record<string,unknown>|null;
+ depositProof:CctpCoreDepositTransferProof|null;coreProof:CctpCoreCreditProof|null;
  createdAt:string;
 }
 export interface CctpStageRecord {
