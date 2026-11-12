@@ -130,3 +130,10 @@ describe('Customer-scoped valuation route boundaries (offline fixtures)',()=>{
   const f=await routeHarness();expect((await f.app.inject(f.walletUrl+'&amount=10000')).statusCode).toBe(422);expect((await f.app.inject('/v1/capital/wallets/not-a-wallet/valuation?customer_id='+f.context.customerId)).statusCode).toBe(422);expect(f.balances).not.toHaveBeenCalled();expect(f.price).not.toHaveBeenCalled();
  });
 });
+
+it('returns exact per-asset USD rows without pricing reserved or protocol balances twice',async()=>{
+ const f=await routeHarness(),response=await f.app.inject(f.walletUrl);
+ expect(response.statusCode).toBe(200);
+ expect(response.json().data.assets).toEqual([{asset_id:XLM.id,wallet_amount:'1',value_usd:'0.5'}]);
+ expect(f.price).toHaveBeenCalledTimes(1);
+});
