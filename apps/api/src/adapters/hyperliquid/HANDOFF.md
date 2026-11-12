@@ -1,0 +1,37 @@
+# Hyperliquid Testnet readonly adapter handoff
+
+## Scope and sources
+
+`HyperliquidTestnetReader.readMarkets()` verifies the fixed HyperEVM RPC reports chain998, then calls fixed `https://api.hyperliquid-testnet.xyz/info` with `{ "type": "metaAndAssetCtxs" }`. These are auth-free **reads**, despite the provider's JSON-RPC/Info transport using HTTP POST. There is no mainnet request, exchange request, signer, order, approval, bridge, account query or financial-write method.
+
+The first/native perpetual DEX universe is returned in original index order, including delisted entries. Context count and unique names are checked; amount/price/funding metrics remain exact source decimal strings, optional absent values remain null. Delisted flags follow provider semantics (omitted means false). No stock-share/commodity classification, fabricated prices or executable capability is inferred. HIP-3 DEX discovery is not implemented or represented as covered.
+
+Primary schema source: https://hyperliquid.gitbook.io/hyperliquid-docs/for-developers/api/info-endpoint/perpetuals . Network source: https://hyperliquid.gitbook.io/hyperliquid-docs/for-developers/hyperevm . API docs often show the mainnet hostname as an example; this adapter never uses it.
+
+## Freshness / bounded responses
+
+Every call has an8second native AbortSignal deadline, no cache or credentials, and redirects rejected. Responses must be JSON and at most2MiB (both declared-size and streaming cap checked). HTTP Date, when supplied, must be no more than60seconds old or30seconds in the future. Requests exceeding the elapsed deadline fail even if a test transport ignores abort. Metadata supports at most2048 entries. Wrong chain, missing or mismatched contexts, duplicate markets, malformed decimals, numeric JSON amounts and missing required metrics fail closed.
+
+`source.receivedAt` and HTTP Date are transport observations. The source endpoint supplies no per-market oracle timestamp, so `providerMarketTimestamp` remains null; this reader does **not** attest to oracle freshness from HTTP receipt alone.
+
+## Actual live read (single probe)
+
+`research/testnet-markets.json` was created by one live `readMarkets()` invocation at **2026-11-12T03:50:34.483Z** (November11 Toronto). Chain ID returned0x3e6. Info returned **213** entries, **54** delisted. Example SOL: mark83.174, oracle83.355, funding0.0000125, openInterest10136.3, dayNotionalVolume548270.28688, all preserved as strings. Result remains `discovery_only`, `executable:false`.
+
+```sh
+pnpm exec vitest run apps/api/src/adapters/hyperliquid/reader.test.ts
+pnpm exec tsx apps/api/src/adapters/hyperliquid/research/probe-readonly.ts
+```
+
+**18 tests passed**, and isolated strict TypeScript checking passed for all four TS files. Full API typecheck in this older worktree is affected by existing `trade.commodities` references in app/runtime/routes against the concurrently updated shared contract package (module removed by lead); no shared code was changed by this adapter. Re-run full API checks after lead integration.
+
+## Funding / access requirements are not solved by this reader
+
+See `docs/research/hyperliquid-testnet.md` for source-backed review. Most consequential facts:
+
+- Circle now documents **Stellar Testnet domain27 → HyperEVM Testnet domain19 → CoreDepositWallet → HyperCore**. This is a possible real bridge workflow, not locally verified execution. Chain998 is the EVM; perps/fills/positions live on HyperCore.
+- **Circle's Testnet HyperCore recipient must already exist on HyperCore mainnet; it can receive at most1000testUSDC, and addresses without mainnet state can fail silently.** Do not automatically activate mainnet or ask the customer to make a mainnet deposit. Need an already eligible account or provider-supported exception/activation. Official source: https://developers.circle.com/cctp/concepts/cctp-on-hypercore . Official faucet likewise requires prior same-address mainnet deposit: https://hyperliquid.gitbook.io/hyperliquid-docs/onboarding/testnet-faucet .
+- Use Circle Stellar USDC issuer `GBBD47IF6LWK7P7MDEVSCWR7DPUWV3NY3DTQEVFL4NAT4AQH3ZLLFLA5`, not the current Blend USDC issuer by symbol. HyperEVM Testnet Circle USDC is `0x2B3370eE501B4a559b57D449569354196457D8Ab`; legacy mockUSDC2 is a different asset. Verify exact current contracts and attestation routing before writes.
+- An independent Stellar treasury payout after trading separate HyperCore funds is **treasury conversion/settlement**, not proof the original asset bridged. Need actual funded inventories, capped liabilities, customer approvals and separate deposit/fill/PnL/payout evidence.
+- Current official Interface terms exclude Ontario and ship in Testnet frontend; they do not clearly establish an API/Testnet exemption or blanket protocol prohibition. Clarify allowed automated Testnet/integrator use with provider. This reader neither bypasses restrictions nor turns public data into trading permission.
+- A user-owned EVM signer or explicitly approved Testnet agent wallet is separate from the Stellar Ed25519 wallet and business API key. Funding, exact intent signing, cancellation, close-only safety, reconciliation and customer UI remain lead-owned future integration. No execution acceptance is claimed.
