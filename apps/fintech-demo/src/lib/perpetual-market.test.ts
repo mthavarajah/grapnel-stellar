@@ -23,8 +23,8 @@ describe('recognized customer catalog',()=>{
   expect(isRecognizedDerivativeMarket({...market,provider_symbol:'BTC'},'perps')).toBe(true);
   expect(isRecognizedDerivativeMarket({...market,provider_symbol:'xyz:AAPL'},'perps')).toBe(true);
  });
- it('excludes unfamiliar prefixed listings without substituting same-ticker artwork',()=>{
-  expect(isRecognizedDerivativeMarket({...market,provider_symbol:'text:AAPL',underlying:{symbol:'AAPL'}},'perps')).toBe(false);
-  expect(isRecognizedDerivativeMarket({...market,provider_symbol:'nq:TEST'},'perps')).toBe(false);
+ it('includes all source-qualified listings even without curated artwork',()=>{
+  expect(isRecognizedDerivativeMarket({...market,provider_symbol:'text:AAPL',underlying:{symbol:'AAPL'}},'perps')).toBe(true);
+  expect(isRecognizedDerivativeMarket({...market,provider_symbol:'nq:TEST'},'perps')).toBe(true);
  });
 });

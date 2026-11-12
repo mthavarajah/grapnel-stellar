@@ -1,0 +1,5333 @@
+{
+  "checked_at": "2026-11-12T22:17:20.277Z",
+  "provider": "hyperliquid",
+  "network": "hyperliquid-testnet",
+  "source": {
+    "infoUrl": "https://api.hyperliquid-testnet.xyz/info",
+    "receivedAt": "2026-11-12T22:17:19.471Z",
+    "cacheExpiresAt": "2026-11-12T22:18:19.009Z",
+    "metadataCacheTtlMs": 60000,
+    "metricAvailability": "not_requested",
+    "providerMarketTimestamp": null,
+    "observations": [
+      {
+        "type": "perpDexs",
+        "receivedAt": "2026-11-12T22:17:19.009Z",
+        "httpDate": "Thu, 12 Nov 2026 22:17:18 GMT"
+      },
+      {
+        "type": "allPerpMetas",
+        "receivedAt": "2026-11-12T22:17:19.440Z",
+        "httpDate": "Thu, 12 Nov 2026 22:17:18 GMT"
+      },
+      {
+        "type": "spotMeta",
+        "receivedAt": "2026-11-12T22:17:19.471Z",
+        "httpDate": "Thu, 12 Nov 2026 22:17:18 GMT"
+      },
+      {
+        "type": "perpConciseAnnotations",
+        "receivedAt": "2026-11-12T22:17:18.751Z",
+        "httpDate": "Thu, 12 Nov 2026 22:17:18 GMT"
+      }
+    ],
+    "annotationMeaning": "provider_declared_not_verified_ownership_or_eligibility"
+  },
+  "source_slots": 1008,
+  "active_market_count": 658,
+  "delisted_count": 350,
+  "dex_count": 279,
+  "collateral_counts": {
+    "usdc": 553,
+    "other": 105,
+    "unresolved": 0
+  },
+  "sample": {
+    "symbol": "BTC",
+    "mark_price": "73154.0",
+    "candles": 97
+  },
+  "accounts": [
+    {
+      "address": "0x80bd216c39869cec85e37ee37c020530d144799a",
+      "withdrawable": "0.0",
+      "account_value": "0.0",
+      "position_count": 0
+    },
+    {
+      "address": "0x023274335f7e2ae6102f8a1c987378d896177699",
+      "withdrawable": "0.0",
+      "account_value": "0.0",
+      "position_count": 0
+    }
+  ],
+  "execution_verified": false,
+  "open_order": null,
+  "close_order": null,
+  "markets": [
+    {
+      "market_id": "hyperliquid-testnet:perps:0",
+      "symbol": "SOL",
+      "dex": "",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:1",
+      "symbol": "APT",
+      "dex": "",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 3
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:2",
+      "symbol": "ATOM",
+      "dex": "",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:3",
+      "symbol": "BTC",
+      "dex": "",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 40
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:4",
+      "symbol": "ETH",
+      "dex": "",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 25
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:6",
+      "symbol": "BNB",
+      "dex": "",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:7",
+      "symbol": "AVAX",
+      "dex": "",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:8",
+      "symbol": "GMT",
+      "dex": "",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 2
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:9",
+      "symbol": "DYDX",
+      "dex": "",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 20
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:10",
+      "symbol": "APE",
+      "dex": "",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 5
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:11",
+      "symbol": "OP",
+      "dex": "",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:12",
+      "symbol": "kPEPE",
+      "dex": "",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:13",
+      "symbol": "ARB",
+      "dex": "",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:15",
+      "symbol": "WLD",
+      "dex": "",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:18",
+      "symbol": "COMP",
+      "dex": "",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 5
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:21",
+      "symbol": "AAVE",
+      "dex": "",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:22",
+      "symbol": "SNX",
+      "dex": "",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:24",
+      "symbol": "LDO",
+      "dex": "",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 5
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:25",
+      "symbol": "SUI",
+      "dex": "",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:26",
+      "symbol": "INJ",
+      "dex": "",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:27",
+      "symbol": "STX",
+      "dex": "",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:29",
+      "symbol": "kSHIB",
+      "dex": "",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:32",
+      "symbol": "ZRO",
+      "dex": "",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:34",
+      "symbol": "BANANA",
+      "dex": "",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 3
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:36",
+      "symbol": "TRB",
+      "dex": "",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 5
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:38",
+      "symbol": "BIGTIME",
+      "dex": "",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 3
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:40",
+      "symbol": "KAS",
+      "dex": "",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 5
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:41",
+      "symbol": "BLUR",
+      "dex": "",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:42",
+      "symbol": "TIA",
+      "dex": "",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:43",
+      "symbol": "BSV",
+      "dex": "",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:45",
+      "symbol": "ADA",
+      "dex": "",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:46",
+      "symbol": "MINA",
+      "dex": "",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:47",
+      "symbol": "POLYX",
+      "dex": "",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:48",
+      "symbol": "GAS",
+      "dex": "",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:50",
+      "symbol": "PENDLE",
+      "dex": "",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:52",
+      "symbol": "FET",
+      "dex": "",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:54",
+      "symbol": "NEAR",
+      "dex": "",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 20
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:55",
+      "symbol": "MEME",
+      "dex": "",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:56",
+      "symbol": "ORDI",
+      "dex": "",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:58",
+      "symbol": "NEO",
+      "dex": "",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 20
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:59",
+      "symbol": "ZEN",
+      "dex": "",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:60",
+      "symbol": "FIL",
+      "dex": "",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:61",
+      "symbol": "PYTH",
+      "dex": "",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:62",
+      "symbol": "RUNE",
+      "dex": "",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:63",
+      "symbol": "SUSHI",
+      "dex": "",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:66",
+      "symbol": "IMX",
+      "dex": "",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:67",
+      "symbol": "kBONK",
+      "dex": "",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 5
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:69",
+      "symbol": "SUPER",
+      "dex": "",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:71",
+      "symbol": "JUP",
+      "dex": "",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 5
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:73",
+      "symbol": "GALA",
+      "dex": "",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:74",
+      "symbol": "RSR",
+      "dex": "",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 5
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:75",
+      "symbol": "kLUNC",
+      "dex": "",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:76",
+      "symbol": "JTO",
+      "dex": "",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:77",
+      "symbol": "ACE",
+      "dex": "",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:78",
+      "symbol": "WIF",
+      "dex": "",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 5
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:79",
+      "symbol": "CAKE",
+      "dex": "",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:80",
+      "symbol": "PEOPLE",
+      "dex": "",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:81",
+      "symbol": "ENS",
+      "dex": "",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:82",
+      "symbol": "ETC",
+      "dex": "",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:83",
+      "symbol": "XAI",
+      "dex": "",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:84",
+      "symbol": "MANTA",
+      "dex": "",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:85",
+      "symbol": "UMA",
+      "dex": "",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:87",
+      "symbol": "ONDO",
+      "dex": "",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:88",
+      "symbol": "ALT",
+      "dex": "",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:89",
+      "symbol": "ZETA",
+      "dex": "",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:90",
+      "symbol": "DYM",
+      "dex": "",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:92",
+      "symbol": "W",
+      "dex": "",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 3
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:95",
+      "symbol": "TAO",
+      "dex": "",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:97",
+      "symbol": "AR",
+      "dex": "",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:99",
+      "symbol": "SAGA",
+      "dex": "",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 3
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:100",
+      "symbol": "MERL",
+      "dex": "",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 5
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:101",
+      "symbol": "HBAR",
+      "dex": "",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 5
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:102",
+      "symbol": "POPCAT",
+      "dex": "",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 5
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:104",
+      "symbol": "EIGEN",
+      "dex": "",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 5
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:105",
+      "symbol": "REZ",
+      "dex": "",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 5
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:106",
+      "symbol": "NOT",
+      "dex": "",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 5
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:107",
+      "symbol": "TURBO",
+      "dex": "",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 5
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:108",
+      "symbol": "IO",
+      "dex": "",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 5
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:109",
+      "symbol": "BRETT",
+      "dex": "",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 5
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:110",
+      "symbol": "ZK",
+      "dex": "",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 3
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:114",
+      "symbol": "RENDER",
+      "dex": "",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 5
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:116",
+      "symbol": "POL",
+      "dex": "",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:118",
+      "symbol": "CELO",
+      "dex": "",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 5
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:119",
+      "symbol": "HMSTR",
+      "dex": "",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 5
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:122",
+      "symbol": "kNEIRO",
+      "dex": "",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 5
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:123",
+      "symbol": "GOAT",
+      "dex": "",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 5
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:124",
+      "symbol": "MOODENG",
+      "dex": "",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 3
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:125",
+      "symbol": "PURR",
+      "dex": "",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 3
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:126",
+      "symbol": "GRASS",
+      "dex": "",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 3
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:127",
+      "symbol": "PNUT",
+      "dex": "",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 5
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:128",
+      "symbol": "XLM",
+      "dex": "",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 5
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:130",
+      "symbol": "SAND",
+      "dex": "",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 5
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:131",
+      "symbol": "ALGO",
+      "dex": "",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 5
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:132",
+      "symbol": "ICP",
+      "dex": "",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:133",
+      "symbol": "IOTA",
+      "dex": "",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 5
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:135",
+      "symbol": "HYPE",
+      "dex": "",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:136",
+      "symbol": "ME",
+      "dex": "",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 3
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:137",
+      "symbol": "MOVE",
+      "dex": "",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:138",
+      "symbol": "VIRTUAL",
+      "dex": "",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 5
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:139",
+      "symbol": "PENGU",
+      "dex": "",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 5
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:140",
+      "symbol": "USUAL",
+      "dex": "",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 5
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:141",
+      "symbol": "FARTCOIN",
+      "dex": "",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:142",
+      "symbol": "AIXBT",
+      "dex": "",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 5
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:145",
+      "symbol": "BIO",
+      "dex": "",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 5
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:146",
+      "symbol": "SPX",
+      "dex": "",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 5
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:147",
+      "symbol": "GRIFFAIN",
+      "dex": "",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 3
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:148",
+      "symbol": "S",
+      "dex": "",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 5
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:149",
+      "symbol": "MORPHO",
+      "dex": "",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 5
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:150",
+      "symbol": "TRUMP",
+      "dex": "",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:151",
+      "symbol": "ANIME",
+      "dex": "",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 12
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:152",
+      "symbol": "MELANIA",
+      "dex": "",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 3
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:154",
+      "symbol": "VVV",
+      "dex": "",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 3
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:157",
+      "symbol": "BERA",
+      "dex": "",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 5
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:159",
+      "symbol": "LAYER",
+      "dex": "",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 3
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:162",
+      "symbol": "KAITO",
+      "dex": "",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 5
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:164",
+      "symbol": "NIL",
+      "dex": "",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 5
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:165",
+      "symbol": "PAXG",
+      "dex": "",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:167",
+      "symbol": "BABY",
+      "dex": "",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 5
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:168",
+      "symbol": "WCT",
+      "dex": "",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 3
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:169",
+      "symbol": "HYPER",
+      "dex": "",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 3
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:170",
+      "symbol": "ZORA",
+      "dex": "",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 3
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:171",
+      "symbol": "INIT",
+      "dex": "",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 3
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:173",
+      "symbol": "DOGE",
+      "dex": "",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:175",
+      "symbol": "NXPC",
+      "dex": "",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 3
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:176",
+      "symbol": "SOPH",
+      "dex": "",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 3
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:177",
+      "symbol": "RESOLV",
+      "dex": "",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 3
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:178",
+      "symbol": "SYRUP",
+      "dex": "",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 3
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:179",
+      "symbol": "PUMP",
+      "dex": "",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:180",
+      "symbol": "PROVE",
+      "dex": "",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 3
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:182",
+      "symbol": "XPL",
+      "dex": "",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:183",
+      "symbol": "WLFI",
+      "dex": "",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 5
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:184",
+      "symbol": "LINEA",
+      "dex": "",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 3
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:185",
+      "symbol": "SKY",
+      "dex": "",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 3
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:186",
+      "symbol": "ASTER",
+      "dex": "",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 5
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:187",
+      "symbol": "AVNT",
+      "dex": "",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 5
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:188",
+      "symbol": "STBL",
+      "dex": "",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 3
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:189",
+      "symbol": "0G",
+      "dex": "",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 3
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:190",
+      "symbol": "HEMI",
+      "dex": "",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 3
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:191",
+      "symbol": "APEX",
+      "dex": "",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 3
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:192",
+      "symbol": "2Z",
+      "dex": "",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 3
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:194",
+      "symbol": "MON",
+      "dex": "",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 5
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:195",
+      "symbol": "MET",
+      "dex": "",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 3
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:196",
+      "symbol": "MEGA",
+      "dex": "",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 3
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:197",
+      "symbol": "CC",
+      "dex": "",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 3
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:198",
+      "symbol": "AERO",
+      "dex": "",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 3
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:199",
+      "symbol": "STABLE",
+      "dex": "",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 3
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:200",
+      "symbol": "FOGO",
+      "dex": "",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 3
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:201",
+      "symbol": "LIT",
+      "dex": "",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 5
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:202",
+      "symbol": "XMR",
+      "dex": "",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 5
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:203",
+      "symbol": "AXS",
+      "dex": "",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 5
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:204",
+      "symbol": "DASH",
+      "dex": "",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 5
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:205",
+      "symbol": "SKR",
+      "dex": "",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 3
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:206",
+      "symbol": "AZTEC",
+      "dex": "",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 3
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:207",
+      "symbol": "CHIP",
+      "dex": "",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 3
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:208",
+      "symbol": "GRAM",
+      "dex": "",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 5
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:209",
+      "symbol": "CASHCAT",
+      "dex": "",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 3
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:210",
+      "symbol": "PONS",
+      "dex": "",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 3
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:211",
+      "symbol": "USELESS",
+      "dex": "",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 5
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:212",
+      "symbol": "XTEN",
+      "dex": "",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 3
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:110000",
+      "symbol": "test:ABC",
+      "dex": "test",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 3
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:120000",
+      "symbol": "unit:ES",
+      "dex": "unit",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 20
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:130000",
+      "symbol": "scam:EUR",
+      "dex": "scam",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 50
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:130001",
+      "symbol": "scam:CHF",
+      "dex": "scam",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 1
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:140000",
+      "symbol": "felix:TEST",
+      "dex": "felix",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:140001",
+      "symbol": "felix:TSLA",
+      "dex": "felix",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 5
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:140002",
+      "symbol": "felix:TEST1",
+      "dex": "felix",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 3
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:140003",
+      "symbol": "felix:CRCL",
+      "dex": "felix",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 5
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:150000",
+      "symbol": "volmex:TEST",
+      "dex": "volmex",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 3
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:160000",
+      "symbol": "angry:TEST",
+      "dex": "angry",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 3
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:170000",
+      "symbol": "TOON:UPSIDE",
+      "dex": "TOON",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:170001",
+      "symbol": "TOON:PHISH",
+      "dex": "TOON",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 50
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:170002",
+      "symbol": "TOON:DOWNSIDE",
+      "dex": "TOON",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 50
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:180000",
+      "symbol": "VOLMEX:BVIV",
+      "dex": "VOLMEX",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:180001",
+      "symbol": "VOLMEX:$EVIV",
+      "dex": "VOLMEX",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:200000",
+      "symbol": "pluto:ABC",
+      "dex": "pluto",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 50
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:210000",
+      "symbol": "zigg:ZIGG",
+      "dex": "zigg",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 1
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:210001",
+      "symbol": "zigg:AAPL",
+      "dex": "zigg",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 50
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:220000",
+      "symbol": "i<3fl:TEST",
+      "dex": "i<3fl",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:230000",
+      "symbol": "KNETIQ:kHYPE",
+      "dex": "KNETIQ",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 50
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:240000",
+      "symbol": "knetiq:KNTQ",
+      "dex": "knetiq",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 50
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:250000",
+      "symbol": "ddot:ES",
+      "dex": "ddot",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 20
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:260002",
+      "symbol": "venone:VOAI",
+      "dex": "venone",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 3
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:260003",
+      "symbol": "venone:vANDRL",
+      "dex": "venone",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:270000",
+      "symbol": "tstdex:TESTCOIN",
+      "dex": "tstdex",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:280001",
+      "symbol": "vntls:vSPACEX",
+      "dex": "vntls",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 3
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:280006",
+      "symbol": "vntls:vANTHRPC",
+      "dex": "vntls",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:280008",
+      "symbol": "vntls:vKRAKEN",
+      "dex": "vntls",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:280017",
+      "symbol": "vntls:vPERPLXT",
+      "dex": "vntls",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:280018",
+      "symbol": "vntls:vBYTED",
+      "dex": "vntls",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 3
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:290000",
+      "symbol": "oracle:HB",
+      "dex": "oracle",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:300000",
+      "symbol": "hb:HB",
+      "dex": "hb",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:300001",
+      "symbol": "hb:BTC-29AUG25-120000-C",
+      "dex": "hb",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:300002",
+      "symbol": "hb:BTC-29AUG25-120000-P",
+      "dex": "hb",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:300003",
+      "symbol": "hb:BTC-26SEP25-120000-C",
+      "dex": "hb",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:300004",
+      "symbol": "hb:BTC-26SEP25-100000-P",
+      "dex": "hb",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:300005",
+      "symbol": "hb:GOLD",
+      "dex": "hb",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 50
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:300006",
+      "symbol": "hb:SILVER",
+      "dex": "hb",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 50
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:300007",
+      "symbol": "hb:BRENTCRUDEOIL",
+      "dex": "hb",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 50
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:300008",
+      "symbol": "hb:WTICRUDEOIL",
+      "dex": "hb",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 50
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:300009",
+      "symbol": "hb:COFFEE",
+      "dex": "hb",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:300010",
+      "symbol": "hb:SOYBEAN",
+      "dex": "hb",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:300011",
+      "symbol": "hb:COPPER",
+      "dex": "hb",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:300012",
+      "symbol": "hb:NG",
+      "dex": "hb",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:310000",
+      "symbol": "sports:JALLEN17",
+      "dex": "sports",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:320000",
+      "symbol": "aura:a2YY",
+      "dex": "aura",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 50
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:340000",
+      "symbol": "orange:TEST0",
+      "dex": "orange",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:350000",
+      "symbol": "sekai:TEST",
+      "dex": "sekai",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:360000",
+      "symbol": "flow:pXLP",
+      "dex": "flow",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:360001",
+      "symbol": "flow:pLily",
+      "dex": "flow",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:370000",
+      "symbol": "x:XYZ500",
+      "dex": "x",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 20
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:370001",
+      "symbol": "x:NVDA",
+      "dex": "x",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:370002",
+      "symbol": "x:TSLA",
+      "dex": "x",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:380000",
+      "symbol": "t:XYZ500",
+      "dex": "t",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 20
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:390000",
+      "symbol": "sekaw:BTC",
+      "dex": "sekaw",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:390001",
+      "symbol": "sekaw:ETH",
+      "dex": "sekaw",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:400000",
+      "symbol": "gpu:H100",
+      "dex": "gpu",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:410000",
+      "symbol": "qwerty:BTC",
+      "dex": "qwerty",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:420000",
+      "symbol": "merrli:BTC",
+      "dex": "merrli",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 40
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:430000",
+      "symbol": "dex:TICKER",
+      "dex": "dex",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 5
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:430001",
+      "symbol": "dex:BET",
+      "dex": "dex",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 1
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:430002",
+      "symbol": "dex:STREAMABCD************",
+      "dex": "dex",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 15
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:440000",
+      "symbol": "olvb:oHYPE",
+      "dex": "olvb",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:440001",
+      "symbol": "olvb:oPOLYMARKET",
+      "dex": "olvb",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:440002",
+      "symbol": "olvb:oBASE",
+      "dex": "olvb",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:450000",
+      "symbol": "nq:TEST",
+      "dex": "nq",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 3
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:450001",
+      "symbol": "nq:TEST1",
+      "dex": "nq",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 20
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:450002",
+      "symbol": "nq:TEST2",
+      "dex": "nq",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 20
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:460000",
+      "symbol": "fx:EUR",
+      "dex": "fx",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:470000",
+      "symbol": "nqz:TEST0",
+      "dex": "nqz",
+      "collateral": "NQ",
+      "collateral_compatibility": "other",
+      "max_leverage": 3
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:480000",
+      "symbol": "btcx:BTC-FEUSD",
+      "dex": "btcx",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:490000",
+      "symbol": "woof:WOOF",
+      "dex": "woof",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:500000",
+      "symbol": "shiok:grab",
+      "dex": "shiok",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:510000",
+      "symbol": "z:XYZ100",
+      "dex": "z",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 20
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:510001",
+      "symbol": "z:TSLA",
+      "dex": "z",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:510002",
+      "symbol": "z:NVDA",
+      "dex": "z",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:520000",
+      "symbol": "hbtwo:BTC",
+      "dex": "hbtwo",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:530000",
+      "symbol": "tndex:A B:C",
+      "dex": "tndex",
+      "collateral": "TZERO",
+      "collateral_compatibility": "other",
+      "max_leverage": 50
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:530001",
+      "symbol": "tndex:A B:C/../../../../../../../中",
+      "dex": "tndex",
+      "collateral": "TZERO",
+      "collateral_compatibility": "other",
+      "max_leverage": 50
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:530002",
+      "symbol": "tndex:ADLT",
+      "dex": "tndex",
+      "collateral": "TZERO",
+      "collateral_compatibility": "other",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:540000",
+      "symbol": "rrrrr:BTC",
+      "dex": "rrrrr",
+      "collateral": "USDEEE",
+      "collateral_compatibility": "other",
+      "max_leverage": 40
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:540001",
+      "symbol": "rrrrr:ETH",
+      "dex": "rrrrr",
+      "collateral": "USDEEE",
+      "collateral_compatibility": "other",
+      "max_leverage": 25
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:540002",
+      "symbol": "rrrrr:HYPE",
+      "dex": "rrrrr",
+      "collateral": "USDEEE",
+      "collateral_compatibility": "other",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:540003",
+      "symbol": "rrrrr:SOL",
+      "dex": "rrrrr",
+      "collateral": "USDEEE",
+      "collateral_compatibility": "other",
+      "max_leverage": 40
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:540008",
+      "symbol": "rrrrr:BASED",
+      "dex": "rrrrr",
+      "collateral": "USDEEE",
+      "collateral_compatibility": "other",
+      "max_leverage": 3
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:550000",
+      "symbol": "hbhb:ETH",
+      "dex": "hbhb",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:550002",
+      "symbol": "hbhb:HYPE",
+      "dex": "hbhb",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:560000",
+      "symbol": "stocks:TSLA",
+      "dex": "stocks",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:570000",
+      "symbol": "nunchi:US3M",
+      "dex": "nunchi",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 20
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:570001",
+      "symbol": "nunchi:XYZ100FR",
+      "dex": "nunchi",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 20
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:570002",
+      "symbol": "nunchi:VXX",
+      "dex": "nunchi",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 20
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:570003",
+      "symbol": "nunchi:BTCSWP",
+      "dex": "nunchi",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 20
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:580001",
+      "symbol": "sqtwr:H100",
+      "dex": "sqtwr",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 12
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:590000",
+      "symbol": "y:XYZ100",
+      "dex": "y",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 20
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:600000",
+      "symbol": "hypodd:btchourlyupusd",
+      "dex": "hypodd",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:600001",
+      "symbol": "hypodd:btchourlydownusd",
+      "dex": "hypodd",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:600002",
+      "symbol": "hypodd:BTCXYZ",
+      "dex": "hypodd",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 50
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:600003",
+      "symbol": "hypodd:BTC1DUP",
+      "dex": "hypodd",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 50
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:600004",
+      "symbol": "hypodd:BTC1DDOWN",
+      "dex": "hypodd",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 50
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:600005",
+      "symbol": "hypodd:ETH1HU",
+      "dex": "hypodd",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 50
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:610000",
+      "symbol": "strat:BTC",
+      "dex": "strat",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 1
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:610001",
+      "symbol": "strat:ETH",
+      "dex": "strat",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 2
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:610002",
+      "symbol": "strat:SOL",
+      "dex": "strat",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 5
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:610003",
+      "symbol": "strat:GOLD",
+      "dex": "strat",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 1
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:620000",
+      "symbol": "zdex:zzz",
+      "dex": "zdex",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 1
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:630000",
+      "symbol": "crayon:TEST",
+      "dex": "crayon",
+      "collateral": "TZERO",
+      "collateral_compatibility": "other",
+      "max_leverage": 3
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:640000",
+      "symbol": "walao:TEST",
+      "dex": "walao",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 3
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:640001",
+      "symbol": "walao:MINA",
+      "dex": "walao",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 20
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:650000",
+      "symbol": "slpy:TEST",
+      "dex": "slpy",
+      "collateral": "USDZZ",
+      "collateral_compatibility": "other",
+      "max_leverage": 3
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:650001",
+      "symbol": "slpy:SNORE",
+      "dex": "slpy",
+      "collateral": "USDZZ",
+      "collateral_compatibility": "other",
+      "max_leverage": 20
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:650002",
+      "symbol": "slpy:SNORE2",
+      "dex": "slpy",
+      "collateral": "USDZZ",
+      "collateral_compatibility": "other",
+      "max_leverage": 20
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:660000",
+      "symbol": "tsts:TEST2",
+      "dex": "tsts",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:660001",
+      "symbol": "tsts:BTCUSD",
+      "dex": "tsts",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:670000",
+      "symbol": "mbx:TEST",
+      "dex": "mbx",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 3
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:680000",
+      "symbol": "food:CAKE",
+      "dex": "food",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 20
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:680001",
+      "symbol": "food:SOUP",
+      "dex": "food",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 50
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:680002",
+      "symbol": "food:PIZA",
+      "dex": "food",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 7
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:690000",
+      "symbol": "meng:WSKS",
+      "dex": "meng",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 20
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:700000",
+      "symbol": "rawr:BIGMENG",
+      "dex": "rawr",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 20
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:700001",
+      "symbol": "rawr:SMOLMENG",
+      "dex": "rawr",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:700002",
+      "symbol": "rawr:MEDMENG",
+      "dex": "rawr",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 15
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:700003",
+      "symbol": "rawr:RICHMENG",
+      "dex": "rawr",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 50
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:710000",
+      "symbol": "mmmg:HIHI",
+      "dex": "mmmg",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 20
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:720000",
+      "symbol": "msdx:BTCUSD",
+      "dex": "msdx",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:720001",
+      "symbol": "msdx:BTCUSDHL",
+      "dex": "msdx",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:720002",
+      "symbol": "msdx:BTCUSDT0",
+      "dex": "msdx",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:730000",
+      "symbol": "wrld:DEUX",
+      "dex": "wrld",
+      "collateral": "TZERO",
+      "collateral_compatibility": "other",
+      "max_leverage": 50
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:730001",
+      "symbol": "wrld:TROIS",
+      "dex": "wrld",
+      "collateral": "TZERO",
+      "collateral_compatibility": "other",
+      "max_leverage": 50
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:750000",
+      "symbol": "xyz:XYZ100",
+      "dex": "xyz",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 30
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:750001",
+      "symbol": "xyz:TSLA",
+      "dex": "xyz",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:750002",
+      "symbol": "xyz:NVDA",
+      "dex": "xyz",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 20
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:750003",
+      "symbol": "xyz:GOLD",
+      "dex": "xyz",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 25
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:750004",
+      "symbol": "xyz:HOOD",
+      "dex": "xyz",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:750005",
+      "symbol": "xyz:INTC",
+      "dex": "xyz",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:750006",
+      "symbol": "xyz:PLTR",
+      "dex": "xyz",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:750007",
+      "symbol": "xyz:COIN",
+      "dex": "xyz",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:750008",
+      "symbol": "xyz:META",
+      "dex": "xyz",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:750009",
+      "symbol": "xyz:AAPL",
+      "dex": "xyz",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 20
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:750010",
+      "symbol": "xyz:MSFT",
+      "dex": "xyz",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:750011",
+      "symbol": "xyz:ORCL",
+      "dex": "xyz",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:750012",
+      "symbol": "xyz:GOOGL",
+      "dex": "xyz",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:750013",
+      "symbol": "xyz:AMZN",
+      "dex": "xyz",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:750014",
+      "symbol": "xyz:AMD",
+      "dex": "xyz",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:750015",
+      "symbol": "xyz:MU",
+      "dex": "xyz",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:750016",
+      "symbol": "xyz:SNDK",
+      "dex": "xyz",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:750017",
+      "symbol": "xyz:MSTR",
+      "dex": "xyz",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:750018",
+      "symbol": "xyz:CRCL",
+      "dex": "xyz",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:750019",
+      "symbol": "xyz:NFLX",
+      "dex": "xyz",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:750020",
+      "symbol": "xyz:COST",
+      "dex": "xyz",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 20
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:750021",
+      "symbol": "xyz:LLY",
+      "dex": "xyz",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:750022",
+      "symbol": "xyz:SKHX",
+      "dex": "xyz",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:750023",
+      "symbol": "xyz:TSM",
+      "dex": "xyz",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:750024",
+      "symbol": "xyz:JPY",
+      "dex": "xyz",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 50
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:750025",
+      "symbol": "xyz:EUR",
+      "dex": "xyz",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 50
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:750026",
+      "symbol": "xyz:SILVER",
+      "dex": "xyz",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 25
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:750027",
+      "symbol": "xyz:RIVN",
+      "dex": "xyz",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:750028",
+      "symbol": "xyz:BABA",
+      "dex": "xyz",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:750029",
+      "symbol": "xyz:CL",
+      "dex": "xyz",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 20
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:750030",
+      "symbol": "xyz:COPPER",
+      "dex": "xyz",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 20
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:750031",
+      "symbol": "xyz:NATGAS",
+      "dex": "xyz",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:750034",
+      "symbol": "xyz:SMSN",
+      "dex": "xyz",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:750035",
+      "symbol": "xyz:PLATINUM",
+      "dex": "xyz",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 20
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:750036",
+      "symbol": "xyz:USAR",
+      "dex": "xyz",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:750037",
+      "symbol": "xyz:CRWV",
+      "dex": "xyz",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:750050",
+      "symbol": "xyz:VIX",
+      "dex": "xyz",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 5
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:770000",
+      "symbol": "nmx:TEST",
+      "dex": "nmx",
+      "collateral": "USDH",
+      "collateral_compatibility": "other",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:780000",
+      "symbol": "pyth:BTC",
+      "dex": "pyth",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:780001",
+      "symbol": "pyth:PYTH",
+      "dex": "pyth",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:780002",
+      "symbol": "pyth:FOGO",
+      "dex": "pyth",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:790000",
+      "symbol": "msda:BTCUSD",
+      "dex": "msda",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:790001",
+      "symbol": "msda:ETHUSD",
+      "dex": "msda",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:790002",
+      "symbol": "msda:SOLUSD",
+      "dex": "msda",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:800000",
+      "symbol": "ho:BTCHOURLY",
+      "dex": "ho",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 50
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:800003",
+      "symbol": "ho:ETHDAILY",
+      "dex": "ho",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 50
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:810000",
+      "symbol": "flsh:FLASHUSD",
+      "dex": "flsh",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:810001",
+      "symbol": "flsh:FLASHHYPE",
+      "dex": "flsh",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:810002",
+      "symbol": "flsh:BTCUSD",
+      "dex": "flsh",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:820000",
+      "symbol": "hyfl:FLASHUSD",
+      "dex": "hyfl",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:820001",
+      "symbol": "hyfl:FHYPE",
+      "dex": "hyfl",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:820002",
+      "symbol": "hyfl:FLASH",
+      "dex": "hyfl",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:830000",
+      "symbol": "csan:AICOST",
+      "dex": "csan",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 50
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:830001",
+      "symbol": "csan:AIX",
+      "dex": "csan",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:830002",
+      "symbol": "csan:REAL",
+      "dex": "csan",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:840000",
+      "symbol": "sedx:TEST0",
+      "dex": "sedx",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:850000",
+      "symbol": "rbbt:RAB",
+      "dex": "rbbt",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 5
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:850001",
+      "symbol": "rbbt:F1LN",
+      "dex": "rbbt",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 5
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:860000",
+      "symbol": "rbte:F1LN",
+      "dex": "rbte",
+      "collateral": "USDEEE",
+      "collateral_compatibility": "other",
+      "max_leverage": 5
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:860001",
+      "symbol": "rbte:RAB",
+      "dex": "rbte",
+      "collateral": "USDEEE",
+      "collateral_compatibility": "other",
+      "max_leverage": 5
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:870000",
+      "symbol": "demo:TEST0",
+      "dex": "demo",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:870001",
+      "symbol": "demo:TEST1",
+      "dex": "demo",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:870002",
+      "symbol": "demo:TEST2",
+      "dex": "demo",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:870003",
+      "symbol": "demo:TEST3",
+      "dex": "demo",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:890000",
+      "symbol": "bsx:FRBTC",
+      "dex": "bsx",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:890001",
+      "symbol": "bsx:BOND",
+      "dex": "bsx",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:890002",
+      "symbol": "bsx:TLT",
+      "dex": "bsx",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:900000",
+      "symbol": "loh:LOHC",
+      "dex": "loh",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 1
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:900001",
+      "symbol": "loh:SECOND",
+      "dex": "loh",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 1
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:900002",
+      "symbol": "loh:THIRD",
+      "dex": "loh",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:910000",
+      "symbol": "xvm:XYZ100",
+      "dex": "xvm",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 20
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:910002",
+      "symbol": "xvm:NVDA",
+      "dex": "xvm",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:920001",
+      "symbol": "dydx:EURUSD",
+      "dex": "dydx",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 4
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:920002",
+      "symbol": "dydx:EUR",
+      "dex": "dydx",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 3
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:930000",
+      "symbol": "fzx:TSLA",
+      "dex": "fzx",
+      "collateral": "USDH",
+      "collateral_compatibility": "other",
+      "max_leverage": 1
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:940001",
+      "symbol": "abdc:GBP",
+      "dex": "abdc",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 1
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:950000",
+      "symbol": "fam:FAMOUS",
+      "dex": "fam",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:950001",
+      "symbol": "fam:DEX",
+      "dex": "fam",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 50
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:970008",
+      "symbol": "bart:AAPL",
+      "dex": "bart",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 5
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:980000",
+      "symbol": "sss:BTC",
+      "dex": "sss",
+      "collateral": "USDEEE",
+      "collateral_compatibility": "other",
+      "max_leverage": 30
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:980001",
+      "symbol": "sss:ETH",
+      "dex": "sss",
+      "collateral": "USDEEE",
+      "collateral_compatibility": "other",
+      "max_leverage": 25
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:980002",
+      "symbol": "sss:SOL",
+      "dex": "sss",
+      "collateral": "USDEEE",
+      "collateral_compatibility": "other",
+      "max_leverage": 30
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:990000",
+      "symbol": "owal:EUR",
+      "dex": "owal",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 50
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:990001",
+      "symbol": "owal:GBP",
+      "dex": "owal",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 50
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:990002",
+      "symbol": "owal:CAD",
+      "dex": "owal",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 50
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:1010000",
+      "symbol": "fdnk:UFDS",
+      "dex": "fdnk",
+      "collateral": "USDH",
+      "collateral_compatibility": "other",
+      "max_leverage": 3
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:1020000",
+      "symbol": "trve:CS2",
+      "dex": "trve",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 5
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:1020001",
+      "symbol": "trve:F1LN",
+      "dex": "trve",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 5
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:1020003",
+      "symbol": "trve:PMRT",
+      "dex": "trve",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 5
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:1030000",
+      "symbol": "odd:BTCDAILY",
+      "dex": "odd",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:1040000",
+      "symbol": "trv:POKE",
+      "dex": "trv",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 5
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:1040001",
+      "symbol": "trv:ZARD",
+      "dex": "trv",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 5
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:1070000",
+      "symbol": "gass:GASSA",
+      "dex": "gass",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 25
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:1070001",
+      "symbol": "gass:GASSB",
+      "dex": "gass",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 25
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:1080000",
+      "symbol": "whtm:EADIAH",
+      "dex": "whtm",
+      "collateral": "USDH",
+      "collateral_compatibility": "other",
+      "max_leverage": 3
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:1090000",
+      "symbol": "rip:TSLA",
+      "dex": "rip",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:1100000",
+      "symbol": "sand:EUR",
+      "dex": "sand",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 1
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:1100001",
+      "symbol": "sand:EURR",
+      "dex": "sand",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:1100002",
+      "symbol": "sand:JPY",
+      "dex": "sand",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 50
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:1110000",
+      "symbol": "hmax:BEST0",
+      "dex": "hmax",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 1
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:1110001",
+      "symbol": "hmax:BEST1",
+      "dex": "hmax",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:1110002",
+      "symbol": "hmax:BEST2",
+      "dex": "hmax",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 2
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:1130000",
+      "symbol": "hyfi:PKMN",
+      "dex": "hyfi",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 50
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:1140000",
+      "symbol": "str:GOLD",
+      "dex": "str",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 2
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:1140001",
+      "symbol": "str:SILVER",
+      "dex": "str",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 2
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:1150001",
+      "symbol": "trov:NTDO",
+      "dex": "trov",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 5
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:1160000",
+      "symbol": "erez:SSLROO",
+      "dex": "erez",
+      "collateral": "USDH",
+      "collateral_compatibility": "other",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:1180000",
+      "symbol": "mcd:DUCKY",
+      "dex": "mcd",
+      "collateral": "HORSE",
+      "collateral_compatibility": "other",
+      "max_leverage": 20
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:1180001",
+      "symbol": "mcd:CHIKIN",
+      "dex": "mcd",
+      "collateral": "HORSE",
+      "collateral_compatibility": "other",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:1180003",
+      "symbol": "mcd:MEONG",
+      "dex": "mcd",
+      "collateral": "HORSE",
+      "collateral_compatibility": "other",
+      "max_leverage": 25
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:1200000",
+      "symbol": "plsh:TACO",
+      "dex": "plsh",
+      "collateral": "HORSE",
+      "collateral_compatibility": "other",
+      "max_leverage": 20
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:1200001",
+      "symbol": "plsh:CICAKY",
+      "dex": "plsh",
+      "collateral": "HORSE",
+      "collateral_compatibility": "other",
+      "max_leverage": 20
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:1200002",
+      "symbol": "plsh:SHARKY",
+      "dex": "plsh",
+      "collateral": "HORSE",
+      "collateral_compatibility": "other",
+      "max_leverage": 20
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:1200003",
+      "symbol": "plsh:ENI",
+      "dex": "plsh",
+      "collateral": "HORSE",
+      "collateral_compatibility": "other",
+      "max_leverage": 20
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:1220000",
+      "symbol": "trvv:WATCH",
+      "dex": "trvv",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 5
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:1220001",
+      "symbol": "trvv:BIRKN",
+      "dex": "trvv",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 5
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:1230000",
+      "symbol": "trvo:BIRKN",
+      "dex": "trvo",
+      "collateral": "USDH",
+      "collateral_compatibility": "other",
+      "max_leverage": 5
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:1230001",
+      "symbol": "trvo:WATCH",
+      "dex": "trvo",
+      "collateral": "USDH",
+      "collateral_compatibility": "other",
+      "max_leverage": 5
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:1230002",
+      "symbol": "trvo:SBLAR",
+      "dex": "trvo",
+      "collateral": "USDH",
+      "collateral_compatibility": "other",
+      "max_leverage": 5
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:1240000",
+      "symbol": "tvr:LVMH",
+      "dex": "tvr",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 5
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:1240001",
+      "symbol": "tvr:HRMES",
+      "dex": "tvr",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 5
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:1240002",
+      "symbol": "tvr:RCHMT",
+      "dex": "tvr",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 5
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:1250000",
+      "symbol": "torv:KRING",
+      "dex": "torv",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 5
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:1250001",
+      "symbol": "torv:PRADA",
+      "dex": "torv",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 5
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:1250002",
+      "symbol": "torv:BRBY",
+      "dex": "torv",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 5
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:1260000",
+      "symbol": "tvro:MONC",
+      "dex": "tvro",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 5
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:1260001",
+      "symbol": "tvro:GOOS",
+      "dex": "tvro",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 5
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:1270000",
+      "symbol": "tvor:TPR",
+      "dex": "tvor",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 5
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:1280000",
+      "symbol": "hyna:BTC",
+      "dex": "hyna",
+      "collateral": "USDEEE",
+      "collateral_compatibility": "other",
+      "max_leverage": 40
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:1280001",
+      "symbol": "hyna:ETH",
+      "dex": "hyna",
+      "collateral": "USDEEE",
+      "collateral_compatibility": "other",
+      "max_leverage": 25
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:1280002",
+      "symbol": "hyna:HYPE",
+      "dex": "hyna",
+      "collateral": "USDEEE",
+      "collateral_compatibility": "other",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:1290000",
+      "symbol": "tdex:JEEZ",
+      "dex": "tdex",
+      "collateral": "TUSDC",
+      "collateral_compatibility": "other",
+      "max_leverage": 3
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:1290001",
+      "symbol": "tdex:BUMBUM",
+      "dex": "tdex",
+      "collateral": "TUSDC",
+      "collateral_compatibility": "other",
+      "max_leverage": 3
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:1290002",
+      "symbol": "tdex:CHEENA",
+      "dex": "tdex",
+      "collateral": "TUSDC",
+      "collateral_compatibility": "other",
+      "max_leverage": 3
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:1300000",
+      "symbol": "neo:EURFX",
+      "dex": "neo",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:1300001",
+      "symbol": "neo:GRAMGFX",
+      "dex": "neo",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 1
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:1300002",
+      "symbol": "neo:PHP",
+      "dex": "neo",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:1310000",
+      "symbol": "bhpx:BHTEST",
+      "dex": "bhpx",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 1
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:1310001",
+      "symbol": "bhpx:OTEST",
+      "dex": "bhpx",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 1
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:1310002",
+      "symbol": "bhpx:DTEST",
+      "dex": "bhpx",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 1
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:1310003",
+      "symbol": "bhpx:UTEST",
+      "dex": "bhpx",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 50
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:1320000",
+      "symbol": "yldx:SUSDE",
+      "dex": "yldx",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 1
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:1330000",
+      "symbol": "dpro:DPRO",
+      "dex": "dpro",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 1
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:1330001",
+      "symbol": "dpro:XAU",
+      "dex": "dpro",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 1
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:1340000",
+      "symbol": "wa:GDR",
+      "dex": "wa",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 1
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:1340001",
+      "symbol": "wa:ESV",
+      "dex": "wa",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 1
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:1340003",
+      "symbol": "wa:XAU2",
+      "dex": "wa",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 1
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:1350000",
+      "symbol": "org:ORG",
+      "dex": "org",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 1
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:1350001",
+      "symbol": "org:NVDA",
+      "dex": "org",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 1
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:1350002",
+      "symbol": "org:XAG",
+      "dex": "org",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 1
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:1370000",
+      "symbol": "fxx:EUR",
+      "dex": "fxx",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:1370001",
+      "symbol": "fxx:GBP",
+      "dex": "fxx",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:1380001",
+      "symbol": "pmt:PTEST",
+      "dex": "pmt",
+      "collateral": "USDEEE",
+      "collateral_compatibility": "other",
+      "max_leverage": 3
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:1390000",
+      "symbol": "trva:POKE",
+      "dex": "trva",
+      "collateral": "USDH",
+      "collateral_compatibility": "other",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:1390001",
+      "symbol": "trva:ZARD",
+      "dex": "trva",
+      "collateral": "USDH",
+      "collateral_compatibility": "other",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:1390002",
+      "symbol": "trva:CS2",
+      "dex": "trva",
+      "collateral": "USDH",
+      "collateral_compatibility": "other",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:1400000",
+      "symbol": "trvb:PMRT",
+      "dex": "trvb",
+      "collateral": "USDH",
+      "collateral_compatibility": "other",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:1400001",
+      "symbol": "trvb:NTDO",
+      "dex": "trvb",
+      "collateral": "USDH",
+      "collateral_compatibility": "other",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:1400002",
+      "symbol": "trvb:GAVIN",
+      "dex": "trvb",
+      "collateral": "USDH",
+      "collateral_compatibility": "other",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:1410000",
+      "symbol": "perp:EUR",
+      "dex": "perp",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 50
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:1440000",
+      "symbol": "trvc:VANCE",
+      "dex": "trvc",
+      "collateral": "USDH",
+      "collateral_compatibility": "other",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:1440002",
+      "symbol": "trvc:RIVN",
+      "dex": "trvc",
+      "collateral": "USDH",
+      "collateral_compatibility": "other",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:1450000",
+      "symbol": "brd:BREAD",
+      "dex": "brd",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:1450001",
+      "symbol": "brd:HYPE",
+      "dex": "brd",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:1450002",
+      "symbol": "brd:GF",
+      "dex": "brd",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:1470000",
+      "symbol": "ddex:GOLD",
+      "dex": "ddex",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 20
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:1520000",
+      "symbol": "jdo:BTC",
+      "dex": "jdo",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 50
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:1530000",
+      "symbol": "otcm:EUR",
+      "dex": "otcm",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 50
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:1530001",
+      "symbol": "otcm:GBP",
+      "dex": "otcm",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 50
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:1530002",
+      "symbol": "otcm:JPY",
+      "dex": "otcm",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 50
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:1540000",
+      "symbol": "xmas:SANTA",
+      "dex": "xmas",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:1540001",
+      "symbol": "xmas:EUR",
+      "dex": "xmas",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 50
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:1550000",
+      "symbol": "rub:SOXX",
+      "dex": "rub",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 1
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:1560000",
+      "symbol": "avtr:JPA",
+      "dex": "avtr",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 50
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:1560001",
+      "symbol": "avtr:JPB",
+      "dex": "avtr",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 50
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:1560002",
+      "symbol": "avtr:JPC",
+      "dex": "avtr",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 1
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:1570000",
+      "symbol": "wgts:BTC",
+      "dex": "wgts",
+      "collateral": "USDH",
+      "collateral_compatibility": "other",
+      "max_leverage": 21
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:1570001",
+      "symbol": "wgts:TEST",
+      "dex": "wgts",
+      "collateral": "USDH",
+      "collateral_compatibility": "other",
+      "max_leverage": 14
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:1580000",
+      "symbol": "vrse:ETHBTC",
+      "dex": "vrse",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:1590001",
+      "symbol": "gst:AI",
+      "dex": "gst",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 3
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:1600000",
+      "symbol": "otc:EUR",
+      "dex": "otc",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 50
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:1600001",
+      "symbol": "otc:JPY",
+      "dex": "otc",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 50
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:1600002",
+      "symbol": "otc:GBP",
+      "dex": "otc",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 50
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:1610000",
+      "symbol": "bee:SHINY",
+      "dex": "bee",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 1
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:1620000",
+      "symbol": "trvd:RKLB",
+      "dex": "trvd",
+      "collateral": "USDH",
+      "collateral_compatibility": "other",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:1620001",
+      "symbol": "trvd:OIL",
+      "dex": "trvd",
+      "collateral": "USDH",
+      "collateral_compatibility": "other",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:1620002",
+      "symbol": "trvd:LEGO",
+      "dex": "trvd",
+      "collateral": "USDH",
+      "collateral_compatibility": "other",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:1630000",
+      "symbol": "unc:YIN",
+      "dex": "unc",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 25
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:1630003",
+      "symbol": "unc:HIPS",
+      "dex": "unc",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 2
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:1650000",
+      "symbol": "dxn:ABC",
+      "dex": "dxn",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 50
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:1660000",
+      "symbol": "egrl:EGRL",
+      "dex": "egrl",
+      "collateral": "USDH",
+      "collateral_compatibility": "other",
+      "max_leverage": 3
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:1680000",
+      "symbol": "bmx:TSLA",
+      "dex": "bmx",
+      "collateral": "TZERO",
+      "collateral_compatibility": "other",
+      "max_leverage": 20
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:1680001",
+      "symbol": "bmx:DBTH",
+      "dex": "bmx",
+      "collateral": "TZERO",
+      "collateral_compatibility": "other",
+      "max_leverage": 20
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:1680002",
+      "symbol": "bmx:PX0001",
+      "dex": "bmx",
+      "collateral": "TZERO",
+      "collateral_compatibility": "other",
+      "max_leverage": 1
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:1680003",
+      "symbol": "bmx:PX0002",
+      "dex": "bmx",
+      "collateral": "TZERO",
+      "collateral_compatibility": "other",
+      "max_leverage": 50
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:1680004",
+      "symbol": "bmx:PX0003",
+      "dex": "bmx",
+      "collateral": "TZERO",
+      "collateral_compatibility": "other",
+      "max_leverage": 50
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:1690000",
+      "symbol": "purr:PURR",
+      "dex": "purr",
+      "collateral": "USDH",
+      "collateral_compatibility": "other",
+      "max_leverage": 50
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:1700000",
+      "symbol": "vdex:BTC",
+      "dex": "vdex",
+      "collateral": "USDH",
+      "collateral_compatibility": "other",
+      "max_leverage": 5
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:1710000",
+      "symbol": "narr:MEME",
+      "dex": "narr",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 1
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:1710001",
+      "symbol": "narr:RWA",
+      "dex": "narr",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 1
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:1710002",
+      "symbol": "narr:AI",
+      "dex": "narr",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 1
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:1720000",
+      "symbol": "abcd:TOKEN1",
+      "dex": "abcd",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:1720001",
+      "symbol": "abcd:TOKENH",
+      "dex": "abcd",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:1720002",
+      "symbol": "abcd:TOKENU",
+      "dex": "abcd",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:1740000",
+      "symbol": "angl:BTC",
+      "dex": "angl",
+      "collateral": "USDH",
+      "collateral_compatibility": "other",
+      "max_leverage": 50
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:1750000",
+      "symbol": "trvf:PUDGY",
+      "dex": "trvf",
+      "collateral": "USDH",
+      "collateral_compatibility": "other",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:1760000",
+      "symbol": "hnb:EURUSD",
+      "dex": "hnb",
+      "collateral": "USDH",
+      "collateral_compatibility": "other",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:1770000",
+      "symbol": "ggwp:BTC",
+      "dex": "ggwp",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:1770001",
+      "symbol": "ggwp:ETH",
+      "dex": "ggwp",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 50
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:1790000",
+      "symbol": "orma:TKNA1",
+      "dex": "orma",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 1
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:1790001",
+      "symbol": "orma:TKN2",
+      "dex": "orma",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 1
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:1790002",
+      "symbol": "orma:TKN3",
+      "dex": "orma",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 1
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:1800000",
+      "symbol": "ormb:TKNB1",
+      "dex": "ormb",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 1
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:1800001",
+      "symbol": "ormb:TKNB2",
+      "dex": "ormb",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 1
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:1800002",
+      "symbol": "ormb:TKNB3",
+      "dex": "ormb",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 1
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:1810000",
+      "symbol": "ormc:TKNC1",
+      "dex": "ormc",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 1
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:1810001",
+      "symbol": "ormc:TKNC2",
+      "dex": "ormc",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 1
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:1810002",
+      "symbol": "ormc:TKNC3",
+      "dex": "ormc",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 1
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:1820000",
+      "symbol": "ormd:TKND1",
+      "dex": "ormd",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 1
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:1820001",
+      "symbol": "ormd:TKND2",
+      "dex": "ormd",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 1
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:1820002",
+      "symbol": "ormd:TKND3",
+      "dex": "ormd",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 1
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:1830000",
+      "symbol": "orme:TKNE1",
+      "dex": "orme",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 1
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:1830001",
+      "symbol": "orme:TKNE2",
+      "dex": "orme",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 1
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:1830002",
+      "symbol": "orme:TKNE3",
+      "dex": "orme",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 1
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:1840000",
+      "symbol": "ormf:TKNF1",
+      "dex": "ormf",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 1
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:1840001",
+      "symbol": "ormf:TKNF2",
+      "dex": "ormf",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 1
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:1840002",
+      "symbol": "ormf:TKNF3",
+      "dex": "ormf",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 1
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:1850000",
+      "symbol": "ormg:TKNG1",
+      "dex": "ormg",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 1
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:1850001",
+      "symbol": "ormg:TKNG2",
+      "dex": "ormg",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 1
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:1850002",
+      "symbol": "ormg:TKNG3",
+      "dex": "ormg",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 1
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:1860000",
+      "symbol": "ormh:TKNH1",
+      "dex": "ormh",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 20
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:1860001",
+      "symbol": "ormh:TKNH2",
+      "dex": "ormh",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 20
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:1860002",
+      "symbol": "ormh:TKNH3",
+      "dex": "ormh",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 20
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:1870000",
+      "symbol": "tngs:WEATHER",
+      "dex": "tngs",
+      "collateral": "TGUSD",
+      "collateral_compatibility": "other",
+      "max_leverage": 20
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:1870001",
+      "symbol": "tngs:HYPURR",
+      "dex": "tngs",
+      "collateral": "TGUSD",
+      "collateral_compatibility": "other",
+      "max_leverage": 3
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:1870003",
+      "symbol": "tngs:EGGS",
+      "dex": "tngs",
+      "collateral": "TGUSD",
+      "collateral_compatibility": "other",
+      "max_leverage": 3
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:1870004",
+      "symbol": "tngs:H100",
+      "dex": "tngs",
+      "collateral": "TGUSD",
+      "collateral_compatibility": "other",
+      "max_leverage": 3
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:1870005",
+      "symbol": "tngs:CHARIZARD",
+      "dex": "tngs",
+      "collateral": "TGUSD",
+      "collateral_compatibility": "other",
+      "max_leverage": 3
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:1870006",
+      "symbol": "tngs:REDLINE",
+      "dex": "tngs",
+      "collateral": "TGUSD",
+      "collateral_compatibility": "other",
+      "max_leverage": 3
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:1870007",
+      "symbol": "tngs:ROLEX",
+      "dex": "tngs",
+      "collateral": "TGUSD",
+      "collateral_compatibility": "other",
+      "max_leverage": 3
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:1880000",
+      "symbol": "ormi:TKNI1",
+      "dex": "ormi",
+      "collateral": "XAG",
+      "collateral_compatibility": "other",
+      "max_leverage": 20
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:1900000",
+      "symbol": "yex:VXX",
+      "dex": "yex",
+      "collateral": "USDYP",
+      "collateral_compatibility": "other",
+      "max_leverage": 20
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:1900001",
+      "symbol": "yex:US3M",
+      "dex": "yex",
+      "collateral": "USDYP",
+      "collateral_compatibility": "other",
+      "max_leverage": 20
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:1900002",
+      "symbol": "yex:BTCSWP",
+      "dex": "yex",
+      "collateral": "USDYP",
+      "collateral_compatibility": "other",
+      "max_leverage": 20
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:1910000",
+      "symbol": "ez:BTC",
+      "dex": "ez",
+      "collateral": "EZSUSD",
+      "collateral_compatibility": "other",
+      "max_leverage": 25
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:1910001",
+      "symbol": "ez:MUSK",
+      "dex": "ez",
+      "collateral": "EZSUSD",
+      "collateral_compatibility": "other",
+      "max_leverage": 25
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:1910002",
+      "symbol": "ez:ETH",
+      "dex": "ez",
+      "collateral": "EZSUSD",
+      "collateral_compatibility": "other",
+      "max_leverage": 25
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:1910003",
+      "symbol": "ez:WLFI",
+      "dex": "ez",
+      "collateral": "EZSUSD",
+      "collateral_compatibility": "other",
+      "max_leverage": 25
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:1920000",
+      "symbol": "rbit:TEST1",
+      "dex": "rbit",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 20
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:1920001",
+      "symbol": "rbit:TEST2",
+      "dex": "rbit",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 20
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:1950000",
+      "symbol": "guac:RICE",
+      "dex": "guac",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 25
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:1950003",
+      "symbol": "guac:GBETB",
+      "dex": "guac",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 2
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:1960000",
+      "symbol": "osrs:TEST",
+      "dex": "osrs",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 50
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:1960001",
+      "symbol": "osrs:OTEST",
+      "dex": "osrs",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 50
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:1960002",
+      "symbol": "osrs:DTEST",
+      "dex": "osrs",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 50
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:1960003",
+      "symbol": "osrs:HTEST",
+      "dex": "osrs",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 3
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:1960004",
+      "symbol": "osrs:ETEST",
+      "dex": "osrs",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 50
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:1960006",
+      "symbol": "osrs:AAA",
+      "dex": "osrs",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:1960007",
+      "symbol": "osrs:AAB",
+      "dex": "osrs",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:1980000",
+      "symbol": "idx:IDX0",
+      "dex": "idx",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:1980002",
+      "symbol": "idx:IDX2",
+      "dex": "idx",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:1990001",
+      "symbol": "scpe:SILVER",
+      "dex": "scpe",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 25
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:1990002",
+      "symbol": "scpe:GOLD",
+      "dex": "scpe",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 25
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:1990003",
+      "symbol": "scpe:SHAG",
+      "dex": "scpe",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 3
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:1990004",
+      "symbol": "scpe:SHAU",
+      "dex": "scpe",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 3
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:1990005",
+      "symbol": "scpe:SHCU",
+      "dex": "scpe",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 5
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:2000000",
+      "symbol": "mag:MAGTEST",
+      "dex": "mag",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 5
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:2000001",
+      "symbol": "mag:MAG1",
+      "dex": "mag",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 5
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:2010001",
+      "symbol": "frce:US10Y",
+      "dex": "frce",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 20
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:2010002",
+      "symbol": "frce:US30YFRM",
+      "dex": "frce",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:2030001",
+      "symbol": "yoyo:BTC",
+      "dex": "yoyo",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 50
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:2030002",
+      "symbol": "yoyo:ETH",
+      "dex": "yoyo",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 50
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:2040000",
+      "symbol": "cmdt:CBTUNIT",
+      "dex": "cmdt",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 3
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:2040001",
+      "symbol": "cmdt:CBTUNIT01",
+      "dex": "cmdt",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 3
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:2070000",
+      "symbol": "idxx:IDX3",
+      "dex": "idxx",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 30
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:2070001",
+      "symbol": "idxx:IDX4",
+      "dex": "idxx",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 20
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:2080000",
+      "symbol": "cmdb:CBTUNIT",
+      "dex": "cmdb",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 3
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:2110000",
+      "symbol": "zktx:BTC",
+      "dex": "zktx",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:2110001",
+      "symbol": "zktx:SOL",
+      "dex": "zktx",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 45
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:2130000",
+      "symbol": "otni:OHTANI",
+      "dex": "otni",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 3
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:2140000",
+      "symbol": "nova:BTC",
+      "dex": "nova",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:2150000",
+      "symbol": "ani:DOG",
+      "dex": "ani",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 1
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:2150001",
+      "symbol": "ani:CAT",
+      "dex": "ani",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 1
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:2150002",
+      "symbol": "ani:DOG2",
+      "dex": "ani",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:2160000",
+      "symbol": "soya:SOYA",
+      "dex": "soya",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:2180000",
+      "symbol": "tenx:SMH",
+      "dex": "tenx",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:2200000",
+      "symbol": "myx:HTEST",
+      "dex": "myx",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:2210000",
+      "symbol": "pmas:SSEC",
+      "dex": "pmas",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:2230000",
+      "symbol": "rsge:COAL",
+      "dex": "rsge",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 1
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:2230001",
+      "symbol": "rsge:BLOOD",
+      "dex": "rsge",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 1
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:2240001",
+      "symbol": "hov:VOLX",
+      "dex": "hov",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 50
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:2250000",
+      "symbol": "dlx:HPD",
+      "dex": "dlx",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:2250002",
+      "symbol": "dlx:HYP3",
+      "dex": "dlx",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:2250003",
+      "symbol": "dlx:HYP10",
+      "dex": "dlx",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:2260000",
+      "symbol": "dxx:HYPE3",
+      "dex": "dxx",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:2260001",
+      "symbol": "dxx:HYPE10",
+      "dex": "dxx",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:2260002",
+      "symbol": "dxx:STTH",
+      "dex": "dxx",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 25
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:2270000",
+      "symbol": "dyel:SARMS",
+      "dex": "dyel",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:2290000",
+      "symbol": "mooo:WAGYU",
+      "dex": "mooo",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 20
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:2290001",
+      "symbol": "mooo:WAGYU2",
+      "dex": "mooo",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 20
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:2290002",
+      "symbol": "mooo:WAGYU3",
+      "dex": "mooo",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 20
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:2300000",
+      "symbol": "rolo:ROPE",
+      "dex": "rolo",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:2330000",
+      "symbol": "dolo:DOPE",
+      "dex": "dolo",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 3
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:2350000",
+      "symbol": "krzh:SOMEASSET",
+      "dex": "krzh",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 4
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:2350001",
+      "symbol": "krzh:SOMETEST",
+      "dex": "krzh",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 4
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:2360000",
+      "symbol": "kwo:FOF",
+      "dex": "kwo",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 50
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:2370000",
+      "symbol": "name:SPACE",
+      "dex": "name",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:2390000",
+      "symbol": "tsst:SSSTTT",
+      "dex": "tsst",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 1
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:2400000",
+      "symbol": "neol:IWM",
+      "dex": "neol",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:2420000",
+      "symbol": "dd:MAK",
+      "dex": "dd",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 15
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:2420001",
+      "symbol": "dd:USOIL",
+      "dex": "dd",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:2440001",
+      "symbol": "hfl:BTCHFL",
+      "dex": "hfl",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 50
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:2440002",
+      "symbol": "hfl:HYPEHFL",
+      "dex": "hfl",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:2460000",
+      "symbol": "pew:PEW",
+      "dex": "pew",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 3
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:2470000",
+      "symbol": "magm:7I2ZI",
+      "dex": "magm",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 20
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:2470001",
+      "symbol": "magm:OBOA4",
+      "dex": "magm",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 20
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:2470002",
+      "symbol": "magm:YGHGY",
+      "dex": "magm",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 20
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:2490000",
+      "symbol": "magk:7I2ZI",
+      "dex": "magk",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 20
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:2490001",
+      "symbol": "magk:OBOA4",
+      "dex": "magk",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 20
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:2490002",
+      "symbol": "magk:JGCGQ",
+      "dex": "magk",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 20
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:2490003",
+      "symbol": "magk:7AG5Z",
+      "dex": "magk",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 20
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:2490004",
+      "symbol": "magk:U4A2Y",
+      "dex": "magk",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 20
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:2490005",
+      "symbol": "magk:M3ZIG",
+      "dex": "magk",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 20
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:2500000",
+      "symbol": "ktob:BTC",
+      "dex": "ktob",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:2510001",
+      "symbol": "nxlb:SPLIT",
+      "dex": "nxlb",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:2540000",
+      "symbol": "mmmm:ZHIPU",
+      "dex": "mmmm",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:2540001",
+      "symbol": "mmmm:MINIMAX",
+      "dex": "mmmm",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:2550000",
+      "symbol": "acmt:ACMT",
+      "dex": "acmt",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 50
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:2560001",
+      "symbol": "cna:A50",
+      "dex": "cna",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 3
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:2570000",
+      "symbol": "bb:BB",
+      "dex": "bb",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:2600000",
+      "symbol": "lob:COW",
+      "dex": "lob",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 1
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:2600001",
+      "symbol": "lob:BIRD",
+      "dex": "lob",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 1
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:2620000",
+      "symbol": "ignp:BTC",
+      "dex": "ignp",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 4
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:2620001",
+      "symbol": "ignp:ETH",
+      "dex": "ignp",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 50
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:2620002",
+      "symbol": "ignp:SOL",
+      "dex": "ignp",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 30
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:2620003",
+      "symbol": "ignp:AVAX",
+      "dex": "ignp",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 30
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:2630000",
+      "symbol": "kjex:KJX",
+      "dex": "kjex",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 40
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:2640000",
+      "symbol": "arg:YPF",
+      "dex": "arg",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 5
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:2670000",
+      "symbol": "par:BTC",
+      "dex": "par",
+      "collateral": "USDPR",
+      "collateral_compatibility": "other",
+      "max_leverage": 40
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:2670001",
+      "symbol": "par:ETH",
+      "dex": "par",
+      "collateral": "USDPR",
+      "collateral_compatibility": "other",
+      "max_leverage": 25
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:2670002",
+      "symbol": "par:HYPE",
+      "dex": "par",
+      "collateral": "USDPR",
+      "collateral_compatibility": "other",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:2670003",
+      "symbol": "par:SP500",
+      "dex": "par",
+      "collateral": "USDPR",
+      "collateral_compatibility": "other",
+      "max_leverage": 50
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:2670004",
+      "symbol": "par:EWY",
+      "dex": "par",
+      "collateral": "USDPR",
+      "collateral_compatibility": "other",
+      "max_leverage": 20
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:2670005",
+      "symbol": "par:EWJ",
+      "dex": "par",
+      "collateral": "USDPR",
+      "collateral_compatibility": "other",
+      "max_leverage": 20
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:2670006",
+      "symbol": "par:BRENT",
+      "dex": "par",
+      "collateral": "USDPR",
+      "collateral_compatibility": "other",
+      "max_leverage": 20
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:2670007",
+      "symbol": "par:GOLD",
+      "dex": "par",
+      "collateral": "USDPR",
+      "collateral_compatibility": "other",
+      "max_leverage": 25
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:2670008",
+      "symbol": "par:USDEUR",
+      "dex": "par",
+      "collateral": "USDPR",
+      "collateral_compatibility": "other",
+      "max_leverage": 50
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:2670009",
+      "symbol": "par:USDJPY",
+      "dex": "par",
+      "collateral": "USDPR",
+      "collateral_compatibility": "other",
+      "max_leverage": 50
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:2690000",
+      "symbol": "parx:BTC",
+      "dex": "parx",
+      "collateral": "USDPR",
+      "collateral_compatibility": "other",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:2690001",
+      "symbol": "parx:NVDA",
+      "dex": "parx",
+      "collateral": "USDPR",
+      "collateral_compatibility": "other",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:2690002",
+      "symbol": "parx:XAU",
+      "dex": "parx",
+      "collateral": "USDPR",
+      "collateral_compatibility": "other",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:2710000",
+      "symbol": "fcmt:BTC",
+      "dex": "fcmt",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:2720000",
+      "symbol": "nimb:BTC",
+      "dex": "nimb",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:2740000",
+      "symbol": "stt:BTC",
+      "dex": "stt",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 50
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:2750000",
+      "symbol": "pmew:BTC",
+      "dex": "pmew",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 50
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:2760000",
+      "symbol": "tape:TEST",
+      "dex": "tape",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 5
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:2770001",
+      "symbol": "goy:BRL",
+      "dex": "goy",
+      "collateral": "USDGOY",
+      "collateral_compatibility": "other",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:2780000",
+      "symbol": "eqde:SAP",
+      "dex": "eqde",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 2
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:2810000",
+      "symbol": "pas:BTC",
+      "dex": "pas",
+      "collateral": "USDP",
+      "collateral_compatibility": "other",
+      "max_leverage": 40
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:2810001",
+      "symbol": "pas:ETH",
+      "dex": "pas",
+      "collateral": "USDP",
+      "collateral_compatibility": "other",
+      "max_leverage": 25
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:2810002",
+      "symbol": "pas:HYPE",
+      "dex": "pas",
+      "collateral": "USDP",
+      "collateral_compatibility": "other",
+      "max_leverage": 10
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:2810003",
+      "symbol": "pas:SP500",
+      "dex": "pas",
+      "collateral": "USDP",
+      "collateral_compatibility": "other",
+      "max_leverage": 50
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:2810004",
+      "symbol": "pas:EWY",
+      "dex": "pas",
+      "collateral": "USDP",
+      "collateral_compatibility": "other",
+      "max_leverage": 20
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:2810005",
+      "symbol": "pas:EWJ",
+      "dex": "pas",
+      "collateral": "USDP",
+      "collateral_compatibility": "other",
+      "max_leverage": 20
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:2810006",
+      "symbol": "pas:BRENT",
+      "dex": "pas",
+      "collateral": "USDP",
+      "collateral_compatibility": "other",
+      "max_leverage": 20
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:2810007",
+      "symbol": "pas:GOLD",
+      "dex": "pas",
+      "collateral": "USDP",
+      "collateral_compatibility": "other",
+      "max_leverage": 25
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:2810008",
+      "symbol": "pas:USDEUR",
+      "dex": "pas",
+      "collateral": "USDP",
+      "collateral_compatibility": "other",
+      "max_leverage": 50
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:2810009",
+      "symbol": "pas:USDJPY",
+      "dex": "pas",
+      "collateral": "USDP",
+      "collateral_compatibility": "other",
+      "max_leverage": 50
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:2820000",
+      "symbol": "lab:CRASH",
+      "dex": "lab",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 20
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:2820001",
+      "symbol": "lab:CRASH2",
+      "dex": "lab",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 20
+    },
+    {
+      "market_id": "hyperliquid-testnet:perps:2820002",
+      "symbol": "lab:M1",
+      "dex": "lab",
+      "collateral": "USDC",
+      "collateral_compatibility": "usdc",
+      "max_leverage": 20
+    }
+  ]
+}

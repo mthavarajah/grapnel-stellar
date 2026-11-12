@@ -2,7 +2,7 @@ import{describe,it,expect,vi}from'vitest';
 import{Keypair}from'@stellar/stellar-sdk';
 import{Buffer}from'buffer';
 import{privateKeyToAccount}from'viem/accounts';
-import{approvalSha256,stableApprovalJson,bindingApprovalMessage,inspectPerpetualBinding,orderApprovalMessage,reconstructedOrderAction,reconstructedOrderTypedData,inspectPerpetualOrder,signStellarApproval,signEvmBinding,signEvmOrder,inspectPerpetualAccount,selectedVenueBalance,type PerpetualMarketApproval,type PerpetualOrderDraft,type BrowserEvmProvider}from'./perpetual-approval';
+import{positionCloseFields,approvalSha256,stableApprovalJson,bindingApprovalMessage,inspectPerpetualBinding,orderApprovalMessage,reconstructedOrderAction,reconstructedOrderTypedData,inspectPerpetualOrder,signStellarApproval,signEvmBinding,signEvmOrder,inspectPerpetualAccount,selectedVenueBalance,type PerpetualMarketApproval,type PerpetualOrderDraft,type BrowserEvmProvider}from'./perpetual-approval';
 // Deterministic offline fixture keys only. No account funding, RPC or exchange transport exists.
 const stellar=Keypair.fromRawEd25519Seed(Buffer.alloc(32,7)),evm=privateKeyToAccount(('0x'+'11'.repeat(32))as`0x${string}`),other=privateKeyToAccount(('0x'+'22'.repeat(32))as`0x${string}`);
 const now=Date.now(),scope={businessId:'business-fixture',customerId:'customer-fixture',walletId:'wallet-fixture',stellarAddress:stellar.publicKey()},account={...scope,accountAddress:evm.address.toLowerCase(),signingKeyRef:'browser-fixture-only'},id='00000000-0000-4000-8000-000000000001';
@@ -27,4 +27,12 @@ describe('actual account/venue display boundaries',()=>{
  it('uses the builder venue balance and never substitutes a native balance',()=>{const checked=inspectPerpetualAccount(snapshot,scope,market);expect(selectedVenueBalance(checked,{...market,provider_dex:'xyz'})).toEqual({withdrawable:'3',accountValue:'4'});expect(selectedVenueBalance(checked,{...market,provider_dex:'unavailable'})).toEqual({withdrawable:null,accountValue:null});expect(selectedVenueBalance(checked,market)).toEqual({withdrawable:'100',accountValue:'120'});});
  it('keeps non-USDC and missing-account balances unknown instead of fabricating funds',()=>{const checked=inspectPerpetualAccount(snapshot,scope,market);expect(selectedVenueBalance(checked,{...market,settlement_asset:{code:'USDH',compatibility:'other'}}).withdrawable).toBeNull();expect(selectedVenueBalance(null,market).withdrawable).toBeNull();});
  it('rejects cross-customer and mismatched selected-market account reads',()=>{expect(()=>inspectPerpetualAccount({...snapshot,account:{...snapshot.account,customerId:'someone-else'}},scope,market)).toThrow('different wallet');expect(()=>inspectPerpetualAccount({...snapshot,selected_market:{...snapshot.selected_market,market_id:'hyperliquid-testnet:perps:9'}},scope,market)).toThrow('does not match');});
+});
+
+describe('close position review',()=>{
+ it('reverses long and short sides and keeps the full exact size',()=>{
+  expect(positionCloseFields('9007199254740993.00000001')).toEqual({side:'sell',size:'9007199254740993.00000001',reduceOnly:true});
+  expect(positionCloseFields('-0.000000000000000001')).toEqual({side:'buy',size:'0.000000000000000001',reduceOnly:true});
+ });
+ it.each(['0','-0.00','NaN','1e10','--1'])('rejects zero or invalid positions %s',value=>expect(()=>positionCloseFields(value)).toThrow());
 });

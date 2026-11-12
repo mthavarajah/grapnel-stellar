@@ -1,0 +1,47 @@
+{
+  "checked_at": "2026-11-12T22:20:00Z",
+  "scope": "Local Hyperliquid Perpetuals catalog restoration and ticket controls",
+  "tests": {
+    "backend_adapter_and_frontend_initial": {
+      "passed": 300,
+      "skipped": 29
+    },
+    "final_frontend": {
+      "passed": 53,
+      "skipped": 0
+    },
+    "workspace_typecheck": "passed",
+    "final_fintech_typecheck": "passed",
+    "fintech_production_build": "passed",
+    "secret_scan": "passed"
+  },
+  "local_http": {
+    "health": 200,
+    "perps_catalog": {
+      "status": 200,
+      "provider": "hyperliquid",
+      "active_markets": 658,
+      "executable_markets": 0
+    },
+    "selected_btc_detail": {
+      "status": 200,
+      "price_status": "current"
+    },
+    "stocks_catalog": {
+      "status": 200,
+      "provider": "robinhood",
+      "markets": 5,
+      "executable_markets": 5
+    }
+  },
+  "hyperliquid_funding_verified": false,
+  "hyperliquid_open_close_verified": false,
+  "blockers": [
+    "No funded HyperCore Testnet treasury or customer collateral",
+    "Official faucet requires prior same-address mainnet deposit",
+    "CCTP recipient eligibility and remaining capacity unverified",
+    "Provider access approval remains required",
+    "Execution adapter supports native/xyz USDC only; other catalog venues are discovery-only"
+  ],
+  "public_deployment": false
+}

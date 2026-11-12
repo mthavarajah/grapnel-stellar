@@ -90,3 +90,9 @@ Authenticated read of the current customer Stellar wallet returned a 66-characte
 
 - USDG token artwork: official Global Dollar brand guidelines https://globaldollar.com/brand, hosted token logo https://424565.fs1.hubspotusercontent-na1.net/hubfs/424565/GDN_USDG_Token_32x32.png. Downloaded unchanged for local asset display; artwork does not establish token identity.
 - Robinhood delayed recovery re-read: all ten existing own-QA buy/sell hashes independently confirmed through canonical transaction/receipt/ERC20-event reads. Exact proof and timestamps in `evidence/robinhood-recovery-verification.json`. No new chain transactions or fabricated historical balances were used.
+
+## Hyperliquid refresh — November 12, 2026, 22:17 UTC
+
+- Live Testnet info requests (`perpDexs`, `allPerpMetas`, `spotMeta`, optional annotations) returned 1008 slots / 279 venues, including 658 active markets. Native BTC `metaAndAssetCtxs` and 97 fifteen-minute candles were read; no market prices were synthesized. Full source-qualified active identities and the two zero-collateral account reads are preserved in `evidence/hyperliquid-catalog-verification.json`.
+- Rechecked [official Testnet faucet](https://hyperliquid.gitbook.io/hyperliquid-docs/onboarding/testnet-faucet): prior same-address mainnet deposit is required for its 1000 mock-USDC claim. No mainnet writes were made.
+- Rechecked [Circle HyperCore considerations](https://developers.circle.com/cctp/concepts/cctp-on-hypercore#testnet-recipient-address-limitations): recipient mainnet state, 1000-Testnet-USDC receiving limit, and silent failure for missing mainnet state remain documented. These prerequisites were not bypassed; no new CCTP burn or HyperCore execution proof is claimed.

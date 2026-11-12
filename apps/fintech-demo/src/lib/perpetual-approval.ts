@@ -36,6 +36,12 @@ export function stableApprovalJson(value:unknown):string{
 }
 export async function approvalSha256(message:string):Promise<string>{return [...new Uint8Array(await crypto.subtle.digest('SHA-256',new TextEncoder().encode(message)))].map(value=>value.toString(16).padStart(2,'0')).join('');}
 export function normalizedDecimal(value:string):string{if(!signedDecimal.safeParse(value).success)return fail('Enter a valid decimal amount.');const negative=value.startsWith('-'),[whole,fraction='']=(negative?value.slice(1):value).split('.'),trim=fraction.replace(/0+$/,'');return(negative&&(whole!=='0'||trim)?'-':'')+whole+(trim?'.'+trim:'');}
+/** Prepare the opposite, reduce-only side without converting token size to Number. */
+export function positionCloseFields(positionSize:string):{side:'buy'|'sell';size:string;reduceOnly:true}{
+ const value=normalizedDecimal(positionSize);
+ if(value==='0')return fail('There is no open position to close.');
+ return {side:value.startsWith('-')?'buy':'sell',size:value.replace(/^-/,''),reduceOnly:true};
+}
 const units=(value:string,decimals:number,signed=false)=>{if(!(signed?signedDecimal:decimal).safeParse(value).success)return fail();const neg=value.startsWith('-'),[whole,fraction='']=(neg?value.slice(1):value).split('.');if(fraction.length>decimals)return fail('The amount has too many decimal places.');return (BigInt(whole!)*10n**BigInt(decimals)+BigInt(fraction.padEnd(decimals,'0')||'0'))*(neg?-1n:1n);};
 function expectedScope(actual:z.infer<typeof scope>,expected:ExpectedPerpetualScope){if(actual.customerId!==expected.customerId||actual.walletId!==expected.walletId||actual.stellarAddress!==expected.stellarAddress||expected.businessId&&actual.businessId!==expected.businessId||!StrKey.isValidEd25519PublicKey(expected.stellarAddress))return fail('This request belongs to a different wallet session.');}
 export function bindingApprovalMessage(value:Pick<PerpetualBindingChallenge,'id'|'scope'|'accountAddress'|'expiresAt'>):string{return 'Grapnel Perpetuals account binding\n'+stableApprovalJson({version:1,network:'hyperliquid-testnet',challengeId:value.id,...value.scope,accountAddress:value.accountAddress.toLowerCase(),expiresAt:value.expiresAt});}

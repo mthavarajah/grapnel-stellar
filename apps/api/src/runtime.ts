@@ -293,7 +293,7 @@ export async function createRuntime(pool?:Pool,marginRoutes:RuntimeMarginBinding
    'capital.lending':readBlendReadiness,
    'trade.spot':()=>spotReadiness.capability(),
    'trade.stocks':async()=>{const ready=await stockAcceptance('TSLA');return{execution_status:ready?'testnet_verified' as const:'discovery_only' as const,reason:ready?null:'ROBINHOOD_STOCK_EXECUTION_PROOF_REQUIRED',actions:ready?['read_markets','funding_status','prepare_order']:['read_markets','funding_status']};},
-   'trade.perps':async()=>{const ready=await gmxRuntime.acceptance();return {execution_status:ready?'testnet_verified' as const:'discovery_only' as const,reason:ready?null:'GMX_OWN_EXECUTION_PROOF_REQUIRED',actions:ready?['read_markets','fund','prepare_order','close_position']:['read_markets']};},
+   'trade.perps':async()=>({execution_status:'discovery_only' as const,reason:'HYPERLIQUID_FUNDING_AND_EXECUTION_PROOF_REQUIRED',actions:['read_markets']}),
    'capital.wallets':async()=>{const current=await hasGate1Proof(chain);return {execution_status:current?'testnet_verified':'blocked',reason:current?null:privy?'Privy-signed Testnet payment proof is pending':'PRIVY_APP_ID and PRIVY_APP_SECRET are required',actions:current?['provision','balances','test_payment']:[]};},
    'capital.testnet_funding':readFundingReadiness
   },
@@ -367,7 +367,7 @@ export async function createRuntime(pool?:Pool,marginRoutes:RuntimeMarginBinding
    await registerMarginFundingRoutes(app,{operations,...marginBindings.collateralFunding});
    await registerLendingRoutes(app,{adapter:blend,borrowing,operations,balanceReader:address=>chain.getClassicBalances(address)});
    await registerSpotRoutes(app,{service:new SpotService(spot,db,operations,createSpotReservation(operations,readSpotBalances)),refreshReadiness:()=>spotReadiness.refresh(),requireBusiness,requireCustomer,success,
-    readDiscoveryMarkets:async category=>category==='perps'?readGmxMarkets():readStockMarkets(),
+    readDiscoveryMarkets:async category=>category==='perps'?readPerpetualMarkets():readStockMarkets(),
     readDiscoveryMarket:async id=>id.startsWith('gmx-testnet:perps:')?(await readGmxMarkets()).find(row=>row.market_id===id):id.startsWith('robinhood-testnet:stocks:')?(await readStockMarkets()).find(row=>row.market_id===id):readDetailedPerpetualMarket(id),
     readPositions:async customer=>({wallet_holdings:await wallets.balances(customer.businessId,customer.walletId),venue_positions:[]})});
    await registerFundingRoutes(app,{service:new FundingService(funding,operations),requireBusiness,requireCustomer,success});
