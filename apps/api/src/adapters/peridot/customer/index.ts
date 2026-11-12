@@ -7,3 +7,6 @@ export type {CustomerChainDependencies,CustomerSnapshot,ConfirmedPeridotTransact
 export {reviewedPhaseBindings} from './bindings.js';
 export type {CustomerPhaseBinding,CustomerPhaseBindings,PhasePrepared,PrivateMarginBaseline} from './bindings.js';
 export {PERIDOT_RECEIPT_ID,REQUIRED_CUSTOMER_STEPS,createCustomerTerms,validateCustomerTerms} from './policy.js';
+
+export {PeridotRoundTripVerifier} from './roundtrip.js';
+export type {PeridotRoundTripManifest,PeridotRoundTripVerifierDependencies} from './roundtrip.js';

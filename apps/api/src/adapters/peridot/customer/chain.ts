@@ -9,7 +9,7 @@ export interface CustomerSnapshot {
  nativeWalletAtomic:string;nativeSpendableAtomic:string;observedAt:string;ledger:number;
  position:MarginPositionSnapshot|null;
 }
-export interface ConfirmedPeridotTransaction {hash:string;ledger:number;feeAtomic:string;meta:xdr.TransactionMeta;returnValue:xdr.ScVal|undefined;transaction:Transaction;}
+export interface ConfirmedPeridotTransaction {hash:string;ledger:number;createdAt?:number;feeAtomic:string;meta:xdr.TransactionMeta;returnValue:xdr.ScVal|undefined;transaction:Transaction;}
 export interface CustomerChainDependencies {
  server?:rpc.Server;
  nativeBalance(customer:CustomerContext):Promise<WalletBalance>;
@@ -66,6 +66,6 @@ export class PeridotCustomerChain {
   if(!(parsed instanceof Transaction)||parsed.source!==customer.walletAddress||parsed.hash().toString('hex')!==hash)return invalid('CONFIRMED_ENVELOPE');
   const horizon=await this.deps.horizonTransaction(hash),fee=unsigned(tx.resultXdr.feeCharged().toString(),true);
   if(!horizon.successful||horizon.hash!==hash||horizon.source_account!==customer.walletAddress||horizon.ledger_attr!==tx.ledger||unsigned(String(horizon.fee_charged),true)!==fee)return invalid('CONFIRMED_HORIZON_OR_FEE');
-  return{hash,ledger:tx.ledger,feeAtomic:fee.toString(),meta:tx.resultMetaXdr,returnValue:tx.returnValue,transaction:parsed};
+  return{hash,ledger:tx.ledger,createdAt:tx.createdAt,feeAtomic:fee.toString(),meta:tx.resultMetaXdr,returnValue:tx.returnValue,transaction:parsed};
  }
 }

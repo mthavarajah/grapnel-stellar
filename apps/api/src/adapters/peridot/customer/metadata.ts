@@ -22,7 +22,11 @@ export class PeridotTransactionChanges {
    const data=entry.data().contractData();if(data.durability().name!=='persistent')continue;
    const id=fingerprint(Address.fromScAddress(data.contract()).toString(),data.key());
    const row=this.entries.get(id)??{before:null,after:null,created:false,removed:false};
-   if(kind==='ledgerEntryRestored')continue;
+   if(kind==='ledgerEntryRestored'){
+    // A restored pinned instance contains the actual previous TotalSupply; it is not a new zero-supply vault.
+    if(data.key().switch().name!=='scvLedgerKeyContractInstance')continue;
+    if(row.before||row.after||row.created)return invalid('DUPLICATE_RESTORED_INSTANCE');row.before=data.val();this.entries.set(id,row);continue;
+   }
    if(kind==='ledgerEntryState'){if(row.before||row.created||row.after)return invalid('DUPLICATE_META_STATE');row.before=data.val();}
    else{if(row.after||row.removed||kind==='ledgerEntryCreated'&&row.before)return invalid('DUPLICATE_META_UPDATE');row.after=data.val();row.created=kind==='ledgerEntryCreated';}
    this.entries.set(id,row);
