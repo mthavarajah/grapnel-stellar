@@ -1518,8 +1518,7 @@ function FinanceShell({ page, auth, initialCategory }: { page: string; auth?: Au
             </>
           )}
           {page === "borrow" && <section className="card borrowing-section" aria-label="Borrowing" data-testid="borrowing">
-            <div className="section-heading"><h2>Borrow</h2><button type="button" className="button outline small-button" disabled={borrowingLoading||busy||!capability("capital.lending")?.enabled} onClick={()=>void refreshBorrowing()}>Refresh loans</button></div>
-            <p className="small muted">Borrowing accrues variable interest. Low collateral health can lead to liquidation.</p>
+            <div className="section-heading"><button type="button" className="button outline small-button" disabled={borrowingLoading||busy||!capability("capital.lending")?.enabled} onClick={()=>void refreshBorrowing()}>Refresh loans</button></div>
             {borrowingError&&<p className="inline-note" role="alert">{customerMessage(borrowingError)}</p>}
             {borrowingLoading&&!borrowing?<p className="small muted" role="status">Loading loan information…</p>:borrowing?.assets.length?<div className="borrowing-grid">{borrowing.assets.map(row=>{
               const collateralNeeded=row.reason==="COLLATERAL_REQUIRED"||/^0(?:\.0+)?$/.test(row.collateral_value??"");
