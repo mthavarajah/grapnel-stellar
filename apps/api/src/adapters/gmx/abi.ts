@@ -1,4 +1,4 @@
-/** Exact selected ABI entries from gmx-io/gmx-interface master and gmx-synthetics updates. See research sources. */
+/** Exact selected ABI entries from gmx-io/gmx-interface SyntheticsReaderV2_2_1 (live reader1543), ExchangeRouter master and gmx-synthetics updates. See research sources. */
 export const EXCHANGE_ABI = [
   {
     "inputs": [
@@ -331,6 +331,21 @@ export const READER_ABI = [
                 "type": "int256"
               },
               {
+                "internalType": "int256",
+                "name": "realizedUncappedPnlUsd",
+                "type": "int256"
+              },
+              {
+                "internalType": "int256",
+                "name": "realizedPnlUsd",
+                "type": "int256"
+              },
+              {
+                "internalType": "uint256",
+                "name": "cappedPnlPoolTokenAmount",
+                "type": "uint256"
+              },
+              {
                 "internalType": "uint256",
                 "name": "borrowingFactor",
                 "type": "uint256"
@@ -358,6 +373,16 @@ export const READER_ABI = [
               {
                 "internalType": "uint256",
                 "name": "decreasedAtTime",
+                "type": "uint256"
+              },
+              {
+                "internalType": "int256",
+                "name": "cappedPnlReferencePoolPnlUsd",
+                "type": "int256"
+              },
+              {
+                "internalType": "uint256",
+                "name": "cappedPnlAllowancePerPrice",
                 "type": "uint256"
               }
             ],
