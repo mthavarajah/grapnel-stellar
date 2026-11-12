@@ -6,7 +6,7 @@ import { ZtellarReadinessReader } from './ztellar-readonly.js';
 
 const current: ZtellarObservation = {
   networkPassphrase: Networks.TESTNET,
-  vault: ids.vault, vaultWasm: ids.vaultWasm, tier: ids.tier, tierWasm: ids.tierWasm, usdc: ids.usdc,
+  vault: ids.vault, vaultWasm: ids.vaultWasm, tier: ids.tier, tierWasm: ids.tierWasm, verifier: ids.verifier, verifierWasm: ids.verifierWasm, usdc: ids.usdc,
   vaultUsdcUnits: '5084898268', walletUsdcUnits: null, walletMaxLeverage: 0,
   vaultLastModifiedLedger: 3408963, observedLedger: 5681203,
 };
@@ -28,6 +28,8 @@ describe('independent Ztellar stock candidate review', () => {
     ['mainnet', { networkPassphrase: Networks.PUBLIC }, 'NETWORK_MISMATCH'],
     ['different vault bytecode', { vaultWasm: '0'.repeat(64) }, 'VAULT_IDENTITY_MISMATCH'],
     ['different tier manager', { tier: ids.vault }, 'TIER_IDENTITY_MISMATCH'],
+    ['different verifier contract', { verifier: ids.vault }, 'VERIFIER_IDENTITY_MISMATCH'],
+    ['different verifier bytecode', { verifierWasm: '0'.repeat(64) }, 'VERIFIER_IDENTITY_MISMATCH'],
     ['same-symbol other USDC', { usdc: ids.vault }, 'COLLATERAL_IDENTITY_MISMATCH'],
     ['zero liquidity', { vaultUsdcUnits: '0' }, 'VAULT_LIQUIDITY_REQUIRED'],
     ['fractional base units', { vaultUsdcUnits: '0.5' }, 'INVALID_VAULT_BALANCE'],

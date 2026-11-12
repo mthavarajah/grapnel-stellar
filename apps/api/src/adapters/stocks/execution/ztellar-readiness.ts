@@ -7,6 +7,8 @@ export const ZTELLAR_CANDIDATE = Object.freeze({
   vaultWasm: 'bbdd2079eea1ee289bc55e1ae5526b65772a390033f774acae0c5173d203f3fb',
   tier: 'CC7EF4NGJDLQECANFXHXA32UAHYQKVU6Z57COFSR2WIB5TMQL3G4EKQF',
   tierWasm: '24feb0e4ceca7a8c10660f3927ff00179b96748e423bdcc248bc4ddca57d7374',
+  verifier: 'CAO4EYDG7B5OXUUONZWY6AAUGYQPZD66D2E5NPMKCBIYRO2D6ZEO3HX7',
+  verifierWasm: '4fa9aa3386c8530ddac90aa4aff37af442cfd6e8e404bdceaf4bc1874d106a51',
   usdc: 'CBIELTK6YBZJU5UP2WWQEUCYKLPU6AUNZ2BQ4WWFEIE3USCIHMXQDAMA',
   usdcIssuer: 'GBBD47IF6LWK7P7MDEVSCWR7DPUWV3NY3DTQEVFL4NAT4AQH3ZLLFLA5',
   collateralDecimals: 7,
@@ -20,6 +22,8 @@ export interface ZtellarObservation {
   vaultWasm: string;
   tier: string;
   tierWasm: string;
+  verifier: string;
+  verifierWasm: string;
   usdc: string;
   vaultUsdcUnits: string;
   walletUsdcUnits: string | null;
@@ -48,6 +52,8 @@ export function assessZtellarCandidate(observed: ZtellarObservation) {
     blockers.push('VAULT_IDENTITY_MISMATCH');
   if (observed.tier !== expected.tier || observed.tierWasm !== expected.tierWasm)
     blockers.push('TIER_IDENTITY_MISMATCH');
+  if (observed.verifier !== expected.verifier || observed.verifierWasm !== expected.verifierWasm)
+    blockers.push('VERIFIER_IDENTITY_MISMATCH');
   if (observed.usdc !== expected.usdc) blockers.push('COLLATERAL_IDENTITY_MISMATCH');
   const vaultUnits = nonNegativeUnits(observed.vaultUsdcUnits);
   if (vaultUnits === null) blockers.push('INVALID_VAULT_BALANCE');

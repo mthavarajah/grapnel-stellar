@@ -1,17 +1,19 @@
 {
-  "observedAt": "2026-11-11T21:05:26.407Z",
+  "observedAt": "2026-11-12T03:10:45.773Z",
   "observation": {
     "networkPassphrase": "Test SDF Network ; September 2015",
     "vault": "CDQANGYCMZQKYSR6GQAXR7FEF3PALRMEDR65ONKSSJGAVDI23DM5YNQM",
     "vaultWasm": "bbdd2079eea1ee289bc55e1ae5526b65772a390033f774acae0c5173d203f3fb",
     "tier": "CC7EF4NGJDLQECANFXHXA32UAHYQKVU6Z57COFSR2WIB5TMQL3G4EKQF",
     "tierWasm": "24feb0e4ceca7a8c10660f3927ff00179b96748e423bdcc248bc4ddca57d7374",
+    "verifier": "CAO4EYDG7B5OXUUONZWY6AAUGYQPZD66D2E5NPMKCBIYRO2D6ZEO3HX7",
+    "verifierWasm": "4fa9aa3386c8530ddac90aa4aff37af442cfd6e8e404bdceaf4bc1874d106a51",
     "usdc": "CBIELTK6YBZJU5UP2WWQEUCYKLPU6AUNZ2BQ4WWFEIE3USCIHMXQDAMA",
     "vaultUsdcUnits": "5084898268",
     "walletUsdcUnits": null,
     "walletMaxLeverage": 0,
     "vaultLastModifiedLedger": 3408963,
-    "observedLedger": 5681496
+    "observedLedger": 5685880
   },
   "assessment": {
     "executionStatus": "blocked",

@@ -1,5 +1,5 @@
 {
-  "observed_at": "2026-11-11T20:41:02.888Z",
+  "observed_at": "2026-11-12T03:10:08.483Z",
   "source": "https://github.com/Rohitamalraj/Ztellar-Edge/tree/7588e2ba33da8220fae8a0123377a70e747b2063",
   "network": {
     "friendbotUrl": "https://friendbot.stellar.org/",
@@ -12,9 +12,10 @@
     {
       "role": "vault",
       "address": "CDQANGYCMZQKYSR6GQAXR7FEF3PALRMEDR65ONKSSJGAVDI23DM5YNQM",
-      "latest_ledger": 5681203,
+      "latest_ledger": 5685872,
       "instance_count": 1,
       "last_modified_ledger": 3408963,
+      "instance_xdr_sha256": "b672a35ed30ce7eada8ad594ee170636055312711089534cc9395eeedebe2c0b",
       "storage": [
         {
           "key": [
@@ -297,15 +298,15 @@
             "scSpecTypeI128"
           ]
         }
-      ],
-      "instance_xdr_sha256": "b672a35ed30ce7eada8ad594ee170636055312711089534cc9395eeedebe2c0b"
+      ]
     },
     {
       "role": "tier",
       "address": "CC7EF4NGJDLQECANFXHXA32UAHYQKVU6Z57COFSR2WIB5TMQL3G4EKQF",
-      "latest_ledger": 5681203,
+      "latest_ledger": 5685872,
       "instance_count": 1,
       "last_modified_ledger": 3347064,
+      "instance_xdr_sha256": "927f6f054dd20bfd83dc2968d35e9a1fe148e423fc3999f777ad0d04f522c032",
       "storage": [
         {
           "key": [
@@ -430,15 +431,15 @@
             "scSpecTypeU32"
           ]
         }
-      ],
-      "instance_xdr_sha256": "927f6f054dd20bfd83dc2968d35e9a1fe148e423fc3999f777ad0d04f522c032"
+      ]
     },
     {
       "role": "verifier",
       "address": "CAO4EYDG7B5OXUUONZWY6AAUGYQPZD66D2E5NPMKCBIYRO2D6ZEO3HX7",
-      "latest_ledger": 5681203,
+      "latest_ledger": 5685872,
       "instance_count": 1,
       "last_modified_ledger": 3347063,
+      "instance_xdr_sha256": "f37bcd69e8e3cbfa32159abf7f57de21fcaeba6281a7ee4ac775af84f8a3d906",
       "storage": [
         {
           "key": [
@@ -457,7 +458,7 @@
             "Vk"
           ],
           "value": {
-            "note": "Public verification key omitted from report; available in deployed contract storage"
+            "public_xdr_sha256": "cf5aa9c6e87cd401d2a732f318df93163059335aa55673f25cc05f1acae15d0f"
           }
         }
       ],
@@ -545,15 +546,15 @@
             "scSpecTypeResult"
           ]
         }
-      ],
-      "instance_xdr_sha256": "f37bcd69e8e3cbfa32159abf7f57de21fcaeba6281a7ee4ac775af84f8a3d906"
+      ]
     },
     {
       "role": "usdc",
       "address": "CBIELTK6YBZJU5UP2WWQEUCYKLPU6AUNZ2BQ4WWFEIE3USCIHMXQDAMA",
-      "latest_ledger": 5681203,
+      "latest_ledger": 5685872,
       "instance_count": 1,
       "last_modified_ledger": 4609662,
+      "instance_xdr_sha256": "9fc44f23650723d671b836fe3b061a131e9de0adc02e9afa90d4dacd1ebf0765",
       "storage": [
         {
           "key": "METADATA",
@@ -617,15 +618,15 @@
             }
           ]
         }
-      ],
-      "instance_xdr_sha256": "9fc44f23650723d671b836fe3b061a131e9de0adc02e9afa90d4dacd1ebf0765"
+      ]
     },
     {
       "role": "aapl",
       "address": "CCJ2FSS234EZB7LE2JZLLRZXEVDX4QIN2GMK7EDA5XXNCNPYSQYOGYXX",
-      "latest_ledger": 5681203,
+      "latest_ledger": 5685872,
       "instance_count": 1,
       "last_modified_ledger": 3297395,
+      "instance_xdr_sha256": "77f6c092f2c8e0ca7b143ab331dbd33de116e3246c9c3d8f84bde22800183106",
       "storage": [
         {
           "key": [
@@ -900,15 +901,15 @@
             "scSpecTypeResult"
           ]
         }
-      ],
-      "instance_xdr_sha256": "77f6c092f2c8e0ca7b143ab331dbd33de116e3246c9c3d8f84bde22800183106"
+      ]
     },
     {
       "role": "tsla",
       "address": "CD4HYGTAL7EZRYCGAPIXILCFZDN4RYLGJN4SYYIVHY56OAFWDVADDQZ4",
-      "latest_ledger": 5681203,
+      "latest_ledger": 5685872,
       "instance_count": 1,
       "last_modified_ledger": 3297421,
+      "instance_xdr_sha256": "e019cb17099d96a27aff2bba37f5873862cb6ccc8b2decee0301867c98f551d4",
       "storage": [
         {
           "key": [
@@ -1183,15 +1184,15 @@
             "scSpecTypeResult"
           ]
         }
-      ],
-      "instance_xdr_sha256": "e019cb17099d96a27aff2bba37f5873862cb6ccc8b2decee0301867c98f551d4"
+      ]
     },
     {
       "role": "nvda",
       "address": "CBHBEHJD2GSHSQY2MVJ464KZDL3QOZWZBQABP2VSFVRJQ4BUBXVJLTTK",
-      "latest_ledger": 5681203,
+      "latest_ledger": 5685872,
       "instance_count": 1,
       "last_modified_ledger": 3297406,
+      "instance_xdr_sha256": "c3afad1b42ffe272d6bd2f6385f09f4e8d5ae21409a25f753f474185a9cc6149",
       "storage": [
         {
           "key": [
@@ -1466,15 +1467,14 @@
             "scSpecTypeResult"
           ]
         }
-      ],
-      "instance_xdr_sha256": "c3afad1b42ffe272d6bd2f6385f09f4e8d5ae21409a25f753f474185a9cc6149"
+      ]
     }
   ],
   "views": [
     {
       "role": "vault",
       "method": "get_price",
-      "ledger": 5681203,
+      "ledger": 5685872,
       "success": true,
       "authorization_count": 0,
       "value": "308630000"
@@ -1482,7 +1482,7 @@
     {
       "role": "vault",
       "method": "get_vault_usdc_balance",
-      "ledger": 5681203,
+      "ledger": 5685872,
       "success": true,
       "authorization_count": 0,
       "value": "5084898268"
@@ -1490,7 +1490,7 @@
     {
       "role": "vault",
       "method": "get_wallet_positions",
-      "ledger": 5681203,
+      "ledger": 5685872,
       "success": true,
       "authorization_count": 0,
       "value": []
@@ -1498,7 +1498,7 @@
     {
       "role": "tier",
       "method": "get_max_leverage",
-      "ledger": 5681203,
+      "ledger": 5685872,
       "success": true,
       "authorization_count": 0,
       "value": 0
@@ -1506,7 +1506,7 @@
     {
       "role": "tier",
       "method": "get_tier",
-      "ledger": 5681203,
+      "ledger": 5685872,
       "success": true,
       "authorization_count": 0,
       "value": null
@@ -1514,7 +1514,7 @@
     {
       "role": "usdc",
       "method": "balance",
-      "ledger": 5681203,
+      "ledger": 5685872,
       "success": true,
       "authorization_count": 0,
       "value": "5084898268"
@@ -1522,7 +1522,7 @@
     {
       "role": "usdc",
       "method": "balance",
-      "ledger": 5681203,
+      "ledger": 5685872,
       "success": false,
       "error": "HostError: Error(Contract, #13)\n\nEvent log (newest first):\n   0: [Diagnostic Event] contract:CBIELTK6YBZJU5UP2WWQEUCYKLPU6AUNZ2BQ4WWFEIE3USCIHMXQDAMA, topics:[error, Error(Contract, #13)], data:[\"trustline entry is missing for account\", GB4PC65ZHBPVEZMAHY2K2KYMS3RFBIN2FQIE3LGTLEHT2DEWVMTD7JYQ]\n   1: [Diagnostic Event] topics:[fn_call, CBIELTK6YBZJU5UP2WWQEUCYKLPU6AUNZ2BQ4WWFEIE3USCIHMXQDAMA, balance], data:GB4PC65ZHBPVEZMAHY2K2KYMS3RFBIN2FQIE3LGTLEHT2DEWVMTD7JYQ\n"
     }

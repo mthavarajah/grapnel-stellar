@@ -1,0 +1,40 @@
+{
+  "observed_at": "2026-11-12T03:11:11.560Z",
+  "source": "https://github.com/Rohitamalraj/Ztellar-Edge",
+  "current_revision": "7588e2ba33da8220fae8a0123377a70e747b2063",
+  "permission_source_files": [
+    {
+      "path": "circuits/tier_proof.circom",
+      "sha256": "1f0ca36dc0f7014f5814eccd2a598481242022b730ba2b773cb69866a9b655a5"
+    },
+    {
+      "path": "contracts/zk_verifier/src/lib.rs",
+      "sha256": "18aaa41f5f32ac45ff20814f019e54d7068999ab5f7a2dbd845f5c9dbb5aba67"
+    },
+    {
+      "path": "frontend/app/api/score/route.ts",
+      "sha256": "490931588a919253148e26ed3940638c091876f3b2aefa1a15139e0967562fbe"
+    }
+  ],
+  "oracle_get": {
+    "prices": {
+      "sAAPL": 355.63,
+      "sTSLA": 390.84,
+      "sNVDA": 173.73,
+      "sMSFT": 521.125,
+      "sAMZN": 266.17,
+      "sGOOG": 290.63,
+      "sMETA": 628.77,
+      "sNFLX": 64.54,
+      "sAMD": 552.9,
+      "sJPM": 343.39,
+      "sSPY": 759.81,
+      "sPFE": 29.45
+    },
+    "updatedAt": 1794453072924
+  },
+  "onchain_writes_performed": false,
+  "provider_post_performed": false,
+  "execution_verified": false,
+  "tx_hash": null
+}
