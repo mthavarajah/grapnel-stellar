@@ -1,0 +1,39 @@
+{
+  "checked_at": "2026-11-12T23:43:11.442Z",
+  "network": "localhost",
+  "before": {
+    "capability_requests_last_30m": 459,
+    "capabilities_avg_ms": 565,
+    "capabilities_max_ms": 4265,
+    "network_assets_avg_ms": 1897,
+    "source": "local_api_request_logs"
+  },
+  "after": [
+    {
+      "path": "/v1/capabilities?readiness=omit",
+      "status": 200,
+      "ms": 33
+    },
+    {
+      "path": "/v1/capabilities?module=trade.stocks&readiness=omit",
+      "status": 200,
+      "ms": 2
+    },
+    {
+      "path": "/v1/capabilities?module=capital.wallets&readiness=omit",
+      "status": 200,
+      "ms": 1
+    },
+    {
+      "path": "/v1/capabilities",
+      "status": 200,
+      "ms": 2640
+    },
+    {
+      "path": "/v1/trade/markets/robinhood-testnet:stocks:TSLA",
+      "status": 200,
+      "ms": 9
+    }
+  ],
+  "customer_privy_execution_verified": false
+}

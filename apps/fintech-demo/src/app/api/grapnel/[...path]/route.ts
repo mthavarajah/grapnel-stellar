@@ -61,7 +61,7 @@ export async function GET(
   try {
     const path = (await params).path;
     if (path.length === 1 && path[0] === "capabilities")
-      return json(await grapnel("/capabilities"));
+      return json(await grapnel("/capabilities"+(request.nextUrl.searchParams.get("readiness")==="omit"?"?readiness=omit":"")));
     const s = await requireSession();
     const key = path.join("/");
     if(key==='network-assets'){

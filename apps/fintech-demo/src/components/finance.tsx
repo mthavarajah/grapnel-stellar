@@ -2,8 +2,6 @@
 import {StockActivity} from "./stock-activity";
 import {RobinhoodExecution} from "./robinhood-execution";
 import {GroupedAssets} from "./grouped-assets";
-import {defineChain} from 'viem';
-import {arbitrumSepolia,hyperliquidEvmTestnet} from 'viem/chains';
 import {createIdentityTokenResolver} from '@/lib/identity-token';
 import Link from "next/link";
 import {VelocityBrand} from "./velocity-brand";
@@ -18,7 +16,6 @@ import {assertMarginPositionBinding,marginPositionAction,type MarginReviewBindin
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
-  PrivyProvider,
   getIdentityToken,
   usePrivy,
   useIdentityToken,
@@ -28,7 +25,6 @@ import { formatTokenAmount, fromAtomic, toAtomic, type PreparedAction, type Asse
 import {borrowingReasonMessage,borrowingAmountMessage} from "@/lib/borrowing-feedback";
 import { api, ClientError, operationRequestKey, clearOperationRequest } from "@/lib/client";
 import { signPreparedAction } from "@/lib/privy-signer";
-const robinhoodTestnet=defineChain({id:46630,name:'Robinhood Testnet',nativeCurrency:{name:'Ether',symbol:'ETH',decimals:18},rpcUrls:{default:{http:['https://rpc.testnet.chain.robinhood.com']}},blockExplorers:{default:{name:'Robinhood Explorer',url:'https://explorer.testnet.chain.robinhood.com'}},testnet:true});
 type Capability = {
   module: string;
   enabled: boolean;
@@ -309,24 +305,8 @@ const title: Record<string, string> = {
   borrow: "Borrow",
   activity: "Activity",
 };
-export default function Finance({ page, initialCategory }: { page: string; initialCategory?:string }) {
-  const id = process.env.NEXT_PUBLIC_PRIVY_APP_ID;
-  return id ? (
-    <PrivyProvider
-      appId={id}
-      config={{
-        loginMethods: ["email"],
-        embeddedWallets: {ethereum:{createOnLogin:"users-without-wallets"}},
-        supportedChains: [robinhoodTestnet,arbitrumSepolia,hyperliquidEvmTestnet],
-        defaultChain: arbitrumSepolia,
-        appearance: { theme: "light", accentColor: "#2555d7" },
-      }}
-    >
-      <PrivyFinance page={page} initialCategory={initialCategory} />
-    </PrivyProvider>
-  ) : (
-    <FinanceShell page={page} initialCategory={initialCategory} />
-  );
+export default function Finance({page,initialCategory}:{page:string;initialCategory?:string}){
+ return process.env.NEXT_PUBLIC_PRIVY_APP_ID?<PrivyFinance page={page} initialCategory={initialCategory}/>:<FinanceShell page={page} initialCategory={initialCategory}/>;
 }
 const identityTokens=createIdentityTokenResolver();
 function PrivyFinance({ page, initialCategory }: { page: string; initialCategory?:string }) {
@@ -718,9 +698,10 @@ function FinanceShell({ page, auth, initialCategory }: { page: string; auth?: Au
       setSessionChecked(true);
     }
     // Market and chain reads must never hold the login gate open.
-    void Promise.allSettled([api("status"), api("grapnel/capabilities")]).then(([configuration, capabilities]) => {
+    void Promise.allSettled([api("status"), api("grapnel/capabilities?readiness=omit")]).then(([configuration, capabilities]) => {
       if (configuration.status === "fulfilled") setStatus(configuration.value);
       if (capabilities.status === "fulfilled") setCaps(capabilities.value.capabilities ?? []);
+      void api("grapnel/capabilities").then(result=>setCaps(result.capabilities??[])).catch(()=>{});
     });
     if (identity) {
       void Promise.allSettled([api("grapnel/balances"), api("grapnel/operations")]).then(([b, o]) => {

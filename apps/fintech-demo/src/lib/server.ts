@@ -324,7 +324,7 @@ export async function requireModule(
   session: CustomerSession,
   execute = false,
 ) {
-  const data = await grapnel("/capabilities", session);
+  const data = await grapnel("/capabilities?module="+encodeURIComponent(module)+(execute?"":"&readiness=omit"), session);
   const capability = data.capabilities.find(
     (c: { module: string }) => c.module === module,
   );

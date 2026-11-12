@@ -2,7 +2,7 @@
   "openapi": "3.1.0",
   "info": {
     "title": "Grapnel Testnet API",
-    "version": "0.4.1",
+    "version": "0.4.2",
     "description": "Testnet B2B API with independently authorized customer wallets. Stellar funding, Crypto and Blend; canonical Robinhood Testnet USDG stock execution. Financial writes require current tenant permissions, customer ownership and actual chain proof. See docs/20_STOCKS_CUSTOMER_EXECUTION.md."
   },
   "servers": [
@@ -183,7 +183,40 @@
               }
             }
           }
-        }
+        },
+        "parameters": [
+          {
+            "name": "module",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "capital.wallets",
+                "capital.testnet_funding",
+                "capital.lending",
+                "trade.spot",
+                "trade.stocks",
+                "trade.perps"
+              ]
+            },
+            "description": "Return only the selected module; current entitlements remain checked."
+          },
+          {
+            "name": "readiness",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "full",
+                "omit"
+              ],
+              "default": "full"
+            },
+            "description": "omit returns current entitlements without provider probes. Such rows are discovery_only with no executable actions; financial routes still enforce current readiness."
+          }
+        ]
       }
     },
     "/v1/dashboard/login": {

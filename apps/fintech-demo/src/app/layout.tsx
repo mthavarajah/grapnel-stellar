@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import {FintechProviders} from "../components/fintech-providers";
 export const metadata: Metadata = {
   title: "Velocity",
   icons: {icon:"/brand/velocity-official-icon.png"},
@@ -13,7 +14,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body><FintechProviders>{children}</FintechProviders></body>
     </html>
   );
 }

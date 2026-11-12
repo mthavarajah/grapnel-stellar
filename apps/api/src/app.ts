@@ -48,11 +48,12 @@ export async function buildApp(options:AppOptions={}):Promise<FastifyInstance>{
  });
  app.setNotFoundHandler((request,reply)=>reply.code(404).send({error:{code:'NOT_FOUND',message:'Route not found',retryable:false,details:{}},meta:{request_id:request.id}}));
  if(ownPool)app.addHook('onClose',async()=>{await pool.end();});
- const capabilities=async(businessId:string)=>{
+ const capabilities=async(businessId:string,selected?:ModuleId,includeReadiness=true)=>{
   const rows=(await pool.query('SELECT module_code,enabled FROM business_modules WHERE business_id=$1',[businessId])).rows;
-  return Promise.all(MODULE_IDS.map(async module=>{
+  return Promise.all(MODULE_IDS.filter(module=>!selected||module===selected).map(async module=>{
    const ready=options.capabilities?.[module];
-   const availability=ready?await ready():{execution_status:module.startsWith('trade.')&&module!=='trade.spot'?'discovery_only' as const:'blocked' as const,reason:'Live Testnet execution has not passed the signing and provider acceptance gates',actions:[]};
+   let availability:Pick<Capability,'execution_status'|'reason'|'actions'>={execution_status:'discovery_only',reason:'READINESS_NOT_REQUESTED',actions:[]};
+   if(includeReadiness){try{availability=ready?await ready():{execution_status:module.startsWith('trade.')&&module!=='trade.spot'?'discovery_only':'blocked',reason:'Live Testnet execution has not passed the signing and provider acceptance gates',actions:[]};}catch{availability={execution_status:'blocked',reason:'PROVIDER_READINESS_UNAVAILABLE',actions:[]};}}
    return {module,...metadata[module],enabled:!!rows.find(r=>r.module_code===module)?.enabled,...availability};
   }));
  };
@@ -131,7 +132,7 @@ export async function buildApp(options:AppOptions={}):Promise<FastifyInstance>{
  app.get('/v1/dashboard/api-keys',async request=>{const owner=await requireOwner(request);return success(request,{keys:(await pool.query("SELECT id,prefix,last_four,name,created_at,revoked_at,last_used_at,CASE WHEN revoked_at IS NULL THEN 'active' ELSE 'revoked' END AS status FROM api_keys WHERE business_id=$1 ORDER BY created_at DESC",[owner.businessId])).rows});});
  app.delete('/v1/dashboard/api-keys/:id',async request=>{const owner=await requireOwner(request,true);const {id}=request.params as {id:string};const result=await pool.query('UPDATE api_keys SET revoked_at=COALESCE(revoked_at,now()) WHERE business_id=$1 AND id=$2 RETURNING id',[owner.businessId,id]);if(!result.rowCount)throw new GrapnelError(404,'NOT_FOUND','API key not found');return success(request,{id,status:'revoked'});});
  app.get('/v1/dashboard/requests',async request=>{const owner=await requireOwner(request);return success(request,{requests:(await pool.query('SELECT request_id,method,path_template,status,duration_ms,created_at FROM api_request_logs WHERE business_id=$1 ORDER BY created_at DESC LIMIT 100',[owner.businessId])).rows});});
- app.get('/v1/capabilities',async request=>{const business=await requireBusiness(request);return success(request,{capabilities:await capabilities(business.businessId),revision:(await pool.query('SELECT revision FROM businesses WHERE id=$1',[business.businessId])).rows[0].revision});});
+ app.get('/v1/capabilities',async request=>{const business=await requireBusiness(request);const query=z.object({module:z.enum(MODULE_IDS).optional(),readiness:z.enum(['full','omit']).default('full')}).strict().parse(request.query);return success(request,{capabilities:await capabilities(business.businessId,query.module,query.readiness==='full'),revision:(await pool.query('SELECT revision FROM businesses WHERE id=$1',[business.businessId])).rows[0].revision});});
  app.post('/v1/customers',async request=>{const business=await requireBusiness(request);const body=CustomerInputSchema.parse(request.body);const row=(await pool.query('INSERT INTO customers(business_id,external_customer_id) VALUES($1,$2) ON CONFLICT (business_id,external_customer_id) DO UPDATE SET external_customer_id=EXCLUDED.external_customer_id RETURNING id,external_customer_id,created_at',[business.businessId,body.external_customer_id])).rows[0];return success(request,{customer_id:row.id,...row});});
  app.get('/v1/customers/:id',async request=>{const business=await requireBusiness(request);const {id}=request.params as {id:string};const row=(await pool.query('SELECT id,external_customer_id,created_at FROM customers WHERE business_id=$1 AND id=$2',[business.businessId,id])).rows[0];if(!row)throw new GrapnelError(404,'NOT_FOUND','Customer not found');return success(request,{customer_id:row.id,...row});});
  app.get('/v1/operations',async request=>{

@@ -145,3 +145,7 @@ All paths below require the business `trade.perps` and `capital.wallets` entitle
 Responses follow `modules/perpetuals/cctp-contract.ts` and include exact scope, amounts, source hash, stage and immutable evidence. `completed` requires actual matched HyperCore cash credit. A Stellar burn, Iris attestation or HyperEVM mint alone never completes funding. Current source burns are unavailable because no authoritative Testnet receiving-capacity reader has been verified. No source transfer proof has been claimed.
 
 `GET /v1/trade/stocks/funding?customer_id=...&wallet_id=...&account_address=...` returns official Paxos USDG/Robinhood gas faucet metadata and exact USDG/ETH balances for a currently verified customer-owned Privy EVM wallet. Unknown balances are null. A browser cannot select another user’s address. This is separate Testnet faucet funding, not CCTP bridging to Robinhood.
+
+## v0.4.2 — capability loading
+
+`GET /v1/capabilities` keeps its full default response. Optional `module=<frozen module ID>` selects one provider and `readiness=omit` reads only live tenant entitlements without provider probes. Omitted-readiness rows explicitly use `discovery_only`, `READINESS_NOT_REQUESTED` and empty actions; they cannot establish financial execution permission. Existing/revoked keys and current enabled-module records are checked on every request. Full readiness failures are isolated to the affected module instead of failing the complete catalog.
