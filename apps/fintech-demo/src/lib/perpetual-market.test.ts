@@ -1,5 +1,5 @@
 import{describe,it,expect}from'vitest';
-import{isCurrentPerpetualMarket,isCurrentDerivativeMarket,bindMarketDetail,clearMarketLiveFields,derivativeClass}from'./perpetual-market';
+import{isCurrentPerpetualMarket,isCurrentDerivativeMarket,isRecognizedDerivativeMarket,bindMarketDetail,clearMarketLiveFields,derivativeClass}from'./perpetual-market';
 const market={market_id:'hyperliquid-testnet:perps:0',asset_class:'perps',provider:'hyperliquid',network:'hyperliquid-testnet'};
 describe('current perpetual market boundary',()=>{
  it('accepts the exact Testnet provider identity without promoting execution',()=>expect(isCurrentPerpetualMarket({...market,executable:false})).toBe(true));
@@ -16,4 +16,15 @@ describe('selected source detail binding',()=>{
  it('maps Stocks aliases to stock perpetuals without treating them as Stellar tokens',()=>{expect(derivativeClass(equity.market_id)).toBe('stocks');expect(isCurrentDerivativeMarket(equity,'stocks')).toBe(true);expect(isCurrentDerivativeMarket({...equity,instrument_type:'tokenized_stock'},'stocks')).toBe(false);});
  it('rejects different IDs, modules, venues and networks before a detail is merged',()=>{expect(bindMarketDetail(equity,equity.market_id,'stocks')).toEqual(equity);for(const row of [{...equity,market_id:'hyperliquid-testnet:stocks:750010'},{...equity,asset_class:'perps'},{...equity,module:'trade.perps'},{...equity,provider:'sodax'},{...equity,network:'hyperliquid-mainnet'}])expect(()=>bindMarketDetail(row,equity.market_id,'stocks')).toThrow('does not match');});
  it('clears all volatile price, activity and risk values on a failed selected read',()=>{const cleared=clearMarketLiveFields({...equity,reference_price:'200',reference_price_atomic:'200000000',price_status:'current',observed_at:'now',perpetuals_stats:{mark_price:'200'},stats:{volume:'20'},risk:{enabled:true}});expect(cleared).toMatchObject({market_id:equity.market_id,reference_price:null,reference_price_atomic:null,price_status:'unavailable',observed_at:null,stats:null,perpetuals_stats:null,risk:null});});
+});
+
+describe('recognized customer catalog',()=>{
+ it('keeps reviewed native and equity instruments with exact logos',()=>{
+  expect(isRecognizedDerivativeMarket({...market,provider_symbol:'BTC'},'perps')).toBe(true);
+  expect(isRecognizedDerivativeMarket({...market,provider_symbol:'xyz:AAPL'},'perps')).toBe(true);
+ });
+ it('excludes unfamiliar prefixed listings without substituting same-ticker artwork',()=>{
+  expect(isRecognizedDerivativeMarket({...market,provider_symbol:'text:AAPL',underlying:{symbol:'AAPL'}},'perps')).toBe(false);
+  expect(isRecognizedDerivativeMarket({...market,provider_symbol:'nq:TEST'},'perps')).toBe(false);
+ });
 });

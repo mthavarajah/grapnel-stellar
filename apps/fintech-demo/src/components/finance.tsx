@@ -5,7 +5,7 @@ import {OperationProgress,ProgressIndicator} from "./operation-progress";
 import {trackApproval,type ApprovalPhase} from "@/lib/operation-progress";
 import { AssetLogo } from "./asset-logo";
 import {PerpetualOrderPreview,PerpetualMarketMetrics} from "./perpetual-order-preview";
-import {isCurrentDerivativeMarket,bindMarketDetail,clearMarketLiveFields} from "@/lib/perpetual-market";
+import {isCurrentDerivativeMarket,isRecognizedDerivativeMarket,bindMarketDetail,clearMarketLiveFields} from "@/lib/perpetual-market";
 import {assertMarginPositionBinding,marginPositionAction,type MarginReviewBinding} from "@/lib/margin-workflow";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
@@ -589,7 +589,7 @@ function FinanceShell({ page, auth, initialCategory }: { page: string; auth?: Au
       inFlight=true;if(firstLoad)setMarketsLoading(true);
       try{const result=await api("grapnel/markets?asset_class="+assetClass),rows=Array.isArray(result)?result:result?.markets;
         if(!Array.isArray(rows))throw Error("Market data is unavailable.");
-        if(isCurrent())setMarkets(rows.filter((entry:unknown)=>isCurrentDerivativeMarket(entry,assetClass)));
+        if(isCurrent())setMarkets(rows.filter((entry:unknown)=>isRecognizedDerivativeMarket(entry,assetClass)));
       }catch{if(isCurrent())setMarkets(current=>current.map(clearMarketLiveFields));}
       finally{inFlight=false;firstLoad=false;if(isCurrent())setMarketsLoading(false);}
     };
