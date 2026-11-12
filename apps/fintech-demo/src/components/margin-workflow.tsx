@@ -1,5 +1,6 @@
 'use client';
 import{useEffect,useRef,useState}from'react';
+import{MarginCollateralFunding}from'./margin-collateral-funding';
 import{MarginWorkflowPublicSchema,MarginStepQuoteSchema,fromAtomic,formatTokenAmount,type MarginWorkflowPublic,type MarginStepQuote,type AssetIdentity}from'@grapnel/contracts';
 import{api,ClientError,operationRequestKey,clearOperationRequest}from'@/lib/client';
 import{MARGIN_MARKET_ID,MarginBrowserInputSchema,marginStepLabels,marginPhaseLabels,marginStorageKey}from'@/lib/margin-workflow';
@@ -9,7 +10,7 @@ type Recovery={workflow_id?:string;draft?:ReturnType<typeof MarginBrowserInputSc
 const uuid=(value:unknown):value is string=>typeof value==='string'&&/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(value);
 function recoveryRead(key:string):Recovery|null{for(const storage of ['localStorage','sessionStorage']as const){try{const value=JSON.parse(window[storage].getItem(key)??'null');if(value&&typeof value==='object'&&!Array.isArray(value)&&Object.keys(value).every(field=>['workflow_id','draft','request_key'].includes(field))&&(!value.workflow_id||uuid(value.workflow_id))&&(!value.request_key||uuid(value.request_key))&&(!value.draft||MarginBrowserInputSchema.safeParse(value.draft).success))return value;}catch{}}return null;}
 function recoverySave(key:string,value:Recovery|null){for(const storage of ['localStorage','sessionStorage']as const){try{if(value)window[storage].setItem(key,JSON.stringify(value));else window[storage].removeItem(key);}catch{}}}
-export function MarginWorkflowCard({market,session,marginVerified,walletVerified,onReviewOperation,guardReason}:{market:Market;session:Binding; marginVerified:boolean;walletVerified:boolean;onReviewOperation:(id:string,owner:Binding)=>Promise<void>;guardReason?:string}){
+export function MarginWorkflowCard({market,session,marginVerified,walletVerified,onReviewOperation,guardReason,balances}:{market:Market;session:Binding; marginVerified:boolean;walletVerified:boolean;onReviewOperation:(id:string,owner:Binding)=>Promise<void>;guardReason?:string;balances:{asset_id:string;wallet_amount?:string;spendable?:string}[]}){
  const owner=`${session.customer_id}:${session.wallet_id}`,ownerRef=useRef(owner);ownerRef.current=owner;
  const key=marginStorageKey(session.customer_id,session.wallet_id),recovery=useRef<Recovery>({});
  const[workflow,setWorkflow]=useState<MarginWorkflowPublic|null>(null),[loading,setLoading]=useState(true),[busy,setBusy]=useState(false),[error,setError]=useState(''),[savedId,setSavedId]=useState<string|null>(null),[recoveringDraft,setRecoveringDraft]=useState(false),[uncertainRecovery,setUncertainRecovery]=useState(false);
@@ -27,7 +28,7 @@ export function MarginWorkflowCard({market,session,marginVerified,walletVerified
     const result=await api('grapnel/margin/workflows');if(!Array.isArray(result?.workflows))throw Error('Margin status is unavailable.');
     const rows=result.workflows.map(scopedWorkflow);return rows.find((row:MarginWorkflowPublic)=>row.phase!=='recovered')??rows[0]??null;
   };
-  void restore().then(value=>{if(alive&&ownerRef.current===captured){if(value)accept(value);else if(saved.workflow_id){setSavedId(null);recovery.current={};recoverySave(key,null);}}}).catch(()=>{if(alive&&ownerRef.current===captured){setError('Saved margin status is unavailable. Check its status before starting another.');setUncertainRecovery(true);}}).finally(()=>{if(alive&&ownerRef.current===captured)setLoading(false);});
+  void restore().then(value=>{if(alive&&ownerRef.current===captured){if(value)accept(value);else if(saved.workflow_id){setSavedId(null);recovery.current={};recoverySave(key,null);}}}).catch(()=>{if(alive&&ownerRef.current===captured){setError('Margin status is unavailable. Check before starting another setup.');setUncertainRecovery(true);}}).finally(()=>{if(alive&&ownerRef.current===captured)setLoading(false);});
   return()=>{alive=false;};
  // Exact customer/wallet namespace owns all recovery data; response binding is checked separately.
  },[owner,key]);
@@ -43,9 +44,11 @@ export function MarginWorkflowCard({market,session,marginVerified,walletVerified
  const getQuote=(step:MarginWorkflowPublic['next_steps'][number])=>run(async()=>{if(!workflow?.preparation_available||!workflow.next_steps.includes(step))throw Error('This margin action is unavailable right now.');setQuote(null);const parsed=MarginStepQuoteSchema.safeParse(await post(`margin/workflows/${workflow.workflow_id}/steps/${step}/quote`,{}));if(!parsed.success)throw Error('Margin quote is unavailable.');const result=parsed.data;if(result.workflow_id!==workflow.workflow_id||result.step!==step||result.revision!==workflow.revision||Date.parse(result.expires_at)<=Date.now())throw Error('Request a fresh margin quote.');if(ownerRef.current===owner){setQuote(result);setClock(Date.now());}});
  const expired=quote!=null&&Date.parse(quote.expires_at)<=clock;
  const collateral=market.collateral,displayAmount=workflow&&collateral?.id===workflow.asset_id&&collateral.decimals===7?formatTokenAmount(fromAtomic(BigInt(workflow.amount_atomic),7)):null;
- return <section className="market-order-card margin-workflow-card" aria-label="Margin setup" data-testid="margin-workflow-card">
+ return <section className="market-order-card margin-workflow-card" aria-label="Margin setup" data-testid="margin-workflow-card" aria-busy={busy}>
   <h2>Margin {market.market_id===MARGIN_MARKET_ID?'XLM':''}</h2>
   {guardReason&&<p className="margin-trading-reason" role="status">{guardReason}</p>}
+  {validMarket&&market.collateral&&<MarginCollateralFunding session={session} asset={market.collateral} walletVerified={walletVerified} balances={balances} onReviewOperation={onReviewOperation}/>}
+  {busy&&<p className="small muted" role="status">Checking margin request…</p>}
   {error&&<p className="swap-action-error" role="alert">{error}</p>}
   {loading?<p className="small muted" role="status">Checking saved margin setup…</p>:workflow?<>
    <p className="margin-workflow-phase" role="status" data-testid="margin-workflow-phase">{marginPhaseLabels[workflow.phase]}</p>

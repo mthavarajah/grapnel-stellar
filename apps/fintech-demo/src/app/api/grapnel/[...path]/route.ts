@@ -1,7 +1,7 @@
 import { NextRequest } from "next/server";
 import { z } from "zod";
-import {MarginWorkflowInputSchema,MarginCustomerBindingSchema,MarginWorkflowPublicSchema,MarginStepQuoteSchema,MarginStepSchema,MarginStepInputSchema,OperationSchema,toAtomic} from '@grapnel/contracts';
-import {MARGIN_MARKET_ID,MarginBrowserInputSchema,MarginBrowserPrepareSchema,MarginEmptyInputSchema} from '../../../../lib/margin-workflow';
+import {MarginWorkflowInputSchema,MarginCustomerBindingSchema,MarginWorkflowPublicSchema,MarginStepQuoteSchema,MarginStepSchema,MarginStepInputSchema,OperationSchema,toAtomic,fromAtomic,XLM,MarginCollateralFundingQuoteSchema,MarginCollateralFundingQuoteInputSchema,MarginCollateralFundingInputSchema} from '@grapnel/contracts';
+import {MARGIN_MARKET_ID,MarginBrowserInputSchema,MarginBrowserPrepareSchema,MarginEmptyInputSchema,MarginFundingBrowserQuoteSchema,MarginFundingBrowserPrepareSchema} from '../../../../lib/margin-workflow';
 import {
   assertOrigin,
   BffError,
@@ -176,6 +176,29 @@ export async function POST(
         "A request identifier is required",
       );
     const binding = { customer_id: s.customerId, wallet_id: s.walletId };
+    if(route==="margin/collateral/quote"||route==="margin/collateral/swap"){
+      await requireModule("trade.perps",s);await requireModule("capital.wallets",s,true);
+      const requestBody=route.endsWith("/quote")?MarginFundingBrowserQuoteSchema.parse(raw):MarginFundingBrowserPrepareSchema.parse(raw);
+      const markets=await grapnel("/trade/markets?asset_class=perps",s);
+      const selected=(Array.isArray(markets)?markets:markets?.markets??[]).find((entry:{market_id:string})=>entry.market_id===MARGIN_MARKET_ID);
+      if(selected?.network!=="stellar-testnet"||selected?.collateral?.network!=="stellar-testnet"||selected?.collateral?.verified!==true||selected?.collateral?.decimals!==7)throw new BffError(409,"EXECUTION_UNAVAILABLE","Collateral funding is unavailable right now");
+      const validateQuote=(value:unknown,amount:string)=>{
+        const parsed=MarginCollateralFundingQuoteSchema.safeParse(value);
+        if(!parsed.success||parsed.data.from_asset_id!==XLM.id||parsed.data.to_asset_id!==selected.collateral.id||BigInt(parsed.data.amount_in_atomic)!==toAtomic(amount,7)||BigInt(parsed.data.minimum_out_atomic)>BigInt(parsed.data.expected_out_atomic))throw new BffError(409,"INTENT_MISMATCH","Collateral quote does not match your request");
+        if(Date.parse(parsed.data.expires_at)<=Date.now()||Date.parse(parsed.data.expires_at)>Date.now()+120000)throw new BffError(409,"QUOTE_EXPIRED","Get a fresh collateral quote");
+        return parsed.data;
+      };
+      if("amount" in requestBody){
+        const input=MarginCollateralFundingQuoteInputSchema.parse({...binding,amount:requestBody.amount});
+        return json(validateQuote(await grapnel("/trade/margin/collateral/quote",s,{method:"POST",body:input,idempotencyKey:key}),input.amount));
+      }
+      const amount=fromAtomic(BigInt(requestBody.quote.amount_in_atomic),7);
+      const input=MarginCollateralFundingInputSchema.parse({...binding,amount,minimum_output_atomic:requestBody.quote.minimum_out_atomic});
+      validateQuote(requestBody.quote,amount);
+      const op=OperationSchema.safeParse(await grapnel("/trade/margin/collateral/swap",s,{method:"POST",body:input,idempotencyKey:key}));
+      if(!op.success||op.data.customer_id!==s.customerId||op.data.wallet_id!==s.walletId||op.data.type!=="margin.collateral_swap"||op.data.module!=="trade.perps"||!z.string().uuid().safeParse(op.data.operation_id).success)throw new BffError(409,"INTENT_MISMATCH","Collateral operation does not match your request");
+      return json(op.data,202);
+    }
     if(route==="margin/workflows"){
       await requireModule("trade.perps",s,true);await requireModule("capital.wallets",s,true);
       const body=MarginBrowserInputSchema.parse(raw);
