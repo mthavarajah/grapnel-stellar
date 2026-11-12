@@ -1,0 +1,533 @@
+{
+  "observedAt": "2026-11-12T19:03:44.106Z",
+  "head": {
+    "number": "328592441",
+    "timestamp": "1794510223"
+  },
+  "addresses": {
+    "reader": "0x92659fEf40582ceCC3CBa4D096d28291C238D358",
+    "eventEmitter": "0xa973c2692C1556E1a3d478e745e9a75624AEDc73",
+    "datastore": "0xCF4c2C4c53157BcC01A596e3788fFF69cBBCD201",
+    "token": "0x3253a335E7bFfB4790Aa4C25C4250d206E9b9773"
+  },
+  "code": {
+    "reader": 23870,
+    "eventEmitter": 7998,
+    "datastore": 10443,
+    "token": 2853
+  },
+  "token": {
+    "symbol": "USDC",
+    "name": "USDC",
+    "decimals": 6,
+    "totalSupply": "111158920902374161957237876871879261240489005557801087329131894455076273001412"
+  },
+  "mintSimulation": {},
+  "markets": [
+    {
+      "marketToken": "0xb6fC4C9eB02C35A134044526C62bb15014Ac0Bcc",
+      "indexToken": "0x980B62Da83eFf3D4576C647993b0c1D7faf17c73",
+      "longToken": "0x980B62Da83eFf3D4576C647993b0c1D7faf17c73",
+      "shortToken": "0x3253a335E7bFfB4790Aa4C25C4250d206E9b9773",
+      "usdcBalance": "50445532398099"
+    },
+    {
+      "marketToken": "0x3A83246bDDD60c4e71c91c10D9A66Fd64399bBCf",
+      "indexToken": "0xF79cE1Cf38A09D572b021B4C5548b75A14082F12",
+      "longToken": "0xF79cE1Cf38A09D572b021B4C5548b75A14082F12",
+      "shortToken": "0x3253a335E7bFfB4790Aa4C25C4250d206E9b9773",
+      "usdcBalance": "1816029876307"
+    },
+    {
+      "marketToken": "0xAde9D177B9E060D2064ee9F798125e6539fDaA1c",
+      "indexToken": "0xD5DdAED48B09fa1D7944bd662CB05265FCD7077C",
+      "longToken": "0x980B62Da83eFf3D4576C647993b0c1D7faf17c73",
+      "shortToken": "0x3253a335E7bFfB4790Aa4C25C4250d206E9b9773",
+      "usdcBalance": "1105640145711"
+    },
+    {
+      "marketToken": "0x860F6B4B2F218885935C306B1c782a864ed2d67f",
+      "indexToken": "0x0f16dFBA0242F23F4a5faDE95Cd138139DD7592F",
+      "longToken": "0x980B62Da83eFf3D4576C647993b0c1D7faf17c73",
+      "shortToken": "0x3253a335E7bFfB4790Aa4C25C4250d206E9b9773",
+      "usdcBalance": "2003363198744"
+    },
+    {
+      "marketToken": "0x8490D84c29134dA93f434210D76721179C382471",
+      "indexToken": "0xAc0CeE37770FdC16732C1f591a6B90A4Ea580643",
+      "longToken": "0x980B62Da83eFf3D4576C647993b0c1D7faf17c73",
+      "shortToken": "0x3253a335E7bFfB4790Aa4C25C4250d206E9b9773",
+      "usdcBalance": "15010521884"
+    },
+    {
+      "marketToken": "0x02f0D10977f044d59460B2e71afB8c07Dc7b5E1F",
+      "indexToken": "0xF3a3486de22725d8d762671AC4479d8ab9C21173",
+      "longToken": "0x980B62Da83eFf3D4576C647993b0c1D7faf17c73",
+      "shortToken": "0x3253a335E7bFfB4790Aa4C25C4250d206E9b9773",
+      "usdcBalance": "20450155931"
+    },
+    {
+      "marketToken": "0x0b0A750812700E9673547134096577D8a79d8108",
+      "indexToken": "0xC371020838605F2150b0C3C8E2f872c13C3F1d5b",
+      "longToken": "0x980B62Da83eFf3D4576C647993b0c1D7faf17c73",
+      "shortToken": "0x3253a335E7bFfB4790Aa4C25C4250d206E9b9773",
+      "usdcBalance": "15000736613"
+    },
+    {
+      "marketToken": "0xceDa6b537180BB37bbF6B3cef6c24Fa19674a975",
+      "indexToken": "0x2EC60C7838af976B3bA3802A7aCD00B727Cfb09c",
+      "longToken": "0x980B62Da83eFf3D4576C647993b0c1D7faf17c73",
+      "shortToken": "0x3253a335E7bFfB4790Aa4C25C4250d206E9b9773",
+      "usdcBalance": "0"
+    },
+    {
+      "marketToken": "0xBeE77Fef192c5473592f14Fd4c8CaF757796822F",
+      "indexToken": "0x558f1A57c2aF28a1bB908e9eB60BfF25511027AA",
+      "longToken": "0x980B62Da83eFf3D4576C647993b0c1D7faf17c73",
+      "shortToken": "0x3253a335E7bFfB4790Aa4C25C4250d206E9b9773",
+      "usdcBalance": "0"
+    },
+    {
+      "marketToken": "0x91791497Eb6bD5347Ddca5A9D04237ae9bA79fd4",
+      "indexToken": "0xb909F3f85836E9fCE03D58e4ADbAdd5689771665",
+      "longToken": "0x980B62Da83eFf3D4576C647993b0c1D7faf17c73",
+      "shortToken": "0x3253a335E7bFfB4790Aa4C25C4250d206E9b9773",
+      "usdcBalance": "0"
+    }
+  ],
+  "events": [
+    {
+      "name": "OrderCreated",
+      "tx": "0x6102a9e5f3e8ad6a26df7158cb3f827402f759fdc5e5ee23422cb70f6634e00f",
+      "block": "328591672",
+      "data": {
+        "eventNameHash": "0xa7427759bfd3b941f14e687e129519da3c9b0046c5b9aaa290bb1dede63753b3",
+        "topic1": "0xa222f9bafd38b84e466d7a772ee706ca6965fcd03c711a4d5411ae67aaa8be02",
+        "topic2": "0x0000000000000000000000001128d5fd06d15288f014eb35162d4a69bea7aa7c",
+        "msgSender": "0xC881c2391611829d7bc81c12a285cB0201F08f8c",
+        "eventName": "OrderCreated",
+        "eventData": {
+          "addressItems": {
+            "items": [
+              {
+                "key": "account",
+                "value": "0x1128D5fD06D15288F014eB35162D4a69BEa7Aa7c"
+              },
+              {
+                "key": "receiver",
+                "value": "0x1128D5fD06D15288F014eB35162D4a69BEa7Aa7c"
+              },
+              {
+                "key": "callbackContract",
+                "value": "0x0000000000000000000000000000000000000000"
+              },
+              {
+                "key": "uiFeeReceiver",
+                "value": "0x3fd568A58000FC56413d637dddd69e73668139c6"
+              },
+              {
+                "key": "market",
+                "value": "0x3A83246bDDD60c4e71c91c10D9A66Fd64399bBCf"
+              },
+              {
+                "key": "initialCollateralToken",
+                "value": "0x3253a335E7bFfB4790Aa4C25C4250d206E9b9773"
+              },
+              {
+                "key": "cancellationReceiver",
+                "value": "0x0000000000000000000000000000000000000000"
+              }
+            ],
+            "arrayItems": [
+              {
+                "key": "swapPath",
+                "value": []
+              }
+            ]
+          },
+          "uintItems": {
+            "items": [
+              {
+                "key": "orderType",
+                "value": "4"
+              },
+              {
+                "key": "decreasePositionSwapType",
+                "value": "0"
+              },
+              {
+                "key": "sizeDeltaUsd",
+                "value": "500000000000000000000000000000000"
+              },
+              {
+                "key": "initialCollateralDeltaAmount",
+                "value": "99789930"
+              },
+              {
+                "key": "triggerPrice",
+                "value": "0"
+              },
+              {
+                "key": "acceptablePrice",
+                "value": "719071630119459774278173039"
+              },
+              {
+                "key": "executionFee",
+                "value": "433549665648000"
+              },
+              {
+                "key": "callbackGasLimit",
+                "value": "0"
+              },
+              {
+                "key": "minOutputAmount",
+                "value": "0"
+              },
+              {
+                "key": "uiFeeFactor",
+                "value": "40000000000000000000000000"
+              },
+              {
+                "key": "updatedAtTime",
+                "value": "1794510017"
+              },
+              {
+                "key": "validFromTime",
+                "value": "0"
+              },
+              {
+                "key": "srcChainId",
+                "value": "0"
+              }
+            ],
+            "arrayItems": []
+          },
+          "intItems": {
+            "items": [],
+            "arrayItems": []
+          },
+          "boolItems": {
+            "items": [
+              {
+                "key": "isLong",
+                "value": false
+              },
+              {
+                "key": "shouldUnwrapNativeToken",
+                "value": false
+              },
+              {
+                "key": "autoCancel",
+                "value": true
+              }
+            ],
+            "arrayItems": []
+          },
+          "bytes32Items": {
+            "items": [
+              {
+                "key": "key",
+                "value": "0xa222f9bafd38b84e466d7a772ee706ca6965fcd03c711a4d5411ae67aaa8be02"
+              }
+            ],
+            "arrayItems": [
+              {
+                "key": "dataList",
+                "value": [
+                  "0x61706973646b90941f9c489f5754591f8832fb21a16900000000000000000000"
+                ]
+              }
+            ]
+          },
+          "bytesItems": {
+            "items": [],
+            "arrayItems": []
+          },
+          "stringItems": {
+            "items": [],
+            "arrayItems": []
+          }
+        }
+      }
+    },
+    {
+      "name": "PositionDecrease",
+      "tx": "0x13abf88cce93d7a7a82e597a1e705578a74e2b24038d32fd0bf354c5c87778b8",
+      "block": "328591682",
+      "data": {
+        "eventNameHash": "0x07d51b51b408d7c62dcc47cc558da5ce6a6e0fd129a427ebce150f52b0e5171a",
+        "topic1": "0x0000000000000000000000001128d5fd06d15288f014eb35162d4a69bea7aa7c",
+        "msgSender": "0x63eB92a0434875d5C47004b83540CCa77C5584ED",
+        "eventName": "PositionDecrease",
+        "eventData": {
+          "addressItems": {
+            "items": [
+              {
+                "key": "account",
+                "value": "0x1128D5fD06D15288F014eB35162D4a69BEa7Aa7c"
+              },
+              {
+                "key": "market",
+                "value": "0x3A83246bDDD60c4e71c91c10D9A66Fd64399bBCf"
+              },
+              {
+                "key": "collateralToken",
+                "value": "0x3253a335E7bFfB4790Aa4C25C4250d206E9b9773"
+              }
+            ],
+            "arrayItems": []
+          },
+          "uintItems": {
+            "items": [
+              {
+                "key": "sizeInUsd",
+                "value": "0"
+              },
+              {
+                "key": "sizeInTokens",
+                "value": "0"
+              },
+              {
+                "key": "collateralAmount",
+                "value": "0"
+              },
+              {
+                "key": "borrowingFactor",
+                "value": "570976013704177268061137256"
+              },
+              {
+                "key": "fundingFeeAmountPerSize",
+                "value": "206022297085675076275"
+              },
+              {
+                "key": "longTokenClaimableFundingAmountPerSize",
+                "value": "5217956153454385383"
+              },
+              {
+                "key": "shortTokenClaimableFundingAmountPerSize",
+                "value": "183656661869536940573568"
+              },
+              {
+                "key": "executionPrice",
+                "value": "716874424641600299647195728"
+              },
+              {
+                "key": "indexTokenPrice.max",
+                "value": "716874320533058325000000000"
+              },
+              {
+                "key": "indexTokenPrice.min",
+                "value": "716856271236211575000000000"
+              },
+              {
+                "key": "collateralTokenPrice.max",
+                "value": "999717062500000000000000"
+              },
+              {
+                "key": "collateralTokenPrice.min",
+                "value": "999692587500000000000000"
+              },
+              {
+                "key": "sizeDeltaUsd",
+                "value": "500000000000000000000000000000000"
+              },
+              {
+                "key": "sizeDeltaInTokens",
+                "value": "695923"
+              },
+              {
+                "key": "collateralDeltaAmount",
+                "value": "99789930"
+              },
+              {
+                "key": "values.priceImpactDiffUsd",
+                "value": "0"
+              },
+              {
+                "key": "orderType",
+                "value": "4"
+              },
+              {
+                "key": "decreasedAtTime",
+                "value": "1794510020"
+              },
+              {
+                "key": "cappedPnlPoolTokenAmount",
+                "value": "0"
+              },
+              {
+                "key": "cappedPnlAllowancePerPrice",
+                "value": "0"
+              }
+            ],
+            "arrayItems": []
+          },
+          "intItems": {
+            "items": [
+              {
+                "key": "priceImpactUsd",
+                "value": "-72451528856622400393266390"
+              },
+              {
+                "key": "basePnlUsd",
+                "value": "1110672231672451291025000000000"
+              },
+              {
+                "key": "uncappedBasePnlUsd",
+                "value": "1110672231672451291025000000000"
+              },
+              {
+                "key": "proportionalPendingImpactUsd",
+                "value": "0"
+              },
+              {
+                "key": "totalImpactUsd",
+                "value": "-72451528856622400393266390"
+              },
+              {
+                "key": "realizedUncappedPnlUsd",
+                "value": "0"
+              },
+              {
+                "key": "realizedPnlUsd",
+                "value": "0"
+              },
+              {
+                "key": "cappedPnlReferencePoolPnlUsd",
+                "value": "0"
+              }
+            ],
+            "arrayItems": []
+          },
+          "boolItems": {
+            "items": [
+              {
+                "key": "isLong",
+                "value": false
+              },
+              {
+                "key": "balanceWasImproved",
+                "value": false
+              }
+            ],
+            "arrayItems": []
+          },
+          "bytes32Items": {
+            "items": [
+              {
+                "key": "orderKey",
+                "value": "0xa222f9bafd38b84e466d7a772ee706ca6965fcd03c711a4d5411ae67aaa8be02"
+              },
+              {
+                "key": "positionKey",
+                "value": "0x27f8b5acc2d7b8d42151f90908027b2f224e8d6b795765a0f219b951f6ed8081"
+              }
+            ],
+            "arrayItems": []
+          },
+          "bytesItems": {
+            "items": [],
+            "arrayItems": []
+          },
+          "stringItems": {
+            "items": [],
+            "arrayItems": []
+          }
+        }
+      }
+    },
+    {
+      "name": "OrderExecuted",
+      "tx": "0x13abf88cce93d7a7a82e597a1e705578a74e2b24038d32fd0bf354c5c87778b8",
+      "block": "328591682",
+      "data": {
+        "eventNameHash": "0x680f10f06595d3d707241f604672ec4b6ae50eb82728ec2f3c65f6789e897760",
+        "topic1": "0xa222f9bafd38b84e466d7a772ee706ca6965fcd03c711a4d5411ae67aaa8be02",
+        "topic2": "0x0000000000000000000000001128d5fd06d15288f014eb35162d4a69bea7aa7c",
+        "msgSender": "0x396B1897854714A7E3896F9a5C4864CdB8879054",
+        "eventName": "OrderExecuted",
+        "eventData": {
+          "addressItems": {
+            "items": [
+              {
+                "key": "account",
+                "value": "0x1128D5fD06D15288F014eB35162D4a69BEa7Aa7c"
+              }
+            ],
+            "arrayItems": []
+          },
+          "uintItems": {
+            "items": [
+              {
+                "key": "secondaryOrderType",
+                "value": "0"
+              }
+            ],
+            "arrayItems": []
+          },
+          "intItems": {
+            "items": [],
+            "arrayItems": []
+          },
+          "boolItems": {
+            "items": [],
+            "arrayItems": []
+          },
+          "bytes32Items": {
+            "items": [
+              {
+                "key": "key",
+                "value": "0xa222f9bafd38b84e466d7a772ee706ca6965fcd03c711a4d5411ae67aaa8be02"
+              }
+            ],
+            "arrayItems": []
+          },
+          "bytesItems": {
+            "items": [],
+            "arrayItems": []
+          },
+          "stringItems": {
+            "items": [],
+            "arrayItems": []
+          }
+        }
+      }
+    }
+  ],
+  "readOnly": true,
+  "ownExecutionProof": null,
+  "freshCallerMintEthCall": {
+    "account": "0x3a33d2e70c851b05f8f1c36f3187e35a06f83a03",
+    "transactionCount": 0,
+    "balanceWei": "0",
+    "mintEthCall": {},
+    "frontendCode": {
+      "0x3Fb6d5429612588510341eA60AacC282dB264295": 21048,
+      "0x1543f5e73b9d329d7DE25ADC98120F13D29bC53b": 24394
+    },
+    "executionReceipt": {
+      "status": "success",
+      "blockNumber": "328591682",
+      "transactionHash": "0x13abf88cce93d7a7a82e597a1e705578a74e2b24038d32fd0bf354c5c87778b8"
+    }
+  },
+  "otherGmxUsdc": {
+    "address": "0x3321Fd36aEaB0d5CdfD26f4A3A93E2D2aAcCB99f",
+    "metadata": {
+      "symbol": "USDC",
+      "name": "USDC",
+      "decimals": 6,
+      "totalSupply": "1010002001033102539011100"
+    },
+    "currentMarketsAllHaveOtherShortToken": true
+  },
+  "sourceUrls": [
+    "https://docs.gmx.io/docs/api/contracts/addresses/",
+    "https://raw.githubusercontent.com/gmx-io/gmx-synthetics/updates/docs/arbitrumSepolia-deployments.md",
+    "https://raw.githubusercontent.com/gmx-io/gmx-interface/master/sdk/src/configs/tokens.ts",
+    "https://test.gmx-interface.pages.dev/assets/bootstrap-BHvzI4RZ.js",
+    "https://docs.arbitrum.io/chain-info",
+    "https://www.alchemy.com/faucets/arbitrum-sepolia",
+    "https://ethfaucet.com/networks/arbitrum/arbitrum-sepolia"
+  ]
+}
