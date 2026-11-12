@@ -33,7 +33,7 @@ type Session = {
   wallet_id: string;
   stellar_address: string;
 };
-type WalletValuation = {wallet_id:string;total_usd:string|null;priced_subtotal_usd:string;unpriced_asset_count:number;unknown_source_count?:number;as_of:string};
+type WalletValuation = {assets?:{asset_id:string;wallet_amount:string;value_usd:string|null}[];wallet_id:string;total_usd:string|null;priced_subtotal_usd:string;unpriced_asset_count:number;unknown_source_count?:number;as_of:string};
 type BorrowAsset = {
   market_id:string;asset:AssetIdentity;borrow_apr:string|null;borrow_apy:string|null;
   available_liquidity:string|null;borrowed:string;repayable:string;
@@ -368,7 +368,7 @@ function FinanceShell({ page, auth, initialCategory }: { page: string; auth?: Au
   const valuationOwner=useRef("");valuationOwner.current=`${session?.customer_id??""}:${session?.wallet_id??""}`;
   useEffect(()=>{setProfileOpen(false);setWalletValuation(null);setValuationUnavailable(false);},[session?.customer_id,session?.wallet_id]);
   useEffect(()=>{
-    if(!profileOpen||!session)return;
+    if((!profileOpen&&page!=="home"&&page!=="funds")||!session)return;
     let alive=true;const owner=`${session.customer_id}:${session.wallet_id}`,walletId=session.wallet_id;
     setValuationLoading(true);setWalletValuation(null);setValuationUnavailable(false);
     let pending=valuationFlight.current?.owner===owner?valuationFlight.current.promise:null;
@@ -383,7 +383,7 @@ function FinanceShell({ page, auth, initialCategory }: { page: string; auth?: Au
     }
     void pending.then(value=>{if(alive&&valuationOwner.current===owner)setWalletValuation(value);}).catch(()=>{if(alive&&valuationOwner.current===owner)setValuationUnavailable(true);}).finally(()=>{if(alive&&valuationOwner.current===owner)setValuationLoading(false);});
     return()=>{alive=false;};
-  },[profileOpen,session?.customer_id,session?.wallet_id]);
+  },[profileOpen,page,session?.customer_id,session?.wallet_id]);
   useEffect(()=>{
     if(!profileOpen)return;
     profilePanel.current?.focus();
@@ -1152,7 +1152,7 @@ function FinanceShell({ page, auth, initialCategory }: { page: string; auth?: Au
                     Wallet balances
                   </span>
                 </div>
-                <BalanceTable balances={balances} connected={!!session} />
+                <BalanceTable valuation={walletValuation} balances={balances} connected={!!session} />
               </section>
               <section className="market-overview" aria-label="Market overview" data-testid="market-overview">
                 {overviewGroups.filter(group=>capability(group.module)?.enabled).map(group=>{
@@ -1188,7 +1188,7 @@ function FinanceShell({ page, auth, initialCategory }: { page: string; auth?: Au
           {fundingPage === "fund" && <>
             <section className="section" aria-label="Current wallet balances">
               <div className="section-heading"><h2>Your wallet balances</h2></div>
-              <BalanceTable balances={balances} connected={!!session} />
+              <BalanceTable valuation={walletValuation} balances={balances} connected={!!session} />
             </section>
           </>}
           {(fundingPage === "fund" || fundingPage === "return") && (
@@ -1803,9 +1803,11 @@ function Empty({
   );
 }
 function BalanceTable({
+  valuation,
   balances,
   connected,
 }: {
+  valuation?: WalletValuation|null;
   balances: any[];
   connected: boolean;
 }) {
@@ -1825,6 +1827,7 @@ function BalanceTable({
           <tr>
             <th>Asset</th>
             <th>Wallet amount</th>
+            <th>Value (USD)</th>
             <th>Reserved</th>
             <th>Spendable</th>
           </tr>
@@ -1845,6 +1848,7 @@ function BalanceTable({
                 </div>
               </td>
               <td>{formatTokenAmount(b.wallet_amount)}</td>
+              <td>{(()=>{const item=valuation?.assets?.find(row=>row.asset_id===b.asset_id&&row.wallet_amount===b.wallet_amount);return item?.value_usd!=null&&/^(0|[1-9]\d*)(\.\d+)?$/.test(item.value_usd)?new Intl.NumberFormat("en-US",{style:"currency",currency:"USD",minimumFractionDigits:2,maximumFractionDigits:2}).format(Number(item.value_usd)):"—";})()}</td>
               <td>{formatTokenAmount(b.reserved)}</td>
               <td>
                 <strong>{formatTokenAmount(b.spendable)}</strong>

@@ -15,8 +15,12 @@ export async function registerWalletValuationRoutes(app:FastifyInstance,deps:Wal
   const {id}=z.object({id:z.string().uuid()}).parse(request.params);
   const {customer_id}=z.object({customer_id:z.string().uuid()}).strict().parse(request.query);
   const customer=await deps.requireCustomer(request,customer_id,id);
-  const valuation=await valueWalletBalances(await deps.balances(customer),assetId=>deps.priceFor(assetId));
-  return deps.success(request,{wallet_id:customer.walletId,...valuation});
+  const balances=await deps.balances(customer),prices=new Map<string,Promise<WalletUsdPrice|null>>();
+  const priceFor=(id:string)=>{let value=prices.get(id);if(!value){value=deps.priceFor(id);prices.set(id,value);}return value;};
+  const valuation=await valueWalletBalances(balances,priceFor);
+  const assets=[];
+  for(const balance of balances){const value=await valueWalletBalances([balance],priceFor);assets.push({asset_id:balance.asset_id,wallet_amount:balance.wallet_amount,value_usd:value.total_usd});}
+  return deps.success(request,{wallet_id:customer.walletId,...valuation,assets});
  });
 }
 

@@ -1,3 +1,8 @@
+import {HyperliquidTestnetHttpTransport} from './adapters/hyperliquid/execution/index.js';
+import {PgPerpetualWorkflowStore} from './modules/perpetuals/persistence.js';
+import {PerpetualCustomerService} from './modules/perpetuals/service.js';
+import {registerPerpetualCustomerRoutes} from './modules/perpetuals/routes.js';
+import {CCTP_CIRCLE_ASSET_ID} from './adapters/cctp/inspector.js';
 import {HyperliquidTestnetReader} from './adapters/hyperliquid/index.js';
 import {perpetualMarketRows,perpetualHistory,stockPerpetualRows} from './modules/perpetuals/market-data.js';
 import { readFile } from 'node:fs/promises';
@@ -71,6 +76,9 @@ export function financialRouteModule(path:string):'capital.testnet_funding'|'cap
  if(pathname.startsWith('/v1/capital/testnet/'))return 'capital.testnet_funding';
  if(pathname.startsWith('/v1/capital/lending/'))return 'capital.lending';
  if(pathname.startsWith('/v1/trade/margin/'))return 'trade.perps';
+ // The customer-signed perpetual routes resolve stocks/perps from the exact order
+ // and enforce current signing proof themselves, without requiring Spot.
+ if(pathname.startsWith('/v1/trade/perpetuals/'))return null;
  if(pathname.startsWith('/v1/trade/'))return 'trade.spot';
  return null;
 }
@@ -222,6 +230,11 @@ export async function createRuntime(pool?:Pool,marginRoutes:RuntimeMarginBinding
   }
   return blendReadiness;
  };
+ const perpetualService=new PerpetualCustomerService({store:new PgPerpetualWorkflowStore(db),transport:new HyperliquidTestnetHttpTransport(),
+  market:readDetailedPerpetualMarket,
+  accessApproved:async()=>process.env.HYPERLIQUID_TESTNET_ACCESS_CONFIRMED==='true'&&!!process.env.HYPERLIQUID_TESTNET_ACCESS_REFERENCE?.trim(),
+  fundingStatus:async scope=>{const balances=await chain.getClassicBalances(scope.stellarAddress),circle=balances.find(row=>row.asset_id===CCTP_CIRCLE_ASSET_ID);return {trustline_ready:!!circle,balance:circle?.wallet_amount??null,allowance:null,bridge_available:false,reason:circle?'CCTP_DESTINATION_AND_RETURN_PROOF_REQUIRED':'CIRCLE_USDC_TRUSTLINE_REQUIRED'};},
+ });
  const app=await buildApp({pool:db,config,identityVerifier:identity,
   verifySignedAction:async(action,signed)=>{if(action.summary.action.startsWith('margin.'))await verifyRuntimeMarginAction(action,signed,marginBindings);else if(action.summary.action==='wallet.usdc_trustline')verifyPreparedUsdcTrustline(action,signed);else if(action.summary.action==='spot.swap')await spotInspector.verifyForSubmission(action,signed);else if(borrowingAction(action.summary.action))await borrowPreparer.verifyForSubmission(action,signed);else if(action.summary.action==='blend.supply'||action.summary.action==='blend.withdraw')await soroban.verifyForSubmission(action,signed);else verifySignedAction(action,signed);return {txHash:parseTestnetTransaction(signed).hash().toString('hex')};},
   balanceReader:address=>chain.getClassicBalances(address),
@@ -265,6 +278,7 @@ export async function createRuntime(pool?:Pool,marginRoutes:RuntimeMarginBinding
     const customer=await requireCustomer(request,query.customer_id,query.wallet_id);
     return success(request,{earnings:await earningsReader.getEarnings(customer),as_of:new Date().toISOString()});
    });
+   await registerPerpetualCustomerRoutes(app,perpetualService,()=>hasGate1Proof(chain));
    await registerUsdcTrustline(app,{chain,operations,verifyGate1:()=>hasGate1Proof(chain)});
    // Revalidate the actual chain proof for every new provider intent. A
    // startup snapshot must not survive a Testnet reset or unavailable proof.
@@ -309,7 +323,7 @@ export async function createRuntime(pool?:Pool,marginRoutes:RuntimeMarginBinding
  });
  app.addHook('onClose',async()=>{if(!pool)await db.end();});
  const workerChain=createRuntimeWorkerChain({pool:db,chain,blend,soroban,borrowing,borrowPreparer,gate1Passed,verifyGate1:()=>hasGate1Proof(chain),spot:spotInspector,readSpotBalances,margin:marginBindings.execution,marginFunding:marginBindings.fundingExecution});
- return {app,config,pool:db,chain,wallets,operations,funding,gate1Passed,worker:new OperationWorker(db,workerChain)};
+ return {app,config,pool:db,chain,wallets,operations,funding,gate1Passed,perpetualService,worker:new OperationWorker(db,workerChain)};
 }
 
 

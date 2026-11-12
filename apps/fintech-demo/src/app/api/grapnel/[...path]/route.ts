@@ -64,6 +64,18 @@ export async function GET(
       return json(await grapnel("/capabilities"));
     const s = await requireSession();
     const key = path.join("/");
+    if(key==='perps-account'){
+      const category=z.enum(['perps','stocks']).parse(request.nextUrl.searchParams.get('asset_class')??'perps');
+      await requireModule('trade.'+category,s);
+      const id=request.nextUrl.searchParams.get('market_id');if(id&&derivativeClass(id)!==category)throw new BffError(404,'NOT_FOUND','Market not found');
+      return json(await grapnel(`/trade/perpetuals/account?customer_id=${s.customerId}&wallet_id=${s.walletId}&asset_class=${category}${id?'&market_id='+encodeURIComponent(id):''}`,s));
+    }
+    if(key==='perps-order'){
+      const id=z.string().uuid().parse(request.nextUrl.searchParams.get('order_id'));
+      const row=await grapnel(`/trade/perpetuals/orders/${id}?customer_id=${s.customerId}&wallet_id=${s.walletId}`,s);
+      if(row?.intent?.customerId!==s.customerId||row?.intent?.walletId!==s.walletId||row?.id!==id)throw new BffError(404,'NOT_FOUND','Order not found');
+      const category=derivativeClass(row.intent.marketId);if(!category)throw new BffError(502,'INVALID_RESPONSE','Order market is invalid');await requireModule('trade.'+category,s);return json(row);
+    }
     if(key==="margin/workflows"){
       await requireModule("trade.perps",s);
       const response=await grapnel(`/trade/margin/workflows?customer_id=${s.customerId}&wallet_id=${s.walletId}`,s);
@@ -184,6 +196,23 @@ export async function POST(
         "A request identifier is required",
       );
     const binding = { customer_id: s.customerId, wallet_id: s.walletId };
+    if(route==='perps-account-challenge'||route==='perps-account-bind'){
+      const category=z.enum(['perps','stocks']).default('perps');
+      const body=route==='perps-account-challenge'?z.object({asset_class:category,account_address:z.string().regex(/^0x[0-9a-fA-F]{40}$/)}).strict().parse(raw):z.object({asset_class:category,challenge_id:z.string().uuid(),stellar_signature:z.string().regex(/^(0x)?[0-9a-fA-F]{128}$/),evm_signature:z.string().regex(/^0x[0-9a-fA-F]{130}$/)}).strict().parse(raw);
+      await requireModule('trade.'+body.asset_class,s);await requireModule('capital.wallets',s);
+      return json(await grapnel('/trade/perpetuals/accounts/'+(route.endsWith('challenge')?'challenge':'bind'),s,{method:'POST',body:{...body,...binding},idempotencyKey:key}));
+    }
+    if(route==='perps-order-prepare'){
+      const body=z.object({market_id:z.string().max(200),side:z.enum(['buy','sell']),size:money,limit_price:money,leverage:z.number().int().min(1).max(1000),reduce_only:z.boolean()}).strict().parse(raw),category=derivativeClass(body.market_id);
+      if(!category)throw new BffError(404,'NOT_FOUND','Market not found');await requireModule('trade.'+category,s);await requireModule('capital.wallets',s);
+      return json(await grapnel('/trade/perpetuals/orders/prepare',s,{method:'POST',body:{...body,...binding},idempotencyKey:key}));
+    }
+    if(route==='perps-order-authorize'){
+      const body=z.object({order_id:z.string().uuid(),stellar_signature:z.string().regex(/^(0x)?[0-9a-fA-F]{128}$/),evm_signature:z.string().regex(/^0x[0-9a-fA-F]{130}$/)}).strict().parse(raw);
+      const row=await grapnel(`/trade/perpetuals/orders/${body.order_id}?customer_id=${s.customerId}&wallet_id=${s.walletId}`,s),category=derivativeClass(row?.intent?.marketId);
+      if(!category||row?.intent?.customerId!==s.customerId||row?.intent?.walletId!==s.walletId)throw new BffError(404,'NOT_FOUND','Order not found');await requireModule('trade.'+category,s);await requireModule('capital.wallets',s);
+      return json(await grapnel(`/trade/perpetuals/orders/${body.order_id}/authorize`,s,{method:'POST',body:{...binding,stellar_signature:body.stellar_signature,evm_signature:body.evm_signature},idempotencyKey:key}));
+    }
     if(route==="margin/collateral/quote"||route==="margin/collateral/swap"){
       await requireModule("trade.perps",s);await requireModule("capital.wallets",s,true);
       const requestBody=route.endsWith("/quote")?MarginFundingBrowserQuoteSchema.parse(raw):MarginFundingBrowserPrepareSchema.parse(raw);
