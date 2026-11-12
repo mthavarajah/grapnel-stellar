@@ -271,6 +271,8 @@ function quoteUnitRate(quote: any, input?: SwapAsset, output?: SwapAsset): strin
 const approvalFee = (value?: string): string => value && /^\d+$/.test(value) ? `${fromAtomic(BigInt(value), 7)} XLM` : "Unavailable";
 
 function activityLabel(op: Operation): string {
+  if (op.type === "perps.usdc_trustline") return op.status === "completed" ? "Enabled trading USDC" : "Enable trading USDC";
+  if (op.type === "perps.usdc_allowance") return op.status === "completed" ? "Approved trading funding" : "Approve trading funding";
   if (op.type === "wallet.usdc_trustline") return op.status === "completed" ? "Enabled USDC" : "Enable USDC";
   const labels: Record<string, [string, string]> = {
     "blend.supply": ["Supply", "Supplied"], "blend.withdraw": ["Withdraw", "Withdrew"],
@@ -1672,7 +1674,11 @@ function FinanceShell({ page, auth, initialCategory }: { page: string; auth?: Au
             >
               <OperationProgress status={active.status} approvalPhase={approvalPhase?.operationId===active.operation_id?approvalPhase.phase:null}/>
             </span>
-            {active.prepared_action && active.type === "wallet.usdc_trustline" ? (
+            {active.prepared_action && active.type === "perps.usdc_trustline" ? (
+              <div className="approval-summary"><div><span>Asset</span><strong>Trading USDC</strong></div><div><span>Holding limit</span><code>{active.prepared_action.summary.amount} USDC</code></div><div><span>Maximum network fee</span><code>{approvalFee(active.prepared_action.summary.maxFeeStroops)}</code></div><p className="small muted">This enables the asset in your wallet. No USDC is transferred.</p></div>
+            ) : active.prepared_action && active.type === "perps.usdc_allowance" ? (
+              <div className="approval-summary"><div><span>Spending limit</span><code>{active.prepared_action.summary.amount} USDC</code></div><div><span>Approval expires at ledger</span><code>{active.prepared_action.summary.allowanceExpirationLedger}</code></div><div><span>Maximum network fee</span><code>{approvalFee(active.prepared_action.summary.maxFeeStroops)}</code></div><p className="small muted">This grants a bounded funding approval. It does not transfer USDC.</p></div>
+            ) : active.prepared_action && active.type === "wallet.usdc_trustline" ? (
               <div className="approval-summary">
                 <div><span>USDC holding limit</span><code>{active.prepared_action.summary.amount === "1000" ? "1,000" : active.prepared_action.summary.amount ?? "Unavailable"} USDC</code></div>
                 <div><span>XLM held for USDC</span><code>0.5 XLM</code></div>

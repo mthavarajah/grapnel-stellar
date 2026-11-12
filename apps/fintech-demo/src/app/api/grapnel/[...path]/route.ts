@@ -196,6 +196,12 @@ export async function POST(
         "A request identifier is required",
       );
     const binding = { customer_id: s.customerId, wallet_id: s.walletId };
+    if(route==='perps-funding-trustline'||route==='perps-funding-allowance'){
+      const category=z.enum(['perps','stocks']).default('perps');
+      const body=route.endsWith('trustline')?z.object({asset_class:category}).strict().parse(raw):z.object({asset_class:category,amount:money}).strict().parse(raw);
+      await requireModule('trade.'+body.asset_class,s);await requireModule('capital.wallets',s);
+      return json(await grapnel('/trade/perpetuals/funding/'+(route.endsWith('trustline')?'trustline':'allowance'),s,{method:'POST',body:{...body,...binding},idempotencyKey:key}));
+    }
     if(route==='perps-account-challenge'||route==='perps-account-bind'){
       const category=z.enum(['perps','stocks']).default('perps');
       const body=route==='perps-account-challenge'?z.object({asset_class:category,account_address:z.string().regex(/^0x[0-9a-fA-F]{40}$/)}).strict().parse(raw):z.object({asset_class:category,challenge_id:z.string().uuid(),stellar_signature:z.string().regex(/^(0x)?[0-9a-fA-F]{128}$/),evm_signature:z.string().regex(/^0x[0-9a-fA-F]{130}$/)}).strict().parse(raw);

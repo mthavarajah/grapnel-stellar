@@ -1,3 +1,5 @@
+import {CctpUsdcSetupPreparer} from './adapters/cctp/setup.js';
+import {CircleSetupExecutionBridge,registerPerpetualFundingRoutes} from './modules/perpetuals/funding.js';
 import {HyperliquidTestnetHttpTransport} from './adapters/hyperliquid/execution/index.js';
 import {PgPerpetualWorkflowStore} from './modules/perpetuals/persistence.js';
 import {PerpetualCustomerService} from './modules/perpetuals/service.js';
@@ -106,6 +108,13 @@ export async function createRuntime(pool?:Pool,marginRoutes:RuntimeMarginBinding
  const readSpotBalances=async(address:string)=>{const [classic,tokens]=await Promise.all([chain.getClassicBalances(address),readStandaloneBalances(address)]);return [...classic,...tokens];};
  const wallets=new WalletService(db,identity,chain,signer,readStandaloneBalances);
  const operations=new OperationService(db);
+ const circleSetup=new CctpUsdcSetupPreparer({server:chain.server,readSpendableXlm:async(customer,operationId)=>{
+  const row=(await chain.getClassicBalances(customer.walletAddress)).find(balance=>balance.asset_id===XLM.id);
+  if(!row)throw new GrapnelError(503,'BALANCE_UNAVAILABLE','Current available XLM could not be verified');
+  const held=await db.query("SELECT COALESCE(sum(amount_atomic),0)::text AS amount FROM balance_reservations WHERE business_id=$1 AND customer_id=$2 AND wallet_id=$3 AND asset_id=$4 AND state='active' AND operation_id<>$5",[customer.businessId,customer.customerId,customer.walletId,XLM.id,operationId]);
+  const available=toAtomic(row.spendable,7)-BigInt(held.rows[0].amount);return available>0n?available:0n;
+ }});
+ const circleExecution=new CircleSetupExecutionBridge({operations,setup:circleSetup,verifyGate1:()=>hasGate1Proof(chain),chain});
  const customerMargin=new PeridotCustomerAdapter({server:chain.server,nativeBalance:async customer=>{
   const balance=(await chain.getClassicBalances(customer.walletAddress)).find(row=>row.asset_id===XLM.id);
   if(!balance)throw new GrapnelError(503,'BALANCE_UNAVAILABLE','A confirmed native balance is required');return balance;
@@ -233,10 +242,10 @@ export async function createRuntime(pool?:Pool,marginRoutes:RuntimeMarginBinding
  const perpetualService=new PerpetualCustomerService({store:new PgPerpetualWorkflowStore(db),transport:new HyperliquidTestnetHttpTransport(),
   market:readDetailedPerpetualMarket,
   accessApproved:async()=>process.env.HYPERLIQUID_TESTNET_ACCESS_CONFIRMED==='true'&&!!process.env.HYPERLIQUID_TESTNET_ACCESS_REFERENCE?.trim(),
-  fundingStatus:async scope=>{const balances=await chain.getClassicBalances(scope.stellarAddress),circle=balances.find(row=>row.asset_id===CCTP_CIRCLE_ASSET_ID);return {trustline_ready:!!circle,balance:circle?.wallet_amount??null,allowance:null,bridge_available:false,reason:circle?'CCTP_DESTINATION_AND_RETURN_PROOF_REQUIRED':'CIRCLE_USDC_TRUSTLINE_REQUIRED'};},
+
  });
  const app=await buildApp({pool:db,config,identityVerifier:identity,
-  verifySignedAction:async(action,signed)=>{if(action.summary.action.startsWith('margin.'))await verifyRuntimeMarginAction(action,signed,marginBindings);else if(action.summary.action==='wallet.usdc_trustline')verifyPreparedUsdcTrustline(action,signed);else if(action.summary.action==='spot.swap')await spotInspector.verifyForSubmission(action,signed);else if(borrowingAction(action.summary.action))await borrowPreparer.verifyForSubmission(action,signed);else if(action.summary.action==='blend.supply'||action.summary.action==='blend.withdraw')await soroban.verifyForSubmission(action,signed);else verifySignedAction(action,signed);return {txHash:parseTestnetTransaction(signed).hash().toString('hex')};},
+  verifySignedAction:async(action,signed)=>{if(['perps.usdc_trustline','perps.usdc_allowance'].includes(action.summary.action))await circleExecution.verifyForSubmission(action,signed);else if(action.summary.action.startsWith('margin.'))await verifyRuntimeMarginAction(action,signed,marginBindings);else if(action.summary.action==='wallet.usdc_trustline')verifyPreparedUsdcTrustline(action,signed);else if(action.summary.action==='spot.swap')await spotInspector.verifyForSubmission(action,signed);else if(borrowingAction(action.summary.action))await borrowPreparer.verifyForSubmission(action,signed);else if(action.summary.action==='blend.supply'||action.summary.action==='blend.withdraw')await soroban.verifyForSubmission(action,signed);else verifySignedAction(action,signed);return {txHash:parseTestnetTransaction(signed).hash().toString('hex')};},
   balanceReader:address=>chain.getClassicBalances(address),
   dashboardCustomerBalances:(businessId,walletId)=>wallets.balances(businessId,walletId),
   dashboardCustomerPositions:async customer=>{
@@ -279,6 +288,7 @@ export async function createRuntime(pool?:Pool,marginRoutes:RuntimeMarginBinding
     return success(request,{earnings:await earningsReader.getEarnings(customer),as_of:new Date().toISOString()});
    });
    await registerPerpetualCustomerRoutes(app,perpetualService,()=>hasGate1Proof(chain));
+   await registerPerpetualFundingRoutes(app,{operations,setup:circleSetup,verifyGate1:()=>hasGate1Proof(chain)});
    await registerUsdcTrustline(app,{chain,operations,verifyGate1:()=>hasGate1Proof(chain)});
    // Revalidate the actual chain proof for every new provider intent. A
    // startup snapshot must not survive a Testnet reset or unavailable proof.
@@ -322,7 +332,7 @@ export async function createRuntime(pool?:Pool,marginRoutes:RuntimeMarginBinding
   }
  });
  app.addHook('onClose',async()=>{if(!pool)await db.end();});
- const workerChain=createRuntimeWorkerChain({pool:db,chain,blend,soroban,borrowing,borrowPreparer,gate1Passed,verifyGate1:()=>hasGate1Proof(chain),spot:spotInspector,readSpotBalances,margin:marginBindings.execution,marginFunding:marginBindings.fundingExecution});
+ const workerChain=createRuntimeWorkerChain({pool:db,chain,blend,soroban,borrowing,borrowPreparer,gate1Passed,verifyGate1:()=>hasGate1Proof(chain),spot:spotInspector,readSpotBalances,margin:marginBindings.execution,marginFunding:marginBindings.fundingExecution,circleSetup:circleExecution});
  const tickPerpetuals=async()=>{
   const rows=(await db.query("WITH picked AS (SELECT o.id FROM perpetual_orders o JOIN wallets w ON w.business_id=o.business_id AND w.customer_id=o.customer_id AND w.id=o.wallet_id AND w.stellar_address=o.stellar_address WHERE o.state IN ('approved','sending','unknown') AND o.signed_action IS NOT NULL AND o.updated_at<now()-interval '5 seconds' ORDER BY o.updated_at FOR UPDATE OF o SKIP LOCKED LIMIT 3) UPDATE perpetual_orders o SET updated_at=now() FROM picked WHERE o.id=picked.id RETURNING o.*")).rows;
   for(const row of rows){
@@ -394,7 +404,7 @@ function storedBorrowingAction(operation:Record<string,any>,hash:string):Prepare
   throw new GrapnelError(403,'INTENT_MISMATCH','Durable borrowing request, customer approval and position baseline differ');
  return action;
 }
-export interface RuntimeWorkerDependencies {margin?:MarginExecutionBridge;marginFunding?:MarginFundingExecutionBridge;borrowing?:Pick<BorrowingAdapter,'positions'>;borrowPreparer?:Pick<BlendBorrowSorobanPreparer,'verifyForSubmission'>;pool:Pool;chain:StellarTestnetExecutor;blend:Pick<BlendAdapter,'positions'>;soroban:Pick<BlendSorobanPreparer,'verifyForSubmission'>;gate1Passed:boolean;verifyGate1?:()=>Promise<boolean>;spot?:Pick<SoroswapDirectInspector,'verifyForSubmission'>;readSpotBalances?:(address:string)=>Promise<WalletBalance[]>;}
+export interface RuntimeWorkerDependencies {circleSetup?:CircleSetupExecutionBridge;margin?:MarginExecutionBridge;marginFunding?:MarginFundingExecutionBridge;borrowing?:Pick<BorrowingAdapter,'positions'>;borrowPreparer?:Pick<BlendBorrowSorobanPreparer,'verifyForSubmission'>;pool:Pool;chain:StellarTestnetExecutor;blend:Pick<BlendAdapter,'positions'>;soroban:Pick<BlendSorobanPreparer,'verifyForSubmission'>;gate1Passed:boolean;verifyGate1?:()=>Promise<boolean>;spot?:Pick<SoroswapDirectInspector,'verifyForSubmission'>;readSpotBalances?:(address:string)=>Promise<WalletBalance[]>;}
 /** No network send exists outside the durable worker's recorded hash/envelope path. */
 export function createRuntimeWorkerChain(deps:RuntimeWorkerDependencies):WorkerChain {
  const {pool,chain,blend,soroban,gate1Passed}=deps;
@@ -404,6 +414,7 @@ export function createRuntimeWorkerChain(deps:RuntimeWorkerDependencies):WorkerC
    const parsed=parseTestnetTransaction(envelope);const hash=parsed.hash().toString('hex');
    const operation=(await pool.query('SELECT o.*,w.stellar_address,c.privy_user_id FROM operations o JOIN wallets w ON w.business_id=o.business_id AND w.customer_id=o.customer_id AND w.id=o.wallet_id JOIN customers c ON c.business_id=o.business_id AND c.id=o.customer_id WHERE o.tx_hash=$1 AND o.signed_xdr=$2',[hash,envelope])).rows[0];
    if(!operation || (operation.type!=='wallet.test_payment' && (!gate1Passed || !await (deps.verifyGate1?.()??Promise.resolve(false)))))throw new GrapnelError(409,'EXECUTION_UNAVAILABLE','Gate 1 proof is required before financial provider execution');
+   if(['perps.usdc_trustline','perps.usdc_allowance'].includes(operation.type)){if(!deps.circleSetup)throw new GrapnelError(409,'EXECUTION_UNAVAILABLE','Trading USDC setup is unavailable');return deps.circleSetup.broadcast(PreparedActionSchema.parse(operation.prepared_action),envelope);}
    if(operation.type.startsWith('margin.')){
     if(operation.module_code!=='trade.perps'||operation.provider!=='peridot'||operation.state!=='submitted'||typeof operation.privy_user_id!=='string'||!operation.privy_user_id.startsWith('did:privy:'))throw new GrapnelError(403,'INTENT_MISMATCH','Margin requires its recorded customer-approved first send');
     const action=PreparedActionSchema.parse(operation.prepared_action);
@@ -467,6 +478,7 @@ export function createRuntimeWorkerChain(deps:RuntimeWorkerDependencies):WorkerC
   async verifyDeltas(id,hash){
    const op=(await pool.query('SELECT o.*,w.stellar_address,c.privy_user_id FROM operations o JOIN wallets w ON w.business_id=o.business_id AND w.customer_id=o.customer_id AND w.id=o.wallet_id JOIN customers c ON c.business_id=o.business_id AND c.id=o.customer_id WHERE o.id=$1 AND o.tx_hash=$2',[id,hash])).rows[0];
    if(!op)return false;
+   if(['perps.usdc_trustline','perps.usdc_allowance'].includes(op.type)){if(!deps.circleSetup)return false;return deps.circleSetup.verifyDeltas(id,hash);}
    if(op.type.startsWith('margin.')){
     if(op.module_code!=='trade.perps'||op.provider!=='peridot')return false;
     const bridge=op.type===MARGIN_COLLATERAL_SWAP?deps.marginFunding:Object.values(MARGIN_STEP_ACTIONS).includes(op.type)?deps.margin:undefined;

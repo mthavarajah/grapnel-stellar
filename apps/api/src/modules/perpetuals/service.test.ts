@@ -15,7 +15,7 @@ import type {SignedPerpetualAction} from './execution-contract.js';
 const initial=Date.parse('2026-11-12T06:00:00Z');
 const input:OrderInput={market_id:'hyperliquid-testnet:perps:0',side:'buy',size:'0.01',limit_price:'50000',leverage:2,reduce_only:false};
 function fixture(){
- const stellar=Keypair.random(),evm=privateKeyToAccount(generatePrivateKey()),foreignEvm=privateKeyToAccount(generatePrivateKey());let now=initial,access=true,withdrawable='100',account:PerpetualAccount|null=null,stale=false,wrongNetwork=false,exchangeTimeout=false,changedLeverage=false;
+ const stellar=Keypair.random(),evm=privateKeyToAccount(generatePrivateKey()),foreignEvm=privateKeyToAccount(generatePrivateKey());let now=initial,access=true,withdrawable='1000',positionSize='0',account:PerpetualAccount|null=null,stale=false,wrongNetwork=false,exchangeTimeout=false,changedLeverage=false;
  const scope:PerpetualScope={businessId:randomUUID(),customerId:randomUUID(),walletId:randomUUID(),stellarAddress:stellar.publicKey()};
  const orders=new Map<string,PendingPerpetualOrder>(),challenges=new Map<string,PerpetualChallenge>(),reserved=new Set<string>(),claimed=new Set<string>(),events:string[]=[];
  const matches=(left:PerpetualScope,right:PerpetualScope)=>stable(left)===stable(right);
@@ -39,7 +39,7 @@ function fixture(){
  const transport:ExecutionTransport={
   rpc:vi.fn(async(endpoint,request)=>receipt(endpoint,request,{jsonrpc:'2.0',id:1,result:wrongNetwork?'0x1':'0x3e6'})),
   info:vi.fn(async(endpoint,request)=>{
-   if(request.type==='clearinghouseState')return receipt(endpoint,request,{time:stale?now-6000:now,withdrawable,marginSummary:{accountValue:withdrawable},assetPositions:[]});
+   if(request.type==='clearinghouseState')return receipt(endpoint,request,{time:stale?now-6000:now,withdrawable,marginSummary:{accountValue:withdrawable},assetPositions:positionSize==='0'?[]:[{type:'oneWay',position:{coin:'BTC',szi:positionSize,entryPx:'50000',unrealizedPnl:'0',leverage:{type:'cross',value:2}}}]});
    if(request.type==='activeAssetData')return receipt(endpoint,request,{user:request.user,coin:request.coin,leverage:{type:'cross',value:changedLeverage?3:2},maxTradeSzs:['0.1','0.1'],availableToTrade:[withdrawable,withdrawable]});
    if(request.type==='metaAndAssetCtxs')return receipt(endpoint,request,[{universe:[{name:'BTC',szDecimals:3,maxLeverage:40}]},[{}]]);
    if(request.type==='orderStatus')return receipt(endpoint,request,{status:'unknownOid'});
@@ -55,7 +55,7 @@ function fixture(){
  const bind=async()=>{const c=await service.challenge(scope,evm.address),sig=await signatures(c);return service.bind(scope,c.id,sig.stellarSignature,sig.evmSignature);};
  const prepare=async()=>{if(!account)await bind();return service.prepare(scope,input,'fixture-request');};
  const signedApproval=async()=>{const prepared=await prepare(),unsigned=prepared.unsignedAction as UnsignedPerpetualAction;return {prepared,unsigned,stellarSignature:stellar.sign(Buffer.from(prepared.approvalDigest,'hex')).toString('hex'),evmSignature:await evm.signTypedData(unsigned.typedData)};};
- return {scope,stellar,evm,foreignEvm,store,transport,market,service,orders,challenges,events,claimed,accessApproved,signatures,bind,prepare,signedApproval,setNow:(n:number)=>{now=n;},setAccess:(value:boolean)=>{access=value;},setWithdrawable:(v:string)=>{withdrawable=v;},setStale:()=>{stale=true;},setWrongNetwork:()=>{wrongNetwork=true;},setExchangeTimeout:()=>{exchangeTimeout=true;},setChangedLeverage:()=>{changedLeverage=true;}};
+ return {scope,stellar,evm,foreignEvm,store,transport,market,service,orders,challenges,events,claimed,accessApproved,signatures,bind,prepare,signedApproval,setNow:(n:number)=>{now=n;},setAccess:(value:boolean)=>{access=value;},setPosition:(v:string)=>{positionSize=v;},setWithdrawable:(v:string)=>{withdrawable=v;},setStale:()=>{stale=true;},setWrongNetwork:()=>{wrongNetwork=true;},setExchangeTimeout:()=>{exchangeTimeout=true;},setChangedLeverage:()=>{changedLeverage=true;}};
 }
 
 describe('customer perpetual service exact authorizations (offline fixtures)',()=>{
@@ -78,3 +78,7 @@ describe('customer perpetual service exact authorizations (offline fixtures)',()
  it('signed approved recovery rechecks access and stored Stellar intent before any send claim',async()=>{for(const fault of ['access','approval','intent']){const f=fixture(),p=await f.signedApproval();await f.service.authorize(f.scope,p.prepared.id,p.stellarSignature,p.evmSignature);const row=f.orders.get(p.prepared.id)!;row.state='approved';f.claimed.delete(row.id);vi.mocked(f.transport.exchange).mockClear();vi.mocked(f.store.claimSend).mockClear();if(fault==='access')f.setAccess(false);if(fault==='approval')row.customerSignature=Keypair.random().sign(Buffer.from(row.approvalDigest,'hex')).toString('hex');if(fault==='intent')row.intent.size='0.02';await expect(f.service.resume(f.scope,row.id)).rejects.toThrow();expect(f.store.claimSend).not.toHaveBeenCalled();expect(f.transport.exchange).not.toHaveBeenCalled();}});
  it('foreign scope cannot retrieve, approve or resume another customer order',async()=>{const f=fixture(),p=await f.signedApproval(),scope={...f.scope,customerId:randomUUID()};await expect(f.service.get(scope,p.prepared.id)).rejects.toMatchObject({code:'NOT_FOUND'});await expect(f.service.authorize(scope,p.prepared.id,p.stellarSignature,p.evmSignature)).rejects.toMatchObject({code:'NOT_FOUND'});expect(await f.service.resume(scope,p.prepared.id)).toBe(false);expect(f.transport.exchange).not.toHaveBeenCalled();});
 });
+
+it('explains insufficient trading margin before persisting or signing an order',async()=>{const f=fixture();await f.bind();f.setWithdrawable('10');await expect(f.service.prepare(f.scope,input,'too-large')).rejects.toMatchObject({code:'INSUFFICIENT_AVAILABLE_BALANCE'});expect(f.store.createOrder).not.toHaveBeenCalled();expect(f.transport.exchange).not.toHaveBeenCalled();});
+
+it('allows a reviewed reduce-only close when free collateral is zero but an actual position exists',async()=>{const f=fixture();await f.bind();f.setWithdrawable('0');f.setPosition('0.01');const order=await f.service.prepare(f.scope,{...input,side:'sell',reduce_only:true},'close-held-position');expect(order.state).toBe('awaiting_approval');expect(order.intent.reduceOnly).toBe(true);expect(f.transport.exchange).not.toHaveBeenCalled();});

@@ -24,6 +24,7 @@ export interface PerpetualServiceDependencies {
 }
 const unavailable=(message:string,reason:string):never=>{throw new GrapnelError(409,'EXECUTION_UNAVAILABLE',message,false,{reason});};
 const positive=(value:string)=>/^[0-9]+(?:\.[0-9]+)?$/.test(value)&&BigInt(value.replace('.',''))>0n;
+const fundedVenue=(row:{withdrawable:string;positions:{size:string}[]})=>positive(row.withdrawable)||row.positions.some(position=>units(position.size,18,true)!==0n);
 const bound=(a:PerpetualAccount):BoundPerpetualAccount=>({businessId:a.businessId,customerId:a.customerId,walletId:a.walletId,stellarAddress:a.stellarAddress,accountAddress:a.accountAddress,signingKeyRef:a.signingKeyRef});
 export class PerpetualCustomerService {
  private now:()=>number;private accounts:PerpetualAccountReader;
@@ -54,10 +55,10 @@ export class PerpetualCustomerService {
    if(raw.user.toLowerCase()!==account.accountAddress||raw.coin!==market.provider_symbol)throw new GrapnelError(502,'PROVIDER_INVALID_RESPONSE','Trading account details do not match your selection');
    selected_market={market_id:marketId,symbol:raw.coin,leverage:raw.leverage.value,leverage_type:raw.leverage.type,max_trade_sizes:raw.maxTradeSzs??null,available_to_trade:raw.availableToTrade??null};
   }}
-  return {network:'hyperliquid-testnet',account,execution_available:access&&state.venues.some(row=>positive(row.withdrawable)),reason:!access?'PROVIDER_ACCESS_VERIFICATION_REQUIRED':!state.venues.some(row=>positive(row.withdrawable))?'TRADING_ACCOUNT_FUNDING_REQUIRED':null,withdrawable:native.withdrawable,account_value:native.accountValue,positions:state.positions,venues:state.venues,selected_market,funding:{asset_id:CCTP_CIRCLE_ASSET_ID,...funding}};
+  return {network:'hyperliquid-testnet',account,execution_available:access&&state.venues.some(fundedVenue),reason:!access?'PROVIDER_ACCESS_VERIFICATION_REQUIRED':!state.venues.some(fundedVenue)?'TRADING_ACCOUNT_FUNDING_REQUIRED':null,withdrawable:native.withdrawable,account_value:native.accountValue,positions:state.positions,venues:state.venues,selected_market,funding:{asset_id:CCTP_CIRCLE_ASSET_ID,...funding}};
  }
  private adapter(scope:PerpetualScope,account:PerpetualAccount){
-  const a=bound(account),proof=async()=>{if(!await this.d.accessApproved())return false;const row=await this.d.store.account(scope);if(!row||row.accountAddress!==a.accountAddress)return false;const snapshot=await this.accounts.read(a.accountAddress);return snapshot.venues.some(venue=>positive(venue.withdrawable));};
+  const a=bound(account),proof=async()=>{if(!await this.d.accessApproved())return false;const row=await this.d.store.account(scope);if(!row||row.accountAddress!==a.accountAddress)return false;const snapshot=await this.accounts.read(a.accountAddress);return snapshot.venues.some(fundedVenue);};
   const dependencies:HyperliquidExecutionDependencies={scope:a,transport:this.d.transport,
    durability:{reserveIntent:(i,b,h)=>this.d.store.reserveIntent(scope,i,b,h),loadPrepared:(id,h)=>this.d.store.loadPrepared(scope,id,h),claimSend:(id,h,p)=>this.d.store.claimSend(scope,id,h,p)},
    verifyAccountExecutionProof:proof,
@@ -74,7 +75,8 @@ export class PerpetualCustomerService {
   if(market.settlement_asset.compatibility!=='usdc'||!['','xyz'].includes(market.provider_dex))return unavailable('This market’s collateral is not supported for trading','UNSUPPORTED_PERPETUAL_COLLATERAL');
   if(units(input.size,18)*units(input.limit_price,18)<10n*10n**36n)throw new GrapnelError(422,'ORDER_TOO_SMALL','The minimum order value is $10. Increase the quantity or price limit');
   const venue=status.venues?.find(row=>row.dex===market.provider_dex);
-  if(!venue||!positive(venue.withdrawable))return unavailable('Add USDC to this market’s trading account first','TRADING_VENUE_FUNDING_REQUIRED');
+  if(!venue||!input.reduce_only&&!positive(venue.withdrawable))return unavailable('Add USDC to this market’s trading account first','TRADING_VENUE_FUNDING_REQUIRED');
+  if(!input.reduce_only&&units(input.size,18)*units(input.limit_price,18)>units(venue.withdrawable,18)*BigInt(input.leverage)*10n**18n)throw new GrapnelError(409,'INSUFFICIENT_AVAILABLE_BALANCE','Your available trading balance is too low for this order');
   const nonce=this.now(),id=randomUUID(),expiresAt=new Date(nonce+60000).toISOString();
   const intent:ApprovedPerpetualIntent={operationId:id,businessId:scope.businessId,customerId:scope.customerId,walletId:scope.walletId,network:'hyperliquid-testnet',accountAddress:account.accountAddress,marketId:market.market_id,providerSymbol:market.provider_symbol,assetIndex:Number(market.market_id.split(':').at(-1)),dex:market.provider_dex,side:input.side,leverage:input.leverage,size:input.size,limitPrice:input.limit_price,reduceOnly:input.reduce_only,nonce,clientOrderId:`0x${randomBytes(16).toString('hex')}`,expiresAt,customerApprovalHash:'0'.repeat(64)};
   const message=orderApprovalMessage(scope,intent),digest=approvalDigest(message);intent.customerApprovalHash=digest;

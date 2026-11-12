@@ -76,3 +76,12 @@ The customer's current GATALT-issued USDC is different from canonical Circle-USD
 Isolated SDK-free browser regression:14 Playwright cases passed (all external requests blocked; all cases assert zero financial POSTs), covering entitlement filtering, selected-detail reads, stale/error clearing, late-response races, stock search/timeframes, pointer/touch/keyboard chart interaction and retired-provider exclusion. This fixture-only QA does not replace the separate signed-in live read checks above or establish order execution. The final branding patch also removed the uppercase Local Finance workspace label.
 
 Owner presentation revision: the Velocity customer catalog now excludes unfamiliar Hyperliquid listings without exact reviewed logo mappings. The underlying Grapnel source catalog remains complete for discovery; its658 active source count is not the filtered customer listing count. No execution entitlement or provider identity was changed.
+
+
+## Customer-controlled trading workflow checkpoint
+
+New customer account bindings use a one-use server challenge with Stellar Ed25519 and EVM personal signatures. Orders use the customer’s browser-held EVM signer and an independently reconstructed exact EIP712 Testnet order, plus an exact Stellar intent approval. Postgres persists the unsigned snapshot, approval, signed payload, nonce and cloid before a single-use send claim. Recovery reconciles ambiguous sends; a second unresolved account order is blocked. No trading account keys are exported or shared. Existing source positions can be reduced even with zero free collateral; increasing exposure is checked against available margin before review.
+
+Scoped validation includes21 actual disposable-Postgres cases,77 offline execution/transport cases,46 workflow/route cases before follow-up additions, and30 browser-signing/component cases. The wallet table now includes exact per-asset USD valuation rows; unpriced or stale-amount mismatches show a dash. Browser identity-token reuse removes redundant SDK refreshes without changing server token validation; actual provider429 source behavior still requires a live recheck.
+
+Bridging is parked by owner instruction. Circle-USDC setup has40 offline tests and the complete CCTP adapter set has124, but these are not transfer proof. No Circle burn/mint, HyperCore deposit, stock/perpetual fill, close or return has occurred. Access confirmation and a funded, customer-owned Hyperliquid Testnet wallet are still needed for live trading acceptance. Public deployment remains deferred.
