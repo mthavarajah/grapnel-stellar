@@ -44,7 +44,7 @@ export function GmxPerpetualExecutionCard({api,customerId,walletId,businessId,sy
  const label=record?gmxRequestLabel(record):'',complete=['Funds received','Approved','Position opened','Position closed'].includes(label);
  return <section className="market-order-card" aria-label="Perpetual trading" data-testid="gmx-perpetual-execution" aria-busy={!!busy||loading}>
   <h2>Trade {symbol}</h2>
-  {!walletsReady?<ProgressIndicator label="Loading trading wallet" spinning/>:!wallet?<button type="button" className="button outline wide" disabled={!!busy} onClick={()=>run(async captured=>{await onCreate();guard(captured);})}>Create trading wallet</button>:<div className="detail-row"><span>Trading wallet</span><strong>Connected</strong></div>}
+  {!walletsReady?<ProgressIndicator label="Loading account" spinning/>:!wallet?<button type="button" className="button outline wide" disabled={!!busy} onClick={()=>run(async captured=>{await onCreate();guard(captured);})}>Enable perpetuals</button>:null}
   {loading&&<ProgressIndicator label="Loading account" spinning/>}
   <div className="detail-row"><span>Available collateral</span><strong>{display(snapshot?.collateral_balance)} USDC</strong></div>
   <div className="detail-row"><span>Gas balance</span><strong>{display(snapshot?.native_balance)} ETH</strong></div>
