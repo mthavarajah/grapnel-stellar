@@ -11,8 +11,8 @@ import type { PerpetualScope } from './workflow-contract.js';
 import type { CctpFundingStore, CctpFundingRecord, CctpStageRecord } from './cctp-contract.js';
 export interface CctpStoreValidators {
     /** Mandatory trusted RPC/event readers; never browser proof flags. */
-    verifyProof(record: CctpFundingRecord, patch: Parameters<CctpFundingStore['saveProof']>[2]): Promise<void>;
-    verifyStageResult(record: CctpFundingRecord, stage: CctpStageRecord, state: 'confirmed' | 'reverted', proof: Record<string, unknown>): Promise<void>;
+    verifyProof(record: CctpFundingRecord, patch: Parameters<CctpFundingStore['saveProof']>[2], client?: PoolClient): Promise<void>;
+    verifyStageResult(record: CctpFundingRecord, stage: CctpStageRecord, state: 'confirmed' | 'reverted', proof: Record<string, unknown>, client?: PoolClient): Promise<void>;
 }
 const uuid = z.string().uuid(), hash = z.string().regex(/^[a-f0-9]{64}$/), hexHash = z.string().regex(/^0x[a-f0-9]{64}$/), evm = z.string().regex(/^0x[0-9a-f]{40}$/), bytes = z.string().regex(/^0x(?:[a-f0-9]{2})+$/);
 const scopeSchema = z.object({ businessId: uuid, customerId: uuid, walletId: uuid, stellarAddress: z.string().refine(StrKey.isValidEd25519PublicKey) }).strict();
@@ -127,7 +127,7 @@ export class PgCctpFundingStore implements CctpFundingStore {
         const found = await c.query(`SELECT id FROM cctp_customer_funding WHERE id<>$1 AND ${field === 'sourceTxHash' ? "record->>'sourceTxHash'" : "record->'coreProof'->>'ledgerHash'"}=$2 LIMIT 1`, [id, value]);
         if (found.rowCount)
             fail('CCTP_UNIQUENESS_CONFLICT', 'Chain evidence already belongs to another funding request');
-    } await this.verified('verifyProof', r, patch); await c.query('UPDATE cctp_customer_funding SET record=$6,state=$7,updated_at=now() WHERE business_id=$1 AND customer_id=$2 AND wallet_id=$3 AND stellar_address=$4 AND id=$5', [...args(s), id, JSON.stringify(next), next.state]); }); }
+    } await this.verified('verifyProof', r, patch, c); await c.query('UPDATE cctp_customer_funding SET record=$6,state=$7,updated_at=now() WHERE business_id=$1 AND customer_id=$2 AND wallet_id=$3 AND stellar_address=$4 AND id=$5', [...args(s), id, JSON.stringify(next), next.state]); }); }
     async stages(s: PerpetualScope, id: string) { return this.write(async (c) => { await this.record(c, s, id); return (await c.query('SELECT * FROM cctp_customer_stages WHERE business_id=$1 AND customer_id=$2 AND wallet_id=$3 AND funding_id=$4 ORDER BY created_at', [s.businessId, s.customerId, s.walletId, id])).rows.map(stageRow); }); }
     private async stage(c: PoolClient, s: PerpetualScope, id: string, stageId: string) { uuid.parse(stageId); const row = (await c.query('SELECT * FROM cctp_customer_stages WHERE business_id=$1 AND customer_id=$2 AND wallet_id=$3 AND funding_id=$4 AND id=$5 FOR UPDATE', [s.businessId, s.customerId, s.walletId, id, stageId])).rows[0]; if (!row)
         fail('NOT_FOUND', 'Customer funding stage not found'); return row; }
@@ -181,6 +181,6 @@ export class PgCctpFundingStore implements CctpFundingStore {
         fail('CCTP_SEND_CLAIM_REQUIRED', 'Outcome requires recorded send claim'); if (state !== 'unknown') {
         if (!proof)
             fail('CCTP_RECEIPT_PROOF_REQUIRED', 'Actual confirmed receipt required');
-        await this.verified('verifyStageResult', r, stageRow(row), state, proof!);
+        await this.verified('verifyStageResult', r, stageRow(row), state, proof!, c);
     } await c.query('UPDATE cctp_customer_stages SET state=$2,proof=$3,updated_at=now() WHERE id=$1', [stageId, state, JSON.stringify(proof)]); }); }
 }
