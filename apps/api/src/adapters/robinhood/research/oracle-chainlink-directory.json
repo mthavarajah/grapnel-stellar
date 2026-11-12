@@ -1,0 +1,11 @@
+{
+  "capturedAt": "2026-11-12",
+  "source": "https://docs.chain.link/data-feeds/price-feeds/addresses?network=robinhood",
+  "sha256": "40a46e853b6a060e33c11fdbc7258bf7d2b677b47a4ddcc8bae7434fba01a327",
+  "networkEntryFindings": {
+    "robinhoodMainnetEntries": 4,
+    "robinhoodTestnetEntries": 0
+  },
+  "mainnetEntryExcerpt": "rl\":[0,\"https://robinhoodchain.blockscout.com/address/%s\"],\"networkType\":[0,\"mainnet\"],\"rddUrl\":[0,\"https://reference-data-directory.vercel.app/feeds-robinhood-mainnet.json\"],\"queryString\":[0,\"robinhood-mainnet\"],\"tags\":[1,[[0,\"tokenizedEquity\"],[0,\"svrAtlas\"]]],\"metadata\":[1,[[0,{\"compareOffchain\":[0,\"\"],\"contractAddress\":[0,\"0x0E96B7708487f91baAC",
+  "qualification": "No public Robinhood Testnet feed directory entry found; this does not prove no private or unlisted Testnet feeds exist. No mainnet feed address is used on Testnet."
+}

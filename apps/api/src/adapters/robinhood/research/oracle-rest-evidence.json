@@ -1,0 +1,329 @@
+{
+  "capturedAt": "2026-11-12T17:05:30.709Z",
+  "purpose": "Offchain official underlying reference prices, not Testnet pool execution proof",
+  "onchainWrites": 0,
+  "sourceRequests": [
+    {
+      "method": "GET",
+      "url": "https://api.robinhood.com/rhj/prices/TSLA",
+      "status": 200,
+      "receivedAt": "2026-11-12T17:05:30.523Z",
+      "body": {
+        "quotes": [
+          {
+            "tokenSymbol": "TSLA",
+            "deployments": [
+              {
+                "contractAddress": "0x322F0929c4625eD5bAd873c95208D54E1c003b2d",
+                "chainId": 4663,
+                "networkName": "Robinhood Chain",
+                "transporterEnabled": false,
+                "replicatorEnabled": false
+              }
+            ],
+            "bid": "391.78",
+            "ask": "392.02",
+            "currency": "USD",
+            "dailyTradingVolume": "10454709",
+            "isTradingHalt": false,
+            "generatedAt": "2026-11-12T17:05:20.779944627Z",
+            "dailyHigh": "396.2",
+            "dailyLow": "384.104",
+            "mintBurnTokenVolume": "741.4999",
+            "mintBurnUsdVolume": "290593.81081",
+            "tokenBid": "391.780000000000000000",
+            "tokenAsk": "392.020000000000000000"
+          }
+        ]
+      }
+    },
+    {
+      "method": "GET",
+      "url": "https://api.robinhood.com/rhj/prices/AMZN",
+      "status": 200,
+      "receivedAt": "2026-11-12T17:05:30.588Z",
+      "body": {
+        "quotes": [
+          {
+            "tokenSymbol": "AMZN",
+            "deployments": [
+              {
+                "contractAddress": "0x12f190a9F9d7D37a250758b26824B97CE941bF54",
+                "chainId": 4663,
+                "networkName": "Robinhood Chain",
+                "transporterEnabled": false,
+                "replicatorEnabled": false
+              }
+            ],
+            "bid": "270",
+            "ask": "270.03",
+            "currency": "USD",
+            "dailyTradingVolume": "16325760",
+            "isTradingHalt": false,
+            "generatedAt": "2026-11-12T17:05:25.860508167Z",
+            "dailyHigh": "273.5998",
+            "dailyLow": "263.16",
+            "mintBurnTokenVolume": "652.94402",
+            "mintBurnUsdVolume": "176304.6795603",
+            "tokenBid": "270.000000000000000000",
+            "tokenAsk": "270.030000000000000000"
+          }
+        ]
+      }
+    },
+    {
+      "method": "GET",
+      "url": "https://api.robinhood.com/rhj/prices/PLTR",
+      "status": 200,
+      "receivedAt": "2026-11-12T17:05:30.630Z",
+      "body": {
+        "quotes": [
+          {
+            "tokenSymbol": "PLTR",
+            "deployments": [
+              {
+                "contractAddress": "0x894E1EC2D74FFE5AEF8Dc8A9e84686acCB964F2A",
+                "chainId": 4663,
+                "networkName": "Robinhood Chain",
+                "transporterEnabled": false,
+                "replicatorEnabled": false
+              }
+            ],
+            "bid": "172.3",
+            "ask": "172.39",
+            "currency": "USD",
+            "dailyTradingVolume": "6052323",
+            "isTradingHalt": false,
+            "generatedAt": "2026-11-12T17:05:18.818418765Z",
+            "dailyHigh": "172.68",
+            "dailyLow": "168.25",
+            "mintBurnTokenVolume": "356.73437",
+            "mintBurnUsdVolume": "61481.38499765",
+            "tokenBid": "172.300000000000000000",
+            "tokenAsk": "172.390000000000000000"
+          }
+        ]
+      }
+    },
+    {
+      "method": "GET",
+      "url": "https://api.robinhood.com/rhj/prices/NFLX",
+      "status": 200,
+      "receivedAt": "2026-11-12T17:05:30.671Z",
+      "body": {
+        "quotes": [
+          {
+            "tokenSymbol": "NFLX",
+            "deployments": [
+              {
+                "contractAddress": "0xE0444EF8BF4eD74f74FD73686e2ddF4C1c5591E8",
+                "chainId": 4663,
+                "networkName": "Robinhood Chain",
+                "transporterEnabled": false,
+                "replicatorEnabled": false
+              }
+            ],
+            "bid": "63.76",
+            "ask": "63.77",
+            "currency": "USD",
+            "dailyTradingVolume": "11750979",
+            "isTradingHalt": false,
+            "generatedAt": "2026-11-12T17:05:22.672492619Z",
+            "dailyHigh": "64.74",
+            "dailyLow": "62.87",
+            "mintBurnTokenVolume": "11.24641",
+            "mintBurnUsdVolume": "717.12733365",
+            "tokenBid": "63.760000000000000000",
+            "tokenAsk": "63.770000000000000000"
+          }
+        ]
+      }
+    },
+    {
+      "method": "GET",
+      "url": "https://api.robinhood.com/rhj/prices/AMD",
+      "status": 200,
+      "receivedAt": "2026-11-12T17:05:30.709Z",
+      "body": {
+        "quotes": [
+          {
+            "tokenSymbol": "AMD",
+            "deployments": [
+              {
+                "contractAddress": "0x86923f96303D656E4aa86D9d42D1e57ad2023fdC",
+                "chainId": 4663,
+                "networkName": "Robinhood Chain",
+                "transporterEnabled": false,
+                "replicatorEnabled": false
+              }
+            ],
+            "bid": "585.4",
+            "ask": "585.88",
+            "currency": "USD",
+            "dailyTradingVolume": "36491852",
+            "isTradingHalt": false,
+            "generatedAt": "2026-11-12T17:05:20.797774234Z",
+            "dailyHigh": "594",
+            "dailyLow": "550.65",
+            "mintBurnTokenVolume": "1438.69953",
+            "mintBurnUsdVolume": "842559.9927492",
+            "tokenBid": "585.400000000000000000",
+            "tokenAsk": "585.880000000000000000"
+          }
+        ]
+      }
+    }
+  ],
+  "observations": [
+    {
+      "symbol": "TSLA",
+      "status": "observed",
+      "observation": {
+        "symbol": "TSLA",
+        "currency": "USD",
+        "bid": "391.78",
+        "ask": "392.02",
+        "midpoint": "391.9",
+        "dailyTradingVolume": "10454709",
+        "generatedAt": "2026-11-12T17:05:20.779944627Z",
+        "observedAt": "2026-11-12T17:05:30.526Z",
+        "isTradingHalt": false,
+        "status": "current",
+        "source": "robinhood_official_rest",
+        "sourceUrl": "https://api.robinhood.com/rhj/prices/TSLA",
+        "priceBasis": "underlying",
+        "executable": false,
+        "destinationChainId": null,
+        "multiplier": null
+      },
+      "coverage": {
+        "kind": "observed_only",
+        "historicalOhlcAvailable": false,
+        "count": 1,
+        "firstGeneratedAt": "2026-11-12T17:05:20.779944627Z",
+        "lastGeneratedAt": "2026-11-12T17:05:20.779944627Z",
+        "truncated": false
+      }
+    },
+    {
+      "symbol": "AMZN",
+      "status": "observed",
+      "observation": {
+        "symbol": "AMZN",
+        "currency": "USD",
+        "bid": "270",
+        "ask": "270.03",
+        "midpoint": "270.015",
+        "dailyTradingVolume": "16325760",
+        "generatedAt": "2026-11-12T17:05:25.860508167Z",
+        "observedAt": "2026-11-12T17:05:30.589Z",
+        "isTradingHalt": false,
+        "status": "current",
+        "source": "robinhood_official_rest",
+        "sourceUrl": "https://api.robinhood.com/rhj/prices/AMZN",
+        "priceBasis": "underlying",
+        "executable": false,
+        "destinationChainId": null,
+        "multiplier": null
+      },
+      "coverage": {
+        "kind": "observed_only",
+        "historicalOhlcAvailable": false,
+        "count": 1,
+        "firstGeneratedAt": "2026-11-12T17:05:25.860508167Z",
+        "lastGeneratedAt": "2026-11-12T17:05:25.860508167Z",
+        "truncated": false
+      }
+    },
+    {
+      "symbol": "PLTR",
+      "status": "observed",
+      "observation": {
+        "symbol": "PLTR",
+        "currency": "USD",
+        "bid": "172.3",
+        "ask": "172.39",
+        "midpoint": "172.345",
+        "dailyTradingVolume": "6052323",
+        "generatedAt": "2026-11-12T17:05:18.818418765Z",
+        "observedAt": "2026-11-12T17:05:30.630Z",
+        "isTradingHalt": false,
+        "status": "current",
+        "source": "robinhood_official_rest",
+        "sourceUrl": "https://api.robinhood.com/rhj/prices/PLTR",
+        "priceBasis": "underlying",
+        "executable": false,
+        "destinationChainId": null,
+        "multiplier": null
+      },
+      "coverage": {
+        "kind": "observed_only",
+        "historicalOhlcAvailable": false,
+        "count": 1,
+        "firstGeneratedAt": "2026-11-12T17:05:18.818418765Z",
+        "lastGeneratedAt": "2026-11-12T17:05:18.818418765Z",
+        "truncated": false
+      }
+    },
+    {
+      "symbol": "NFLX",
+      "status": "observed",
+      "observation": {
+        "symbol": "NFLX",
+        "currency": "USD",
+        "bid": "63.76",
+        "ask": "63.77",
+        "midpoint": "63.765",
+        "dailyTradingVolume": "11750979",
+        "generatedAt": "2026-11-12T17:05:22.672492619Z",
+        "observedAt": "2026-11-12T17:05:30.671Z",
+        "isTradingHalt": false,
+        "status": "current",
+        "source": "robinhood_official_rest",
+        "sourceUrl": "https://api.robinhood.com/rhj/prices/NFLX",
+        "priceBasis": "underlying",
+        "executable": false,
+        "destinationChainId": null,
+        "multiplier": null
+      },
+      "coverage": {
+        "kind": "observed_only",
+        "historicalOhlcAvailable": false,
+        "count": 1,
+        "firstGeneratedAt": "2026-11-12T17:05:22.672492619Z",
+        "lastGeneratedAt": "2026-11-12T17:05:22.672492619Z",
+        "truncated": false
+      }
+    },
+    {
+      "symbol": "AMD",
+      "status": "observed",
+      "observation": {
+        "symbol": "AMD",
+        "currency": "USD",
+        "bid": "585.4",
+        "ask": "585.88",
+        "midpoint": "585.64",
+        "dailyTradingVolume": "36491852",
+        "generatedAt": "2026-11-12T17:05:20.797774234Z",
+        "observedAt": "2026-11-12T17:05:30.709Z",
+        "isTradingHalt": false,
+        "status": "current",
+        "source": "robinhood_official_rest",
+        "sourceUrl": "https://api.robinhood.com/rhj/prices/AMD",
+        "priceBasis": "underlying",
+        "executable": false,
+        "destinationChainId": null,
+        "multiplier": null
+      },
+      "coverage": {
+        "kind": "observed_only",
+        "historicalOhlcAvailable": false,
+        "count": 1,
+        "firstGeneratedAt": "2026-11-12T17:05:20.797774234Z",
+        "lastGeneratedAt": "2026-11-12T17:05:20.797774234Z",
+        "truncated": false
+      }
+    }
+  ]
+}
