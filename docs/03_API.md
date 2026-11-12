@@ -130,3 +130,18 @@ Invalid key (401); revoked key (401); Spot disabled (403); enable Spot with same
 `GET /v1/trade/markets/:id` loads only the selected venue's fresh source context and preserves its exact collateral and price units. Catalog-only rows can have null prices. `GET /v1/trade/markets/:id/history?range=live|1d|1w|1m|1y|all` uses exact qualified source symbols and range-specific source candles. No history is invented for an empty source response. Stock aliases cannot resolve a crypto instrument. Provider metadata does not establish customer balances, account eligibility or live execution.
 
 Crypto history may expose `price_basis: underlying_reference`, `reference_symbol`, `related_asset_id`, `source_url`, and the actual quote unit for a first-party reference price series. This series describes the underlying reference; it is not the Soroswap execution quote or the token balance valuation. Unsupported reference identities retain observed Testnet pool history without fabricated backfill.
+
+## Customer CCTP funding freeze v1 (November12)
+
+All paths below require the business `trade.perps` and `capital.wallets` entitlements plus the verified customer session. Browser BFF injects `customer_id` and `wallet_id`; they are never browser-selected ownership. Every POST requires `Idempotency-Key`. No standalone bridge module exists.
+
+- `GET /v1/trade/perpetuals/funding?customer_id=...&wallet_id=...&funding_id=...`: reconcile an existing scoped request, or the pending request when ID is omitted; never signs or sends.
+- `POST .../funding/prepare`: `{customer_id,wallet_id,amount}`; returns exact prepared Stellar burn and a one-use `source_customer_action_token` only after prerequisites pass.
+- `POST .../funding/source-review`: `{customer_id,wallet_id,funding_id}`; explicitly refreshes the token for the same still-unsigned, unexpired source approval.
+- `POST .../funding/source-authorize`: `{customer_id,wallet_id,funding_id,customer_action_token,signed_xdr}`; records the exact customer signature/hash before the existing operations worker can send once.
+- `POST .../funding/stage-prepare`: `{customer_id,wallet_id,funding_id,step}`; step is `cctp.receive`, `core.approve` or `core.deposit`, gated by actual predecessor proof.
+- `POST .../funding/stage-authorize`: `{customer_id,wallet_id,funding_id,stage_id,step,signed_transaction}`; persists exact customer-signed chain998 EIP1559 bytes/hash before a one-use send claim.
+
+Responses follow `modules/perpetuals/cctp-contract.ts` and include exact scope, amounts, source hash, stage and immutable evidence. `completed` requires actual matched HyperCore cash credit. A Stellar burn, Iris attestation or HyperEVM mint alone never completes funding. Current source burns are unavailable because no authoritative Testnet receiving-capacity reader has been verified. No source transfer proof has been claimed.
+
+`GET /v1/trade/stocks/funding?customer_id=...&wallet_id=...&account_address=...` returns official Paxos USDG/Robinhood gas faucet metadata and exact USDG/ETH balances for a currently verified customer-owned Privy EVM wallet. Unknown balances are null. A browser cannot select another user’s address. This is separate Testnet faucet funding, not CCTP bridging to Robinhood.

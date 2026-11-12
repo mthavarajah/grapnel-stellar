@@ -64,6 +64,16 @@ export async function GET(
       return json(await grapnel("/capabilities"));
     const s = await requireSession();
     const key = path.join("/");
+    if(key==='stocks-funding'){
+      await requireModule('trade.stocks',s);await requireModule('capital.wallets',s);
+      const address=z.string().regex(/^0x[0-9a-fA-F]{40}$/).optional().parse(request.nextUrl.searchParams.get('account_address')??undefined);
+      return json(await grapnel(`/trade/stocks/funding?customer_id=${s.customerId}&wallet_id=${s.walletId}${address?'&account_address='+address:''}`,s));
+    }
+    if(key==='perps-funding'){
+      await requireModule('trade.perps',s);await requireModule('capital.wallets',s);
+      const id=z.string().uuid().optional().parse(request.nextUrl.searchParams.get('funding_id')??undefined);
+      return json(await grapnel(`/trade/perpetuals/funding?customer_id=${s.customerId}&wallet_id=${s.walletId}${id?'&funding_id='+id:''}`,s));
+    }
     if(key==='perps-account'){
       const category=z.enum(['perps','stocks']).parse(request.nextUrl.searchParams.get('asset_class')??'perps');
       await requireModule('trade.'+category,s);
@@ -196,6 +206,19 @@ export async function POST(
         "A request identifier is required",
       );
     const binding = { customer_id: s.customerId, wallet_id: s.walletId };
+    if(['perps-funding-prepare','perps-funding-source-review','perps-funding-source-authorize','perps-funding-stage-prepare','perps-funding-stage-authorize'].includes(route)){
+      await requireModule('trade.perps',s);await requireModule('capital.wallets',s);
+      const identifier=z.string().uuid(),stage=z.enum(['cctp.receive','core.approve','core.deposit']);
+      const schemas={
+        'perps-funding-prepare':z.object({amount:money}).strict(),
+        'perps-funding-source-review':z.object({funding_id:identifier}).strict(),
+        'perps-funding-source-authorize':z.object({funding_id:identifier,customer_action_token:z.string().min(1).max(200),signed_xdr:z.string().min(1).max(100000)}).strict(),
+        'perps-funding-stage-prepare':z.object({funding_id:identifier,step:stage}).strict(),
+        'perps-funding-stage-authorize':z.object({funding_id:identifier,stage_id:identifier,step:stage,signed_transaction:z.string().regex(/^0x[0-9a-fA-F]+$/).max(100000)}).strict(),
+      };
+      const body=schemas[route as keyof typeof schemas].parse(raw),suffix=route.slice('perps-funding-'.length);
+      return json(await grapnel('/trade/perpetuals/funding/'+suffix,s,{method:'POST',body:{...body,...binding},idempotencyKey:key}));
+    }
     if(route==='perps-funding-trustline'||route==='perps-funding-allowance'){
       const category=z.enum(['perps','stocks']).default('perps');
       const body=route.endsWith('trustline')?z.object({asset_class:category}).strict().parse(raw):z.object({asset_class:category,amount:money}).strict().parse(raw);

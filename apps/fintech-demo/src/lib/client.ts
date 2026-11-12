@@ -1,6 +1,8 @@
 import {borrowingReasonMessage} from './borrowing-feedback';
 /** Consumer copy stays separate from structured diagnostic codes and recovery details. */
 export function consumerErrorMessage(code: string, message: string, details?: Record<string,unknown>): string {
+  const fundingReasons:Record<string,string>={HYPERCORE_TESTNET_EXISTING_ACCOUNT_REQUIRED:'This wallet cannot receive trading funds yet. An eligible existing account is required.',CCTP_TESTNET_RECEIVE_CAPACITY_UNVERIFIED:'We could not verify this wallet’s funding limit. No transfer was started.',HYPEREVM_TESTNET_HYPE_REQUIRED:'Add HYPE to cover your trading wallet’s network fees.',CONNECT_TRADING_WALLET:'Create your trading wallet first.',HYPERLIQUID_TESTNET_ACCESS_NOT_CONFIRMED:'Trading access has not been enabled for this account.',CCTP_CIRCLE_USDC_TRUSTLINE_REQUIRED:'Enable trading USDC before adding funds.',CCTP_ALLOWANCE_REVIEW_REQUIRED:'Review the spending approval for this funding amount first.'};
+  if(code==='EXECUTION_UNAVAILABLE'&&typeof details?.reason==='string'&&fundingReasons[details.reason])return fundingReasons[details.reason]!;
   const borrowing=code==="EXECUTION_UNAVAILABLE"?borrowingReasonMessage(details?.reason):null;
   if(borrowing)return borrowing;
   if (code === "WALLET_OPERATION_PENDING") return "Finish the wallet action already in progress.";

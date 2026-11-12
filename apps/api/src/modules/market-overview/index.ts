@@ -41,6 +41,7 @@ export interface MarketOverviewSnapshot {
 }
 export interface MarketOverviewDependencies {
   referencePrice: MarketReferencePriceReader;
+  stockReferenceItems?:Array<{symbol:string;name:string;maxAgeMs:number}>;
   perps: () => Promise<OverviewTradingMarket[]>;
   lending: () => Promise<BlendMarket[]>;
   now?: () => number;
@@ -73,7 +74,7 @@ function sourceDate(value: unknown, now: number, maxAgeMs: number): string | nul
 async function referenceSection(
   id: "spot" | "stocks",
   label: string,
-  items: Array<{ symbol: YahooSymbol; name: string; maxAgeMs: number; unit_detail?: string }>,
+  items: Array<{ symbol: string; name: string; maxAgeMs: number; unit_detail?: string }>,
   deps: MarketOverviewDependencies,
   now: number,
 ): Promise<MarketOverviewSection> {
@@ -150,7 +151,7 @@ export class MarketOverviewService {
       }));
       return { id: "perps", label: "Margin prices", items, available: items.length > 0 };
     })();
-    if (enabled.has("trade.stocks")) sections.stocks = referenceSection("stocks", "Stock prices", referenceItems.stocks, this.deps, this.now());
+    if (enabled.has("trade.stocks")) sections.stocks = referenceSection("stocks", "Stock prices", this.deps.stockReferenceItems??referenceItems.stocks, this.deps, this.now());
     if (enabled.has("capital.lending")) sections.lending = (async () => {
       let markets: BlendMarket[] = [];
       try { markets = await this.deps.lending(); } catch { /* preserve other enabled sections */ }

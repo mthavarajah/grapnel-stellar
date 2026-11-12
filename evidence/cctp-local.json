@@ -1,0 +1,51 @@
+{
+  "observed_at": "2026-11-12T18:57:55.885Z",
+  "scope": "local implementation and read-only verification",
+  "network": "testnet-only",
+  "execution_status": "blocked",
+  "source_burn_tx_hash": null,
+  "destination_mint_tx_hash": null,
+  "core_deposit_tx_hash": null,
+  "core_credit_proof": null,
+  "hyperliquid_order_proof": null,
+  "blockers": [
+    "HYPERCORE_TESTNET_EXISTING_ACCOUNT_REQUIRED for fresh Privy EVM accounts",
+    "CCTP_TESTNET_RECEIVE_CAPACITY_UNVERIFIED",
+    "Actual EVM deposit to HyperCore ledger correlation has not been proven"
+  ],
+  "checks": {
+    "offline_tests": {
+      "passed": 1952,
+      "skipped": 151
+    },
+    "postgres_workflow_tests": {
+      "passed": 10,
+      "proof_adapters": "explicit offline fixtures; not live chain execution"
+    },
+    "build": "passed",
+    "api_typecheck": "passed",
+    "secret_scan": "passed before final source staging"
+  },
+  "local_http": {
+    "api_health": 200,
+    "fintech_login": 200,
+    "robinhood_stock_catalog": 200,
+    "robinhood_TSLA_detail": 200,
+    "robinhood_TSLA_history": 200
+  },
+  "robinhood": {
+    "symbols": [
+      "TSLA",
+      "AMZN",
+      "PLTR",
+      "NFLX",
+      "AMD"
+    ],
+    "settlement": "USDG",
+    "reference_currency": "USD",
+    "price_source": "robinhood_official_rest",
+    "history_coverage": "observed_only",
+    "funding": "official Paxos USDG faucet plus Robinhood ETH faucet",
+    "stock_trade_tx_hash": null
+  }
+}

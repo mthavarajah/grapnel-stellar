@@ -16,7 +16,8 @@ export interface MarketHistoryRouteDependencies {
 export async function registerMarketHistoryRoutes(app:FastifyInstance,deps:MarketHistoryRouteDependencies):Promise<void>{
  app.get('/v1/trade/markets/:id/history',async request=>{
   const {id}=z.object({id:z.string().min(1).max(200)}).parse(request.params);
-  const category=/^hyperliquid-testnet:stocks:(?:0|[1-9]\d{0,8})$/.test(id)?'stocks'
+  const category=/^robinhood-testnet:stocks:(?:TSLA|AMZN|PLTR|NFLX|AMD)$/.test(id)?'stocks'
+   :/^hyperliquid-testnet:stocks:(?:0|[1-9]\d{0,8})$/.test(id)?'stocks'
    :/^hyperliquid-testnet:perps:(?:0|[1-9]\d{0,8})$/.test(id)?'perps'
    :/^sodax:catalog:(?:mainnet|testnet):C[A-Z2-7]{55}$/.test(id)?'stocks'
    :id.startsWith('stellar-testnet:soroswap:')?'spot':null;
