@@ -1,5 +1,5 @@
 import { randomUUID } from 'node:crypto';
-import { GrapnelError, NETWORK, PreparedActionSchema, type ModuleId, type Operation, type OperationStatus, type PreparedAction } from '@grapnel/contracts';
+import { GrapnelError, NETWORK, PreparedActionSchema,fromAtomic,toAtomic, type ModuleId, type Operation, type OperationStatus, type PreparedAction } from '@grapnel/contracts';
 import type { Pool, PoolClient, QueryResultRow } from 'pg';
 import { lock, transaction } from '../../db/index.js';
 import { canonicalJson, digest, secretToken } from '../../lib/crypto.js';
@@ -14,6 +14,14 @@ export function serializeOperation(row:QueryResultRow,withPrepared=false):Operat
   const asset=row.request_json?.asset_id??row.prepared_action?.summary?.fromAssetId;
   if(typeof amount==='string'&&/^(0|[1-9]\d*)(\.\d+)?$/.test(amount)&&amount.length<=100)result.display_amount=amount;
   if(typeof asset==='string')result.display_asset_id=asset;
+  if(row.type==='blend.repay'&&row.state==='completed'){
+   delete result.display_amount;
+   const proof=row.result_json?.blend_borrowing_verification;
+   try{if(proof?.verified===true&&proof.operation==='repay'&&proof.tx_hash===row.tx_hash&&proof.asset_id===asset&&/^[0-9]{1,38}$/.test(proof.repay_incoming_atomic)&&/^[0-9]{1,38}$/.test(proof.repay_refund_atomic)){
+    const incoming=BigInt(proof.repay_incoming_atomic),refund=BigInt(proof.repay_refund_atomic);
+    if(incoming===toAtomic(amount,7)&&refund>=0n&&refund<incoming)result.display_amount=fromAtomic(incoming-refund,7);
+   }}catch{/* A completed repayment without exact settlement evidence has no invented amount. */}
+  }
  }
  if(withPrepared && row.prepared_action)result.prepared_action=PreparedActionSchema.parse(row.prepared_action);
  return result;

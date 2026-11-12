@@ -47,5 +47,7 @@ export const PERIDOT_DOCS='https://peridot.finance/docs/margin-trading';
 export const PERIDOT_POOL_ID='9ac7a9cde23ac2ada11105eeaa42e43c2ea8332ca0aa8f41f58d7160274d718e';
 export const PERIDOT_BASE:AssetIdentity={id:'stellar-testnet:native:XLM',network:NETWORK,kind:'native',code:'XLM',name:'Stellar Lumens',decimals:7,contractId:PERIDOT_TESTNET_PINS.native_token.address,verified:true,sourceUrl:PERIDOT_PUBLIC_APP};
 export const PERIDOT_COLLATERAL:AssetIdentity={id:`stellar-testnet:soroban:${PERIDOT_TESTNET_PINS.mock_usdt.address}`,network:NETWORK,kind:'soroban',code:'USDT',name:'Mock USDT',decimals:7,contractId:PERIDOT_TESTNET_PINS.mock_usdt.address,verified:true,sourceUrl:PERIDOT_PUBLIC_APP};
+/** Live name()/symbol() are the vault address; display labels are descriptions, not invented symbols. */
+export const PERIDOT_RECEIPT_ASSET:AssetIdentity={id:`stellar-testnet:soroban:${PERIDOT_TESTNET_PINS.mock_usdt_vault.address}`,network:NETWORK,kind:'soroban',code:PERIDOT_TESTNET_PINS.mock_usdt_vault.address,name:PERIDOT_TESTNET_PINS.mock_usdt_vault.address,decimals:6,contractId:PERIDOT_TESTNET_PINS.mock_usdt_vault.address,verified:true,sourceUrl:PERIDOT_PUBLIC_APP};
 // These are reviewed application/chain pins, not Grapnel-deployed contracts.
 export{NETWORK_PASSPHRASE};

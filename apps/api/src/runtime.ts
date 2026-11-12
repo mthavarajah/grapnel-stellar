@@ -49,6 +49,10 @@ import {MARGIN_STEP_ACTIONS} from './modules/margin/types.js';
 import type {MarginExecutionBridge} from './modules/margin/execution.js';
 import {registerMarginFundingRoutes,MARGIN_COLLATERAL_SWAP,type MarginFundingDependencies} from './modules/margin-funding/index.js';
 import type {MarginFundingExecutionBridge} from './modules/margin-funding/execution.js';
+import {createMarginFundingExecutionBridge} from './modules/margin-funding/execution.js';
+import {createMarginExecutionBridge} from './modules/margin/execution.js';
+import {MarginWorkflowService} from './modules/margin/service.js';
+import {PeridotCustomerAdapter,PeridotCollateralFundingAdapter,PERIDOT_CUSTOMER_POLICY} from './adapters/peridot/customer/index.js';
 
 /** A flag or credentials alone cannot establish a passed signing gate. */
 export async function hasGate1Proof(chain:StellarTestnetExecutor):Promise<boolean> {
@@ -93,6 +97,17 @@ export async function createRuntime(pool?:Pool,marginRoutes:RuntimeMarginBinding
  const readSpotBalances=async(address:string)=>{const [classic,tokens]=await Promise.all([chain.getClassicBalances(address),readStandaloneBalances(address)]);return [...classic,...tokens];};
  const wallets=new WalletService(db,identity,chain,signer,readStandaloneBalances);
  const operations=new OperationService(db);
+ const customerMargin=new PeridotCustomerAdapter({server:chain.server,nativeBalance:async customer=>{
+  const balance=(await chain.getClassicBalances(customer.walletAddress)).find(row=>row.asset_id===XLM.id);
+  if(!balance)throw new GrapnelError(503,'BALANCE_UNAVAILABLE','A confirmed native balance is required');return balance;
+ },horizonTransaction:hash=>chain.horizon.transactions().transaction(hash).call()});
+ const marginFunding=new PeridotCollateralFundingAdapter(customerMargin.chain,()=>customerMargin.executionReady());
+ const marginBindings:RuntimeMarginBindings={
+  service:new MarginWorkflowService(operations,customerMargin,PERIDOT_CUSTOMER_POLICY),
+  termsFor:customerMargin.termsFor.bind(customerMargin),creationReadyFor:customerMargin.creationReadyFor.bind(customerMargin),readinessFor:customerMargin.readinessFor.bind(customerMargin),quoteFor:customerMargin.quoteFor.bind(customerMargin),
+  execution:createMarginExecutionBridge(operations,customerMargin,PERIDOT_CUSTOMER_POLICY),
+  collateralFunding:{adapter:marginFunding,ready:()=>customerMargin.executionReady()},fundingExecution:createMarginFundingExecutionBridge(operations,marginFunding),...marginRoutes,
+ };
  const stocks=new StocksTestnetDiscovery({network:config.network,networkPassphrase:NETWORK_PASSPHRASE});
  const commodities=new CommodityAdapter({network:config.network,passphrase:NETWORK_PASSPHRASE});
  let stocksReason='STOCKS_ROUTE_USES_MAINNET_ASSETS',stocksProbeAt=0,stocksProbeRunning=false;
@@ -120,7 +135,16 @@ export async function createRuntime(pool?:Pool,marginRoutes:RuntimeMarginBinding
  const soroban=new BlendSorobanPreparer({network:config.network,passphrase:NETWORK_PASSPHRASE,rpcUrl:process.env.STELLAR_RPC_URL,gate1Passed});
  const blend=new BlendAdapter({network:config.network,passphrase:NETWORK_PASSPHRASE,rpcUrl:process.env.STELLAR_RPC_URL,gate1Passed},{prepareAndSimulate:input=>soroban.prepare(input)});
  const borrowPreparer=new BlendBorrowSorobanPreparer({network:config.network,passphrase:NETWORK_PASSPHRASE,rpcUrl:process.env.STELLAR_RPC_URL,gate1Passed});
- const borrowing=new BlendBorrowAdapter({network:config.network,passphrase:NETWORK_PASSPHRASE,rpcUrl:process.env.STELLAR_RPC_URL,gate1Passed},{prepareAndSimulate:input=>borrowPreparer.prepare(input)});
+ const readBorrowSpendable=async(assetId:string,customer:CustomerContext):Promise<bigint>=>{
+  if(!BORROW_ASSETS.some(asset=>asset.id===assetId))throw new GrapnelError(409,'EXECUTION_UNAVAILABLE','Unsupported borrowing asset');
+  const wallet=await wallets.get(customer.businessId,customer.walletId);
+  if(wallet.customer_id!==customer.customerId||wallet.stellar_address!==customer.walletAddress)throw new GrapnelError(404,'NOT_FOUND','Wallet not found');
+  const [balances,held]=await Promise.all([chain.getClassicBalances(customer.walletAddress),db.query("SELECT COALESCE(SUM(amount_atomic),0)::text AS reserved FROM balance_reservations WHERE business_id=$1 AND customer_id=$2 AND wallet_id=$3 AND asset_id=$4 AND state='active'",[customer.businessId,customer.customerId,customer.walletId,assetId])]);
+  const rows=balances.filter(balance=>balance.asset_id===assetId),balance=rows[0],now=Date.now();
+  if(rows.length!==1||!balance||balance.source!=='stellar_horizon_testnet'||!fresh(balance.as_of,15000,now))throw new GrapnelError(409,'BALANCE_UNAVAILABLE','A fresh confirmed spendable balance is required');
+  const available=zeroAtomic(balance.spendable),reserved=BigInt(held.rows[0]?.reserved??'0');return available>reserved?available-reserved:0n;
+ };
+ const borrowing=new BlendBorrowAdapter({network:config.network,passphrase:NETWORK_PASSPHRASE,rpcUrl:process.env.STELLAR_RPC_URL,gate1Passed},{prepareAndSimulate:input=>borrowPreparer.prepare(input),readSpendableBalance:readBorrowSpendable});
  const earningsReader=new LendingEarningsReader({pool:db,positions:customer=>blend.positions(customer)});
  const referencePrices=createYahooReferencePriceReader();
  const marketOverview=new MarketOverviewService({referencePrice:referencePrices,perps:readMarginMarkets,lending:()=>blend.markets()});
@@ -171,7 +195,7 @@ export async function createRuntime(pool?:Pool,marginRoutes:RuntimeMarginBinding
   return blendReadiness;
  };
  const app=await buildApp({pool:db,config,identityVerifier:identity,
-  verifySignedAction:async(action,signed)=>{if(action.summary.action.startsWith('margin.'))await verifyRuntimeMarginAction(action,signed,marginRoutes);else if(action.summary.action==='wallet.usdc_trustline')verifyPreparedUsdcTrustline(action,signed);else if(action.summary.action==='spot.swap')await spotInspector.verifyForSubmission(action,signed);else if(borrowingAction(action.summary.action))await borrowPreparer.verifyForSubmission(action,signed);else if(action.summary.action==='blend.supply'||action.summary.action==='blend.withdraw')await soroban.verifyForSubmission(action,signed);else verifySignedAction(action,signed);return {txHash:parseTestnetTransaction(signed).hash().toString('hex')};},
+  verifySignedAction:async(action,signed)=>{if(action.summary.action.startsWith('margin.'))await verifyRuntimeMarginAction(action,signed,marginBindings);else if(action.summary.action==='wallet.usdc_trustline')verifyPreparedUsdcTrustline(action,signed);else if(action.summary.action==='spot.swap')await spotInspector.verifyForSubmission(action,signed);else if(borrowingAction(action.summary.action))await borrowPreparer.verifyForSubmission(action,signed);else if(action.summary.action==='blend.supply'||action.summary.action==='blend.withdraw')await soroban.verifyForSubmission(action,signed);else verifySignedAction(action,signed);return {txHash:parseTestnetTransaction(signed).hash().toString('hex')};},
   balanceReader:address=>chain.getClassicBalances(address),
   dashboardCustomerBalances:(businessId,walletId)=>wallets.balances(businessId,walletId),
   dashboardCustomerPositions:async customer=>{
@@ -242,8 +266,8 @@ export async function createRuntime(pool?:Pool,marginRoutes:RuntimeMarginBinding
     return reply.code(202).send(success(request,result.operation));
    });
    // Register after the provider gate hook. Missing reviewed bindings stay unavailable.
-   await registerMarginRoutes(app,marginRoutes);
-   await registerMarginFundingRoutes(app,{operations,...marginRoutes.collateralFunding});
+   await registerMarginRoutes(app,marginBindings);
+   await registerMarginFundingRoutes(app,{operations,...marginBindings.collateralFunding});
    await registerLendingRoutes(app,{adapter:blend,borrowing,operations,balanceReader:address=>chain.getClassicBalances(address)});
    await registerSpotRoutes(app,{service:new SpotService(spot,db,operations,createSpotReservation(operations,readSpotBalances)),refreshReadiness:()=>spotReadiness.refresh(),requireBusiness,requireCustomer,success,
     readDiscoveryMarkets:async category=>category==='perps'?readMarginMarkets():category==='commodities'?commodities.markets():(await stocks.catalog()).map(market=>({...market,underlying:{symbol:market.symbol,name:market.name}})),
@@ -252,7 +276,7 @@ export async function createRuntime(pool?:Pool,marginRoutes:RuntimeMarginBinding
   }
  });
  app.addHook('onClose',async()=>{if(!pool)await db.end();});
- const workerChain=createRuntimeWorkerChain({pool:db,chain,blend,soroban,borrowing,borrowPreparer,gate1Passed,verifyGate1:()=>hasGate1Proof(chain),spot:spotInspector,readSpotBalances,margin:marginRoutes.execution,marginFunding:marginRoutes.fundingExecution});
+ const workerChain=createRuntimeWorkerChain({pool:db,chain,blend,soroban,borrowing,borrowPreparer,gate1Passed,verifyGate1:()=>hasGate1Proof(chain),spot:spotInspector,readSpotBalances,margin:marginBindings.execution,marginFunding:marginBindings.fundingExecution});
  return {app,config,pool:db,chain,wallets,operations,funding,gate1Passed,worker:new OperationWorker(db,workerChain)};
 }
 
