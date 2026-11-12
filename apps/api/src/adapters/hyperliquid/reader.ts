@@ -10,6 +10,7 @@ const MAX_AGE_MS = 60_000;
 const decimal = z.string().max(128).regex(/^(0|[1-9][0-9]*)(\.[0-9]+)?$/);
 const signedDecimal = z.string().max(128).regex(/^-?(0|[1-9][0-9]*)(\.[0-9]+)?$/);
 const metadata = z.object({
+  collateralToken: z.number().int().nonnegative().optional(),
   universe: z.array(z.object({
     name: z.string().min(1).max(128).regex(/^[^\x00-\x1f\x7f]+$/),
     szDecimals: z.number().int().min(0).max(18),
@@ -28,6 +29,10 @@ const payload = z.tuple([metadata, z.array(context).max(2048)]);
 
 export interface HyperliquidTestnetMarket {
   assetIndex: number;
+  globalAssetIndex?: number;
+  localAssetIndex?: number;
+  dex?: '' | 'xyz';
+  dexIndex?: number;
   name: string;
   szDecimals: number;
   maxLeverage: number;
@@ -47,21 +52,42 @@ export interface HyperliquidTestnetMarket {
 
 /** Exact decimals remain strings. Contexts are joined only by the provider's
  * corresponding array index, never a symbol match or a fabricated fallback. */
-export function parseHyperliquidMarkets(value: unknown): HyperliquidTestnetMarket[] {
+export function parseHyperliquidMarkets(value: unknown, builder?: { dex: 'xyz'; dexIndex: number }): HyperliquidTestnetMarket[] {
   const [meta, contexts] = payload.parse(value);
+  if (builder && (builder.dex !== 'xyz' || !Number.isSafeInteger(builder.dexIndex) || builder.dexIndex <= 0 || builder.dexIndex >= 2048))
+    throw new Error('HYPERLIQUID_UNAPPROVED_DEX');
+  if (builder && meta.collateralToken !== 0) throw new Error('HYPERLIQUID_NON_USDC_COLLATERAL');
   if (meta.universe.length !== contexts.length) throw new Error('HYPERLIQUID_CONTEXT_COUNT_MISMATCH');
   const names = new Set<string>();
-  return meta.universe.map((asset, assetIndex) => {
+  return meta.universe.map((asset, localAssetIndex) => {
+    if (builder && (!asset.name.startsWith('xyz:') || asset.name.length <= 4 || asset.name.slice(4).includes(':')))
+      throw new Error('HYPERLIQUID_DEX_PREFIX_MISMATCH');
+    if (!builder && asset.name.includes(':')) throw new Error('HYPERLIQUID_DEX_PREFIX_MISMATCH');
+    const assetIndex = builder ? 100000 + builder.dexIndex * 10000 + localAssetIndex : localAssetIndex;
     if (names.has(asset.name)) throw new Error('HYPERLIQUID_DUPLICATE_MARKET');
     names.add(asset.name);
-    const ctx = contexts[assetIndex]!;
-    return { assetIndex, name: asset.name, szDecimals: asset.szDecimals, maxLeverage: asset.maxLeverage,
+    const ctx = contexts[localAssetIndex]!;
+    return { assetIndex, globalAssetIndex: assetIndex, localAssetIndex, dex: builder?.dex ?? '', dexIndex: builder?.dexIndex ?? 0, name: asset.name, szDecimals: asset.szDecimals, maxLeverage: asset.maxLeverage,
       isDelisted: asset.isDelisted ?? false, onlyIsolated: asset.onlyIsolated ?? false,
       marginMode: asset.marginMode ?? null, markPrice: ctx.markPx, oraclePrice: ctx.oraclePx,
       midPrice: ctx.midPx ?? null, previousDayPrice: ctx.prevDayPx, fundingRate: ctx.funding,
       openInterest: ctx.openInterest, dayNotionalVolume: ctx.dayNtlVlm,
       dayBaseVolume: ctx.dayBaseVlm ?? null, premium: ctx.premium ?? null };
   });
+}
+
+
+/** Registry array positions are provider identifiers. Only xyz is allowlisted;
+ * unknown builders remain metadata rather than accidentally executable assets. */
+export function resolveHyperliquidXyzDex(value: unknown) {
+  const registry = z.array(z.object({ name: z.string().min(1).max(128) }).nullable()).min(2).max(2048).parse(value);
+  if (registry[0] !== null || registry.slice(1).some((entry) => entry === null)) throw new Error('HYPERLIQUID_INVALID_DEX_REGISTRY');
+  const names = registry.map((entry) => entry?.name ?? null);
+  const unique = new Set(names.slice(1));
+  if (unique.size !== names.length - 1) throw new Error('HYPERLIQUID_DUPLICATE_DEX');
+  const dexIndex = names.indexOf('xyz');
+  if (dexIndex <= 0) throw new Error('HYPERLIQUID_XYZ_DEX_UNAVAILABLE');
+  return { dex: 'xyz' as const, dexIndex, names };
 }
 
 /** Fixed Testnet public data reader. No signing, exchange, deposit or mainnet
@@ -128,6 +154,35 @@ export class HyperliquidTestnetReader {
         hyperEvmRpcUrl: HYPEREVM_TESTNET_RPC, hyperEvmChainId: 998 as const, documentationUrl: SOURCE_DOC,
         receivedAt: result.receivedAt, httpDate: result.serverDate, maxResponseAgeMs: MAX_AGE_MS,
         providerMarketTimestamp: null, freshnessBasis: 'http_response_receipt' as const },
+    };
+  }
+
+  /** New complete snapshot for the two explicitly reviewed DEXs. Fail closed
+   * when either source fails; never mix a fresh DEX with cached old metrics. */
+  async readAllMarkets() {
+    await this.verifyHyperEvmNetwork();
+    const registry = await this.read(HYPERLIQUID_TESTNET_INFO, { type: 'perpDexs' });
+    const xyz = resolveHyperliquidXyzDex(registry.data);
+    const [native, builder] = await Promise.all([
+      this.read(HYPERLIQUID_TESTNET_INFO, { type: 'metaAndAssetCtxs' }),
+      this.read(HYPERLIQUID_TESTNET_INFO, { type: 'metaAndAssetCtxs', dex: 'xyz' }),
+    ]);
+    const markets = [...parseHyperliquidMarkets(native.data), ...parseHyperliquidMarkets(builder.data, xyz)];
+    if (new Set(markets.map((market) => market.assetIndex)).size !== markets.length
+        || new Set(markets.map((market) => market.name)).size !== markets.length) throw new Error('HYPERLIQUID_MARKET_ID_COLLISION');
+    const observed = [registry, native, builder].map((row) => Date.parse(row.receivedAt));
+    if (this.now() - Math.min(...observed) > MAX_AGE_MS) throw new Error('HYPERLIQUID_STALE_RESPONSE');
+    return { provider: 'hyperliquid' as const, network: 'hyperliquid-testnet' as const,
+      executionStatus: 'discovery_only' as const, executable: false as const, partial: false as const, markets,
+      source: { infoUrl: HYPERLIQUID_TESTNET_INFO, requestTypes: ['perpDexs', 'metaAndAssetCtxs'] as const,
+        hyperEvmRpcUrl: HYPEREVM_TESTNET_RPC, hyperEvmChainId: 998 as const,
+        receivedAt: new Date(Math.max(...observed)).toISOString(), maxResponseAgeMs: MAX_AGE_MS,
+        providerMarketTimestamp: null, freshnessBasis: 'http_response_receipt' as const,
+        registry: { receivedAt: registry.receivedAt, httpDate: registry.serverDate, names: xyz.names },
+        dexes: [{ dex: '', dexIndex: 0, receivedAt: native.receivedAt, httpDate: native.serverDate },
+          { dex: 'xyz', dexIndex: xyz.dexIndex, collateralToken: 0, receivedAt: builder.receivedAt, httpDate: builder.serverDate }],
+        documentationUrl: SOURCE_DOC,
+        assetIdDocumentationUrl: 'https://hyperliquid.gitbook.io/hyperliquid-docs/for-developers/api/asset-ids' },
     };
   }
 
