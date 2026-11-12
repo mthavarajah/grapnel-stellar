@@ -88,8 +88,8 @@ export class PgPerpetualWorkflowStore implements PerpetualWorkflowStore{
    if(replay){if(replay.request_hash!==copy.requestHash)reject('IDEMPOTENCY_CONFLICT','Idempotency key was used with a different order request');return orderRow(s,replay);}
    if(Date.parse(copy.intent.expiresAt)<=Date.now())reject('PERPETUAL_ORDER_EXPIRED','The prepared order has expired');
    const account=await this.storedAccount(client,s,copy.accountId);if(!account||account.account_address!==copy.intent.accountAddress)reject('NOT_FOUND','Perpetual account not found',404);
-   await lock(client,`perpetual-account-pending:${account.account_address}`);
-   const pending=await client.query("SELECT id FROM perpetual_orders WHERE account_address=$1 AND nonce<>$2 AND client_order_id<>$3 AND (state IN ('approved','sending','unknown') OR state IN ('preparing','awaiting_approval') AND (intent->>'expiresAt')::timestamptz>now()) LIMIT 1",[account.account_address,copy.intent.nonce,copy.intent.clientOrderId]);
+   await lock(client,`perpetual-account-pending:${account!.account_address}`);
+   const pending=await client.query("SELECT id FROM perpetual_orders WHERE account_address=$1 AND nonce<>$2 AND client_order_id<>$3 AND (state IN ('approved','sending','unknown') OR state IN ('preparing','awaiting_approval') AND (intent->>'expiresAt')::timestamptz>now()) LIMIT 1",[account!.account_address,copy.intent.nonce,copy.intent.clientOrderId]);
    if(pending.rowCount)reject('PERPETUAL_ORDER_PENDING','Check your previous order before reviewing another trade');
    const row=(await client.query('INSERT INTO perpetual_orders(id,business_id,customer_id,wallet_id,stellar_address,account_id,idempotency_key,request_hash,intent,approval_message,approval_digest,account_address,nonce,client_order_id,state) VALUES($5,$1,$2,$3,$4,$6,$7,$8,$9,$10,$11,$12,$13,$14,\'preparing\') RETURNING *',[...scopeArgs(s),copy.id,copy.accountId,copy.idempotencyKey,copy.requestHash,JSON.stringify(copy.intent),copy.approvalMessage,copy.approvalDigest,copy.intent.accountAddress,copy.intent.nonce,copy.intent.clientOrderId])).rows[0];return orderRow(s,row);
   });
