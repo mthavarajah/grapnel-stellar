@@ -4,11 +4,22 @@
   "network": "hyperliquid-testnet",
   "source_bundle": "https://app.hyperliquid.xyz/assets/config-D0Al6aLn.js",
   "source_rule": "First-party coin icon component uses /coins/{name}.svg; native k multiplier is stripped by its R8 function. Qualified builder names stay qualified.",
-  "native_count": 158,
+  "native_count": 159,
   "equity_count": 27,
   "index_count": 2,
-  "downloaded_count": 187,
-  "missing": [],
+  "downloaded_count": 194,
+  "missing": [
+    {
+      "provider_symbol": "xyz:COPPER",
+      "source": "https://app.hyperliquid.xyz/coins/xyz%3ACOPPER.svg",
+      "reason": "No safe official SVG published"
+    },
+    {
+      "provider_symbol": "xyz:NATGAS",
+      "source": "https://app.hyperliquid.xyz/coins/xyz%3ANATGAS.svg",
+      "reason": "No safe official SVG published"
+    }
+  ],
   "logos": [
     {
       "provider_symbol": "0G",
@@ -911,6 +922,15 @@
       "sha256": "97c2f45ab5616705890c879b0a6a57fce9204d774d1f530fa866585ca445335d"
     },
     {
+      "provider_symbol": "PAXG",
+      "category": "crypto",
+      "file": "/assets/logos/hyperliquid/paxg.svg",
+      "source": "https://app.hyperliquid.xyz/coins/PAXG.svg",
+      "collection": "Hyperliquid first-party app artwork",
+      "license": "Brand mark; no open license asserted",
+      "sha256": "4053435fdbff01769dc79cf017b8f8ed8bdeed267bef2620b93a3ca7fe7a51dd"
+    },
+    {
       "provider_symbol": "PENDLE",
       "category": "crypto",
       "file": "/assets/logos/hyperliquid/pendle.svg",
@@ -1425,6 +1445,15 @@
       "sha256": "c449fdb948edafe858ae6463496ed03bcd365705def1aaed6659a5d1fb225e2c"
     },
     {
+      "provider_symbol": "xyz:CL",
+      "category": "commodity",
+      "file": "/assets/logos/hyperliquid/xyz-cl.svg",
+      "source": "https://app.hyperliquid.xyz/coins/xyz%3ACL.svg",
+      "collection": "Hyperliquid first-party app artwork",
+      "license": "Brand mark; no open license asserted",
+      "sha256": "a5d392705e8167f602c05a6a1fed7da1e265d66e1f68e09df039c4a1eb243a8b"
+    },
+    {
       "provider_symbol": "xyz:COIN",
       "category": "equity",
       "file": "/assets/logos/hyperliquid/xyz-coin.svg",
@@ -1461,6 +1490,24 @@
       "sha256": "6118144c0fc7de3eb00ea86220239eb3915b7d122dde88b475ef763a09b034cd"
     },
     {
+      "provider_symbol": "xyz:EUR",
+      "category": "fx",
+      "file": "/assets/logos/hyperliquid/xyz-eur.svg",
+      "source": "https://app.hyperliquid.xyz/coins/xyz%3AEUR.svg",
+      "collection": "Hyperliquid first-party app artwork",
+      "license": "Brand mark; no open license asserted",
+      "sha256": "2b781f3667797b8f7f5754cb2f280d651e83022565e69a21a5c3f946c4e878dd"
+    },
+    {
+      "provider_symbol": "xyz:GOLD",
+      "category": "commodity",
+      "file": "/assets/logos/hyperliquid/xyz-gold.svg",
+      "source": "https://app.hyperliquid.xyz/coins/xyz%3AGOLD.svg",
+      "collection": "Hyperliquid first-party app artwork",
+      "license": "Brand mark; no open license asserted",
+      "sha256": "37ae359aee01520ff5216c202e5ec9eb31705bac42ce1b1c040620c5ec5391b0"
+    },
+    {
       "provider_symbol": "xyz:GOOGL",
       "category": "equity",
       "file": "/assets/logos/hyperliquid/xyz-googl.svg",
@@ -1486,6 +1533,15 @@
       "collection": "Hyperliquid first-party app artwork",
       "license": "Brand mark; no open license asserted",
       "sha256": "c3e1cd6736b013f4a280ad7ad83141f83fdf209d05cfae1289e84a2dc8302436"
+    },
+    {
+      "provider_symbol": "xyz:JPY",
+      "category": "fx",
+      "file": "/assets/logos/hyperliquid/xyz-jpy.svg",
+      "source": "https://app.hyperliquid.xyz/coins/xyz%3AJPY.svg",
+      "collection": "Hyperliquid first-party app artwork",
+      "license": "Brand mark; no open license asserted",
+      "sha256": "76cebad43d07823da77b50c1c5fb475d12431d353f5774ac15ee6b8986d1c9fa"
     },
     {
       "provider_symbol": "xyz:LLY",
@@ -1560,6 +1616,15 @@
       "sha256": "ccf58c2f20333ada3c9d796c1e606de9537455567d17a2311cc9c4fe254f1e39"
     },
     {
+      "provider_symbol": "xyz:PLATINUM",
+      "category": "commodity",
+      "file": "/assets/logos/hyperliquid/xyz-platinum.svg",
+      "source": "https://app.hyperliquid.xyz/coins/xyz%3APLATINUM.svg",
+      "collection": "Hyperliquid first-party app artwork",
+      "license": "Brand mark; no open license asserted",
+      "sha256": "4ca19171bf5aa873132ce6ff637981b9d322b21c9053afa00f59abdf2961a4ee"
+    },
+    {
       "provider_symbol": "xyz:PLTR",
       "category": "equity",
       "file": "/assets/logos/hyperliquid/xyz-pltr.svg",
@@ -1576,6 +1641,15 @@
       "collection": "Hyperliquid first-party app artwork",
       "license": "Brand mark; no open license asserted",
       "sha256": "6d17e0c623a1104ef13169b39bb4ca757e0ff755f84e6a0703afabade344f607"
+    },
+    {
+      "provider_symbol": "xyz:SILVER",
+      "category": "commodity",
+      "file": "/assets/logos/hyperliquid/xyz-silver.svg",
+      "source": "https://app.hyperliquid.xyz/coins/xyz%3ASILVER.svg",
+      "collection": "Hyperliquid first-party app artwork",
+      "license": "Brand mark; no open license asserted",
+      "sha256": "8ebead9b39f626fa61b84fcf4a7be336890bbd1a768d91d35e4ce7b46aa54014"
     },
     {
       "provider_symbol": "xyz:SKHX",
@@ -1694,5 +1768,7 @@
       "license": "Brand mark; no open license asserted",
       "sha256": "98610772c13a2a3d8474ba5b7c5c259cd2b17267a7c8c85e5578713f0c47647c"
     }
-  ]
+  ],
+  "commodity_count": 6,
+  "fx_count": 2
 }

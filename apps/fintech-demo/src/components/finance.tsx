@@ -408,7 +408,7 @@ function FinanceShell({ page, auth, initialCategory }: { page: string; auth?: Au
   const [markets, setMarkets] = useState<any[]>([]);
   const [marketsLoading, setMarketsLoading] = useState(false);
   const [marketSearch, setMarketSearch] = useState("");
-  const [perpetualFilter,setPerpetualFilter]=useState<"all"|"crypto"|"equity"|"index">("all");
+  const [perpetualFilter,setPerpetualFilter]=useState<"all"|"crypto"|"equity"|"index"|"commodity"|"fx">("all");
   const [marketResultsOpen, setMarketResultsOpen] = useState(false);
 
   const [lending, setLending] = useState<any[]>([]);
@@ -1291,7 +1291,7 @@ function FinanceShell({ page, auth, initialCategory }: { page: string; auth?: Au
               {category !== "crypto_spot" && category !== "unavailable" && (
                 <section className="card public-market-browser" aria-label="Available markets" data-testid="market-list">
                   <div className="section-heading"><h2>Find a market</h2><span className="small muted">{markets.length} markets</span></div>
-                  {category==="perps"&&<label className="small muted">Asset type <select aria-label="Perpetual asset type" value={perpetualFilter} onChange={event=>{setPerpetualFilter(event.target.value as "all"|"crypto"|"equity"|"index");setMarketResultsOpen(true);}}><option value="all">All assets</option><option value="crypto">Crypto</option><option value="equity">Stock perpetuals</option><option value="index">Indices</option></select></label>}
+                  {category==="perps"&&<label className="small muted">Asset type <select aria-label="Perpetual asset type" value={perpetualFilter} onChange={event=>{setPerpetualFilter(event.target.value as "all"|"crypto"|"equity"|"index"|"commodity"|"fx");setMarketResultsOpen(true);}}><option value="all">All assets</option><option value="crypto">Crypto</option><option value="equity">Stock perpetuals</option><option value="index">Indices</option><option value="commodity">Commodity perpetuals</option><option value="fx">Currency perpetuals</option></select></label>}
                   <div className="public-market-search-row"><label className="market-search-label">Search markets<input type="search" aria-label="Search markets" data-testid="market-search" value={marketSearch} onFocus={()=>setMarketResultsOpen(true)} onChange={event=>{setMarketSearch(event.target.value);setMarketResultsOpen(true);}} placeholder="Search by name or symbol" /></label><button type="button" className="button outline" data-testid="market-browse-toggle" aria-expanded={marketResultsOpen} aria-controls="public-market-options" onClick={()=>setMarketResultsOpen(current=>!current)}>Browse markets</button></div>
                   {marketsLoading ? <p className="small muted" role="status">Loading markets…</p> : marketResultsOpen && visiblePublicMarkets.length ? <div className="public-market-options" id="public-market-options">
                     {visiblePublicMarkets.map(entry=><button type="button" key={entry.market_id??entry.id} data-testid={`market-option-${entry.underlying?.symbol??entry.market_id}`} aria-label={`${entry.underlying?.symbol??entry.label} ${category==="perps"?(entry.asset_category==="equity"?"stock perpetual":entry.asset_category==="index"?"index perpetual":"perpetual"):"stock"}`} aria-pressed={(entry.market_id??entry.id)===market}

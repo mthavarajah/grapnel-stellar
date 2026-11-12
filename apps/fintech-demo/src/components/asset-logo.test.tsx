@@ -16,7 +16,7 @@ describe('Bundled local asset logos',()=>{
 describe('Namespace-bound Hyperliquid market artwork',()=>{
  const manifest=JSON.parse(publicFile('/assets/hyperliquid-logo-sources.json').toString('utf8'));
  it('covers all recorded supported crypto, equity and index symbols with actual artwork',()=>{
-  expect(manifest.downloaded_count).toBe(187);expect(manifest.missing).toEqual([]);expect(manifest.logos.filter((row:any)=>row.category==='crypto')).toHaveLength(158);expect(manifest.logos.filter((row:any)=>row.category==='equity')).toHaveLength(27);expect(manifest.logos.filter((row:any)=>row.category==='index')).toHaveLength(2);
+  expect(manifest.downloaded_count).toBe(194);expect(manifest.missing.map((row:any)=>row.provider_symbol)).toEqual(['xyz:COPPER','xyz:NATGAS']);expect(manifest.logos.filter((row:any)=>row.category==='crypto')).toHaveLength(159);expect(manifest.logos.filter((row:any)=>row.category==='equity')).toHaveLength(27);expect(manifest.logos.filter((row:any)=>row.category==='index')).toHaveLength(2);
   for(const row of manifest.logos)expect(assetLogoPath(row.provider_symbol,'hyperliquid-testnet:perps:750009',row.provider_symbol),row.provider_symbol).not.toBe('/assets/logos/asset.svg');
  });
  it('verifies actual file signatures, safe SVG content and every source checksum',()=>{
