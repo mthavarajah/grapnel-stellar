@@ -1,0 +1,59 @@
+{
+  "observedAt": "2026-11-12T03:28:58.892Z",
+  "sourceRevision": "7588e2ba33da8220fae8a0123377a70e747b2063",
+  "sourceFiles": [
+    {
+      "path": "frontend/lib/zk/generate-proof.ts",
+      "sha256": "7d1f22db40e34d1f6179672ca028d0e596a42def58304ce39e8c409ce0225db2"
+    },
+    {
+      "path": "frontend/lib/stellar.ts",
+      "sha256": "b643fed7c0e1e66a5f22291b82129721d42b65c8bb63507b9fdbf4d3c79d5175"
+    },
+    {
+      "path": "frontend/app/api/oracle/route.ts",
+      "sha256": "de4116bdf456b70ef7f9be834681f82ba13b948c85aeda4032a62935b898731d"
+    },
+    {
+      "path": "frontend/components/zk/prove-access-flow.tsx",
+      "sha256": "03b3b795b7fd6c12bc779dcc5037081488b105407ea69fb54d93a1f82e78a2a0"
+    },
+    {
+      "path": "circuits/scripts/setup.sh",
+      "sha256": "75686b5f677fb954ded7033ad5cbe2c85513c0ef7b7a38013a415e659be65ced"
+    },
+    {
+      "path": "contracts/synth_vault/src/lib.rs",
+      "sha256": "28b47f44c38cd4c86a1768d7d0831506d1c8a0dc0d9b670adf41d5dc3e75366d"
+    },
+    {
+      "path": "contracts/zk_verifier/src/lib.rs",
+      "sha256": "18aaa41f5f32ac45ff20814f019e54d7068999ab5f7a2dbd845f5c9dbb5aba67"
+    }
+  ],
+  "scoreGet": {
+    "url": "https://ztellar-edge.vercel.app/api/score?address=GB4PC65ZHBPVEZMAHY2K2KYMS3RFBIN2FQIE3LGTLEHT2DEWVMTD7JYQ",
+    "status": 200,
+    "body": {
+      "score": 38,
+      "tier": 2,
+      "breakdown": {
+        "longevity": 25,
+        "volume": 0,
+        "diversity": 5,
+        "activity": 8
+      },
+      "meta": {
+        "txCount": 17,
+        "trustlines": 1,
+        "recentTxCount": 17,
+        "ageDays": 2855
+      }
+    }
+  },
+  "provingKeyInGitTree": false,
+  "providerPostPerformed": false,
+  "proofGenerated": false,
+  "onchainWritesPerformed": false,
+  "txHash": null
+}

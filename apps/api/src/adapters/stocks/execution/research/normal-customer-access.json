@@ -1,0 +1,30 @@
+{
+  "observedAt": "2026-11-12T03:28:02.214Z",
+  "wallet": "GB4PC65ZHBPVEZMAHY2K2KYMS3RFBIN2FQIE3LGTLEHT2DEWVMTD7JYQ",
+  "mode": "read_only_access_discovery",
+  "executionStatus": "blocked",
+  "executable": false,
+  "artifacts": [
+    {
+      "name": "circuit_wasm",
+      "url": "https://ztellar-edge.vercel.app/zk/tier_proof.wasm",
+      "httpStatus": 200,
+      "status": "present_unverified"
+    },
+    {
+      "name": "proving_key",
+      "url": "https://ztellar-edge.vercel.app/zk/tier_proof_0001.zkey",
+      "httpStatus": 404,
+      "status": "missing"
+    }
+  ],
+  "blockers": [
+    "PROVING_KEY_UNAVAILABLE",
+    "PROVING_KEY_DEPLOYMENT_MATCH_REQUIRED",
+    "VERIFIED_ELIGIBILITY_BINDING_REQUIRED",
+    "VERIFIED_ORACLE_UPDATE_REQUIRED"
+  ],
+  "providerPostPerformed": false,
+  "onchainWritesPerformed": false,
+  "txHash": null
+}
