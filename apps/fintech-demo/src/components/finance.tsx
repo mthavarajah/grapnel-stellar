@@ -34,6 +34,7 @@ type BorrowAsset = {
   collateral_value:string|null;borrow_limit:string|null;available_to_borrow:string|null;health_factor:string|null;
   can_prepare_borrow:boolean;can_prepare_repay:boolean;reason:string|null;
   collateral?:string;can_prepare_collateral_supply?:boolean;can_prepare_collateral_withdraw?:boolean;
+  repay_all_amount?:string|null;can_prepare_repay_all?:boolean;
 };
 type Borrowing = {pool_id:string;as_of:string;assets:BorrowAsset[]};
 function borrowingRate(value:string|null):string {
@@ -418,20 +419,24 @@ function FinanceShell({ page, auth, initialCategory }: { page: string; auth?: Au
   const [borrowingError,setBorrowingError] = useState("");
   const [loanActions,setLoanActions] = useState<Record<string,"borrow"|"repay"|"collateral-supply"|"collateral-withdraw">>({});
   const [loanAmounts,setLoanAmounts] = useState<Record<string,string>>({});
-  const borrowerOwner=useRef<string|null>(null);borrowerOwner.current=session?.customer_id??null;
-  useEffect(()=>{setBorrowing(null);setLoanActions({});setLoanAmounts({});setBorrowingError("");},[session?.customer_id]);
+  const [repayAllAmounts,setRepayAllAmounts] = useState<Record<string,string>>({});
+  const [repayAllErrors,setRepayAllErrors] = useState<Record<string,string>>({});
+  const borrowerOwner=useRef("");borrowerOwner.current=`${session?.customer_id??""}:${session?.wallet_id??""}`;
+  useEffect(()=>{setBorrowing(null);setLoanActions({});setLoanAmounts({});setRepayAllAmounts({});setRepayAllErrors({});setBorrowingError("");},[session?.customer_id,session?.wallet_id]);
   const refreshBorrowing=useCallback(async()=>{
-    const customer=session?.customer_id;if(!customer)return;
-    setBorrowingLoading(true);setBorrowingError("");
+    const customer=session?.customer_id,wallet=session?.wallet_id;if(!customer||!wallet)return;
+    const owner=`${customer}:${wallet}`;setBorrowingLoading(true);setBorrowingError("");
     try{
       const response=await api("grapnel/borrowing");
       if(!Array.isArray(response?.assets))throw Error("Loan information is unavailable. Please try again.");
-      if(borrowerOwner.current===customer)setBorrowing({...response,assets:response.assets.filter((row:BorrowAsset)=>row.asset?.network==="stellar-testnet"&&row.asset?.verified===true&&["XLM","USDC"].includes(row.asset.code))});
-    }catch(cause){if(borrowerOwner.current===customer){setBorrowing(null);setBorrowingError(cause instanceof Error?cause.message:"Loan information is unavailable. Please try again.");}}
-    finally{if(borrowerOwner.current===customer)setBorrowingLoading(false);}
-  },[session?.customer_id]);
+      if(borrowerOwner.current===owner){const current:Borrowing={...response,assets:response.assets.filter((row:BorrowAsset)=>row.asset?.network==="stellar-testnet"&&row.asset?.verified===true&&["XLM","USDC"].includes(row.asset.code))};setBorrowing(current);return current;}
+    }catch(cause){if(borrowerOwner.current===owner){setBorrowing(null);setBorrowingError(cause instanceof Error?cause.message:"Loan information is unavailable. Please try again.");}}
+    finally{if(borrowerOwner.current===owner)setBorrowingLoading(false);}
+  },[session?.customer_id,session?.wallet_id]);
   const borrowingIdentity=(id?:string)=>borrowing?.assets.find(row=>row.asset.id===id)?.asset;
   const borrowingCode=(id?:string)=>borrowingIdentity(id)?.code??assetCode(id);
+
+
 
   const [historyRange,setHistoryRange] = useState<HistoryRange>("live");
   const [marketHistory,setMarketHistory] = useState<MarketHistory|null>(null);
@@ -463,6 +468,10 @@ function FinanceShell({ page, auth, initialCategory }: { page: string; auth?: Au
   }, [session?.customer_id]);
   const [operations, setOperations] = useState<Operation[]>([]);
   const [active, setActive] = useState<Operation | null>(null);
+  const isMaximumRepayment=active?.type==="blend.repay"&&!!active.prepared_action&&Object.entries(repayAllAmounts).some(([marketId,value])=>{
+    const row=borrowing?.assets.find(entry=>entry.market_id===marketId);if(!row||row.asset.id!==active.prepared_action?.summary.fromAssetId)return false;
+    try{return toAtomic(value,row.asset.decimals)===toAtomic(active.prepared_action.summary.amount??"",row.asset.decimals);}catch{return false;}
+  });
   const [approvalClock, setApprovalClock] = useState(Date.now());
   useEffect(() => {
     if (active?.status !== "awaiting_customer_authorization") return;
@@ -1484,7 +1493,8 @@ function FinanceShell({ page, auth, initialCategory }: { page: string; auth?: Au
             {borrowingLoading&&!borrowing?<p className="small muted" role="status">Loading loan information…</p>:borrowing?.assets.length?<div className="borrowing-grid">{borrowing.assets.map(row=>{
               const direction=loanActions[row.market_id]??"borrow",amountKey=`${row.market_id}:${direction}`;
               const canPrepare=direction==="borrow"?row.can_prepare_borrow:direction==="repay"?row.can_prepare_repay:direction==="collateral-supply"?row.can_prepare_collateral_supply===true:row.can_prepare_collateral_withdraw===true;
-              const reviewLabel=direction==="borrow"?"Review borrow":direction==="repay"?"Review repayment":direction==="collateral-supply"?"Review collateral deposit":"Review collateral removal";
+              const maximumSelected=direction==="repay"&&repayAllAmounts[row.market_id]!=null&&repayAllAmounts[row.market_id]===loanAmounts[amountKey];
+              const reviewLabel=direction==="borrow"?"Review borrow":direction==="repay"?(maximumSelected?"Review repay all":"Review repayment"):direction==="collateral-supply"?"Review collateral deposit":"Review collateral removal";
               const collateralNeeded=row.reason==="COLLATERAL_REQUIRED"||/^0(?:\.0+)?$/.test(row.collateral_value??"");
               return <section className="borrowing-asset" key={row.market_id} aria-label={`${row.asset.code} loan`} data-testid={`loan-${row.asset.code.toLowerCase()}`}>
                 <div className="loan-asset-heading"><AssetLogo symbol={row.asset.code} name={row.asset.name} assetId={row.asset.id} size={40}/><h3>{row.asset.code}</h3></div>
@@ -1502,7 +1512,15 @@ function FinanceShell({ page, auth, initialCategory }: { page: string; auth?: Au
                 {collateralNeeded&&<p className="loan-context">Add collateral to this borrowing pool to enable borrowing. Your other Earn balances are separate.</p>}
                 {!collateralNeeded&&row.reason&&<p className="loan-context">{customerMessage(row.reason)}</p>}
                 <div className="earn-action-toggle loan-action-toggle" role="group" aria-label={`${row.asset.code} loan action`}>{(["borrow","repay","collateral-supply","collateral-withdraw"] as const).map(action=><button key={action} type="button" disabled={busy} aria-pressed={direction===action} onClick={()=>setLoanActions(current=>({...current,[row.market_id]:action}))}>{action==="borrow"?"Borrow":action==="repay"?"Repay":action==="collateral-supply"?"Add collateral":"Remove collateral"}</button>)}</div>
-                <div className="loan-action"><label>{direction==="borrow"?"Borrow amount":direction==="repay"?"Repay amount":"Collateral amount"}<input inputMode="decimal" placeholder="0.00" disabled={busy} value={loanAmounts[amountKey]??""} onChange={event=>setLoanAmounts(current=>({...current,[amountKey]:event.target.value}))}/></label><button className="button" disabled={busy||borrowingLoading||!session||!canPrepare||!loanAmounts[amountKey]||capability("capital.wallets")?.execution_status!=="testnet_verified"} onClick={()=>action(()=>start(direction.startsWith("collateral-")?`borrow-${direction}`:`lending/${direction}`,{market_id:row.market_id,amount:loanAmounts[amountKey]}))}>{busy?"Preparing…":reviewLabel}</button></div>
+                <div className="loan-action"><div className="loan-amount-field"><div className="loan-amount-heading"><label htmlFor={`loan-amount-${row.asset.code}`}>{direction==="borrow"?"Borrow amount":direction==="repay"?"Repay amount":"Collateral amount"}</label>{direction==="repay"&&<button type="button" className="loan-repay-max" disabled={busy||borrowingLoading||row.can_prepare_repay_all!==true||row.repay_all_amount==null} onClick={()=>action(async()=>{
+                  setRepayAllErrors(current=>({...current,[row.market_id]:""}));const owner=`${session?.customer_id??""}:${session?.wallet_id??""}`;const current=await refreshBorrowing();if(!current||borrowerOwner.current!==owner)return;
+                  const latest=current.assets.find(entry=>entry.market_id===row.market_id);let valid=false;
+                  try{valid=latest?.can_prepare_repay_all===true&&typeof latest.repay_all_amount==="string"&&toAtomic(latest.repay_all_amount,latest.asset.decimals)>0n;}catch{}
+                  if(!valid||!latest?.repay_all_amount){setRepayAllErrors(current=>({...current,[row.market_id]:"A full repayment maximum is unavailable. Check your current loan."}));return;}
+                  setLoanAmounts(current=>({...current,[`${row.market_id}:repay`]:latest.repay_all_amount!}));setRepayAllAmounts(current=>({...current,[row.market_id]:latest.repay_all_amount!}));
+                })}>Repay all · MAX</button>}</div><input id={`loan-amount-${row.asset.code}`} aria-label={direction==="borrow"?"Borrow amount":direction==="repay"?"Repay amount":"Collateral amount"} inputMode="decimal" placeholder="0.00" disabled={busy} value={loanAmounts[amountKey]??""} onChange={event=>{setLoanAmounts(current=>({...current,[amountKey]:event.target.value}));if(direction==="repay"){setRepayAllAmounts(current=>{const next={...current};delete next[row.market_id];return next;});setRepayAllErrors(current=>({...current,[row.market_id]:""}));}}}/></div><button className="button" disabled={busy||borrowingLoading||!session||!canPrepare||!loanAmounts[amountKey]||capability("capital.wallets")?.execution_status!=="testnet_verified"} onClick={()=>action(()=>start(direction.startsWith("collateral-")?`borrow-${direction}`:`lending/${direction}`,{market_id:row.market_id,amount:loanAmounts[amountKey]}))}>{busy?"Preparing…":reviewLabel}</button></div>
+                {maximumSelected&&<p className="small muted">Maximum repayment amount selected. Review the full token debit before approving.</p>}
+                {repayAllErrors[row.market_id]&&<p className="swap-action-error" role="alert">{repayAllErrors[row.market_id]}</p>}
               </section>;
             })}</div>:<Empty icon="borrow" title="Loan information is unavailable." text="Try refreshing to check current borrowing options."/>}
           </section>}
@@ -1637,10 +1655,11 @@ function FinanceShell({ page, auth, initialCategory }: { page: string; auth?: Au
               </div>
             ) : active.prepared_action && ["blend.borrow","blend.repay","blend.borrow_collateral_supply","blend.borrow_collateral_withdraw"].includes(active.type) ? (
               <div className="approval-summary">
-                <div><span>{active.type==="blend.borrow"?"You receive":active.type==="blend.repay"?"You repay":active.type==="blend.borrow_collateral_supply"?"You add as collateral":"You remove"}</span><code>{active.prepared_action.summary.amount} {borrowingCode(active.prepared_action.summary.fromAssetId)}</code></div>
+                <div><span>{active.type==="blend.borrow"?"You receive":active.type==="blend.repay"?(isMaximumRepayment?"Maximum approved repayment":"You repay"):active.type==="blend.borrow_collateral_supply"?"You add as collateral":"You remove"}</span><code>{active.prepared_action.summary.amount} {borrowingCode(active.prepared_action.summary.fromAssetId)}</code></div>
                 <div><span>Destination</span><code>{active.type==="blend.borrow"||active.type==="blend.borrow_collateral_withdraw"?"Your wallet":active.type==="blend.repay"?"Your loan":"Your loan collateral"}</code></div>
                 <div><span>Maximum fee</span><code>{approvalFee(active.prepared_action.summary.maxFeeStroops)}</code></div>
                 <div><span>Expires</span><code>{marketDate(active.prepared_action.summary.expiresAt,true)}</code></div>
+                {active.type==="blend.repay"&&isMaximumRepayment&&<p className="small muted">This is the maximum approved token amount. Confirmed debt and any returned amount are checked after execution.</p>}
                 {active.type==="blend.borrow"&&<p className="small muted">This creates debt at a variable rate. Collateral may be liquidated if your loan becomes unhealthy.</p>}
                 {active.type==="blend.borrow_collateral_supply"&&<p className="small muted">This collateral supports borrowing. It may be liquidated if your loan becomes unhealthy.</p>}
                 {active.type==="blend.borrow_collateral_withdraw"&&<p className="small muted">Removing collateral reduces your borrowing capacity.</p>}

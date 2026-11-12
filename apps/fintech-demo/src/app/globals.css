@@ -1747,3 +1747,8 @@ footer strong {
 .margin-funding-details > summary { cursor: pointer; font-size: 11px; padding: 13px 0; font-weight: 600; }
 .margin-funding-details label { margin: 15px 0; }
 .margin-funding-details > p { line-height: 1.6; }
+.loan-amount-field { min-width: 0; }
+.loan-amount-heading { display: flex; align-items: center; justify-content: space-between; gap: 8px; min-height: 21px; }
+.loan-amount-heading label { margin: 0; }
+.loan-repay-max { border: 0; background: transparent; color: var(--ink); font: inherit; font-size: 10px; font-weight: 650; cursor: pointer; padding: 2px 0; }
+.loan-repay-max:disabled { color: var(--muted); cursor: default; opacity: .55; }
