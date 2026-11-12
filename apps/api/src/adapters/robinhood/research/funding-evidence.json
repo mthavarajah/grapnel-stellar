@@ -1,0 +1,18 @@
+{
+  "captured_at": "2026-11-12",
+  "execution_status": "discovery_only",
+  "faucet_claims_submitted": 0,
+  "official_docs_url": "https://docs.paxos.com/guides/stablecoin/usdg/testnet",
+  "official_docs_sha256": "ce340cb769cb2afaa42aef7ecc209a61e157a9a719ce65199f095078c2eb8019",
+  "official_address_excerpt": "5De901f08B83fcd Mantle Sepolia Testnet 0xDb862B6005db978BDf04441B9275d226690eF254 Robinhood Testnet 0x7E955252E15c84f5768B83c41a71F9eba181802F Solana Devnet 4F6PM96JJxngmHnZLBh9n58RH4aTVNWvDs2nuwrT5BP7 X-Layer Testnet 0xF0",
+  "faucet_url": "https://faucet.paxos.com/?token=USDG&network=ROBINHOOD",
+  "amount": "100",
+  "wallet_limit": "1 request per wallet per day",
+  "bundle_url": "https://faucet.paxos.com/assets/index-Cnwrg2YM.js",
+  "bundle_sha256": "0aa4a9022cebc526d3875ce6e91bc033c7b425e9382784a278cfda7e1bd62bfe",
+  "amount_config_excerpt": "GT=100,KT=({netw",
+  "wallet_limit_excerpt": "Limit 1 request per wallet per day",
+  "gas_faucet_url": "https://faucet.testnet.chain.robinhood.com/",
+  "gas_faucet_last_observation": "GET returned HTTP429; no claim or bypass attempted",
+  "bridge_status": "No canonical USDC-to-Robinhood-USDG Testnet bridge or swap route verified. Actual prefunded USDG or official USDG faucet is chosen alternative."
+}

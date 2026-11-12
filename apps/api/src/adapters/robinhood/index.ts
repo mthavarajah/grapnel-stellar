@@ -11,7 +11,7 @@ const ABI = parseAbi([
   'function quoteExactInputSingle((address tokenIn,address tokenOut,uint256 amountIn,uint24 fee,uint160 sqrtPriceLimitX96) params) returns(uint256 amountOut,uint160 sqrtPriceX96After,uint32 initializedTicksCrossed,uint256 gasEstimate)',
 ]);
 const MAX_BYTES = 131072;
-export type ReadMethod = 'eth_chainId' | 'eth_blockNumber' | 'eth_getCode' | 'eth_call';
+export type ReadMethod = 'eth_chainId' | 'eth_blockNumber' | 'eth_getCode' | 'eth_call' | 'eth_getTransactionByHash' | 'eth_getTransactionReceipt' | 'eth_getBlockByNumber' | 'eth_getBalance' | 'eth_estimateGas';
 export type RpcRequest = (method: ReadMethod, params: readonly unknown[]) => Promise<unknown>;
 export class RobinhoodReadError extends Error { readonly code = 'EXECUTION_UNAVAILABLE'; }
 function fail(message: string): never { throw new RobinhoodReadError(message); }
@@ -20,7 +20,7 @@ function hex(value: unknown): Hex {
   if (typeof value !== 'string' || !/^0x(?:[a-fA-F0-9]{2})*$/.test(value)) fail('Invalid RPC hex response');
   return value as Hex;
 }
-const fetchRpc: RpcRequest = async (method, params) => {
+export const robinhoodRpcRequest: RpcRequest = async (method, params) => {
   const response = await fetch(RH_TESTNET.rpc, {
     method: 'POST', redirect: 'error', signal: AbortSignal.timeout(8000),
     headers: { 'content-type': 'application/json' },
@@ -46,7 +46,7 @@ export type RobinhoodQuoteInput = { symbol: StockSymbol; side: 'buy' | 'sell'; a
 
 /** Internal dependency injection supports offline verification; endpoint is never caller-configurable. */
 export function createRobinhoodReader(options: { rpcRequest?: RpcRequest; now?: () => number } = {}) {
-  const rpc = options.rpcRequest ?? fetchRpc;
+  const rpc = options.rpcRequest ?? robinhoodRpcRequest;
   const now = options.now ?? Date.now;
   async function call(address: string, functionName: string, args: readonly unknown[], block: Hex): Promise<unknown> {
     const data = encodeFunctionData({ abi: ABI, functionName: functionName as never, args: args as never });
