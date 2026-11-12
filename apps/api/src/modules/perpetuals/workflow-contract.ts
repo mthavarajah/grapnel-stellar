@@ -9,7 +9,7 @@ export interface PendingPerpetualOrder {
  intent:ApprovedPerpetualIntent;approvalMessage:string;approvalDigest:string;
  unsignedAction:unknown|null;signedAction:SignedPerpetualAction|null;payloadHash:string|null;
  state:'preparing'|'awaiting_approval'|'approved'|'sending'|'unknown'|'filled'|'cancelled'|'rejected'|'no_fill'|'expired';
- result:PerpetualExecutionStatus|null;createdAt:string;
+ result:PerpetualExecutionStatus|null;createdAt:string;customerSignature?:string|null;approvedAt?:string|null;
 }
 export interface PerpetualWorkflowStore {
  challenge(value:PerpetualChallenge):Promise<void>;
@@ -19,6 +19,7 @@ export interface PerpetualWorkflowStore {
  account(scope:PerpetualScope):Promise<PerpetualAccount|null>;
  createOrder(order:PendingPerpetualOrder):Promise<PendingPerpetualOrder>;
  order(scope:PerpetualScope,id:string):Promise<PendingPerpetualOrder|null>;
+ recordApproval(scope:PerpetualScope,id:string,stellarSignature:string):Promise<void>;
  saveUnsigned(scope:PerpetualScope,id:string,unsigned:unknown):Promise<void>;
  /** Stores exact immutable signature artifact before any send claim. */
  saveSigned(scope:PerpetualScope,id:string,action:SignedPerpetualAction,payloadHash:string):Promise<void>;

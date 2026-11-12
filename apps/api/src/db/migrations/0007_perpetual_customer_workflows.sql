@@ -15,7 +15,7 @@ CREATE TABLE perpetual_orders (
  id uuid PRIMARY KEY, business_id uuid NOT NULL, customer_id uuid NOT NULL, wallet_id uuid NOT NULL,
  stellar_address text NOT NULL, account_id uuid NOT NULL, idempotency_key text NOT NULL, request_hash text NOT NULL,
  intent jsonb NOT NULL, approval_message text NOT NULL, approval_digest text NOT NULL,
- unsigned_action jsonb, signed_action jsonb, payload_hash text, intent_hash text,
+ unsigned_action jsonb, signed_action jsonb, payload_hash text, intent_hash text, customer_signature text, approved_at timestamptz,
  account_address text NOT NULL CHECK(account_address ~ '^0x[0-9a-f]{40}$'), nonce bigint NOT NULL, client_order_id text NOT NULL,
  reserved_at timestamptz, send_claimed_at timestamptz,
  state text NOT NULL CHECK(state IN ('preparing','awaiting_approval','approved','sending','unknown','filled','cancelled','rejected','no_fill','expired')),
