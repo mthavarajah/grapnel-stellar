@@ -2,6 +2,7 @@
 import Link from "next/link";
 import { AssetLogo } from "./asset-logo";
 import { MarginWorkflowCard } from "./margin-workflow";
+import {assertMarginPositionBinding,marginPositionAction,type MarginReviewBinding} from "@/lib/margin-workflow";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
@@ -361,6 +362,8 @@ function FinanceShell({ page, auth, initialCategory }: { page: string; auth?: Au
   const [status, setStatus] = useState<any>(null);
   const [session, setSession] = useState<Session | null>(null);
   const marginSession=useRef(session);marginSession.current=session;
+  const marginReviewBindings=useRef(new Map<string,{owner:{customer_id:string;wallet_id:string};binding:MarginReviewBinding}>());
+  useEffect(()=>{marginReviewBindings.current.clear();},[session?.customer_id,session?.wallet_id]);
   const [profileOpen,setProfileOpen]=useState(false);
   const [walletValuation,setWalletValuation]=useState<WalletValuation|null>(null);
   const [valuationLoading,setValuationLoading]=useState(false);
@@ -806,6 +809,11 @@ function FinanceShell({ page, auth, initialCategory }: { page: string; auth?: Au
     }
   }
   function openOperation(op: Operation) {
+    const approved=marginReviewBindings.current.get(op.operation_id);
+    if(approved){
+      if(marginSession.current?.customer_id!==approved.owner.customer_id||marginSession.current?.wallet_id!==approved.owner.wallet_id||op.customer_id!==approved.owner.customer_id||op.wallet_id!==approved.owner.wallet_id)throw Error("Wallet action could not be found.");
+      assertMarginPositionBinding(op,approved.binding.position_id);
+    }
     setActive(op);
     setOperations(current => [op, ...current.filter(item => item.operation_id !== op.operation_id)]);
   }
@@ -813,13 +821,27 @@ function FinanceShell({ page, auth, initialCategory }: { page: string; auth?: Au
     if (!session || !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id)) throw Error("Wallet action could not be found.");
     const op = await api("grapnel/operations/" + id);
     if (op.customer_id !== session.customer_id || op.wallet_id !== session.wallet_id) throw Error("Wallet action could not be found.");
+    if(marginPositionAction(op)&&["accepted","validating","preparing","awaiting_customer_authorization"].includes(op.status)){
+      const parents=await api("grapnel/margin/workflows");
+      const parent=parents.workflows?.find((entry:{active_operation_id:string|null})=>entry.active_operation_id===id);
+      if(!parent||parent.customer_id!==session.customer_id||parent.wallet_id!==session.wallet_id)throw Error("Open the saved margin setup to review this position transaction.");
+      await reviewMarginOperation(id,session,{workflow_id:parent.workflow_id,position_id:parent.position_id});return;
+    }
     openOperation(op);
   }
-  async function reviewMarginOperation(id:string,owner:{customer_id:string;wallet_id:string}) {
+  async function reviewMarginOperation(id:string,owner:{customer_id:string;wallet_id:string},binding?:MarginReviewBinding) {
     const current=marginSession.current;
     if(!current||current.customer_id!==owner.customer_id||current.wallet_id!==owner.wallet_id||!/^[0-9a-f-]{36}$/i.test(id))throw Error("Wallet action could not be found.");
     const op=await api("grapnel/operations/"+id);
     if(marginSession.current?.customer_id!==owner.customer_id||marginSession.current.wallet_id!==owner.wallet_id||op.customer_id!==owner.customer_id||op.wallet_id!==owner.wallet_id)throw Error("Wallet action could not be found.");
+    if(marginPositionAction(op)){
+      if(!binding)throw Error("Position binding is unavailable.");
+      const parent=await api("grapnel/margin/workflows/"+binding.workflow_id);
+      if(marginSession.current?.customer_id!==owner.customer_id||marginSession.current.wallet_id!==owner.wallet_id||parent.workflow_id!==binding.workflow_id||parent.customer_id!==owner.customer_id||parent.wallet_id!==owner.wallet_id||parent.position_id!==binding.position_id)throw Error("Margin workflow does not match this transaction. Check progress before approving.");
+      if(["accepted","validating","preparing","awaiting_customer_authorization"].includes(op.status)&&parent.active_operation_id!==id)throw Error("Margin workflow does not match this transaction. Check progress before approving.");
+      assertMarginPositionBinding(op,parent.position_id);
+      marginReviewBindings.current.set(id,{owner,binding});
+    }
     openOperation(op);
   }
   async function recoverPendingWalletAction(cause: ClientError) {
@@ -1647,7 +1669,7 @@ function FinanceShell({ page, auth, initialCategory }: { page: string; auth?: Au
               </div>
             ) : active.prepared_action?.summary.action.startsWith("margin.") ? (
               <div className="approval-summary">
-                <div><span>Action</span><code>{({"margin.collateral_swap":"Acquire collateral","margin.vault_deposit":"Deposit collateral","margin.vault_withdraw":"Withdraw collateral","margin.transfer":"Move collateral","margin.return":"Return collateral","margin.open_begin":"Start opening","margin.open_swap":"Swap opening assets","margin.open_activate":"Activate position","margin.open_cancel":"Cancel opening","margin.close_prepare":"Start closing","margin.close_swap":"Swap closing assets","margin.close_short_swap":"Repay closing debt","margin.close_finish":"Finish closing","margin.close_cancel":"Cancel closing"} as Record<string,string>)[active.prepared_action.summary.action]??"Margin transaction"}</code></div>
+                <div><span>Action</span><code>{({"margin.collateral_swap":"Acquire collateral","margin.vault_deposit":"Deposit collateral","margin.vault_withdraw":"Withdraw collateral","margin.transfer":"Move collateral","margin.return":"Return collateral","margin.open_begin":"Start opening","margin.open_swap":"Swap opening assets","margin.open_activate":"Activate position","margin.open_cancel":"Cancel opening","margin.close_atomic":"Close position","margin.close_prepare":"Start closing","margin.close_swap":"Swap closing assets","margin.close_short_swap":"Repay closing debt","margin.close_finish":"Finish closing","margin.close_cancel":"Cancel closing"} as Record<string,string>)[active.prepared_action.summary.action]??"Margin transaction"}</code></div>
                 {active.prepared_action.summary.amount&&<div><span>Amount</span><code>{active.prepared_action.summary.amount} {markets.flatMap(entry=>[entry.base,entry.collateral]).find(entry=>entry?.id===active.prepared_action?.summary.fromAssetId)?.name??assetCode(active.prepared_action.summary.fromAssetId)}</code></div>}
                 {active.prepared_action.summary.minReceive&&<div><span>Minimum receive</span><code>{active.prepared_action.summary.minReceive} {markets.flatMap(entry=>[entry.base,entry.collateral]).find(entry=>entry?.id===active.prepared_action?.summary.toAssetId)?.name??assetCode(active.prepared_action.summary.toAssetId)}</code></div>}
                 <div><span>Maximum fee</span><code>{approvalFee(active.prepared_action.summary.maxFeeStroops)}</code></div>

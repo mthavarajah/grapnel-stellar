@@ -37,7 +37,7 @@ async function ownMarginWorkflow(id:string,s:Awaited<ReturnType<typeof requireSe
   const result=MarginWorkflowPublicSchema.safeParse(await grapnel(`/trade/margin/workflows/${id}?customer_id=${s.customerId}&wallet_id=${s.walletId}`,s));
   if(!result.success)throw new BffError(502,"INVALID_RESPONSE","Margin status is unavailable");
   const row=result.data;
-  if(row.customer_id!==s.customerId||row.wallet_id!==s.walletId||row.market_id!==MARGIN_MARKET_ID)throw new BffError(404,"NOT_FOUND","Margin setup not found");
+  if(row.workflow_id!==id||row.customer_id!==s.customerId||row.wallet_id!==s.walletId||row.market_id!==MARGIN_MARKET_ID)throw new BffError(404,"NOT_FOUND","Margin setup not found");
   return row;
 }
 async function marginStepAllowed(id:string,step:string,s:Awaited<ReturnType<typeof requireSession>>){

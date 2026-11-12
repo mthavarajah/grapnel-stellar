@@ -1,0 +1,8 @@
+import{describe,it,expect}from'vitest';import{assertMarginPositionBinding,marginPositionAction}from'./margin-workflow';
+const actions=['margin.open_swap','margin.open_activate','margin.open_cancel','margin.close_atomic','margin.close_prepare','margin.close_swap','margin.close_short_swap','margin.close_finish','margin.close_cancel'];
+describe('client workflow position review binding (not an XDR inspector)',()=>{
+ it.each(actions)('requires the exact saved position for %s',action=>{const op={type:action,prepared_action:{summary:{action,positionId:'18446744073709551610'}}};expect(marginPositionAction(op)).toBe(true);expect(()=>assertMarginPositionBinding(op,'18446744073709551610')).not.toThrow();expect(()=>assertMarginPositionBinding(op,'18446744073709551611')).toThrow(/does not match/);expect(()=>assertMarginPositionBinding(op,null)).toThrow(/binding is unavailable/);});
+ it('rejects missing summary position or still-preparing transaction',()=>{expect(()=>assertMarginPositionBinding({type:'margin.close_prepare',prepared_action:{summary:{action:'margin.close_prepare'}}},'9')).toThrow(/does not match/);expect(()=>assertMarginPositionBinding({type:'margin.open_swap'},'9')).toThrow(/still preparing/);});
+ it('does not coerce numeric or rounded position identifiers',()=>{const op={type:'margin.close_prepare',prepared_action:{summary:{action:'margin.close_prepare',positionId:42}}};expect(()=>assertMarginPositionBinding(op,'42')).toThrow(/does not match/);});
+ it.each(['margin.vault_deposit','margin.transfer','margin.open_begin','margin.collateral_swap'])('does not invent a position for non-position step %s',action=>{expect(()=>assertMarginPositionBinding({type:action,prepared_action:{summary:{action}}},null)).not.toThrow();});
+});

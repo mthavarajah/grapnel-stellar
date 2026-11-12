@@ -10,3 +10,14 @@ export const marginStorageKey=(customer:string,wallet:string)=>`grapnel.margin.w
 
 export const MarginFundingBrowserQuoteSchema=MarginCollateralFundingQuoteInputSchema.omit({customer_id:true,wallet_id:true});
 export const MarginFundingBrowserPrepareSchema=z.object({quote:MarginCollateralFundingQuoteSchema}).strict();
+
+const positionActions=new Set(['margin.open_swap','margin.open_activate','margin.open_cancel','margin.close_atomic','margin.close_prepare','margin.close_swap','margin.close_short_swap','margin.close_finish','margin.close_cancel']);
+export const marginPositionAction=(operation:{type:string;prepared_action?:{summary:{action:string}}})=>positionActions.has(operation.type)||positionActions.has(operation.prepared_action?.summary.action??'');
+export function assertMarginPositionBinding(operation:{type:string;prepared_action?:{summary:{action:string}}},expectedPositionId:string|null|undefined):void{
+ if(!marginPositionAction(operation))return;
+ if(expectedPositionId==null)throw Error('Position binding is unavailable. Check margin progress before approving.');
+ const summary=operation.prepared_action?.summary;
+ if(!summary)throw Error('This transaction is still preparing. Check progress before reviewing it.');
+ if(!('positionId'in summary)||typeof summary.positionId!=='string'||summary.positionId!==expectedPositionId)throw Error('This transaction does not match the saved margin position. Check progress before approving.');
+}
+export type MarginReviewBinding={workflow_id:string;position_id:string|null};
