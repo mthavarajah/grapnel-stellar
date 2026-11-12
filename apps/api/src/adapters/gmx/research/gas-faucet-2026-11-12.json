@@ -1,0 +1,103 @@
+{
+  "captured_at": "2026-11-12T19:16:28.259548+00:00",
+  "purpose": "Actual gas funding for owner-authorized GMX Testnet QA",
+  "faucet": "https://openfaucet.org/arbitrum-sepolia",
+  "discovery_source": "https://arbitrum.faucet.dev/ArbSepolia",
+  "official_aggregator_listing": "https://docs.arbitrum.io/chain-info#faucet-list",
+  "network": "arbitrum-sepolia",
+  "chain_id": 421614,
+  "rpc": "https://sepolia-rollup.arbitrum.io/rpc",
+  "recipient": "0x80BD216C39869Cec85E37ee37c020530D144799a",
+  "claim_count": 1,
+  "amount_wei": "10000000000000000",
+  "amount_eth": "0.01",
+  "proofs": 5,
+  "mining_stopped": true,
+  "no_login_no_terms_acceptance_no_captcha": true,
+  "tx_hash": "0xc20d97983dd15ec2f1569c22df8407fa7b7d063f4c236044e2aee6b5ee3a6311",
+  "explorer": "https://sepolia.arbiscan.io/tx/0xc20d97983dd15ec2f1569c22df8407fa7b7d063f4c236044e2aee6b5ee3a6311",
+  "before_rpc": [
+    {
+      "jsonrpc": "2.0",
+      "id": 1,
+      "result": "0x66eee"
+    },
+    {
+      "jsonrpc": "2.0",
+      "id": 2,
+      "result": "0x0"
+    }
+  ],
+  "after_rpc": [
+    {
+      "jsonrpc": "2.0",
+      "id": 1,
+      "result": "0x66eee"
+    },
+    {
+      "jsonrpc": "2.0",
+      "id": 2,
+      "result": "0x2386f26fc10000"
+    },
+    {
+      "jsonrpc": "2.0",
+      "id": 3,
+      "result": {
+        "blockHash": "0xa593c8edd5bf36b16f6dc76b6e3929fea2c9d8b2394a965f346081d1c5fb2de9",
+        "blockNumber": "0x1395f63a",
+        "blockTimestamp": "0x6af61053",
+        "from": "0x6752365ce8c2330fe7422b6322823bcda2b74f67",
+        "gas": "0x5208",
+        "gasPrice": "0x1312d00",
+        "maxFeePerGas": "0x2df21c0",
+        "maxPriorityFeePerGas": "0x0",
+        "hash": "0xc20d97983dd15ec2f1569c22df8407fa7b7d063f4c236044e2aee6b5ee3a6311",
+        "input": "0x",
+        "nonce": "0x1f55",
+        "to": "0x80bd216c39869cec85e37ee37c020530d144799a",
+        "transactionIndex": "0x6",
+        "value": "0x2386f26fc10000",
+        "type": "0x2",
+        "accessList": [],
+        "chainId": "0x66eee",
+        "v": "0x1",
+        "r": "0x58e7d28f4cabb17417ec94beb15f4ac783701e2c9d37f793f519822ab2294986",
+        "s": "0x3e7c73401dfb1ecb0109870bba4c15c6ead6cc3b1f6928078b72b38f676ffd92",
+        "yParity": "0x1"
+      }
+    },
+    {
+      "jsonrpc": "2.0",
+      "id": 4,
+      "result": {
+        "blockHash": "0xa593c8edd5bf36b16f6dc76b6e3929fea2c9d8b2394a965f346081d1c5fb2de9",
+        "blockNumber": "0x1395f63a",
+        "contractAddress": null,
+        "cumulativeGasUsed": "0xb3a65",
+        "effectiveGasPrice": "0x1312d00",
+        "from": "0x6752365ce8c2330fe7422b6322823bcda2b74f67",
+        "gasUsed": "0x5208",
+        "gasUsedForL1": "0x0",
+        "l1BlockNumber": "0xb8f317",
+        "logs": [],
+        "logsBloom": "0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+        "status": "0x1",
+        "timeboosted": false,
+        "to": "0x80bd216c39869cec85e37ee37c020530d144799a",
+        "transactionHash": "0xc20d97983dd15ec2f1569c22df8407fa7b7d063f4c236044e2aee6b5ee3a6311",
+        "transactionIndex": "0x6",
+        "type": "0x2"
+      }
+    }
+  ],
+  "verification": {
+    "chain_verified": true,
+    "receipt_success": true,
+    "transaction_recipient_verified": true,
+    "transaction_value_wei": "10000000000000000",
+    "balance_before_wei": "0",
+    "balance_after_wei": "10000000000000000",
+    "balance_delta_wei": "10000000000000000"
+  },
+  "limitations": "This proves native gas receipt only, not a GMX order or financial provider execution. One faucet claim; no extra session or claim."
+}
