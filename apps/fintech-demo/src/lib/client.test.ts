@@ -31,3 +31,10 @@ it('shows customer error copy while preserving structured diagnostic codes',asyn
  expect(consumerErrorMessage('INSUFFICIENT_POSITION','technical pool position')).toBe('You do not have enough in Earn to withdraw this amount.');
  expect(consumerErrorMessage('VALIDATION_ERROR','Enter a positive amount.')).toBe('Enter a positive amount.');
 });
+it('translates borrowing reasons into actionable customer messages without exposing diagnostics',async()=>{
+ expect(consumerErrorMessage('EXECUTION_UNAVAILABLE','Borrowing unavailable',{reason:'MIN_COLLATERAL_REQUIRED'})).toContain('below the minimum');
+ expect(consumerErrorMessage('EXECUTION_UNAVAILABLE','Borrowing unavailable',{reason:'BORROW_CAPACITY_EXCEEDED'})).toContain('smaller amount');
+ expect(consumerErrorMessage('EXECUTION_UNAVAILABLE','Borrowing unavailable',{reason:'COLLATERAL_WITHDRAW_WITH_DEBT_REQUIRES_REPAYMENT'})).toBe('Repay your outstanding loans before removing collateral.');
+ vi.stubGlobal('fetch',vi.fn().mockResolvedValue({ok:false,status:409,json:async()=>({error:{code:'EXECUTION_UNAVAILABLE',message:'Borrowing is unavailable',details:{reason:'MIN_COLLATERAL_REQUIRED'}}})}));
+ await expect(api('grapnel/lending/borrow',{})).rejects.toMatchObject({message:expect.stringContaining('below the minimum'),details:{reason:'MIN_COLLATERAL_REQUIRED'}});
+});

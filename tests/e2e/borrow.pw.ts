@@ -58,16 +58,20 @@ for(const entry of [{amount:'0',code:'INVALID_AMOUNT'},{amount:'-1',code:'INVALI
  test(`rejected borrow amount ${entry.amount} stays editable and never opens signing`,async({page})=>{
   const {writes}=await fixture(page,{preparationError:{status:422,code:entry.code,message:'The requested amount is unavailable.'}});const xlm=page.getByTestId('loan-xlm');
   await xlm.getByRole('textbox').fill(entry.amount);await xlm.getByRole('button',{name:'Review borrow',exact:true}).click();
-  await expect(page.locator('.notice.error[role=alert]')).toContainText('The requested amount is unavailable.');await expect(page.getByRole('dialog')).toHaveCount(0);
+  await expect(xlm.getByRole('alert')).toContainText('The requested amount is unavailable.');await expect(page.getByRole('dialog')).toHaveCount(0);
   await expect(xlm.getByRole('textbox')).toHaveValue(entry.amount);await expect(xlm.getByRole('button',{name:'Review borrow',exact:true})).toBeEnabled();expect(writes).toHaveLength(1);expect(writes[0]!.body.amount).toBe(entry.amount);
  });
 }
 test('ambiguous preparation retry preserves its exact amount and idempotency key until the review is recovered',async({page})=>{
  const {writes,idempotencyKeys}=await fixture(page,{preparationError:{status:503,code:'PROVIDER_UNAVAILABLE',message:'Preparation is temporarily unavailable.'}});const xlm=page.getByTestId('loan-xlm');
- await xlm.getByRole('textbox').fill('0.1234567');await xlm.getByRole('button',{name:'Review borrow',exact:true}).click();await expect(page.locator('.notice.error[role=alert]')).toContainText('This market is temporarily unavailable. Please try again shortly.');await expect(page.getByRole('dialog')).toHaveCount(0);
+ await xlm.getByRole('textbox').fill('0.1234567');await xlm.getByRole('button',{name:'Review borrow',exact:true}).click();await expect(xlm.getByRole('alert')).toContainText('This market is temporarily unavailable. Please try again shortly.');await expect(page.getByRole('dialog')).toHaveCount(0);
  await xlm.getByRole('button',{name:'Review borrow',exact:true}).click();await expect(page.getByRole('dialog').getByText('0.1234567 XLM',{exact:true})).toBeVisible();expect(writes).toHaveLength(2);expect(writes[0]).toEqual(writes[1]);expect(idempotencyKeys[0]).toBeTruthy();expect(idempotencyKeys[1]).toBe(idempotencyKeys[0]);await expect(page.getByRole('dialog').getByRole('button',{name:'Approve transaction',exact:true})).toBeDisabled();
 });
 test('a pending borrowing operation stays in progress without a completed balance or approval action',async({page})=>{
  const {writes}=await fixture(page,{operationState:'confirming'});const xlm=page.getByTestId('loan-xlm');await xlm.getByRole('textbox').fill('0.1234567');await xlm.getByRole('button',{name:'Review borrow',exact:true}).click();
  const dialog=page.getByRole('dialog');await expect(dialog.getByRole('heading',{name:'Your operation is in progress.',exact:true})).toBeVisible();await expect(dialog.locator('.status-pill')).toHaveText('Confirming');await expect(dialog.getByRole('button',{name:'Approve transaction',exact:true})).toHaveCount(0);await expect(dialog).not.toContainText('Completed');await expect(xlm.locator('dl')).toContainText('Your debt1.23456 XLM');expect(writes).toHaveLength(1);
+});
+
+test('excess borrowing amount explains collateral capacity beside the action',async({page})=>{
+ await fixture(page);const xlm=page.getByTestId('loan-xlm');await xlm.getByRole('textbox').fill('99');await expect(xlm.getByRole('status')).toContainText('You can borrow up to 12.3456789 XLM');await expect(page.locator('.notice.error[role=alert]')).toHaveCount(0);
 });

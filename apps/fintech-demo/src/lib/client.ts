@@ -1,5 +1,8 @@
+import {borrowingReasonMessage} from './borrowing-feedback';
 /** Consumer copy stays separate from structured diagnostic codes and recovery details. */
-export function consumerErrorMessage(code: string, message: string): string {
+export function consumerErrorMessage(code: string, message: string, details?: Record<string,unknown>): string {
+  const borrowing=code==="EXECUTION_UNAVAILABLE"?borrowingReasonMessage(details?.reason):null;
+  if(borrowing)return borrowing;
   if (code === "WALLET_OPERATION_PENDING") return "Finish the wallet action already in progress.";
   if (["ACTION_EXPIRED", "AUTHORIZATION_EXPIRED", "QUOTE_EXPIRED"].includes(code)) return "This request expired. Please try again.";
   if (["CUSTOMER_SESSION_REQUIRED", "CUSTOMER_SESSION_EXPIRED", "INVALID_CUSTOMER_IDENTITY", "CUSTOMER_AUTH_REQUIRED"].includes(code)) return "Please sign in again.";
@@ -41,7 +44,7 @@ export async function api(
   if (!res.ok)
     throw new ClientError(
       result.error?.code ?? "REQUEST_FAILED",
-      consumerErrorMessage(result.error?.code ?? "REQUEST_FAILED", result.error?.message ?? "Request failed"),
+      consumerErrorMessage(result.error?.code ?? "REQUEST_FAILED", result.error?.message ?? "Request failed", result.error?.details),
       res.status,
       result.error?.details && typeof result.error.details === "object" && !Array.isArray(result.error.details) ? result.error.details : {},
     );

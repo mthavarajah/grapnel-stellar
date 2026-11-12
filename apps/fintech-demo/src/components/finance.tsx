@@ -13,6 +13,7 @@ import {
 } from "@privy-io/react-auth";
 import { useSignRawHash } from "@privy-io/react-auth/extended-chains";
 import { formatTokenAmount, fromAtomic, toAtomic, type PreparedAction, type AssetIdentity } from "@grapnel/contracts";
+import {borrowingReasonMessage,borrowingAmountMessage} from "@/lib/borrowing-feedback";
 import { api, ClientError, operationRequestKey, clearOperationRequest } from "@/lib/client";
 import { signPreparedAction } from "@/lib/privy-signer";
 type Capability = {
@@ -483,6 +484,7 @@ function FinanceShell({ page, auth, initialCategory }: { page: string; auth?: Au
     return () => clearInterval(timer);
   }, [active?.status, active?.operation_id]);
   const [error, setError] = useState("");
+  const [actionErrors,setActionErrors]=useState<Record<string,string>>({});
   const [swapError, setSwapError] = useState("");
   useEffect(() => { setSwapError(""); }, [session?.customer_id]);
   const [busy, setBusy] = useState(false);
@@ -670,7 +672,7 @@ function FinanceShell({ page, auth, initialCategory }: { page: string; auth?: Au
       setSession(identity);
     } catch (error) {
       setSession(null);
-      setBalances([]); setOperations([]); setAssets([]); setMarkets([]); setLending([]); setEarnBalances([]); setActive(null);
+      setBalances([]); setOperations([]); setAssets([]); setMarkets([]); setLending([]); setEarnBalances([]); setActive(null);setActionErrors({});
       if (!(error instanceof ClientError && error.status === 401))
         setError(error instanceof Error ? error.message : "Session check failed. Please retry.");
     } finally {
@@ -791,10 +793,11 @@ function FinanceShell({ page, auth, initialCategory }: { page: string; auth?: Au
       clearTimeout(timer);
     };
   }, [active, refresh]);
-  async function action(task: () => Promise<void>, location: "page" | "swap" = "page") {
+  async function action(task: () => Promise<void>, location: string = "page") {
     setBusy(true);
     setError("");
     setSwapError("");
+    if(location!=="page"&&location!=="swap")setActionErrors(current=>({...current,[location]:""}));
     try {
       await task();
     } catch (e) {
@@ -803,7 +806,8 @@ function FinanceShell({ page, auth, initialCategory }: { page: string; auth?: Au
           setQuote(null);
           setSwapError(e.code === "QUOTE_EXPIRED" ? "This quote expired. Get a new quote to continue." : "This quote has already been used. Get a new quote to continue.");
         } else setSwapError(e instanceof Error ? e.message : "Request failed");
-      } else setError(e instanceof Error ? e.message : "Request failed");
+      } else if(location!=="page")setActionErrors(current=>({...current,[location]:e instanceof Error?e.message:"Request failed"}));
+      else setError(e instanceof Error ? e.message : "Request failed");
     } finally {
       setBusy(false);
     }
@@ -990,7 +994,7 @@ function FinanceShell({ page, auth, initialCategory }: { page: string; auth?: Au
                   </div>
                   <button className="profile-logout" type="button" disabled={busy} onClick={()=>action(async()=>{
                     if(auth)await auth.logout();else await api("session",undefined,"DELETE");
-                    setProfileOpen(false);setWalletValuation(null);setSession(null);setBalances([]);setOperations([]);setAssets([]);setMarkets([]);setLending([]);setEarnBalances([]);setActive(null);
+                    setProfileOpen(false);setWalletValuation(null);setSession(null);setBalances([]);setOperations([]);setAssets([]);setMarkets([]);setLending([]);setEarnBalances([]);setActive(null);setActionErrors({});
                   })}>Logout</button>
                 </section>}
               </div>
@@ -1235,13 +1239,15 @@ function FinanceShell({ page, auth, initialCategory }: { page: string; auth?: Au
                 <div className="inline-note">
                   {customerMessage(fundingError || (!fundingCanStart ? capability("capital.testnet_funding")?.reason : "") || "Your wallet keeps the XLM required for network fees and account reserve.")}
                 </div>
+                <p className="small muted">Available: {formatTokenAmount(swapBalance(asset))} {assets.find(entry=>entry.asset_id===asset)?.asset?.code??assetCode(asset)}</p>
+                {actionErrors.funds&&<p className="swap-action-error" role="alert">{customerMessage(actionErrors.funds)}</p>}
                 <button
                   className="button wide"
                   disabled={
                     busy || !session || !(executable("capital.testnet_funding") || (fundingPage === "fund" || fundingPage === "return") && fundingCanStart)
                   }
                   onClick={() =>
-                    action(() => start(fundingPage, { asset_id: asset, amount }))
+                    action(() => start(fundingPage, { asset_id: asset, amount }), "funds")
                   }
                 >
                   {busy
@@ -1332,6 +1338,7 @@ function FinanceShell({ page, auth, initialCategory }: { page: string; auth?: Au
                     {category==="perps"&&selectedSpotMarket.market_id==="stellar-testnet:peridot:XLM-USDT-MARGIN"&&session ? <MarginWorkflowCard market={selectedSpotMarket} session={session} marginVerified={capability("trade.perps")?.execution_status==="testnet_verified"} walletVerified={capability("capital.wallets")?.execution_status==="testnet_verified"} onReviewOperation={reviewMarginOperation} balances={balances} guardReason={selectedSpotMarket.risk?.oracle_band_exceeded===true?`Price deviation exceeds the ${marginPercent(selectedSpotMarket.risk.oracle_band_scaled,selectedSpotMarket.risk.scale)} limit.`:undefined}/> : <section className="market-order-card" aria-label="Trade market" data-testid="market-order-card">
                       <h2>Trade {selectedSpotMarket.underlying?.symbol}</h2>
                       <div className="public-order-direction" role="group" aria-label={category==="perps"?"Position direction":"Order direction"}><button type="button" disabled>{category==="perps"?"Long":"Buy"}</button><button type="button" disabled>{category==="perps"?"Short":"Sell"}</button></div>
+                      <p className="small muted">Available: {formatTokenAmount(swapBalance(selectedSpotMarket.base?.id??selectedSpotMarket.asset_in_id))} {selectedSpotMarket.base?.code??selectedSpotMarket.underlying?.symbol}</p>
                       <label>Amount<input aria-label="Order amount" placeholder="0.00" inputMode="decimal" disabled /></label>
                       <div className="detail-row"><span>Market price</span><strong>{category==="stocks" ? (activePublicHistory?.latest_price==null?"—":`${formatTokenAmount(activePublicHistory.latest_price)} ${activePublicHistory.quote_symbol}`) : selectedSpotMarket.reference_price==null?"—":`${formatTokenAmount(selectedSpotMarket.reference_price)} USD`}</strong></div>
                       {category==="perps"&&selectedSpotMarket.risk?.oracle_band_exceeded===true&&<p className="margin-trading-reason" role="status">Price deviation exceeds the {marginPercent(selectedSpotMarket.risk.oracle_band_scaled,selectedSpotMarket.risk.scale)} limit.</p>}
@@ -1399,6 +1406,7 @@ function FinanceShell({ page, auth, initialCategory }: { page: string; auth?: Au
                       {quoteMatchesMarket && <div className="detail-row"><span>Quote expires</span><strong>{new Date(quote.expires_at).toLocaleTimeString()}</strong></div>}
                     </div>
                   </details>
+                  <p className="small muted">Available to sell: {formatTokenAmount(swapBalance(selectedSpotMarket.asset_in_id))} {spotInputCode}</p>
                   {swapError && <p className="swap-action-error" role="alert" id="swap-action-error">{customerMessage(swapError)}</p>}
                   {quote && quoteExpired && !swapError && <p className="inline-note" role="alert">This quote expired. Request a new quote before reviewing a swap.</p>}
                   {!canPrepareSpot && <p className="small muted">This pair is currently unavailable.</p>}
@@ -1465,11 +1473,12 @@ function FinanceShell({ page, auth, initialCategory }: { page: string; auth?: Au
                           <div><dt>Earned</dt><dd title={balance?.earned_since ? `Since ${new Date(balance.earned_since).toLocaleString()}` : undefined}>{balance?.earned == null ? "—" : shown(balance.earned)}</dd></div>
                         </dl>
                         {earnBalancesError && <p className="small earn-balance-error" role="alert">{customerMessage(earnBalancesError)}</p>}
+                        {actionErrors[`earn:${m.asset_id}`]&&<p className="swap-action-error" role="alert">{customerMessage(actionErrors[`earn:${m.asset_id}`])}</p>}
                         {needsTrustline ? (
                           <div className="earn-setup">
                             <p className="small">Enable USDC in your wallet before supplying it.</p>
                             <button className="button outline" disabled={busy || !session || !canPrepareBlendAction()}
-                              onClick={() => action(() => start("usdc-trustline", {limit: "1000"}))}>Enable USDC</button>
+                              onClick={() => action(() => start("usdc-trustline", {limit: "1000"}),`earn:${m.asset_id}`)}>Enable USDC</button>
                           </div>
                         ) : (
                           <div className="earn-actions">
@@ -1479,15 +1488,16 @@ function FinanceShell({ page, auth, initialCategory }: { page: string; auth?: Au
                                 {a === "supply" ? "Supply" : "Withdraw"}
                               </button>)}
                             </div>
+                            <p className="small muted">{earnAction==="supply"?"Available to supply":"In Earn"}: {shown(earnAction==="supply"?balance?.spendable:balance?.in_earn)} {m.asset?.code??assetCode(m.asset_id)}</p>
                             <div className="earn-action">
                               <label>{earnAction === "supply" ? "Supply amount" : "Withdraw amount"}
                                 <input inputMode="decimal" value={earnAmounts[amountKey] ?? ""} placeholder="0.00"
-                                  onChange={e => setEarnAmounts(current => ({...current, [amountKey]: e.target.value}))} />
+                                  onChange={e => {setEarnAmounts(current => ({...current, [amountKey]: e.target.value}));setActionErrors(current=>({...current,[`earn:${m.asset_id}`]:""}));}} />
                               </label>
                               <button className="button" disabled={busy || !session || !canPrepare || !earnAmounts[amountKey]}
                                 onClick={() => action(() => start("lending/" + earnAction, {
                                   market_id: m.market_id ?? m.id, asset_id: m.asset_id, amount: earnAmounts[amountKey],
-                                }))}>{earnAction === "supply" ? "Supply" : "Withdraw"}</button>
+                                }), `earn:${m.asset_id}`)}>{earnAction === "supply" ? "Supply" : "Withdraw"}</button>
                             </div>
                           </div>
                         )}
@@ -1516,6 +1526,7 @@ function FinanceShell({ page, auth, initialCategory }: { page: string; auth?: Au
               const collateralNeeded=row.reason==="COLLATERAL_REQUIRED"||/^0(?:\.0+)?$/.test(row.collateral_value??"");
               const direction=loanActions[row.market_id]??(collateralNeeded&&row.can_prepare_collateral_supply===true?"collateral-supply":"borrow"),amountKey=`${row.market_id}:${direction}`;
               const canPrepare=direction==="borrow"?row.can_prepare_borrow:direction==="repay"?row.can_prepare_repay:direction==="collateral-supply"?row.can_prepare_collateral_supply===true:row.can_prepare_collateral_withdraw===true;
+              const loanFeedback=direction==="borrow"?(borrowingAmountMessage(loanAmounts[amountKey]??"",row.available_to_borrow,row.asset.code,row.asset.decimals)||(!row.can_prepare_borrow?borrowingReasonMessage(row.reason):null)):direction==="repay"&&!canPrepare?"There is no debt available to repay, or your wallet balance is too low.":direction==="collateral-withdraw"&&!canPrepare?(/^0(?:\.0+)?$/.test(row.collateral??"")?"You have no collateral to remove.":borrowing.assets.some(entry=>!/^0(?:\.0+)?$/.test(entry.borrowed))?"Repay your outstanding loans before removing collateral.":"Collateral removal is unavailable. Refresh to check available funds."):null;
               const maximumSelected=direction==="repay"&&repayAllAmounts[row.market_id]!=null&&repayAllAmounts[row.market_id]===loanAmounts[amountKey];
               const reviewLabel=direction==="borrow"?"Review borrow":direction==="repay"?(maximumSelected?"Review repay all":"Review repayment"):direction==="collateral-supply"?"Review collateral deposit":"Review collateral removal";
               return <section className="borrowing-asset" key={row.market_id} aria-label={`${row.asset.code} loan`} data-testid={`loan-${row.asset.code.toLowerCase()}`}>
@@ -1532,15 +1543,18 @@ function FinanceShell({ page, auth, initialCategory }: { page: string; auth?: Au
                   <div><dt>Health factor</dt><dd>{loanAmount(row.health_factor)}</dd></div>
                 </dl>
                 {collateralNeeded&&<p className="loan-context">Add collateral to this borrowing pool to enable borrowing. Your other Earn balances are separate.</p>}
-                {!collateralNeeded&&row.reason&&<p className="loan-context">{customerMessage(row.reason)}</p>}
+
                 <div className="earn-action-toggle loan-action-toggle" role="group" aria-label={`${row.asset.code} loan action`}>{(["borrow","repay","collateral-supply","collateral-withdraw"] as const).map(action=><button key={action} type="button" disabled={busy} aria-pressed={direction===action} onClick={()=>setLoanActions(current=>({...current,[row.market_id]:action}))}>{action==="borrow"?"Borrow":action==="repay"?"Repay":action==="collateral-supply"?"Add collateral":"Remove collateral"}</button>)}</div>
+                <p className="small muted">Available in wallet: {formatTokenAmount(swapBalance(row.asset.id))} {row.asset.code}</p>
+                {loanFeedback&&<p className="loan-context" role="status">{loanFeedback}</p>}
+                {actionErrors[`loan:${row.market_id}`]&&<p className="swap-action-error" role="alert">{customerMessage(actionErrors[`loan:${row.market_id}`])}</p>}
                 <div className="loan-action"><div className="loan-amount-field"><div className="loan-amount-heading"><label htmlFor={`loan-amount-${row.asset.code}`}>{direction==="borrow"?"Borrow amount":direction==="repay"?"Repay amount":"Collateral amount"}</label>{direction==="repay"&&<button type="button" className="loan-repay-max" disabled={busy||borrowingLoading||row.can_prepare_repay_all!==true||row.repay_all_amount==null} onClick={()=>action(async()=>{
                   setRepayAllErrors(current=>({...current,[row.market_id]:""}));const owner=`${session?.customer_id??""}:${session?.wallet_id??""}`;const current=await refreshBorrowing();if(!current||borrowerOwner.current!==owner)return;
                   const latest=current.assets.find(entry=>entry.market_id===row.market_id);let valid=false;
                   try{valid=latest?.can_prepare_repay_all===true&&typeof latest.repay_all_amount==="string"&&toAtomic(latest.repay_all_amount,latest.asset.decimals)>0n;}catch{}
                   if(!valid||!latest?.repay_all_amount){setRepayAllErrors(current=>({...current,[row.market_id]:"A full repayment maximum is unavailable. Check your current loan."}));return;}
                   setLoanAmounts(current=>({...current,[`${row.market_id}:repay`]:latest.repay_all_amount!}));setRepayAllAmounts(current=>({...current,[row.market_id]:latest.repay_all_amount!}));
-                })}>Repay all · MAX</button>}</div><input id={`loan-amount-${row.asset.code}`} aria-label={direction==="borrow"?"Borrow amount":direction==="repay"?"Repay amount":"Collateral amount"} inputMode="decimal" placeholder="0.00" disabled={busy} value={loanAmounts[amountKey]??""} onChange={event=>{setLoanAmounts(current=>({...current,[amountKey]:event.target.value}));if(direction==="repay"){setRepayAllAmounts(current=>{const next={...current};delete next[row.market_id];return next;});setRepayAllErrors(current=>({...current,[row.market_id]:""}));}}}/></div><button className="button" disabled={busy||borrowingLoading||!session||!canPrepare||!loanAmounts[amountKey]||capability("capital.wallets")?.execution_status!=="testnet_verified"} onClick={()=>action(()=>start(direction.startsWith("collateral-")?`borrow-${direction}`:`lending/${direction}`,{market_id:row.market_id,amount:loanAmounts[amountKey]}))}>{busy?"Preparing…":reviewLabel}</button></div>
+                },`loan:${row.market_id}`)}>Repay all · MAX</button>}</div><input id={`loan-amount-${row.asset.code}`} aria-label={direction==="borrow"?"Borrow amount":direction==="repay"?"Repay amount":"Collateral amount"} inputMode="decimal" placeholder="0.00" disabled={busy} value={loanAmounts[amountKey]??""} onChange={event=>{setLoanAmounts(current=>({...current,[amountKey]:event.target.value}));setActionErrors(current=>({...current,[`loan:${row.market_id}`]:""}));if(direction==="repay"){setRepayAllAmounts(current=>{const next={...current};delete next[row.market_id];return next;});setRepayAllErrors(current=>({...current,[row.market_id]:""}));}}}/></div><button className="button" disabled={busy||borrowingLoading||!session||!canPrepare||!loanAmounts[amountKey]||capability("capital.wallets")?.execution_status!=="testnet_verified"} onClick={()=>action(()=>start(direction.startsWith("collateral-")?`borrow-${direction}`:`lending/${direction}`,{market_id:row.market_id,amount:loanAmounts[amountKey]}),`loan:${row.market_id}`)}>{busy?"Preparing…":reviewLabel}</button></div>
                 {!loanAmounts[amountKey]&&<p className="small muted">Enter an amount to review {direction==="collateral-supply"?"your collateral deposit":direction==="collateral-withdraw"?"your collateral removal":direction==="repay"?"your repayment":"your loan"}.</p>}
                 {maximumSelected&&<p className="small muted">Maximum repayment amount selected. Review the full token debit before approving.</p>}
                 {repayAllErrors[row.market_id]&&<p className="swap-action-error" role="alert">{repayAllErrors[row.market_id]}</p>}
