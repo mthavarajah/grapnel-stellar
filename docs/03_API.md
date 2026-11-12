@@ -117,3 +117,7 @@ All financial writes return **202** on acceptance, never immediate success:
 
 ## Required negative API tests
 Invalid key (401); revoked key (401); Spot disabled (403); enable Spot with same key (success on permitted call); wallet disabled when Spot enabled (dependency error); foreign customer ID (404); customer signing denial (403); duplicate idempotent call returns original op; same key/different body 409; invalid issuer/asset 422; unsupported module execution 409; submitted tx not marked completed before chain confirmation.
+
+### Borrow full repayment
+
+`GET /v1/capital/lending/borrowing` includes optional `repay_all_amount` and `can_prepare_repay_all` per asset. The UI uses the exact fresh maximum string, never the rounded debt display. `POST /v1/capital/lending/repay` keeps its existing body; `amount` is the approved maximum transfer, bounded by current debt plus0.1% and2atomic units and by confirmed spendable funds. XLM Max additionally allows for the1XLM fee ceiling. Actual excess must be refunded and proved in transaction metadata. Debt and collateral stay in the separately pinned borrowing pool; existing Earn collateral is not moved.

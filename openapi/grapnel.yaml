@@ -2,7 +2,7 @@
   "openapi": "3.1.0",
   "info": {
     "title": "Grapnel Testnet API",
-    "version": "0.2.2",
+    "version": "0.2.3",
     "description": "Stellar Testnet only. See docs/03_API.md and packages/contracts for frozen payload schemas."
   },
   "servers": [
@@ -2120,7 +2120,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Envelope data: pool_id, as_of, assets with actual debt/collateral, APR/APY ratios, nullable health/capacity and preparation flags."
+            "description": "Envelope data: pool_id, as_of, assets with actual debt/collateral, APR/APY ratios, nullable health/capacity and preparation flags. Each asset may include repay_all_amount (nullable exact maximum debit) and can_prepare_repay_all; unavailable confirmed spendable funds disable Max."
           },
           "401": {
             "description": "Customer authentication required"
@@ -3119,7 +3119,8 @@
               "type": "string"
             }
           }
-        ]
+        ],
+        "description": "Existing amount is the exact customer-approved maximum repayment transfer. Fresh server bound is debt+ceil(debt/1000)+2atomic, limited by confirmed reservation-adjusted wallet funds. XLM Max includes1XLM fee headroom. Excess above actual execution debt must be refunded and independently verified; full repayment requires actual zero debt tokens. No202success claim."
       }
     },
     "/v1/operations": {
