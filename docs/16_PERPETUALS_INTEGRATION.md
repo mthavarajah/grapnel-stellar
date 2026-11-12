@@ -37,3 +37,7 @@ Every stage needs durable, idempotent operation records, unique external proof i
 ## Ownership
 
 Lead owns shared contracts, HTTP routes, DB migrations, runtime integration and claims. Hyperliquid adapter and CCTP adapter work use disjoint owned paths and read-only tools until their write scopes are reviewed. UI work owns customer Perpetuals presentation and cannot invent provider execution or redefine shared contracts.
+
+## Frozen execution adapter ownership
+
+`modules/perpetuals/execution-contract.ts` freezes the internal account/approved-intent/signed-payload/reconciliation interface. Only a separately validated exact customer approval may create an `ApprovedPerpetualIntent`; browser/body booleans cannot authorize it. Account bindings are tenant/customer/wallet specific and globally segregated by actual provider address. A signed payload, nonce and client order ID must be durably stored before sending. The adapter may not create accounts, bridge funds, silently update leverage, use mainnet endpoints, or treat an acknowledgement as a fill. Setting leverage is a separate customer-approved stage before the bounded order. Execution adapter implementation owns only `adapters/hyperliquid/execution/**`; discovery owns sibling reader/catalog files. Tests are offline until an eligible funded Testnet account and signing authority are configured.
