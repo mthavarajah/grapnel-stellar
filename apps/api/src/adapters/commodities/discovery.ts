@@ -46,18 +46,21 @@ export class CommodityDiscovery {
   }
   this.candidates=structuredClone(candidates);
  }
- async discover(reads:CommodityDiscoveryReads,now=Date.now()):Promise<CommodityCandidateDiscovery[]>{
+ async discover(reads:CommodityDiscoveryReads,now?:number):Promise<CommodityCandidateDiscovery[]>{
+  // Read the clock after each provider response: a slow network call must not
+  // make a newly observed ledger or quote look like it came from the future.
+  const currentTime=()=>now??Date.now();
   if(!this.candidates.length)return [];
   if(await reads.readNetworkPassphrase()!==NETWORK_PASSPHRASE)throw new GrapnelError(400,'NETWORK_MISMATCH','Commodity discovery RPC must report Stellar Testnet');
   return Promise.all(this.candidates.map(async candidate=>{
-   const a=candidate.asset;const base={asset:a,network:NETWORK,executable:false as const,issuer_provenance_url:candidate.issuerProvenanceUrl,issuer_rights_description:candidate.issuerRightsDescription};
+   const a=candidate.asset;const base={asset:structuredClone(a),network:NETWORK,executable:false as const,issuer_provenance_url:candidate.issuerProvenanceUrl,issuer_rights_description:candidate.issuerRightsDescription};
    try{
     const contract=await reads.readContract(a.contractId!);
-    if(contract.contractId!==a.contractId||contract.code!==a.code||contract.decimals!==a.decimals||!Number.isSafeInteger(contract.ledger)||contract.ledger<=0||!fresh(contract.observedAt,15000,now)||a.kind==='classic'&&(contract.executableType!=='stellar_asset'||contract.issuer!==a.issuer)||a.kind==='soroban'&&(contract.executableType!=='wasm'||contract.wasmHash!==candidate.expectedWasmHash))return {...base,execution_status:'blocked' as const,reason:'COMMODITY_LIVE_CONTRACT_OR_IDENTITY_MISMATCH'};
+    if(contract.contractId!==a.contractId||contract.code!==a.code||contract.decimals!==a.decimals||!Number.isSafeInteger(contract.ledger)||contract.ledger<=0||!fresh(contract.observedAt,15000,currentTime())||a.kind==='classic'&&(contract.executableType!=='stellar_asset'||contract.issuer!==a.issuer)||a.kind==='soroban'&&(contract.executableType!=='wasm'||contract.wasmHash!==candidate.expectedWasmHash))return {...base,execution_status:'blocked' as const,reason:'COMMODITY_LIVE_CONTRACT_OR_IDENTITY_MISMATCH'};
     const quote=await reads.quoteExactIn({assetIn:native,assetOut:a.contractId!,amountAtomic:'10000000',slippageBps:50});
-    const out=atomic(quote.expectedOutAtomic),minimum=atomic(quote.minOutAtomic);const expiry=Date.parse(quote.expiresAt);
+    const out=atomic(quote.expectedOutAtomic),minimum=atomic(quote.minOutAtomic);const expiry=Date.parse(quote.expiresAt),quoteNow=currentTime();
     const allowed=new Set([native,a.contractId!,...candidate.allowedRouteContracts]);
-    if(quote.inputContract!==native||quote.outputContract!==a.contractId||quote.amountInAtomic!=='10000000'||out<=0n||minimum<=0n||minimum>out||minimum<(out*9950n+9999n)/10000n||!fresh(quote.observedAt,15000,now)||!Number.isFinite(expiry)||expiry<=now||expiry>now+60000||quote.routeContracts.length<2||quote.routeContracts[0]!==native||quote.routeContracts.at(-1)!==a.contractId||quote.routeContracts.some(c=>!allowed.has(c)))return {...base,execution_status:'blocked' as const,reason:'COMMODITY_EXACT_TESTNET_LIQUIDITY_UNVERIFIED'};
+    if(quote.inputContract!==native||quote.outputContract!==a.contractId||quote.amountInAtomic!=='10000000'||out<=0n||minimum<=0n||minimum>out||minimum<(out*9950n+9999n)/10000n||!fresh(quote.observedAt,15000,quoteNow)||!Number.isFinite(expiry)||expiry<=quoteNow||expiry>quoteNow+60000||quote.routeContracts.length<2||quote.routeContracts[0]!==native||quote.routeContracts.at(-1)!==a.contractId||quote.routeContracts.some(c=>!allowed.has(c)))return {...base,execution_status:'blocked' as const,reason:'COMMODITY_EXACT_TESTNET_LIQUIDITY_UNVERIFIED'};
     return {...base,execution_status:'discovery_only' as const,reason:'COMMODITY_EXECUTION_INSPECTION_AND_CHAIN_PROOF_REQUIRED',live_ledger:contract.ledger,observed_at:contract.observedAt,liquidity_quote:{amount_in_atomic:quote.amountInAtomic,expected_out_atomic:quote.expectedOutAtomic,min_out_atomic:quote.minOutAtomic,expires_at:quote.expiresAt}};
    }catch{return {...base,execution_status:'blocked' as const,reason:'COMMODITY_PROVIDER_READ_UNAVAILABLE'};}
   }));
