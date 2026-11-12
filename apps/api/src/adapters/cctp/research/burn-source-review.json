@@ -1,0 +1,54 @@
+{
+  "observed_at": "2026-11-12T05:00:39.413Z",
+  "repository": "https://github.com/circlefin/stellar-cctp",
+  "commit": "45746f2c803198bc6cd586475eb3c925f12bb488",
+  "deployed_abi_evidence": "burn-abi-read.json",
+  "deployed_wasm_hash": "a04c09f4bf064cfafb7e4e931752de15a216af1d59373bdd9d53908e7d29a9fe",
+  "source_to_deployed_bytecode_match": "not_reproducibly_built; operation shape independently verified from deployed WASM ABI",
+  "files": [
+    {
+      "path": "contracts/token-messenger-minter-v2/src/contract.rs",
+      "sha256": "67ff2741b84581b808f33f114e9410709501f6f3499fd3cfc4ffe33880a02d60"
+    },
+    {
+      "path": "contracts/token-messenger-minter-v2/src/deposit.rs",
+      "sha256": "61035f788d5900e5ea5527f02a0fdb1efac14e9f373866ca17bc771a52c5c275"
+    },
+    {
+      "path": "contracts/message-transmitter-v2/src/contract.rs",
+      "sha256": "216946f38da21b49c554685f30ff526f217a029767660e5c707d1aa9999b45d6"
+    },
+    {
+      "path": "packages/cctp-roles/src/remote_token_messenger/storage.rs",
+      "sha256": "0e732ba93a518599c1b63adc669951c3f8c848360f8bfc8ea17bb149747fcd3d"
+    },
+    {
+      "path": "packages/cctp-roles/src/token_controller/storage.rs",
+      "sha256": "9fab74a8db71a90cdc8d18afb4d0ce7b84986d75a193e0c9a376c7bed53a6739"
+    },
+    {
+      "path": "packages/cctp-roles/src/denylistable/storage.rs",
+      "sha256": "477c584e7dc73c8d464633bc63550fb1154717b075950d03c06215e96ed6b621"
+    },
+    {
+      "path": "packages/cctp-roles/src/min_fee_controller/storage.rs",
+      "sha256": "b27370f279f7bc1b3aad6d008d682b6df27faa2452ea6e3a53ac3d144251c752"
+    }
+  ],
+  "reviewed_behavior": {
+    "customer_auth": "exact caller.require_auth root; no child customer auth",
+    "token_spend": "prior approved SAC transfer_from by messenger, then own balance burn",
+    "destination_domain": 19,
+    "destination_caller": "zero32 permissionless mint to immutable recipient",
+    "max_fee_stellar_atomic": "0",
+    "min_finality_threshold": 2000,
+    "network_fee_ceiling_stroops": "10000000",
+    "required_prior_allowance": true,
+    "no_new_token_approval": true,
+    "source_nonce": "no user-supplied nonce on this burn ABI; address-credential nonces and all children rejected",
+    "footprint_scope": "two pinned WASM code reads, three read-only source instances, exact source config reads; customer CircleUSDC trustline, source-to-messenger allowance and messenger token balance writes only",
+    "actual_successful_burn_simulation_captured": false
+  },
+  "execution_status": "blocked",
+  "tx_hash": null
+}

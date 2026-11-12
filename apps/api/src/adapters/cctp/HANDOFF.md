@@ -37,3 +37,17 @@ HyperEVM Testnet native Circle USDC is `0x2B3370eE501B4a559b57D449569354196457D8
 - https://developers.circle.com/cctp/references/coredepositwallet-contract-interface
 - https://developers.circle.com/cctp/concepts/cctp-on-hypercore
 - https://developers.circle.com/cctp/howtos/transfer-usdc-from-hyperevm-to-hypercore
+
+## Unsigned source burn extension
+
+New `preparer.ts`/`inspector.ts` implement source burn preparation only. No signing, submission, approval, attestation mint or trading method exists.
+
+The frozen request uses operation/customer context, exact Stellar atomic amount, EVM recipient, destinationDomain19, expiry and network fee ceiling. A **separate server-owned recipient binding reader** is mandatory and must match tenant, customer, wallet, source address, EVM recipient, HyperEVM Testnet and chain998. A request recipient alone never authorizes transfer. Root must return bindings only for independently verified/eligible destination accounts and retain its broader venue access gate.
+
+Actual deployed WASM ABI was independently read at ledger5686988 (`research/burn-abi-read.json`). The eight-argument `deposit_for_burn` call fixes Circle USDC, domain19, exact trusted recipient bytes32, permissionless zero destination caller, zero USDC transfer fee and standard finality2000. The network fee ceiling is separate, at most1XLM. Any route requiring nonzero CCTP fee fails simulation; it is not silently deducted. Source snapshots and SHA256 hashes of relevant official files are in `burn-source-review.json`; this is ABI/source analysis, not a claimed reproducible deployed bytecode audit.
+
+The code rejects precision loss and amounts above1000USDC. Auth must be exactly one source-account root matching all eight arguments, with no address nonce, extra signer or child invocation. The resource inspector rejects restores, extra contracts, governance/foreign balance/nonce writes, duplicate keys, excess fees and resources. It allows only source config reads and exact customer Circle USDC trustline, messenger allowance and messenger token balance writes. The source sequence, network, time bounds, memo, signing hash, summary and unsigned envelope are checked. Record and enforce simulations must agree on auth and footprint, fit the approved resources, and pass a final source sequence/expiry check before returning PreparedAction with `summary.action=perps.fund_cctp`.
+
+**Actual current customer preflight remains blocked.** At ledger5687026 the CircleUSDC trustline is absent, the balance getter returns Contract#13 trustline-missing, and the exact allowance getter returns0. No burn transaction was prepared. `research/customer-burn-readiness.json` records public Horizon and unsigned getter observations, signatures0, no customer approval, broadcastfalse and tx_hashnull. Existing GATALT USDC cannot substitute for CircleUSDC. Circle `deposit_for_burn` requires a separate prior token allowance; this preparer never adds or bypasses approval. A real successful funded burn simulation/footprint remains an acceptance item; the happy-path transaction tests use explicit offline fixtures and do not prove execution.
+
+Validation: `pnpm exec vitest run apps/api/src/adapters/cctp` now includes57 tests; API typecheck and secret scan pass. Root still needs exact trustline/allowance customer setup, server-owned binding/eligibility checks, fresh submission verification and the destination/return operation coordinator before any route is advertised executable.

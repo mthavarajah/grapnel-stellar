@@ -1,0 +1,112 @@
+{
+  "observed_at": "2026-11-12T04:43:06.499Z",
+  "network": "stellar-testnet",
+  "source": "https://developers.circle.com/cctp/references/stellar-contracts",
+  "contract": "CDNG7HXAPBWICI2E3AUBP3YZWZELJLYSB6F5CC7WLDTLTHVM74SLRTHP",
+  "ledger": 5686988,
+  "wasm_hash": "a04c09f4bf064cfafb7e4e931752de15a216af1d59373bdd9d53908e7d29a9fe",
+  "wasm_bytes": 89634,
+  "functions": [
+    {
+      "name": "deposit_for_burn",
+      "xdr": "AAAEAERlcG9zaXRzIGFuZCBidXJucyB0b2tlbnMgZnJvbSBzZW5kZXIgdG8gYmUgbWludGVkIG9uIGRlc3RpbmF0aW9uIGRvbWFpbi4KCiMgQXJndW1lbnRzCgoqIGBlYCAtIEFjY2VzcyB0byB0aGUgU29yb2JhbiBlbnZpcm9ubWVudC4KKiBgY2FsbGVyYCAtIFRoZSBhZGRyZXNzIG9mIHRoZSBjYWxsZXIgZGVwb3NpdGluZyB0b2tlbnMuCiogYGFtb3VudGAgLSBBbW91bnQgb2YgdG9rZW5zIHRvIGJ1cm4gKG11c3QgYmUgbm9uLXplcm8pLgoqIGBkZXN0aW5hdGlvbl9kb21haW5gIC0gRGVzdGluYXRpb24gZG9tYWluIHRvIHJlY2VpdmUgbWVzc2FnZSBvbi4KKiBgbWludF9yZWNpcGllbnRgIC0gQWRkcmVzcyBvZiBtaW50IHJlY2lwaWVudCBvbiBkZXN0aW5hdGlvbiBkb21haW4gKGFzIGJ5dGVzMzIpLgoqIGBidXJuX3Rva2VuYCAtIFRva2VuIHRvIGJ1cm4gYGFtb3VudGAgb2YsIG9uIGxvY2FsIGRvbWFpbi4KKiBgZGVzdGluYXRpb25fY2FsbGVyYCAtIEF1dGhvcml6ZWQgY2FsbGVyIG9uIHRoZSBkZXN0aW5hdGlvbiBkb21haW4gKGFzIGJ5dGVzMzIpLgpJZiB6ZXJvLCBhbnkgYWRkcmVzcyBjYW4gYnJvYWRjYXN0IHRoZSBtZXNzYWdlLgoqIGBtYXhfZmVlYCAtIE1heGltdW0gZmVlIHRvIHBheSBvbiB0aGUgZGVzdGluYXRpb24gZG9tYWluLCBpbiB1bml0cyBvZiBidXJuX3Rva2VuLgoqIGBtaW5fZmluYWxpdHlfdGhyZXNob2xkYCAtIFRoZSBtaW5pbXVtIGZpbmFsaXR5IGF0IHdoaWNoIHRoZSBidXJuIG1lc3NhZ2Ugd2lsbCBiZSBhdHRlc3RlZC4KCiMgRXJyb3JzCgoqIGBIb3N0RXJyb3I6IEVycm9yKENvbnRyYWN0LCAjMTAwMClgIOKAkyBDb250cmFjdCBpcyBwYXVzZWQgKGBFbmZvcmNlZFBhdXNlZGApLgoqIGBIb3N0RXJyb3I6IEVycm9yKEF1dGgsIEludmFsaWRBY3Rpb24pYCDigJMgYGNhbGxlcmAgYXV0aG9yaXphdGlvbiBmYWlscy4KKiBbYERlbnlsaXN0RXJyb3I6OkFjY291bnREZW55bGlzdGVkYF0g4oCTIElmIGNhbGxlciBpcyBvbiB0aGUgZGVueWxpc3QuCiogW2BUb2tlbk1lc3NlbmcAAAAQZGVwb3NpdF9mb3JfYnVybgAAAAgAAAAAAAAABmNhbGxlcgAAAAAAEwAAAAAAAAAGYW1vdW50AAAAAAALAAAAAAAAABJkZXN0aW5hdGlvbl9kb21haW4AAAAAAAQAAAAAAAAADm1pbnRfcmVjaXBpZW50AAAAAAPuAAAAIAAAAAAAAAAKYnVybl90b2tlbgAAAAAAEwAAAAAAAAASZGVzdGluYXRpb25fY2FsbGVyAAAAAAPuAAAAIAAAAAAAAAAHbWF4X2ZlZQAAAAALAAAAAAAAABZtaW5fZmluYWxpdHlfdGhyZXNob2xkAAAAAAAEAAAAAA==",
+      "inputs": [
+        {
+          "name": "caller",
+          "type": "scSpecTypeAddress",
+          "type_xdr": "AAAAEw=="
+        },
+        {
+          "name": "amount",
+          "type": "scSpecTypeI128",
+          "type_xdr": "AAAACw=="
+        },
+        {
+          "name": "destination_domain",
+          "type": "scSpecTypeU32",
+          "type_xdr": "AAAABA=="
+        },
+        {
+          "name": "mint_recipient",
+          "type": "scSpecTypeBytesN",
+          "type_xdr": "AAAD7gAAACA="
+        },
+        {
+          "name": "burn_token",
+          "type": "scSpecTypeAddress",
+          "type_xdr": "AAAAEw=="
+        },
+        {
+          "name": "destination_caller",
+          "type": "scSpecTypeBytesN",
+          "type_xdr": "AAAD7gAAACA="
+        },
+        {
+          "name": "max_fee",
+          "type": "scSpecTypeI128",
+          "type_xdr": "AAAACw=="
+        },
+        {
+          "name": "min_finality_threshold",
+          "type": "scSpecTypeU32",
+          "type_xdr": "AAAABA=="
+        }
+      ],
+      "outputs": []
+    },
+    {
+      "name": "deposit_for_burn_with_hook",
+      "xdr": "AAAEAERlcG9zaXRzIGFuZCBidXJucyB0b2tlbnMgZnJvbSBzZW5kZXIgdG8gYmUgbWludGVkIG9uIGRlc3RpbmF0aW9uIGRvbWFpbiwKd2l0aCBvcHRpb25hbCBob29rIGRhdGEgZm9yIGV4ZWN1dGlvbiBvbiB0aGUgZGVzdGluYXRpb24gY2hhaW4uCgojIEFyZ3VtZW50cwoKKiBgZWAgLSBBY2Nlc3MgdG8gdGhlIFNvcm9iYW4gZW52aXJvbm1lbnQuCiogYGNhbGxlcmAgLSBUaGUgYWRkcmVzcyBvZiB0aGUgY2FsbGVyIGRlcG9zaXRpbmcgdG9rZW5zLgoqIGBhbW91bnRgIC0gQW1vdW50IG9mIHRva2VucyB0byBidXJuIChtdXN0IGJlIG5vbi16ZXJvKS4KKiBgZGVzdGluYXRpb25fZG9tYWluYCAtIERlc3RpbmF0aW9uIGRvbWFpbiB0byByZWNlaXZlIG1lc3NhZ2Ugb24uCiogYG1pbnRfcmVjaXBpZW50YCAtIEFkZHJlc3Mgb2YgbWludCByZWNpcGllbnQgb24gZGVzdGluYXRpb24gZG9tYWluIChhcyBieXRlczMyKS4KKiBgYnVybl90b2tlbmAgLSBUb2tlbiB0byBidXJuIGBhbW91bnRgIG9mLCBvbiBsb2NhbCBkb21haW4uCiogYGRlc3RpbmF0aW9uX2NhbGxlcmAgLSBBdXRob3JpemVkIGNhbGxlciBvbiB0aGUgZGVzdGluYXRpb24gZG9tYWluIChhcyBieXRlczMyKS4KSWYgemVybywgYW55IGFkZHJlc3MgY2FuIGJyb2FkY2FzdCB0aGUgbWVzc2FnZS4KKiBgbWF4X2ZlZWAgLSBNYXhpbXVtIGZlZSB0byBwYXkgb24gdGhlIGRlc3RpbmF0aW9uIGRvbWFpbiwgaW4gdW5pdHMgb2YgYnVybl90b2tlbi4KKiBgbWluX2ZpbmFsaXR5X3RocmVzaG9sZGAgLSBUaGUgbWluaW11bSBmaW5hbGl0eSBhdCB3aGljaCB0aGUgYnVybiBtZXNzYWdlIHdpbGwgYmUgYXR0ZXN0ZWQuCiogYGhvb2tfZGF0YWAgLSBIb29rIGRhdGEgdG8gYXBwZW5kIHRvIGJ1cm4gbWVzc2FnZSBmb3IgaW50ZXJwcmV0YXRpb24gb24gZGVzdGluYXRpb24gZG9tYWluLgoKIyBFcnJvcnMKCiogYEhvc3RFcnJvcjogRXJyb3IoQ29udHJhY3QsICMxMDAwKWAg4oCTIENvbnRyYWN0IGlzIHBhdXNlZCAoYEVuZm9yY2VkUGF1c2VkYCkuCiogYEhvc3QAAAAaZGVwb3NpdF9mb3JfYnVybl93aXRoX2hvb2sAAAAAAAkAAAAAAAAABmNhbGxlcgAAAAAAEwAAAAAAAAAGYW1vdW50AAAAAAALAAAAAAAAABJkZXN0aW5hdGlvbl9kb21haW4AAAAAAAQAAAAAAAAADm1pbnRfcmVjaXBpZW50AAAAAAPuAAAAIAAAAAAAAAAKYnVybl90b2tlbgAAAAAAEwAAAAAAAAASZGVzdGluYXRpb25fY2FsbGVyAAAAAAPuAAAAIAAAAAAAAAAHbWF4X2ZlZQAAAAALAAAAAAAAABZtaW5fZmluYWxpdHlfdGhyZXNob2xkAAAAAAAEAAAAAAAAAAlob29rX2RhdGEAAAAAAAAOAAAAAA==",
+      "inputs": [
+        {
+          "name": "caller",
+          "type": "scSpecTypeAddress",
+          "type_xdr": "AAAAEw=="
+        },
+        {
+          "name": "amount",
+          "type": "scSpecTypeI128",
+          "type_xdr": "AAAACw=="
+        },
+        {
+          "name": "destination_domain",
+          "type": "scSpecTypeU32",
+          "type_xdr": "AAAABA=="
+        },
+        {
+          "name": "mint_recipient",
+          "type": "scSpecTypeBytesN",
+          "type_xdr": "AAAD7gAAACA="
+        },
+        {
+          "name": "burn_token",
+          "type": "scSpecTypeAddress",
+          "type_xdr": "AAAAEw=="
+        },
+        {
+          "name": "destination_caller",
+          "type": "scSpecTypeBytesN",
+          "type_xdr": "AAAD7gAAACA="
+        },
+        {
+          "name": "max_fee",
+          "type": "scSpecTypeI128",
+          "type_xdr": "AAAACw=="
+        },
+        {
+          "name": "min_finality_threshold",
+          "type": "scSpecTypeU32",
+          "type_xdr": "AAAABA=="
+        },
+        {
+          "name": "hook_data",
+          "type": "scSpecTypeBytes",
+          "type_xdr": "AAAADg=="
+        }
+      ],
+      "outputs": []
+    }
+  ],
+  "mode": "public_deployed_code_read_only",
+  "tx_hash": null
+}
