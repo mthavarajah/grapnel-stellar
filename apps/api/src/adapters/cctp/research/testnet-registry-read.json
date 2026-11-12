@@ -1,0 +1,209 @@
+{
+  "observed_at": "2026-11-12T03:54:11.995Z",
+  "execution_status": "discovery_only",
+  "registry_verified": true,
+  "bridge_execution_verified": false,
+  "customer_assets_moved": false,
+  "tx_hash": null,
+  "stellar": {
+    "passphrase": "Test SDF Network ; September 2015",
+    "ledger": 5686400,
+    "contracts": {
+      "messenger": {
+        "address": "CDNG7HXAPBWICI2E3AUBP3YZWZELJLYSB6F5CC7WLDTLTHVM74SLRTHP",
+        "executable": "contractExecutableWasm",
+        "codeHash": "a04c09f4bf064cfafb7e4e931752de15a216af1d59373bdd9d53908e7d29a9fe",
+        "storage": {
+          "MIGRATING": true,
+          "LocalMessageTransmitter": "CBJ6MTCKKZG73PMDZCJMSFRD7DQEMI4FKDH7CGDSV4W6FHCRBCQAVVJY",
+          "MessageBodyVersion": 1,
+          "Owner": "GBA553YQZGOEVXSVRMNEJOSTPYOM5QLAXSOUT5VL55JU7APIYASOBSFA"
+        }
+      },
+      "transmitter": {
+        "address": "CBJ6MTCKKZG73PMDZCJMSFRD7DQEMI4FKDH7CGDSV4W6FHCRBCQAVVJY",
+        "executable": "contractExecutableWasm",
+        "codeHash": "8927f7389410044b35b1d3d0d7d42ea4ed0677dea18cb1bd89be4a980566c614",
+        "storage": {
+          "MIGRATING": true,
+          "EnabledAttesters": [
+            {
+              "type": "Buffer",
+              "data": [
+                136,
+                103,
+                166,
+                124,
+                218,
+                75,
+                199,
+                136,
+                198,
+                232,
+                25,
+                186,
+                234,
+                236,
+                96,
+                184,
+                103,
+                134,
+                82,
+                135
+              ]
+            },
+            {
+              "type": "Buffer",
+              "data": [
+                73,
+                253,
+                99,
+                80,
+                110,
+                13,
+                136,
+                224,
+                117,
+                17,
+                173,
+                149,
+                186,
+                231,
+                178,
+                163,
+                26,
+                249,
+                139,
+                40
+              ]
+            }
+          ],
+          "LocalDomain": 27,
+          "MaxMessageBodySize": 8192,
+          "Owner": "GDUBFFFEHCB6TIUWSVJCFDAHNYQZSKFFAUIUDW2YTN77WZQLQXMYXVUQ",
+          "SignatureThreshold": 2,
+          "Version": 1
+        }
+      },
+      "forwarder": {
+        "address": "CA66Q2WFBND6V4UEB7RD4SAXSVIWMD6RA4X3U32ELVFGXV5PJK4T4VSZ",
+        "executable": "contractExecutableWasm",
+        "codeHash": "caa4d100b5d102c07db3ff08d4c53f1f89562e8bbbf45e8bab593b1d99c1dec5",
+        "storage": {
+          "MIGRATING": true,
+          "ExpectedBurnMessageVersion": 1,
+          "ExpectedMessageVersion": 1,
+          "MessageTransmitter": "CBJ6MTCKKZG73PMDZCJMSFRD7DQEMI4FKDH7CGDSV4W6FHCRBCQAVVJY",
+          "Owner": "GCNRPGOF22HDJES5K6NB5EX6Q5ZWBOEPKIRFWTU4E3GIMDVH5M7ULNGH",
+          "TokenMessengerMinter": "CDNG7HXAPBWICI2E3AUBP3YZWZELJLYSB6F5CC7WLDTLTHVM74SLRTHP"
+        }
+      },
+      "usdc": {
+        "address": "CBIELTK6YBZJU5UP2WWQEUCYKLPU6AUNZ2BQ4WWFEIE3USCIHMXQDAMA",
+        "executable": "contractExecutableStellarAsset",
+        "codeHash": null,
+        "storage": {
+          "METADATA": {
+            "decimal": 7,
+            "name": "USDC:GBBD47IF6LWK7P7MDEVSCWR7DPUWV3NY3DTQEVFL4NAT4AQH3ZLLFLA5",
+            "symbol": "USDC"
+          },
+          "Admin": "CCELIKMY7RQ3BQERWSOQHLIVYC5E3UHLTLDYIO2NVS5XGFEXYER5UWSB",
+          "AssetInfo": [
+            "AlphaNum4",
+            {
+              "asset_code": "USDC",
+              "issuer": {
+                "type": "Buffer",
+                "data": [
+                  66,
+                  62,
+                  125,
+                  5,
+                  242,
+                  236,
+                  175,
+                  191,
+                  236,
+                  25,
+                  43,
+                  33,
+                  90,
+                  63,
+                  27,
+                  233,
+                  106,
+                  237,
+                  184,
+                  216,
+                  231,
+                  2,
+                  84,
+                  171,
+                  227,
+                  65,
+                  62,
+                  2,
+                  7,
+                  222,
+                  86,
+                  178
+                ]
+              }
+            }
+          ]
+        }
+      }
+    }
+  },
+  "hyperEvm": {
+    "chainId": "0x3e6",
+    "block": "0x422da4b",
+    "blockTimestamp": 1794455648,
+    "contracts": {
+      "usdc": {
+        "address": "0x2B3370eE501B4a559b57D449569354196457D8Ab",
+        "sha256": "b6ee454dc91cd5643f7b221c8606b9d060aaa574db7e3fcc6d8f8a7b25572790",
+        "implementation": null,
+        "implementationSha256": null
+      },
+      "messenger": {
+        "address": "0x8FE6B999Dc680CcFDD5Bf7EB0974218be2542DAA",
+        "sha256": "501b4a60e24ea82032b7442d75995dee3bdbfc17b25caffc3c955eadc8c2a418",
+        "implementation": "0xf07c0ad13178a9ef5c3ffa0be69e0becd452bf6d",
+        "implementationSha256": "a4cee8ec932bf532c98711a80b2ff0d5fe8e8701c179ec45e86dea2ca619be0b"
+      },
+      "transmitter": {
+        "address": "0xE737e5cEBEEBa77EFE34D4aa090756590b1CE275",
+        "sha256": "501b4a60e24ea82032b7442d75995dee3bdbfc17b25caffc3c955eadc8c2a418",
+        "implementation": "0x1110d9af71fab7e4d05d80c26f98ff0ca125470c",
+        "implementationSha256": "e9423da6e41a7a11455980721a885b8150babbe1628871d8e5d7316fd3299ddf"
+      },
+      "forwarder": {
+        "address": "0x02e39ECb8368b41bF68FF99ff351aC9864e5E2a2",
+        "sha256": "de90f6f079e69f34453c490764eb27d059a8021782555d62cf10a1bd10518bc8",
+        "implementation": "0xd1ff0f53bd651448bced218fd875323486274c26",
+        "implementationSha256": "eba80efd392dbf4213e0c3de29ad1f6634b5dec6148f29d805cb95d81149588a"
+      },
+      "coreDepositWallet": {
+        "address": "0x0B80659a4076E9E93C7DbE0f10675A16a3e5C206",
+        "sha256": "de90f6f079e69f34453c490764eb27d059a8021782555d62cf10a1bd10518bc8",
+        "implementation": "0x49808bcf68fc2e26fa2986aa9b08615181ae19d3",
+        "implementationSha256": "eda4165563cabe7cea32134f9af0e710b92e5b57ee591580adaae9cba7cea7ae"
+      }
+    },
+    "decimals": "0x0000000000000000000000000000000000000000000000000000000000000006",
+    "domain": "0x0000000000000000000000000000000000000000000000000000000000000013",
+    "messengerTransmitter": "0x000000000000000000000000e737e5cebeeba77efe34d4aa090756590b1ce275"
+  },
+  "sources": {
+    "domains": "https://developers.circle.com/cctp/concepts/supported-chains-and-domains",
+    "stellarContracts": "https://developers.circle.com/cctp/references/stellar-contracts",
+    "stellarEncoding": "https://developers.circle.com/cctp/references/stellar",
+    "usdc": "https://developers.circle.com/stablecoins/usdc-contract-addresses",
+    "evmContracts": "https://developers.circle.com/cctp/references/contract-addresses",
+    "hyperCoreContracts": "https://developers.circle.com/cctp/references/hypercore-contract-addresses",
+    "hyperCore": "https://developers.circle.com/cctp/concepts/cctp-on-hypercore",
+    "hyperCoreInterface": "https://developers.circle.com/cctp/references/coredepositwallet-contract-interface"
+  }
+}
