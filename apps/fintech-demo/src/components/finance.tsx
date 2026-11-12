@@ -945,7 +945,7 @@ function FinanceShell({ page, auth, initialCategory }: { page: string; auth?: Au
           <p>Sign in to connect your wallet and open your dashboard.</p>
           {loginTimedOut && <p className="login-error" role="alert">Sign-in is taking too long. Retry the connection.</p>}
           {error && <p className="login-error" role="alert">{customerMessage(error)}</p>}
-          <button className="button" onClick={loginTimedOut ? () => window.location.reload() : connect} disabled={loading || busy || !auth}>
+          <button className="button" onClick={loginTimedOut ? () => action(async () => { if (!auth) throw Error("Customer sign-in is unavailable"); await auth.logout(); window.location.reload(); }) : connect} disabled={loading || busy || !auth}>
             {loginTimedOut ? "Retry connection" : loading ? "Checking session…" : busy ? "Connecting wallet…" : auth?.authenticated ? "Connect wallet" : "Sign in"}
             {!loading && !busy && <Icon name="arrow" size={16} />}
           </button>
