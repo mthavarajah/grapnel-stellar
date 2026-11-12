@@ -108,7 +108,7 @@ export async function buildApp(options:AppOptions={}):Promise<FastifyInstance>{
   const owner=await requireOwner(request,true);const {name}=z.object({name:z.string().trim().min(1).max(120)}).strict().parse(request.body);
   const business=await transaction(pool,async client=>{
    const row=(await client.query('INSERT INTO businesses(name) VALUES($1) RETURNING id,name,environment,revision,created_at',[name])).rows[0];
-   await client.query('INSERT INTO business_modules(business_id,module_code) SELECT $1,unnest(enum_range(NULL::module_code))',[row.id]);
+   await client.query('INSERT INTO business_modules(business_id,module_code) SELECT $1,unnest($2::module_code[])',[row.id,[...MODULE_IDS]]);
    await client.query('INSERT INTO business_users(business_id,auth_provider_id,role) VALUES($1,$2,\'owner\')',[row.id,`demo-owner:${owner.businessId}`]);
    await client.query('UPDATE owner_sessions SET business_id=$2 WHERE token_hash=$1',[digest(owner.token),row.id]);return row;
   });return success(request,business);

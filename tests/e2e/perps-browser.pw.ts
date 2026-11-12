@@ -43,7 +43,7 @@ async function fixture(page:Page,{allCategories=false,historyFailure=false,holdB
   let data:unknown={};
   if(path.endsWith('/session'))data={customer_id:'isolated-ui-customer',wallet_id:'isolated-ui-wallet',stellar_address:'isolated-ui-address'};
   else if(path.endsWith('/status'))data={grapnel_configured:true,privy_configured:true,session_configured:true};
-  else if(path.endsWith('/capabilities'))data={capabilities:[{module:'capital.wallets',enabled:true,execution_status:'testnet_verified'},{module:'trade.perps',enabled:true,execution_status:'discovery_only'},...['spot','stocks','commodities'].map(module=>({module:'trade.'+module,enabled:allCategories,execution_status:'blocked'}))]};
+  else if(path.endsWith('/capabilities'))data={capabilities:[{module:'capital.wallets',enabled:true,execution_status:'testnet_verified'},{module:'trade.perps',enabled:true,execution_status:'discovery_only'},...['spot','stocks'].map(module=>({module:'trade.'+module,enabled:allCategories,execution_status:'blocked'}))]};
   else if(path.endsWith('/operations'))data={operations:[]};
   else if(path.endsWith('/markets')){const category=url.searchParams.get('asset_class')??'crypto_spot';calls.categories.push(category);if(category==='perps'&&marketFailure)return route.fulfill({status:503,json:{error:{code:'MARKET_UNAVAILABLE',message:'Current market read failed'}}});data=category==='perps'?markets:category==='stocks'&&stockCatalog?stocks.map(stock=>({...stock,history_available:stockHistory})):[];}
   else if(path.endsWith('/market-history')){
@@ -105,9 +105,9 @@ test('late history from a previous selection cannot overwrite the selected marke
  expect(calls.writes).toEqual([]);
 });
 
-test('enabled stock and commodity categories with no approved route stay empty',async({page})=>{
+test('enabled stock category with no approved route stay empty',async({page})=>{
  const {calls}=await fixture(page,{allCategories:true});
- for(const category of ['stocks','commodities']){
+ for(const category of ['stocks']){
   await page.getByTestId('markets-category-'+category).click();
   await expect(page.getByTestId('perps-market-detail')).toHaveCount(0);
   await expect(page.getByTestId('market-option-BTC')).toHaveCount(0);

@@ -1,8 +1,8 @@
 import { z } from 'zod';
-export const CONTRACT_VERSION = '0.2.4' as const;
+export const CONTRACT_VERSION = '0.2.5' as const;
 export const NETWORK = 'stellar-testnet' as const;
 export const NETWORK_PASSPHRASE = 'Test SDF Network ; September 2015' as const;
-export const MODULE_IDS = ['capital.wallets','capital.testnet_funding','capital.lending','trade.spot','trade.stocks','trade.perps','trade.commodities'] as const;
+export const MODULE_IDS = ['capital.wallets','capital.testnet_funding','capital.lending','trade.spot','trade.stocks','trade.perps'] as const;
 export const ModuleIdSchema = z.enum(MODULE_IDS);
 export type ModuleId = z.infer<typeof ModuleIdSchema>;
 export const ExecutionStatusSchema = z.enum(['testnet_verified','discovery_only','blocked','simulation']);

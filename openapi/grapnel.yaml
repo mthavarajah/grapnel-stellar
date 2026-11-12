@@ -2,7 +2,7 @@
   "openapi": "3.1.0",
   "info": {
     "title": "Grapnel Testnet API",
-    "version": "0.2.4",
+    "version": "0.2.5",
     "description": "Stellar Testnet only. See docs/03_API.md and packages/contracts for frozen payload schemas."
   },
   "servers": [
@@ -2139,7 +2139,7 @@
             "businessKey": []
           }
         ],
-        "description": "Requires capital.wallets. Only enabled trade.spot, trade.perps, trade.stocks, trade.commodities and capital.lending sections are included. Read-only source reference prices and supply rates; no executable quote or holdings are implied.",
+        "description": "Requires capital.wallets. Only enabled trade.spot, trade.perps, trade.stocks and capital.lending sections are included. Read-only source reference prices and supply rates; no executable quote or holdings are implied.",
         "responses": {
           "200": {
             "description": "Envelope data: as_of, sections[{id,label,available,items[{symbol,name,value,unit,as_of}]}]. Maximum three source-backed items per section. USD reference prices or percentage-point supply APY strings; unavailable items omitted, never zero-filled."
@@ -3905,8 +3905,7 @@
                 "capital.lending",
                 "trade.spot",
                 "trade.stocks",
-                "trade.perps",
-                "trade.commodities"
+                "trade.perps"
               ]
             }
           }

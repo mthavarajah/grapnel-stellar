@@ -2,7 +2,7 @@
   "openapi": "3.1.0",
   "info": {
     "title": "Grapnel Testnet API",
-    "version": "0.1.1",
+    "version": "0.2.5",
     "description": "Stellar Testnet only. See docs/03_API.md and packages/contracts for frozen payload schemas."
   },
   "servers": [
@@ -2934,8 +2934,7 @@
                 "capital.lending",
                 "trade.spot",
                 "trade.stocks",
-                "trade.perps",
-                "trade.commodities"
+                "trade.perps"
               ]
             }
           }

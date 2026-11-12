@@ -38,7 +38,7 @@ async function fixture(page:Page,{expired=false,blockExtra=false,duplicateUsdc=f
     const path=new URL(route.request().url()).pathname;
     let data:unknown={};
     if(path.endsWith('/session'))data={customer_id:'customer',wallet_id:'wallet',stellar_address:'fixture-address'};
-    else if(path.endsWith('/capabilities'))data={capabilities:[{module:'capital.wallets',enabled:true,execution_status:'testnet_verified'},{module:'trade.spot',enabled:true,execution_status:'blocked'},{module:'trade.stocks',enabled:false},{module:'trade.perps',enabled:false},{module:'trade.commodities',enabled:false}]};
+    else if(path.endsWith('/capabilities'))data={capabilities:[{module:'capital.wallets',enabled:true,execution_status:'testnet_verified'},{module:'trade.spot',enabled:true,execution_status:'blocked'},{module:'trade.stocks',enabled:false},{module:'trade.perps',enabled:false}]};
     else if(path.endsWith('/markets'))data=availableMarkets.map(item=>blockExtra&&item.market_id==='eurc-usdc'?{...item,preparation_available:false}:item);
     else if(path.endsWith('/market-history')){
       const url=new URL(route.request().url());calls.history.push(url.searchParams.get('range')!);
