@@ -9,7 +9,7 @@ export const PERIDOT_CUSTOMER_POLICY={
  pinsHash:createHash('sha256').update(canonicalJson(P)).digest('hex'),
  policyVersion:'peridot-testnet-long-2x-1mock-v1',
 } as const;
-export const REQUIRED_CUSTOMER_STEPS=['vault_deposit','margin_transfer','open_begin','open_swap','open_activate','open_cancel','close_prepare','close_swap','close_finish','close_cancel','margin_return','vault_withdraw'] as const;
+export const REQUIRED_CUSTOMER_STEPS=['vault_deposit','margin_transfer','open_begin','open_swap','open_activate','open_cancel','close_atomic','margin_return','vault_withdraw'] as const;
 export const fail=(reason:string):never=>{throw new GrapnelError(409,'EXECUTION_UNAVAILABLE','Verified Margin execution is unavailable',false,{reason});};
 export const invalid=(reason:string):never=>{throw new GrapnelError(403,'MARGIN_CUSTOMER_INTENT_MISMATCH','The Margin action differs from its exact customer intent',false,{reason});};
 export function unsigned(value:unknown,positive=false):bigint {

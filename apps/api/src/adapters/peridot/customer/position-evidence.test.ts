@@ -12,6 +12,8 @@ import {PeridotTransactionChanges,contractKey} from './metadata.js';
 import {openSwapEvidence,openCancelEvidence,activationEvidence} from './phase-evidence.js';
 import {PeridotCustomerChain,type ConfirmedPeridotTransaction,type CustomerSnapshot} from './chain.js';
 import {encodePrivate} from './encoding.js';
+import {atomicCloseEvidence,inspectCommittedAtomicClose} from './atomic-evidence.js';
+import {publicAtomicCloseAction} from './atomic-binding.js';
 import type {PrivateMarginBaseline,PhasePrepared} from './bindings.js';
 const owner='GAJZ5PEECGFB46QXKFW2QTWRXHYL4SOBS5VE2JDGJ4TDUIAUWEAHKV34';
 const customer:CustomerContext={businessId:randomUUID(),customerId:randomUUID(),walletId:randomUUID(),walletAddress:owner,privyUserId:'did:privy:OFFLINE_QA_METADATA_NOT_CUSTOMER_PROOF'};
@@ -52,6 +54,19 @@ describe('Actual open-swap and cancellation metadata (QA signer, not customer ac
   expect(position.position.debt_shares).toBe(0n);expect(evidence.after.position).toMatchObject({status:'Open',debtAtomic:'9999998'});expect(position.position.collateral_ptokens).toBe(129932005n);
   expect(()=>activationEvidence(c,baseline,tx.confirmed,{...after,marginDebtAtomic:'0'},customer,now)).toThrow();
   expect(()=>activationEvidence(c,baseline,tx.confirmed,{...after,position:{...position,position:{...position.position,collateral_ptokens:1n}}},customer,now)).toThrow();
+ });
+ it('proves actual atomic close repays canonical debt and returns only the observed residual receipts',()=>{
+  const swapped=phase('open_swap'),activation=fixture('activate'),tx=fixture('atomic_close'),id=xdr.ScVal.scvU64(xdr.Uint64.fromString('13844')),activated=new PeridotTransactionChanges(activation.confirmed.meta),now=Date.parse(tx.raw.observed_at),at=new Date(now).toISOString();
+  const position=validateMarginPositionSnapshot({positionId:'13844',walletAddress:owner,direction:'long',position:scValToNative(activated.entry(P.margin.address,contractKey('Position',id))!.after!),perps:scValToNative(activated.entry(P.margin.address,contractKey('PerpsPositionData',id))!.after!),pendingOpen:null,pendingClose:null,openExecution:null,observedLedger:activation.b.ledger,observedAt:at});
+  const operation=tx.unsigned.operations[0];if(operation.type!=='invokeHostFunction')throw Error('fixture');const minimum=(scValToNative(operation.func.invokeContract().args()[2]!)as bigint).toString(),workflow={...swapped.c.workflow,phase:'open' as const};
+  const c:MarginStepContext={...swapped.c,workflow,step:'close_atomic',terms:{minimumOutputAtomic:minimum},intentHash:digest(canonicalJson({workflowId:workflow.id,termsHash:workflow.termsHash,step:'close_atomic',terms:{minimumOutputAtomic:minimum},positionId:'13844',receiptAtomic:'9999780'}))};
+  const before:CustomerSnapshot={...swapped.after,ledger:tx.b.ledger-1,observedAt:at,position,nativeWalletAtomic:'100000000000'},helper:PhasePrepared={intent:{step:'close_atomic',walletAddress:owner,positionId:'13844',minimumOutputAtomic:minimum},positionDigest:createHash('sha256').update(JSON.stringify({position:position.position,perps:position.perps},(_,v)=>typeof v==='bigint'?v.toString():v)).digest('hex'),principalAtomic:'9999998',unsignedXdr:tx.unsigned.toXDR(),signingHashHex:tx.raw.hash,expiresAt:new Date(Number(tx.unsigned.timeBounds!.maxTime)*1000).toISOString(),feeStroops:tx.unsigned.fee,networkPassphrase:NETWORK_PASSPHRASE};
+  const baseline={version:1,intentHash:c.intentHash,workflowRevision:1,helper,before:encodePrivate(before)}as PrivateMarginBaseline,after:CustomerSnapshot={...before,position:null,ledger:tx.b.ledger,nativeWalletAtomic:(100000000000n-BigInt(tx.confirmed.feeAtomic)).toString(),marginDebtAtomic:'0',marginReceiptAtomic:'9879964'};
+  const proof=atomicCloseEvidence(c,baseline,tx.confirmed,after,customer,now);
+  expect(proof.after.position).toMatchObject({status:'Closed',debtAtomic:'0',swapOutputAtomic:'19880180'});expect(proof.after.marginReceiptAtomic).toBe('9879964');
+  expect(publicAtomicCloseAction(c,helper,customer).summary).toMatchObject({action:'margin.close_atomic',fromAssetId:'stellar-testnet:native:XLM',positionId:'13844',recipient:P.margin.address});expect(publicAtomicCloseAction(c,helper,customer).summary.amount).toBeUndefined();
+  expect(()=>atomicCloseEvidence(c,baseline,tx.confirmed,{...after,marginDebtAtomic:'1'},customer,now)).toThrow();expect(()=>atomicCloseEvidence(c,baseline,tx.confirmed,{...after,marginReceiptAtomic:'9879965'},customer,now)).toThrow();
+  expect(()=>inspectCommittedAtomicClose(new PeridotTransactionChanges(tx.confirmed.meta),{owner,positionId:'13844',position:position.position,perps:position.perps!,principalAtomic:'1',minimumOutputAtomic:minimum})).toThrow();
  });
  it('proves cancellation through exact deleted owned records and restored controller receipts',()=>{
   const f=phase('open_cancel'),proof=openCancelEvidence(f.c,f.baseline,f.confirmed,f.after,customer,f.now);

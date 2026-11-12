@@ -16,10 +16,13 @@ import {PERIDOT_CUSTOMER_POLICY,PERIDOT_RECEIPT_ID,REQUIRED_CUSTOMER_STEPS,creat
 import {assertSamePrepared,inspectCustomerSignature} from './signature.js';
 import {encodePrivate} from './encoding.js';
 import {reviewedPositionBindings} from './position-bindings.js';
+import {reviewedAtomicCloseBinding} from './atomic-binding.js';
 
 export interface PeridotCustomerDependencies extends CustomerChainDependencies {
  /** Must independently verify an actual full current Testnet round trip. No flag or credentials establish this proof. */
  verifyRoundTripProof?:()=>Promise<boolean>;
+ /** Must validate the deployed expired-swapped recovery path independently; missing proof blocks new customer exposure. */
+ verifySwappedRecoveryProof?:()=>Promise<boolean>;
  /** Root supplies further reviewed phase guards and exact metadata extractors; an absent phase never inherits another phase's guards. */
  bindings?:CustomerPhaseBindings;
 }
@@ -35,10 +38,10 @@ export function publicMarginAction(context:MarginStepContext,helper:PhasePrepare
 }
 export class PeridotCustomerAdapter implements MarginAdapter {
  readonly chain:PeridotCustomerChain;readonly bindings:CustomerPhaseBindings;
- constructor(private readonly deps:PeridotCustomerDependencies){this.chain=new PeridotCustomerChain(deps);this.bindings={...reviewedPhaseBindings(this.chain),...reviewedPositionBindings(this.chain),...deps.bindings};}
+ constructor(private readonly deps:PeridotCustomerDependencies){this.chain=new PeridotCustomerChain(deps);this.bindings={...reviewedPhaseBindings(this.chain),...reviewedPositionBindings(this.chain),...reviewedAtomicCloseBinding(this.chain),...deps.bindings};}
  async executionReady():Promise<boolean>{
   if(!REQUIRED_CUSTOMER_STEPS.every(step=>this.bindings[step]&&(['vault_deposit','margin_transfer','open_begin'].includes(step)||!!this.bindings[step]!.readEvidence&&!!this.bindings[step]!.publicAction)&&(!['close_swap','close_short_swap'].includes(step)||!!this.bindings[step]!.quoteTerms)))return false;
-  try{return await this.deps.verifyRoundTripProof?.()===true;}catch{return false;}
+  try{return await this.deps.verifyRoundTripProof?.()===true&&await this.deps.verifySwappedRecoveryProof?.()===true;}catch{return false;}
  }
  async termsFor(input:Parameters<typeof createCustomerTerms>[0],customer:CustomerContext):Promise<MarginTerms>{return createCustomerTerms(input,customer);}
  async creationReadyFor(terms:MarginTerms,customer:CustomerContext):Promise<boolean>{validateCustomerTerms(terms,customer);return this.executionReady();}
@@ -84,7 +87,7 @@ export class PeridotCustomerAdapter implements MarginAdapter {
   const baseline=this.baseline(context,context.baseline,customer),binding=this.bindings[context.step];if(!binding)return fail('PERIDOT_PHASE_EXTRACTOR_REQUIRED');
   const confirmed=await this.chain.confirmed(context.txHash,customer),prepared=this.actionFor(context,baseline.helper,customer);
   if(context.txHash!==prepared.signingHashHex)return invalid('STORED_CHAIN_HASH');inspectCustomerSignature(prepared,confirmed.transaction.toXDR(),customer);binding.inspectHistorical(baseline.helper,confirmed.transaction);
-  const positionId=context.step==='open_begin'?unsigned(baseline.helper.expectedPositionId,true).toString():context.workflow.positionId,after=await this.chain.snapshot(customer,positionId,['open_cancel','close_finish'].includes(context.step));
+  const positionId=context.step==='open_begin'?unsigned(baseline.helper.expectedPositionId,true).toString():context.workflow.positionId,after=await this.chain.snapshot(customer,positionId,['open_cancel','close_atomic','close_finish'].includes(context.step));
   if(binding.readEvidence)return binding.readEvidence(context,baseline,confirmed,after,customer);
   return knownMarginEvidence(context,baseline,confirmed,after,customer,this.chain.now());
  }
@@ -99,6 +102,17 @@ export class PeridotCustomerAdapter implements MarginAdapter {
    if(typeof quote.value!=='bigint'||quote.value<=0n||!Array.isArray(xp.value)||!Array.isArray(up.value)||xp.value.length!==2||up.value.length!==2||[...xp.value,...up.value].some(v=>typeof v!=='bigint'||v<=0n))return fail('PERIDOT_QUOTE_VALUES');
    const x=xp.value as bigint[],u=up.value as bigint[],numerator=input*u[0]!*x[1]!*9500n,denominator=u[1]!*x[0]!*10000n;
    return{terms:{minimumOutputAtomic:strictMarginMinimum(quote.value.toString(),((numerator+denominator-1n)/denominator).toString(),0)},expires_at:new Date(this.chain.now()+60000).toISOString()};
+  }
+  if(step==='close_atomic'){
+   const snapshot=await this.chain.snapshot(customer,unsigned(workflow.positionId,true).toString());
+   if(!snapshot.position||snapshot.position.status!=='Open'||unsigned(snapshot.marginDebtAtomic)<=0n)return fail('PERIDOT_OWNED_OPEN_POSITION_REQUIRED');
+   const rate=await this.chain.view(customer.walletAddress,P.native_vault.address,'get_exchange_rate');if(typeof rate.value!=='bigint'||rate.value<=0n)return fail('PERIDOT_NATIVE_EXCHANGE_RATE');
+   const input=unsigned(String(snapshot.position.position.collateral_ptokens),true)*rate.value/1000000n;
+   const [quote,xp,up]=await Promise.all([this.chain.view(customer.walletAddress,P.aquarius_pool.address,'estimate_swap',[nativeToScVal(0,{type:'u32'}),nativeToScVal(1,{type:'u32'}),nativeToScVal(input,{type:'u128'})]),this.chain.view(customer.walletAddress,P.troller.address,'get_price_usd',[new Address(P.native_token.address).toScVal()]),this.chain.view(customer.walletAddress,P.troller.address,'get_price_usd',[new Address(P.mock_usdt.address).toScVal()])]);
+   if(typeof quote.value!=='bigint'||quote.value<=0n||!Array.isArray(xp.value)||!Array.isArray(up.value)||xp.value.length!==2||up.value.length!==2||[...xp.value,...up.value].some(v=>typeof v!=='bigint'||v<=0n))return fail('PERIDOT_CLOSE_QUOTE_VALUES');
+   const x=xp.value as bigint[],u=up.value as bigint[],numerator=input*x[0]!*u[1]!*9500n,denominator=x[1]!*u[0]!*10000n,oracle=(numerator+denominator-1n)/denominator,debt=unsigned(snapshot.marginDebtAtomic,true),floor=oracle>debt?oracle:debt;
+   if(quote.value<=debt)return fail('PERIDOT_CLOSE_INSUFFICIENT_DEBT_OUTPUT');
+   return{terms:{minimumOutputAtomic:strictMarginMinimum(quote.value.toString(),floor.toString(),0)},expires_at:new Date(this.chain.now()+60000).toISOString()};
   }
   if(step==='close_swap'||step==='close_short_swap'){const quote=this.bindings[step]?.quoteTerms;if(!quote)return fail('PERIDOT_CLOSE_QUOTE_BINDING_REQUIRED');return quote(workflow,customer);}
   return{terms:{},expires_at:new Date(this.chain.now()+60000).toISOString()};
