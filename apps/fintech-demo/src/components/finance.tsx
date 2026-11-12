@@ -2,7 +2,6 @@
 import {StockActivity} from "./stock-activity";
 import {RobinhoodExecution} from "./robinhood-execution";
 import {GroupedAssets} from "./grouped-assets";
-import {RobinhoodFunding} from './robinhood-funding';
 import {defineChain} from 'viem';
 import {arbitrumSepolia,hyperliquidEvmTestnet} from 'viem/chains';
 import {createIdentityTokenResolver} from '@/lib/identity-token';
@@ -1166,7 +1165,7 @@ function FinanceShell({ page, auth, initialCategory }: { page: string; auth?: Au
                     Wallet balances
                   </span>
                 </div>
-                <BalanceTable valuation={walletValuation} balances={[...balances.map(b=>({...b,network_label:"Stellar",feature_label:"Wallet"})),...networkAssets.filter(b=>!(["TSLA","AMZN","PLTR","NFLX","AMD"].includes(b.asset?.code)&&typeof b.wallet_amount==="string"&&/^0+(?:\.0+)?$/.test(b.wallet_amount)))]} connected={!!session} />
+                <BalanceTable valuation={walletValuation} balances={[...balances.map(b=>({...b,network_label:"Stellar",feature_label:"Wallet"})),...networkAssets.filter(b=>!(["TSLA","AMZN","PLTR","NFLX","AMD"].includes(b.asset?.code)&&typeof b.wallet_amount==="string"&&/^0+(?:\.0+)?$/.test(b.wallet_amount)))]} connected={!!session} hideZeroBalances />
               </section>
               <section className="market-overview" aria-label="Market overview" data-testid="market-overview">
                 {overviewGroups.filter(group=>capability(group.module)?.enabled).map(group=>{
@@ -1318,7 +1317,6 @@ function FinanceShell({ page, auth, initialCategory }: { page: string; auth?: Au
                   </button>
                 ))}
               </div>
-              {category==="stocks"&&session&&<RobinhoodFunding key={`${session.customer_id}:${session.wallet_id}`} api={api} customerId={session.customer_id} walletId={session.wallet_id}/>}
               {category !== "crypto_spot" && category !== "unavailable" && (
                 <section className="card public-market-browser" aria-label="Available markets" data-testid="market-list">
                   <div className="section-heading"><h2>Find a market</h2><span className="small muted">{markets.length} markets</span></div>
@@ -1826,10 +1824,12 @@ function BalanceTable({
   valuation,
   balances,
   connected,
+  hideZeroBalances=false,
 }: {
   valuation?: WalletValuation|null;
   balances: any[];
   connected: boolean;
+  hideZeroBalances?: boolean;
 }) {
-  return <GroupedAssets valuation={valuation} balances={balances} connected={connected}/>;
+  return <GroupedAssets valuation={valuation} balances={balances} connected={connected} hideZeroBalances={hideZeroBalances}/>;
 }

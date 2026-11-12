@@ -1787,3 +1787,19 @@ footer strong {
 @media (prefers-reduced-motion: reduce) {
   .operation-spinner { animation: none; }
 }
+
+/* Stock direction and funding stay inside the order ticket. */
+.stock-order-sides button {transition:background-color .16s,color .16s,border-color .16s,box-shadow .16s;}
+.stock-order-sides .stock-side-buy {color:#137447;background:#edf8f1;border-color:#b5dfc6;}
+.stock-order-sides .stock-side-sell {color:#b52b35;background:#fff1f2;border-color:#ecc2c7;}
+.stock-order-sides .stock-side-buy[aria-pressed="true"] {color:#fff;background:#17844f;border-color:#17844f;box-shadow:0 2px 6px #17844f26;}
+.stock-order-sides .stock-side-sell[aria-pressed="true"] {color:#fff;background:#c43743;border-color:#c43743;box-shadow:0 2px 6px #c4374326;}
+.stock-order-sides .stock-side-buy:hover:not(:disabled) {background:#d9f0e2;}
+.stock-order-sides .stock-side-sell:hover:not(:disabled) {background:#f9dfe2;}
+.stock-order-sides .stock-side-buy[aria-pressed="true"]:hover:not(:disabled) {background:#116b3f;}
+.stock-order-sides .stock-side-sell[aria-pressed="true"]:hover:not(:disabled) {background:#a92934;}
+.stock-order-sides button:focus-visible {outline:2px solid currentColor;outline-offset:3px;}
+.stock-inline-funding {border-top:1px solid var(--line,#e6e8ec);padding-top:12px;margin-top:12px;}
+.stock-inline-funding-actions {display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;}
+.stock-inline-funding-actions .text-button {font-size:12px;padding:4px 0;}
+.stock-funding-received {font-size:12px;color:var(--muted,#737b8c);}
