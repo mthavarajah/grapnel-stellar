@@ -1,0 +1,89 @@
+{
+  "checked_at": "2026-11-12T23:04:05.461Z",
+  "network": "robinhood-testnet",
+  "chain_id": 46630,
+  "account": "0x80bd216c39869cec85e37ee37c020530d144799a",
+  "amount_spent_usdg": "1",
+  "tx_hash": "0x867f8d874b9995f1d06ebb4f7bac56b8e52dbee2436f82efd829fa06cce137a5",
+  "proof": {
+    "state": "confirmed",
+    "txHash": "0x867f8d874b9995f1d06ebb4f7bac56b8e52dbee2436f82efd829fa06cce137a5",
+    "blockNumber": "152519555",
+    "confirmations": "15",
+    "amountInBaseUnits": "1000000",
+    "amountOutBaseUnits": "1811216727459597909",
+    "balance_basis": "canonical_transfer_events",
+    "balanceDeltas": [
+      {
+        "token": "0x7E955252E15c84f5768B83c41a71F9eba181802F",
+        "deltaBaseUnits": "-1000000"
+      },
+      {
+        "token": "0xC9f9c86933092BbbfFF3CCb4b105A4A94bf3Bd4E",
+        "deltaBaseUnits": "1811216727459597909"
+      }
+    ],
+    "price_basis": "testnet_pool_quote"
+  },
+  "before": {
+    "block": "152519484",
+    "usdg": "59977318",
+    "tsla": "0"
+  },
+  "after": {
+    "block": "152519582",
+    "usdg": "58977318",
+    "tsla": "1811216727459597909"
+  },
+  "holdings_response": {
+    "asset_id": "robinhood-testnet:erc20:0xc9f9c86933092bbbfff3ccb4b105a4a94bf3bd4e",
+    "asset": {
+      "id": "robinhood-testnet:erc20:0xc9f9c86933092bbbfff3ccb4b105a4a94bf3bd4e",
+      "code": "TSLA",
+      "name": "TSLA",
+      "kind": "erc20",
+      "network": "robinhood-testnet",
+      "decimals": 18,
+      "verified": true
+    },
+    "balance_verified": true,
+    "wallet_amount": "1.811216727459597909",
+    "reserved": null,
+    "spendable": null,
+    "value_usd": null,
+    "valuation_basis": null,
+    "network_label": "Robinhood",
+    "feature_label": "Wallet",
+    "observed_at": "2026-11-12T23:04:02.000Z"
+  },
+  "customer_privy_execution_verified": false,
+  "note": "Controlled QA buy, retained as a positive holding. No customer funds or customer signer were used.",
+  "cleanup": {
+    "tx_hash": "0xc5f7572379438060839e3909aad73c3c16635d0de61bfff47e88bd221a4acfac",
+    "proof": {
+      "state": "confirmed",
+      "txHash": "0xc5f7572379438060839e3909aad73c3c16635d0de61bfff47e88bd221a4acfac",
+      "blockNumber": "152519884",
+      "confirmations": "26",
+      "amountInBaseUnits": "1811216727459597909",
+      "amountOutBaseUnits": "996146",
+      "balance_basis": "canonical_transfer_events",
+      "balanceDeltas": [
+        {
+          "token": "0xC9f9c86933092BbbfFF3CCb4b105A4A94bf3Bd4E",
+          "deltaBaseUnits": "-1811216727459597909"
+        },
+        {
+          "token": "0x7E955252E15c84f5768B83c41a71F9eba181802F",
+          "deltaBaseUnits": "996146"
+        }
+      ],
+      "price_basis": "testnet_pool_quote"
+    },
+    "after": {
+      "block": "152519923",
+      "usdg": "59973464",
+      "tsla": "0"
+    }
+  }
+}

@@ -42,3 +42,11 @@ A read-only server reconciler polls retained signed transaction hashes even afte
 Overview and Funds both hide confirmed zero-balance rows while preserving unknown observations. Confirmed Robinhood stock-token balances appear in both shared asset tables. Network holdings refresh after terminal stock events, every15seconds while visible, on tab visibility, and on page navigation. A refresh event received during a live read queues another read, avoiding a lost post-trade update.
 
 For the exact bytecode-verified Robinhood Testnet USDG asset, the network-assets response supplies reserved0 and available equal to the actual wallet balance. Its dollar display uses the explicit `testnet_settlement_unit` accounting convention (1 USD/unit), not a fetched market peg or a promise of redemption. Missing/unverified balances and other same-symbol assets retain unknown values. Stock valuations are not inferred from the stock token ticker.
+
+## Missing holdings / explicit buy follow-up — November 12, 23:04 UTC
+
+The reported customer accounts had zero TSLA in live Robinhood token reads. The retained customer records showed a confirmed USDG allowance and unsigned TSLA swap requests expired before broadcast, with no swap hash. An allowance completion is not a purchase. Buy/Sell now runs the exact approval stage when required, waits for independently confirmed approval on that same retained request, then prepares and authorizes the original exact-amount swap. Failed, uncertain, substituted, expired or unconfirmed approvals cannot advance to a purchase. Passive GET recovery never starts this sequence.
+
+Overview and Funds now show only confirmed positive holdings: both zero balances and unknown per-asset placeholder rows are hidden. Unknown sources are not relabeled as zero.
+
+A new controlled-QA buy spent1USDG and increased TSLA by1.811216727459597909 tokens. Receipt `0x867f8d874b9995f1d06ebb4f7bac56b8e52dbee2436f82efd829fa06cce137a5` and the exact positive response from the same `readNetworkAssets` source are preserved in `evidence/qa-tsla-buy-holdings.json`. A subsequent QA cleanup sell restored the original zero stock balance; its hash and effects are included. This proves current protocol execution and holdings-source reads, not the customer's Privy browser flow. That last acceptance test still requires a controllable signed-in customer session.
