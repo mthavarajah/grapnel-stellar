@@ -51,3 +51,11 @@ CREATE TABLE solver_credit_entries (
  FOREIGN KEY(business_id,customer_id,identity_wallet_id,solver_wallet_id) REFERENCES solver_wallets(business_id,customer_id,identity_wallet_id,id),
  FOREIGN KEY(business_id,customer_id,identity_wallet_id,request_id) REFERENCES solver_requests(business_id,customer_id,identity_wallet_id,id)
 );
+CREATE TABLE solver_capacity_reservations (
+ request_id uuid PRIMARY KEY REFERENCES solver_requests(id), business_id uuid NOT NULL,
+ customer_id uuid NOT NULL, identity_wallet_id uuid NOT NULL, master_address text NOT NULL,
+ amount_atomic6 numeric(78,0) NOT NULL CHECK(amount_atomic6>0),
+ state text NOT NULL CHECK(state IN ('active','consumed','released')),
+ observed_at timestamptz NOT NULL, created_at timestamptz NOT NULL DEFAULT now(),
+ FOREIGN KEY(business_id,customer_id,identity_wallet_id,request_id) REFERENCES solver_requests(business_id,customer_id,identity_wallet_id,id)
+);

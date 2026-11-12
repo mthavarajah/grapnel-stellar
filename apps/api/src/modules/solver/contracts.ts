@@ -30,6 +30,8 @@ export interface SolverRepository{
  authorizeMessage(scope:SolverScope,id:string,proof:SolverFreighterProof):Promise<void>;
  claimStellarSend(scope:SolverScope,id:string,txHash:string):Promise<boolean>;
  confirmDeposit(scope:SolverScope,id:string,proof:SolverPaymentProof):Promise<void>;
+ reserveMasterCapacity(scope:SolverScope,id:string,amountAtomic6:string,availableAtomic6:string,observedAt:string):Promise<void>;
+ releaseMasterCapacity(scope:SolverScope,id:string):Promise<void>;
  /** Master nonce namespace is global across all solver customers and action kinds. */
  reserveProviderAction(value:Omit<SolverProviderAction,'nonce'>):Promise<SolverProviderAction>;
  providerAction(scope:SolverScope,id:string):Promise<SolverProviderAction|null>;
@@ -39,6 +41,7 @@ export interface SolverRepository{
  confirmFunding(scope:SolverScope,requestId:string,proof:SolverCashProof):Promise<void>;
  reserveWithdrawal(scope:SolverScope,id:string,availableAtomic7:string,treasuryAvailableAtomic7:string):Promise<void>;
  confirmReturn(scope:SolverScope,requestId:string,proof:SolverCashProof):Promise<void>;
+ payoutAuthorized(scope:SolverScope,id:string):Promise<boolean>;
  preparePayout(scope:SolverScope,id:string,value:SolverPreparedTransaction,signedXdr:string,txHash:string):Promise<void>;
  confirmPayout(scope:SolverScope,id:string,proof:SolverPaymentProof):Promise<void>;
  availableCreditAtomic7(scope:SolverScope):Promise<string>;
