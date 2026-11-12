@@ -1,5 +1,5 @@
 import {HyperliquidTestnetReader} from './adapters/hyperliquid/index.js';
-import {perpetualMarketRows,perpetualHistory} from './modules/perpetuals/market-data.js';
+import {perpetualMarketRows,perpetualHistory,stockPerpetualRows} from './modules/perpetuals/market-data.js';
 import { readFile } from 'node:fs/promises';
 import type { Pool } from 'pg';
 import { z } from 'zod';
@@ -28,7 +28,7 @@ import {SoroswapDirectInspector,NATIVE_SAC} from './adapters/soroswap/inspector.
 import {SoroswapConfiguredInspector} from './adapters/soroswap/configured-inspector.js';
 import {STANDALONE_NATIVE_ROUTES,APPROVED_TOKEN_WASM} from './adapters/soroswap/direct-assets.js';
 import {SorobanTokenBalanceReader} from './adapters/stellar/token-balances.js';
-import {MarketDataService} from './modules/market-data/index.js';
+import {MarketDataService,CryptoReferenceHistoryReader} from './modules/market-data/index.js';
 import {registerMarketHistoryRoutes} from './modules/market-data/routes.js';
 import {registerWalletValuationRoutes,registerAccountValuationRoutes} from './modules/wallets/valuation-routes.js';
 import {AccountValuationService} from './modules/wallets/account-valuation.js';
@@ -118,11 +118,32 @@ export async function createRuntime(pool?:Pool,marginRoutes:RuntimeMarginBinding
  const gate1Passed=await hasGate1Proof(chain);
  const funding=new TestnetFundingAdapter({network:config.network,networkPassphrase:NETWORK_PASSPHRASE,treasurySecret:process.env.DEMO_TREASURY_SECRET,enabled:process.env.TESTNET_FUNDING_ENABLED==='true',gate1Passed,maxPerCustomerAtomic:BigInt(process.env.TESTNET_FUNDING_MAX_PER_CUSTOMER_ATOMIC??'250000000'),maxPerTenantAtomic:BigInt(process.env.TESTNET_FUNDING_MAX_PER_TENANT_ATOMIC??'1000000000'),maxGlobalAtomic:BigInt(process.env.TESTNET_FUNDING_MAX_GLOBAL_ATOMIC??'2000000000')});
  const hyperliquid=new HyperliquidTestnetReader();
- let perpsRows:ReturnType<typeof perpetualMarketRows>|undefined,perpsAt=0,perpsLoading:Promise<ReturnType<typeof perpetualMarketRows>>|undefined;
+ type PerpsRows=ReturnType<typeof perpetualMarketRows>;
+ let perpsRows:PerpsRows|undefined,perpsAt=0,perpsLoading:Promise<PerpsRows>|undefined;
+ const venueCache=new Map<string,{at:number;rows:PerpsRows}>(),venueLoading=new Map<string,Promise<PerpsRows>>();
  const readPerpetualMarkets=async()=>{
   if(perpsRows&&Date.now()-perpsAt<15000)return perpsRows;
-  perpsLoading??=hyperliquid.readMarkets().then(snapshot=>{perpsRows=perpetualMarketRows(snapshot.markets,snapshot.source.receivedAt);perpsAt=Date.now();return perpsRows;}).catch(error=>{perpsRows=undefined;throw error;}).finally(()=>{perpsLoading=undefined;});
+  perpsLoading??=(async()=>{
+   const catalog=await hyperliquid.readCatalog();let rows=perpetualMarketRows(catalog.markets,catalog.source.receivedAt);
+   try{const fast=await hyperliquid.readAllMarkets(),priced=perpetualMarketRows(fast.markets,fast.source.receivedAt),prices=new Map(priced.map(row=>[row.market_id,row]));
+    rows=rows.map(row=>prices.has(row.market_id)?{...row,...prices.get(row.market_id),settlement_asset:row.settlement_asset,source_category:row.source_category,asset_category:row.asset_category}:row);
+    for(const dex of ['', 'xyz'])venueCache.set(dex,{at:Date.now(),rows:priced.filter(row=>row.provider_dex===dex)});
+   }catch{/* Catalog stays metadata-only; a selected venue loads independently. */}
+   perpsRows=rows;perpsAt=Date.now();return rows;
+  })().catch(error=>{perpsRows=undefined;throw error;}).finally(()=>{perpsLoading=undefined;});
   return perpsLoading;
+ };
+ const readDetailedPerpetualMarket=async(id:string)=>{
+  const normalized=id.replace(':stocks:',':perps:'),row=(await readPerpetualMarkets()).find(entry=>entry.market_id===normalized);
+  if(!row||id.includes(':stocks:')&&!['equity','index'].includes(row.asset_category))throw new GrapnelError(404,'NOT_FOUND','Market not found');
+  let venue=venueCache.get(row.provider_dex);
+  if(!venue||Date.now()-venue.at>=15000){
+   let task=venueLoading.get(row.provider_dex);if(!task){task=hyperliquid.readDexMarkets(row.provider_dex).then(snapshot=>{const rows=perpetualMarketRows(snapshot.markets,snapshot.source.receivedAt);venueCache.set(row.provider_dex,{at:Date.now(),rows});return rows;}).finally(()=>{venueLoading.delete(row.provider_dex);});venueLoading.set(row.provider_dex,task);}
+   venue={at:Date.now(),rows:await task};
+  }
+  const priced=venue.rows.find(entry=>entry.market_id===normalized);if(!priced)throw new GrapnelError(404,'NOT_FOUND','Market not found');
+  const merged={...row,...priced,settlement_asset:row.settlement_asset,source_category:row.source_category,asset_category:row.asset_category};
+  return id.includes(':stocks:')?{...merged,market_id:id,asset_class:'stocks' as const,module:'trade.stocks' as const}:merged;
  };
  void readPerpetualMarkets().catch(()=>{/* Unavailable discovery cannot block wallet flows. */});
  const spotInspector=new SoroswapConfiguredInspector({quoteReadSource:funding.treasuryAddress??undefined});
@@ -163,6 +184,14 @@ export async function createRuntime(pool?:Pool,marginRoutes:RuntimeMarginBinding
   const nativeReserve=t0===NATIVE_SAC?r0:r1,tokenReserve=t0===NATIVE_SAC?r1:r0;
   return {market_id:id,price:fromAtomic(nativeReserve*10n**18n/tokenReserve,18),quote_symbol:'XLM',observed_at:new Date().toISOString(),source:`stellar-testnet:pool:${reg.pair}`};
  });
+ const cryptoReferences=new Map<string,'XLM'|'BTC'|'XRP'|'USDC'>([[XLM.id,'XLM'],[SPOT_USDC_ID,'USDC'],
+  ...STANDALONE_NATIVE_ROUTES.filter(route=>['BTC','XRP','USDC'].includes(route.code)).map(route=>[`stellar-testnet:soroban:${route.contract}`,route.code as 'BTC'|'XRP'|'USDC'] as [string,'BTC'|'XRP'|'USDC'])]);
+ const cryptoHistory=new CryptoReferenceHistoryReader({resolveMarket:async id=>{
+  const market=spot.market(id),profile=await marketProfile(id);
+  // Stablecoin-quoted XLM charts show XLM; other direct pairs show the non-XLM asset.
+  const assetId=[market.asset_in.id,market.asset_out.id].some(asset=>cryptoReferences.get(asset)==='USDC')?XLM.id:profile.base_asset_id;
+  const symbol=cryptoReferences.get(assetId);return symbol?{asset_id:assetId,reference_symbol:symbol}:null;
+ }});
  const priceForAsset=async(assetId:string)=>{
   const native=await referencePrices('XLM');if(!native)return null;
   if(assetId===XLM.id)return native;
@@ -204,7 +233,7 @@ export async function createRuntime(pool?:Pool,marginRoutes:RuntimeMarginBinding
   capabilities:{
    'capital.lending':readBlendReadiness,
    'trade.spot':()=>spotReadiness.capability(),
-   'trade.stocks':stocksReadiness,
+   'trade.stocks':async()=>({execution_status:perpsRows?'discovery_only' as const:'blocked' as const,reason:'HYPERLIQUID_FUNDING_AND_EXECUTION_PROOF_REQUIRED',actions:perpsRows?['read_markets']:[]}),
    'trade.perps':async()=>{
     if(Date.now()-perpsAt>15000&&!perpsLoading)void readPerpetualMarkets().catch(()=>{});
     return {execution_status:perpsRows?'discovery_only' as const:'blocked' as const,reason:'HYPERLIQUID_FUNDING_AND_EXECUTION_PROOF_REQUIRED',actions:perpsRows?['read_markets']:[]};
@@ -223,8 +252,12 @@ export async function createRuntime(pool?:Pool,marginRoutes:RuntimeMarginBinding
    });
    await registerMarketHistoryRoutes(app,{requireBusiness,success,
     perps:(id,range)=>perpetualHistory(hyperliquid,readPerpetualMarkets,id,range),
-    stocks:(id,range)=>stocks.history(id,range),
-    spot:async(id,range)=>{const profile=await marketProfile(id);return {...await marketData.history(profile.history_market_id??id,range),market_id:id,base_asset_id:profile.base_asset_id,base_symbol:profile.base_symbol};}
+    stocks:(id,range)=>id.startsWith('hyperliquid-testnet:stocks:')?perpetualHistory(hyperliquid,readPerpetualMarkets,id,range):stocks.history(id,range),
+    spot:async(id,range)=>{const profile=await marketProfile(id);
+     try{const history=await cryptoHistory.history(id,range);return {...history,base_asset_id:history.related_asset_id,base_symbol:history.reference_symbol};}
+     catch(error){if(!(error instanceof GrapnelError)||!['CRYPTO_REFERENCE_UNAVAILABLE','PROVIDER_RATE_LIMITED'].includes(error.code))throw error;
+      return {...await marketData.history(profile.history_market_id??id,range),market_id:id,base_asset_id:profile.base_asset_id,base_symbol:profile.base_symbol,price_basis:'testnet_pool_observation'};}
+    }
    });
    app.get('/v1/capital/lending/earnings',async request=>{
     await requireBusiness(request,'capital.lending');
@@ -268,7 +301,8 @@ export async function createRuntime(pool?:Pool,marginRoutes:RuntimeMarginBinding
    await registerMarginFundingRoutes(app,{operations,...marginBindings.collateralFunding});
    await registerLendingRoutes(app,{adapter:blend,borrowing,operations,balanceReader:address=>chain.getClassicBalances(address)});
    await registerSpotRoutes(app,{service:new SpotService(spot,db,operations,createSpotReservation(operations,readSpotBalances)),refreshReadiness:()=>spotReadiness.refresh(),requireBusiness,requireCustomer,success,
-    readDiscoveryMarkets:async category=>category==='perps'?readPerpetualMarkets():(await stocks.catalog()).map(market=>({...market,underlying:{symbol:market.symbol,name:market.name}})),
+    readDiscoveryMarkets:async category=>category==='perps'?readPerpetualMarkets():stockPerpetualRows(await readPerpetualMarkets()),
+    readDiscoveryMarket:readDetailedPerpetualMarket,
     readPositions:async customer=>({wallet_holdings:await wallets.balances(customer.businessId,customer.walletId),venue_positions:[]})});
    await registerFundingRoutes(app,{service:new FundingService(funding,operations),requireBusiness,requireCustomer,success});
   }

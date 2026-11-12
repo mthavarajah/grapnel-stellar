@@ -174,7 +174,7 @@ type MarketHistory = {
   latest_price:string|null; as_of:string|null;
   points:{timestamp:string;price:string}[];
   change_absolute:string|null; change_percent:string|null;
-  price_basis?:string; source_url?:string; interval?:string;
+  price_basis?:string; reference_symbol?:string; source_url?:string; interval?:string;
   metrics?:{day_high?:string|null;day_low?:string|null;day_volume?:string|null;fifty_two_week_high?:string|null;fifty_two_week_low?:string|null;previous_close?:string|null;market_time?:string|null};
 };
 type OverviewSection = {id:"spot"|"perps"|"stocks"|"lending";label:string;items:{symbol:string;name:string;value:string;unit:"USD"|"percent";unit_detail?:string;as_of:string}[];available:boolean};
@@ -1344,7 +1344,7 @@ function FinanceShell({ page, auth, initialCategory }: { page: string; auth?: Au
                   <section className="market-price-card" aria-label="Asset price">
                     <div className="market-asset-heading">
                       {marketHistory&&<AssetLogo symbol={marketHistory.base_symbol} name={swapAssetMap.get(marketHistory.base_asset_id)?.name} assetId={marketHistory.base_asset_id} size={48} />}
-                      <div><h2>{marketHistory ? (swapAssetMap.get(marketHistory.base_asset_id)?.name ?? marketHistory.base_symbol) : "Asset price"}</h2><span>{marketHistory?.base_symbol??""}</span></div>
+                      <div><h2>{marketHistory ? (swapAssetMap.get(marketHistory.base_asset_id)?.name ?? marketHistory.base_symbol) : "Asset price"}</h2><span>{marketHistory?.price_basis==="underlying_reference"?`${marketHistory.base_symbol} reference`:marketHistory?.base_symbol??""}</span></div>
                     </div>
                     <div className="market-price-heading"><strong>{marketHistory?.latest_price ? formatTokenAmount(marketHistory.latest_price) : "—"}</strong><span>{marketHistory?.latest_price ? `${marketHistory.quote_symbol} per ${marketHistory.base_symbol}` : "Price unavailable"}</span></div>
                     <div className="market-price-change" aria-label="Price change"><strong>{marketHistory&&marketHistory.points.length>1?displayChange(marketHistory.change_absolute):"—"}</strong>{marketHistory?.change_absolute&&marketHistory.points.length>1&&<span>{marketHistory.quote_symbol}</span>}<span>({marketHistory&&marketHistory.points.length>1?displayChange(marketHistory.change_percent):"—"}{marketHistory?.change_percent&&marketHistory.points.length>1?"%":""})</span></div>

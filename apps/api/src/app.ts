@@ -26,7 +26,7 @@ const metadata:Record<ModuleId,{name:string;provider:string;description:string}>
  'capital.testnet_funding':{name:'Testnet Funding & Return',provider:'stellar',description:'Treasury-backed Testnet token transfers'},
  'capital.lending':{name:'Lending, Borrowing & Yield',provider:'blend',description:'Variable-rate Testnet lending positions'},
  'trade.spot':{name:'Crypto',provider:'soroswap',description:'Stellar Testnet swaps'},
- 'trade.stocks':{name:'Tokenized Stocks',provider:'sodax',description:'Provider stock route is mainnet-only; Testnet execution is blocked'},
+ 'trade.stocks':{name:'Stocks',provider:'hyperliquid',description:'Stock and index perpetuals on Hyperliquid Testnet'},
  'trade.perps':{name:'Perpetuals',provider:'hyperliquid',description:'USDC-funded perpetual futures on Hyperliquid Testnet'},
 };
 export async function buildApp(options:AppOptions={}):Promise<FastifyInstance>{

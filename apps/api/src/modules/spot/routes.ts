@@ -9,6 +9,7 @@ export interface SpotRouteDependencies {
  requireCustomer(request:FastifyRequest,customerId:string,walletId?:string):Promise<CustomerContext>;
  success(request:FastifyRequest,data:unknown):unknown;
  readPositions?(customer:CustomerContext):Promise<unknown>;
+ readDiscoveryMarket?(id:string):Promise<unknown>;
  readDiscoveryMarkets?(category:'stocks'|'perps'):Promise<unknown[]>;
 }
 const key=(request:FastifyRequest)=>typeof request.headers['idempotency-key']==='string'?request.headers['idempotency-key']:'';
@@ -21,6 +22,11 @@ export async function registerSpotRoutes(app:FastifyInstance,deps:SpotRouteDepen
   return deps.success(request,query.asset_class==='crypto_spot'?deps.service.adapter.markets():await deps.readDiscoveryMarkets?.(query.asset_class)??[]);
  });
  app.get<{Params:{id:string}}>('/v1/trade/markets/:id',async request=>{
+  if(/^hyperliquid-testnet:(?:perps|stocks):(?:0|[1-9]\d{0,8})$/.test(request.params.id)){
+   await deps.requireBusiness(request,request.params.id.includes(':stocks:')?'trade.stocks':'trade.perps');
+   if(!deps.readDiscoveryMarket)throw new GrapnelError(404,'NOT_FOUND','Market not found');
+   return deps.success(request,await deps.readDiscoveryMarket(request.params.id));
+  }
   await deps.requireBusiness(request,'trade.spot');
   await deps.refreshReadiness?.();
   const market=deps.service.adapter.markets().find(m=>m.market_id===request.params.id);
