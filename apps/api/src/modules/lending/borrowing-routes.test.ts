@@ -22,13 +22,13 @@ beforeEach(()=>{vi.mocked(requireBusiness).mockResolvedValue({businessId:custome
 afterEach(async()=>{vi.resetAllMocks();await Promise.all(apps.splice(0).map(app=>app.close()));});
 async function harness(options:{adapter?:boolean;pending?:boolean;changedAction?:boolean;position?:BorrowingPosition;prepareError?:Error;reused?:boolean}={}){
  const app=Fastify();apps.push(app);app.setErrorHandler((error,_request,reply)=>reply.code(error instanceof GrapnelError?error.statusCode:error instanceof Error&&error.name==='ZodError'?422:500).send({error:{code:error instanceof GrapnelError?error.code:error instanceof Error?error.name:'Unknown'}}));
- const query=vi.fn(async(sql:string)=>({rows:[],rowCount:sql.startsWith('SELECT id FROM operations')&&options.pending?1:0}));
+ const query=vi.fn(async(sql:string,params:unknown[]=[])=>({rows:[],rowCount:sql.startsWith('SELECT id FROM operations')&&options.pending?1:0}));
  const reserveFunds=vi.fn(async()=>{}),setPrepared=vi.fn(async()=>{}),operationId=randomUUID();
  const createIdempotent=vi.fn(async(args:unknown,prepare:(client:unknown,id:string)=>Promise<void>)=>{
   if(!options.reused)await prepare({query},operationId);
   return {created:!options.reused,operation:{operation_id:operationId,status:'awaiting_customer_authorization',tx_hash:null}};
  });
- const adapter:BorrowingAdapter={read:vi.fn(async()=>({pool_id:BORROW_POOL_ID,as_of:new Date().toISOString(),assets:[]})),positions:vi.fn(async()=>[options.position??position()]),prepare:vi.fn(async(action,request)=>{if(options.prepareError)throw options.prepareError;return prepared(request.operationId,options.changedAction?'blend.supply':`blend.${action}`);}),prepareCollateral:vi.fn(async(action,request)=>prepared(request.operationId,`blend.borrow_collateral_${action}`))};
+ const adapter:BorrowingAdapter={read:vi.fn(async()=>({pool_id:BORROW_POOL_ID,as_of:new Date().toISOString(),assets:[]})),positions:vi.fn(async()=>[options.position??position()]),prepare:vi.fn(async(action,request)=>{if(options.prepareError)throw options.prepareError;const value=prepared(request.operationId,options.changedAction?'blend.supply':`blend.${action}`);return {...value,summary:{...value.summary,amount:request.amount}};}),prepareCollateral:vi.fn(async(action,request)=>prepared(request.operationId,`blend.borrow_collateral_${action}`))};
  const balances=vi.fn(async()=>[balance()]);
  await registerBorrowingRoutes(app,{borrowing:options.adapter===false?undefined:adapter,operations:{createIdempotent,reserve:reserveFunds,setPrepared} as unknown as OperationService,balanceReader:balances});
  return {app,adapter,createIdempotent,reserveFunds,setPrepared,query,balances};
@@ -40,6 +40,13 @@ describe('Borrow API authorization and durable preparation (offline fixture)',()
  it('rejects foreign customer before provider or operation creation',async()=>{const f=await harness();vi.mocked(requireCustomer).mockRejectedValue(new GrapnelError(404,'NOT_FOUND','Foreign customer'));expect((await send(f.app)).statusCode).toBe(404);expect(f.adapter.prepare).not.toHaveBeenCalled();expect(f.createIdempotent).not.toHaveBeenCalled();});
  it('fails closed without the dedicated borrowing adapter, never old-pool fallback',async()=>{const f=await harness({adapter:false});expect((await send(f.app)).statusCode).toBe(409);expect(f.createIdempotent).not.toHaveBeenCalled();});
  it('binds idempotency, operation, baseline and fee reservation to the verified tenant wallet',async()=>{const f=await harness();const response=await send(f.app);expect(response.statusCode).toBe(202);expect(response.json().data).toMatchObject({status:'awaiting_customer_authorization',tx_hash:null});expect(f.createIdempotent).toHaveBeenCalledWith(expect.objectContaining({businessId:customer.businessId,customerId:customer.customerId,walletId:customer.walletId,module:'capital.lending',type:'blend.borrow',route:'/v1/capital/lending/borrow',idempotencyKey:'offline-request',request:input}),expect.any(Function));expect(f.reserveFunds).toHaveBeenCalledWith(expect.anything(),expect.objectContaining({assetId:XLM.id,amountAtomic:100000n,spendableAtomic:980000000n}));const update=f.query.mock.calls.find(call=>call[0].startsWith('UPDATE operations'));expect(update).toBeDefined();expect(f.setPrepared).toHaveBeenCalledOnce();});
+ it('persists a full-repayment intent from the reviewed maximum without accepting a new browser flag',async()=>{
+  const f=await harness({position:{...position(),borrowed:'1.0000000',debt_tokens:'10000000'}});
+  expect((await send(f.app,'/v1/capital/lending/repay',{...input,amount:'1.0010002'})).statusCode).toBe(202);
+  const update=f.query.mock.calls.find(call=>call[0].startsWith('UPDATE operations'));
+  expect(JSON.parse(update![1]![2] as string).blend_borrowing_baseline).toMatchObject({repay_all:true,borrowed:'1.0000000'});
+  const negative=await harness();expect((await send(negative.app,'/v1/capital/lending/repay',{...input,repay_all:true})).statusCode).toBe(422);expect(negative.adapter.prepare).not.toHaveBeenCalled();
+ });
  it('reuses the durable operation without preparing or reserving twice',async()=>{const f=await harness({reused:true});expect((await send(f.app)).statusCode).toBe(202);expect(f.adapter.prepare).not.toHaveBeenCalled();expect(f.reserveFunds).not.toHaveBeenCalled();});
  it('rejects extra browser pool/identity overrides before provider calls',async()=>{const f=await harness();expect((await send(f.app,undefined,{...input,pool_id:'arbitrary'})).statusCode).toBe(422);expect(f.createIdempotent).not.toHaveBeenCalled();});
  it('does not reserve or prepare when a prior operation remains pending',async()=>{const f=await harness({pending:true});expect((await send(f.app)).statusCode).toBe(409);expect(f.adapter.prepare).not.toHaveBeenCalled();expect(f.reserveFunds).not.toHaveBeenCalled();});

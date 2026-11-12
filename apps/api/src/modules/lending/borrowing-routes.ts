@@ -49,6 +49,7 @@ export async function registerBorrowingRoutes(app:FastifyInstance,deps:Borrowing
    const positions=await adapter.positions(customer),matches=positions.filter(p=>p.market_id===body.market_id&&p.asset_id===body.asset_id&&p.pool_contract_id===BORROW_POOL_ID);
    if(matches.length!==1)throw new GrapnelError(409,'POSITION_BASELINE_UNAVAILABLE','A unique verified borrowing position baseline is required');
    const balances=await deps.balanceReader(customer.walletAddress),baseline=createBorrowBaseline(matches[0]!,balances,customer.walletAddress);
+   if(action==='repay'&&toAtomic(body.amount,7)>(/^0(?:\.0+)?$/.test(baseline.borrowed)?0n:toAtomic(baseline.borrowed,7)))baseline.repay_all=true;
    for(const item of plan){
     const matches=balances.filter(balance=>balance.asset_id===item.assetId&&balance.source==='stellar_horizon_testnet');
     if(matches.length!==1)throw new GrapnelError(409,'BALANCE_UNAVAILABLE','A unique confirmed fee and principal balance is required');

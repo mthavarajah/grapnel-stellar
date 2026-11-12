@@ -26,7 +26,7 @@ const amountAtomic=(value:string)=>/^0(?:\.0+)?$/.test(value)?0n:toAtomic(value,
 export const BorrowBaselineSchema=z.object({
  asset_id:z.enum([XLM.id,BLEND_USDC_ASSET_ID]),market_id:z.string().min(1),pool_contract_id:z.literal(BORROW_POOL_ID),
  reserve_contract_id:z.string(),wallet_address:z.string().refine(StrKey.isValidEd25519PublicKey),wallet_amount:AmountSchema,native_wallet_amount:AmountSchema,native_as_of:z.string().datetime(),
- borrowed:AmountSchema,collateral:AmountSchema,debt_tokens:uint,collateral_tokens:uint,debt_rate:positive,collateral_rate:positive,
+ borrowed:AmountSchema,collateral:AmountSchema,repay_all:z.boolean().optional(),debt_tokens:uint,collateral_tokens:uint,debt_rate:positive,collateral_rate:positive,
  rate_decimals:z.literal(12),reserve_index:z.number().int().min(0).max(31),as_of:z.string().datetime(),position_as_of:z.string().datetime(),position_ledger:z.number().int().positive(),
 }).strict().superRefine((value,ctx)=>{
  if(value.reserve_contract_id!==reserveFor(value.asset_id)||value.market_id!==`stellar-testnet:blend:${BORROW_POOL_ID}:${value.reserve_contract_id}`)
@@ -60,9 +60,9 @@ const ceil=(n:bigint,d:bigint)=>(n+d-1n)/d;
 export interface BorrowTransactionEvidence {
  tx_hash:string;confirmed_ledger:number;pool_contract_id:string;reserve_contract_id:string;wallet_address:string;reserve_index:number;
  debt_tokens_before:string;debt_tokens_after:string;collateral_tokens_before:string;collateral_tokens_after:string;debt_rate:string;collateral_rate:string;
- other_positions_unchanged:boolean;
+ other_positions_unchanged:boolean;repay_incoming_atomic?:string;repay_refund_atomic?:string;repay_principal_atomic?:string;repay_debt_tokens_burned?:string;
 }
-const evidenceSchema=z.object({tx_hash:z.string().regex(/^[a-f0-9]{64}$/),confirmed_ledger:z.number().int().positive(),pool_contract_id:z.literal(BORROW_POOL_ID),reserve_contract_id:z.string(),wallet_address:z.string(),reserve_index:z.number().int().min(0).max(31),debt_tokens_before:uint,debt_tokens_after:uint,collateral_tokens_before:uint,collateral_tokens_after:uint,debt_rate:positive,collateral_rate:positive,other_positions_unchanged:z.literal(true)}).strict();
+const evidenceSchema=z.object({tx_hash:z.string().regex(/^[a-f0-9]{64}$/),confirmed_ledger:z.number().int().positive(),pool_contract_id:z.literal(BORROW_POOL_ID),reserve_contract_id:z.string(),wallet_address:z.string(),reserve_index:z.number().int().min(0).max(31),debt_tokens_before:uint,debt_tokens_after:uint,collateral_tokens_before:uint,collateral_tokens_after:uint,debt_rate:positive,collateral_rate:positive,other_positions_unchanged:z.literal(true),repay_incoming_atomic:uint.optional(),repay_refund_atomic:uint.optional(),repay_principal_atomic:uint.optional(),repay_debt_tokens_burned:uint.optional()}).strict();
 export interface BorrowDeltaInput {
  action:BorrowingAction;baseline:unknown;request:{asset_id?:unknown;market_id?:unknown;amount?:unknown};walletAddress:string;
  positions:BorrowingPosition[];balances:WalletBalance[];confirmedLedger:number;txHash:string;feeStroops:string;transactionEvidence:unknown;now?:number;
@@ -99,11 +99,15 @@ export function inspectBorrowingDeltas(input:BorrowDeltaInput):{verified:boolean
   if(input.action==='borrow')verified=grossWalletDelta===requested&&debtDelta>=requested&&debtDelta-requested<=debtTolerance&&e.collateral_tokens_before===e.collateral_tokens_after;
   if(input.action==='repay'){
    const paid=-grossWalletDelta,reduction=-debtDelta;
-   verified=paid>0n&&paid===(requested<debtBefore?requested:debtBefore)&&reduction>0n&&reduction<=paid&&paid-reduction<=debtTolerance&&e.collateral_tokens_before===e.collateral_tokens_after;
+   const full=b.repay_all===true||requested>=debtBefore;
+   verified=paid>0n&&paid===(requested<debtBefore?requested:debtBefore)&&reduction>0n&&reduction<=paid&&paid-reduction<=debtTolerance&&e.collateral_tokens_before===e.collateral_tokens_after
+    &&e.repay_incoming_atomic===requested.toString()&&e.repay_refund_atomic===(requested-paid).toString()&&e.repay_principal_atomic===paid.toString()
+    &&e.repay_debt_tokens_burned===(BigInt(e.debt_tokens_before)-BigInt(e.debt_tokens_after)).toString()
+    &&(!full||(e.debt_tokens_after==='0'&&p.debt_tokens==='0'&&amountAtomic(p.borrowed)===0n));
   }
   if(input.action==='collateral_supply')verified=grossWalletDelta===-requested&&collateralDelta>0n&&collateralDelta<=requested&&requested-collateralDelta<=collateralTolerance&&e.debt_tokens_before===e.debt_tokens_after;
   if(input.action==='collateral_withdraw')verified=grossWalletDelta===requested&&collateralDelta<0n&&-collateralDelta>=grossWalletDelta&&-collateralDelta-grossWalletDelta<=collateralTolerance&&e.debt_tokens_before===e.debt_tokens_after;
-  return {verified,result:{blend_borrowing_verification:{verified,operation:input.action,tx_hash:input.txHash,asset_id:b.asset_id,pool_contract_id:b.pool_contract_id,reserve_contract_id:b.reserve_contract_id,requested_atomic:requested.toString(),wallet_before:b.wallet_amount,wallet_after:balance.wallet_amount,wallet_principal_delta:fromAtomic(grossWalletDelta,7),debt_principal_delta:fromAtomic(debtDelta,7),collateral_principal_delta:fromAtomic(collateralDelta,7),debt_tokens_before:e.debt_tokens_before,debt_tokens_after:e.debt_tokens_after,collateral_tokens_before:e.collateral_tokens_before,collateral_tokens_after:e.collateral_tokens_after,actual_fee_stroops:input.feeStroops,confirmed_ledger:input.confirmedLedger,observed_ledger:p.as_of_ledger,observed_at:new Date(now).toISOString()}}};
+  return {verified,result:{blend_borrowing_verification:{verified,operation:input.action,tx_hash:input.txHash,asset_id:b.asset_id,pool_contract_id:b.pool_contract_id,reserve_contract_id:b.reserve_contract_id,requested_atomic:requested.toString(),repay_all:b.repay_all??false,repay_incoming_atomic:e.repay_incoming_atomic??null,repay_refund_atomic:e.repay_refund_atomic??null,wallet_before:b.wallet_amount,wallet_after:balance.wallet_amount,wallet_principal_delta:fromAtomic(grossWalletDelta,7),debt_principal_delta:fromAtomic(debtDelta,7),collateral_principal_delta:fromAtomic(collateralDelta,7),debt_tokens_before:e.debt_tokens_before,debt_tokens_after:e.debt_tokens_after,collateral_tokens_before:e.collateral_tokens_before,collateral_tokens_after:e.collateral_tokens_after,actual_fee_stroops:input.feeStroops,confirmed_ledger:input.confirmedLedger,observed_ledger:p.as_of_ledger,observed_at:new Date(now).toISOString()}}};
  }catch{return reject('BORROW_OBSERVATION_INVALID');}
 }
 
@@ -146,6 +150,32 @@ function sameOtherPositions(before:PositionMaps,after:PositionMaps,index:number,
  }
  return true;
 }
+function repaymentEvents(meta:xdr.TransactionMeta,b:BorrowBaseline):Pick<BorrowTransactionEvidence,'repay_incoming_atomic'|'repay_refund_atomic'|'repay_principal_atomic'|'repay_debt_tokens_burned'>{
+ const events=meta.switch()===4?meta.v4().operations()[0]!.events():meta.switch()===3?meta.v3().sorobanMeta()?.events():undefined;
+ if(!events)throw Error('Missing repayment contract events');
+ let incoming:bigint|undefined,refund:bigint|undefined,principal:bigint|undefined,burned:bigint|undefined;
+ for(const event of events){
+  if(event.type().name!=='contract'||event.body().switch()!==0||!event.contractId())continue;
+  const id=event.contractId();if(!Buffer.isBuffer(id))throw Error('Invalid event contract hash');
+  const contract=StrKey.encodeContract(id),body=event.body().v0(),topics=body.topics();
+  if(contract===b.reserve_contract_id&&topics[0]?.switch().name==='scvSymbol'&&topics[0]!.sym().toString()==='transfer'){
+   if(![3,4].includes(topics.length)||topics[1]!.switch().name!=='scvAddress'||topics[2]!.switch().name!=='scvAddress'||body.data().switch().name!=='scvI128')throw Error('Invalid repayment transfer event');
+   const from=Address.fromScAddress(topics[1]!.address()).toString(),to=Address.fromScAddress(topics[2]!.address()).toString(),value=scValToNative(body.data());
+   if(typeof value!=='bigint'||value<=0n||value>=(1n<<127n))throw Error('Invalid repayment transfer amount');
+   if(from===b.wallet_address&&to===b.pool_contract_id){if(incoming!==undefined)throw Error('Duplicate repayment transfer');incoming=value;}
+   else if(from===b.pool_contract_id&&to===b.wallet_address){if(refund!==undefined)throw Error('Duplicate refund transfer');refund=value;}
+   else throw Error('Unexpected repayment token participant');
+  }
+  if(contract===b.pool_contract_id&&topics[0]?.switch().name==='scvSymbol'&&topics[0]!.sym().toString()==='repay'){
+   if(topics.length!==3||scValToNative(topics[1]!)!==b.reserve_contract_id||scValToNative(topics[2]!)!==b.wallet_address||body.data().switch().name!=='scvVec'||body.data().vec()?.length!==2||principal!==undefined)throw Error('Invalid pool repayment event');
+   const values=body.data().vec()!;if(values.some(value=>value.switch().name!=='scvI128'))throw Error('Invalid repayment event units');
+   const parsed=values.map(scValToNative);if(parsed.some(value=>typeof value!=='bigint'||value<=0n||value>=(1n<<127n)))throw Error('Invalid repayment principal or tokens');
+   principal=parsed[0] as bigint;burned=parsed[1] as bigint;
+  }
+ }
+ if(incoming===undefined||principal===undefined||burned===undefined)throw Error('Missing exact repayment/refund evidence');
+ return {repay_incoming_atomic:incoming.toString(),repay_refund_atomic:(refund??0n).toString(),repay_principal_atomic:principal.toString(),repay_debt_tokens_burned:burned.toString()};
+}
 /** Extract from the exact successful RPC resultMetaXdr already bound to the known transaction hash.
  * Both V3 and V4 transaction metadata expose operation-local entry changes. No legacy/future ABI fallback. */
 export function extractBorrowTransactionEvidence(input:{meta:xdr.TransactionMeta;txHash:string;confirmedLedger:number;baseline:unknown;action:BorrowingAction}):BorrowTransactionEvidence|null{
@@ -180,7 +210,7 @@ export function extractBorrowTransactionEvidence(input:{meta:xdr.TransactionMeta
   if(!sameOtherPositions(before,after,b.reserve_index,input.action))return null;
   const e={tx_hash:input.txHash,confirmed_ledger:input.confirmedLedger,pool_contract_id:b.pool_contract_id,reserve_contract_id:b.reserve_contract_id,wallet_address:b.wallet_address,reserve_index:b.reserve_index,
    debt_tokens_before:(before.liabilities.get(b.reserve_index)??0n).toString(),debt_tokens_after:(after.liabilities.get(b.reserve_index)??0n).toString(),
-   collateral_tokens_before:(before.collateral.get(b.reserve_index)??0n).toString(),collateral_tokens_after:(after.collateral.get(b.reserve_index)??0n).toString(),...rates(reserveAfter),other_positions_unchanged:true};
+   collateral_tokens_before:(before.collateral.get(b.reserve_index)??0n).toString(),collateral_tokens_after:(after.collateral.get(b.reserve_index)??0n).toString(),...rates(reserveAfter),other_positions_unchanged:true,...(input.action==='repay'?repaymentEvents(input.meta,b):{})};
   return evidenceSchema.parse(e);
  }catch{return null;}
 }

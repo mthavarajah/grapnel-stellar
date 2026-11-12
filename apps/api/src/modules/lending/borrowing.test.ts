@@ -1,5 +1,5 @@
 import {describe,expect,it} from 'vitest';
-import {Asset,Keypair,Address,nativeToScVal,xdr} from '@stellar/stellar-sdk';
+import {Asset,Keypair,Address,StrKey,nativeToScVal,xdr} from '@stellar/stellar-sdk';
 import {NETWORK_PASSPHRASE,XLM,fromAtomic,type WalletBalance} from '@grapnel/contracts';
 import {BLEND_USDC_ASSET_ID,BLEND_USDC_ISSUER} from '../../adapters/blend/usdc-inspector.js';
 import {BORROW_POOL_ID,BorrowBaselineSchema,borrowingReservationPlan,createBorrowBaseline,extractBorrowTransactionEvidence,inspectBorrowingDeltas,type BorrowingAction,type BorrowingPosition,type BorrowTransactionEvidence} from './borrowing.js';
@@ -33,9 +33,25 @@ describe('Borrowing principal settlement (offline metadata and balance observati
   const f=observation();for(const change of [{positions:[{...f.positions[0]!,as_of_ledger:100}]},{balances:[{...native,source:'simulation'}]},{walletAddress:Keypair.random().publicKey()},{feeStroops:'0'},{positions:[{...f.positions[0]!,as_of:new Date(now-31000).toISOString()}]}])expect(inspectBorrowingDeltas({...f,...change} as never).verified).toBe(false);
  });
  it('verifies a capped full repayment but rejects an unrequested partial repayment',()=>{
-  const b={...baseline,debt_tokens:'10000000',borrowed:'1'},p={...pos,debt_tokens:'0',borrowed:'0',as_of_ledger:102},e={...evidence,debt_tokens_before:'10000000',debt_tokens_after:'0'};
+  const b={...baseline,debt_tokens:'10000000',borrowed:'1'},p={...pos,debt_tokens:'0',borrowed:'0',as_of_ledger:102},e={...evidence,debt_tokens_before:'10000000',debt_tokens_after:'0',repay_incoming_atomic:'20000000',repay_refund_atomic:'10000000',repay_principal_atomic:'10000000',repay_debt_tokens_burned:'10000000'};
   expect(inspectBorrowingDeltas({...observation(),action:'repay',baseline:b,request:{...observation().request,amount:'2'},positions:[p],balances:[{...native,wallet_amount:'98.9900000'}],transactionEvidence:e}).verified).toBe(true);
   expect(inspectBorrowingDeltas({...observation(),action:'repay',baseline:b,positions:[{...p,debt_tokens:'5000000'}],balances:[{...native,wallet_amount:'99.4900000'}],transactionEvidence:{...e,debt_tokens_after:'5000000'}}).verified).toBe(false);
+ });
+ it('verifies repayment-all despite accrual between the displayed balance and execution, including the exact refund',()=>{
+  const requested=10010002n,rate=1000001500000n,paid=10000015n,b={...baseline,debt_tokens:'10000000',borrowed:'1',repay_all:true};
+  const e={...evidence,debt_tokens_before:'10000000',debt_tokens_after:'0',debt_rate:rate.toString(),repay_incoming_atomic:requested.toString(),repay_refund_atomic:(requested-paid).toString(),repay_principal_atomic:paid.toString(),repay_debt_tokens_burned:'10000000'};
+  const f={...observation(),action:'repay' as const,baseline:b,request:{...observation().request,amount:fromAtomic(requested,7)},positions:[{...pos,borrowed:'0',debt_tokens:'0',as_of_ledger:102}],balances:[{...native,wallet_amount:fromAtomic(1000000000n-paid-100000n,7)}],transactionEvidence:e};
+  expect(inspectBorrowingDeltas(f).verified).toBe(true);
+  expect(inspectBorrowingDeltas({...f,transactionEvidence:{...e,repay_refund_atomic:'0'}}).verified).toBe(false);
+  expect(inspectBorrowingDeltas({...f,transactionEvidence:{...e,repay_incoming_atomic:(requested+1n).toString()}}).verified).toBe(false);
+  expect(inspectBorrowingDeltas({...f,transactionEvidence:{...e,repay_debt_tokens_burned:'9999999'}}).verified).toBe(false);
+ });
+ it('never marks the repay-all intent complete while even one debt token remains',()=>{
+  const requested=10010002n,remaining=4994999n,rate=2000000000000n,burned=10000000n-remaining,b={...baseline,debt_tokens:'10000000',borrowed:'1',repay_all:true};
+  const e={...evidence,debt_tokens_before:'10000000',debt_tokens_after:remaining.toString(),debt_rate:rate.toString(),repay_incoming_atomic:requested.toString(),repay_refund_atomic:'0',repay_principal_atomic:requested.toString(),repay_debt_tokens_burned:burned.toString()};
+  const f={...observation(),action:'repay' as const,baseline:b,request:{...observation().request,amount:fromAtomic(requested,7)},positions:[{...pos,borrowed:fromAtomic(remaining*2n,7),debt_tokens:remaining.toString(),as_of_ledger:102}],balances:[{...native,wallet_amount:fromAtomic(1000000000n-requested-100000n,7)}],transactionEvidence:e};
+  expect(inspectBorrowingDeltas(f).verified).toBe(false);
+  expect(inspectBorrowingDeltas({...f,baseline:{...b,repay_all:false}}).verified).toBe(true);
  });
  it.each(['collateral_supply','collateral_withdraw'] as const)('verifies exact %s without changing debt',action=>{
   const supply=action==='collateral_supply',tokens=supply?'30000000':'10000000';
@@ -55,12 +71,25 @@ function positionValue(liabilities:Map<number,bigint>,collateral=new Map([[0,200
  return xdr.ScVal.scvMap([['liabilities',m(liabilities)],['collateral',m(collateral)],['supply',m(new Map())]].map(([name,val])=>new xdr.ScMapEntry({key:xdr.ScVal.scvSymbol(name as string),val:val as xdr.ScVal})));
 }
 function entry(name:string,target:string,value:xdr.ScVal){return new xdr.LedgerEntry({lastModifiedLedgerSeq:101,data:xdr.LedgerEntryData.contractData(new xdr.ContractDataEntry({ext:new xdr.ExtensionPoint(0),contract:Address.fromString(BORROW_POOL_ID).toScAddress(),key:xdr.ScVal.scvVec([xdr.ScVal.scvSymbol(name),Address.fromString(target).toScVal()]),durability:xdr.ContractDataDurability.persistent(),val:value})),ext:new xdr.LedgerEntryExt(0)});}
-function meta(changes:xdr.LedgerEntryChange[]){return new xdr.TransactionMeta(3,new xdr.TransactionMetaV3({ext:new xdr.ExtensionPoint(0),txChangesBefore:[],operations:[new xdr.OperationMeta({changes})],txChangesAfter:[],sorobanMeta:null}));}
+function meta(changes:xdr.LedgerEntryChange[],events:xdr.ContractEvent[]=[]){return new xdr.TransactionMeta(3,new xdr.TransactionMetaV3({ext:new xdr.ExtensionPoint(0),txChangesBefore:[],operations:[new xdr.OperationMeta({changes})],txChangesAfter:[],sorobanMeta:events.length?new xdr.SorobanTransactionMeta({ext:new xdr.SorobanTransactionMetaExt(0),events,returnValue:xdr.ScVal.scvVoid(),diagnosticEvents:[]}):null}));}
 function metadataFixture(){
  const res=xdr.ScVal.scvMap(['d_rate','b_rate','ir_mod','d_supply','b_supply','backstop_credit','last_time'].map(name=>new xdr.ScMapEntry({key:xdr.ScVal.scvSymbol(name),val:name==='d_rate'||name==='b_rate'?nativeToScVal(1000000000000n,{type:'i128'}):name==='last_time'?xdr.ScVal.scvU64(xdr.Uint64.fromString('1')):nativeToScVal(0n,{type:'i128'})})));
  return [xdr.LedgerEntryChange.ledgerEntryState(entry('Positions',wallet,positionValue(new Map()))),xdr.LedgerEntryChange.ledgerEntryUpdated(entry('Positions',wallet,positionValue(new Map([[0,10000000n]])))),xdr.LedgerEntryChange.ledgerEntryUpdated(entry('ResData',reserve,res))];
 }
+function event(contract:string,topics:xdr.ScVal[],data:xdr.ScVal){return new xdr.ContractEvent({ext:new xdr.ExtensionPoint(0),contractId:StrKey.decodeContract(contract) as unknown as xdr.ContractId,type:xdr.ContractEventType.contract(),body:new xdr.ContractEventBody(0,new xdr.ContractEventV0({topics,data}))});}
+function repaymentEvents(request=20000000n,refund=10000000n){
+ const transfer=(from:string,to:string,n:bigint)=>event(reserve,[xdr.ScVal.scvSymbol('transfer'),Address.fromString(from).toScVal(),Address.fromString(to).toScVal(),xdr.ScVal.scvString('native')],nativeToScVal(n,{type:'i128'}));
+ return [event(BORROW_POOL_ID,[xdr.ScVal.scvSymbol('repay'),Address.fromString(reserve).toScVal(),Address.fromString(wallet).toScVal()],xdr.ScVal.scvVec([nativeToScVal(10000000n,{type:'i128'}),nativeToScVal(10000000n,{type:'i128'})])),transfer(wallet,BORROW_POOL_ID,request),...(refund>0n?[transfer(BORROW_POOL_ID,wallet,refund)]:[])];
+}
 describe('Exact borrowing transaction metadata extraction',()=>{
+ it('requires the exact source transfer, pool repayment event and refund from transaction metadata',()=>{
+  const f=metadataFixture();f[0]=xdr.LedgerEntryChange.ledgerEntryState(entry('Positions',wallet,positionValue(new Map([[0,10000000n]]))));f[1]=xdr.LedgerEntryChange.ledgerEntryUpdated(entry('Positions',wallet,positionValue(new Map())));
+  const b={...baseline,debt_tokens:'10000000',borrowed:'1',repay_all:true};
+  const read=(events:xdr.ContractEvent[])=>extractBorrowTransactionEvidence({meta:meta(f,events),baseline:b,action:'repay',txHash:hash,confirmedLedger:101});
+  expect(read(repaymentEvents())).toMatchObject({repay_incoming_atomic:'20000000',repay_refund_atomic:'10000000',repay_principal_atomic:'10000000',repay_debt_tokens_burned:'10000000'});
+  expect(read([])).toBeNull();expect(read(repaymentEvents().slice(1))).toBeNull();expect(read([...repaymentEvents(),repaymentEvents()[1]!])).toBeNull();
+ });
+
  it('extracts actual before/after tokens and the same execution rates',()=>expect(extractBorrowTransactionEvidence({meta:meta(metadataFixture()),baseline,action:'borrow',txHash:hash,confirmedLedger:101})).toEqual(evidence));
  it('supports current V4 operation metadata with exactly one operation',()=>{
   const current=new xdr.TransactionMeta(4,new xdr.TransactionMetaV4({ext:new xdr.ExtensionPoint(0),txChangesBefore:[],operations:[new xdr.OperationMetaV2({ext:new xdr.ExtensionPoint(0),changes:metadataFixture(),events:[]})],txChangesAfter:[],sorobanMeta:null,events:[],diagnosticEvents:[]}));

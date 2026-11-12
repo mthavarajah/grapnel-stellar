@@ -1,6 +1,6 @@
 import {randomUUID} from 'node:crypto';
 import type {Pool} from 'pg';
-import {Account,Address,Asset,Keypair,TransactionBuilder,nativeToScVal,xdr} from '@stellar/stellar-sdk';
+import {Account,Address,Asset,Keypair,StrKey,TransactionBuilder,nativeToScVal,xdr} from '@stellar/stellar-sdk';
 import {describe,expect,it,vi} from 'vitest';
 import {NETWORK_PASSPHRASE,XLM,type PreparedAction,type WalletBalance} from '@grapnel/contracts';
 import {createRuntimeWorkerChain} from '../../runtime.js';
@@ -31,7 +31,9 @@ function fixture(action:BorrowingAction='borrow',usdc=false){
  const entry=(name:string,target:string,value:xdr.ScVal)=>new xdr.LedgerEntry({lastModifiedLedgerSeq:101,data:xdr.LedgerEntryData.contractData(new xdr.ContractDataEntry({ext:new xdr.ExtensionPoint(0),contract:Address.fromString(BORROW_POOL_ID).toScAddress(),key:xdr.ScVal.scvVec([xdr.ScVal.scvSymbol(name),Address.fromString(target).toScVal()]),durability:xdr.ContractDataDurability.persistent(),val:value})),ext:new xdr.LedgerEntryExt(0)});
  const reserveValue=xdr.ScVal.scvMap(['d_rate','b_rate','ir_mod','d_supply','b_supply','backstop_credit','last_time'].map(name=>new xdr.ScMapEntry({key:xdr.ScVal.scvSymbol(name),val:name==='last_time'?xdr.ScVal.scvU64(xdr.Uint64.fromString('1')):nativeToScVal(name==='d_rate'||name==='b_rate'?1000000000000n:0n,{type:'i128'})})));
  const changes=[xdr.LedgerEntryChange.ledgerEntryState(entry('Positions',wallet,maps(beforeDebt,beforeCollateral))),xdr.LedgerEntryChange.ledgerEntryUpdated(entry('Positions',wallet,maps(afterDebt,afterCollateral))),xdr.LedgerEntryChange.ledgerEntryUpdated(entry('ResData',reserve,reserveValue))];
- const meta=new xdr.TransactionMeta(4,new xdr.TransactionMetaV4({ext:new xdr.ExtensionPoint(0),txChangesBefore:[],operations:[new xdr.OperationMetaV2({ext:new xdr.ExtensionPoint(0),changes,events:[]})],txChangesAfter:[],sorobanMeta:null,events:[],diagnosticEvents:[]}));
+ const event=(contract:string,topics:xdr.ScVal[],data:xdr.ScVal)=>new xdr.ContractEvent({ext:new xdr.ExtensionPoint(0),contractId:StrKey.decodeContract(contract) as unknown as xdr.ContractId,type:xdr.ContractEventType.contract(),body:new xdr.ContractEventBody(0,new xdr.ContractEventV0({topics,data}))});
+ const events=action==='repay'?[event(BORROW_POOL_ID,[xdr.ScVal.scvSymbol('repay'),Address.fromString(reserve).toScVal(),Address.fromString(wallet).toScVal()],xdr.ScVal.scvVec([nativeToScVal(10000000n,{type:'i128'}),nativeToScVal(10000000n,{type:'i128'})])),event(reserve,[xdr.ScVal.scvSymbol('transfer'),Address.fromString(wallet).toScVal(),Address.fromString(BORROW_POOL_ID).toScVal(),xdr.ScVal.scvString(usdc?'USDC:'+BORROW_USDC_ISSUER:'native')],nativeToScVal(10000000n,{type:'i128'}))]:[];
+ const meta=new xdr.TransactionMeta(4,new xdr.TransactionMetaV4({ext:new xdr.ExtensionPoint(0),txChangesBefore:[],operations:[new xdr.OperationMetaV2({ext:new xdr.ExtensionPoint(0),changes,events})],txChangesAfter:[],sorobanMeta:null,events:[],diagnosticEvents:[]}));
  return {op,tx,hash,meta,position,observedBalances,asset};
 }
 function runtime(f:ReturnType<typeof fixture>,options:{gate?:boolean;inspector?:boolean;adapter?:boolean;rpcStatus?:string;source?:string;ledger?:number;txHash?:string;meta?:unknown;fee?:string}={}){
@@ -64,6 +66,13 @@ describe('Borrow worker composition — explicit offline ports, no broadcasts to
  });
  it.each(['borrow','repay','collateral_supply','collateral_withdraw'] as const)('reconciles confirmed XLM and USDC %s using transaction-local debt/collateral state plus actual fees',async action=>{
   for(const usdc of [false,true]){const f=fixture(action,usdc),r=runtime(f,{gate:false});const result=await r.worker.verifyDeltas(f.op.id,f.hash);expect(result).toMatchObject({verified:true,result:{blend_borrowing_verification:{operation:action,tx_hash:f.hash,asset_id:f.asset,actual_fee_stroops:'100000'}}});expect(r.send).not.toHaveBeenCalled();expect(r.query).toHaveBeenCalledTimes(1);}
+ });
+ it('does not complete repayment when source-transfer or refund metadata is absent or inconsistent',async()=>{
+  for(const invalid of ['missing','amount'] as const){
+   const f=fixture('repay'),events=f.meta.v4().operations()[0]!.events();
+   if(invalid==='missing')f.meta.v4().operations()[0]!.events([]);else events[1]!.body().v0().data(nativeToScVal(10000001n,{type:'i128'}));
+   const r=runtime(f);expect(await r.worker.verifyDeltas(f.op.id,f.hash)).toMatchObject({verified:false});expect(r.send).not.toHaveBeenCalled();
+  }
  });
  it.each([{rpcStatus:'NOT_FOUND'},{source:'other'},{ledger:102},{txHash:'b'.repeat(64)},{meta:null},{fee:'99999'}])('never completes a pending or mismatched receipt: %j',async options=>{
   const f=fixture(),r=runtime(f,options);expect(await r.worker.verifyDeltas(f.op.id,f.hash)).toMatchObject({verified:false});expect(r.send).not.toHaveBeenCalled();

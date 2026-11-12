@@ -2,7 +2,7 @@ import {describe,it,expect,vi} from 'vitest';
 import type {Pool,PoolUser,Reserve} from '@blend-capital/blend-sdk';
 import {Address,Asset,Networks,StrKey,xdr} from '@stellar/stellar-sdk';
 import {NETWORK_PASSPHRASE,XLM,type CustomerContext,type PreparedAction,type ChainAction} from '@grapnel/contracts';
-import {BlendBorrowAdapter,BORROW_POOL_ID,BORROW_POOL_WASM,BORROW_ORACLE_ID,BORROW_XLM_RESERVE,BORROW_USDC_RESERVE,BORROW_USDC_ID,buildBorrowOperation,inspectBorrowOperation,borrowReadAtomic,type BorrowDependencies} from './borrow.js';
+import {BlendBorrowAdapter,BORROW_POOL_ID,BORROW_POOL_WASM,BORROW_ORACLE_ID,BORROW_XLM_RESERVE,BORROW_USDC_RESERVE,BORROW_USDC_ID,buildBorrowOperation,inspectBorrowOperation,borrowReadAtomic,borrowRepayAllMaximum,type BorrowDependencies} from './borrow.js';
 const WALLET='GB4PC65ZHBPVEZMAHY2K2KYMS3RFBIN2FQIE3LGTLEHT2DEWVMTD7JYQ';
 const customer:CustomerContext={businessId:'fixture-business',customerId:'fixture-customer',walletId:'fixture-wallet',privyUserId:'fixture-identity-not-authority',walletAddress:WALLET};
 const NOW=Date.now();
@@ -61,6 +61,37 @@ describe('isolated borrowing pool risk and intent fixtures',()=>{
  });
  it('parses confirmed zero balances separately from positive spend amounts',()=>{expect(borrowReadAtomic('0.0000000')).toBe(0n);expect(borrowReadAtomic('1.0000000')).toBe(10000000n);});
  it('rejects repayment without debt as a structured unavailable response',async()=>{const f=fixture();await expect(f.adapter.prepare('repay',f.input(),customer)).rejects.toMatchObject({code:'EXECUTION_UNAVAILABLE'});expect(f.prepare).not.toHaveBeenCalled();});
+ it('publishes an exact bounded repay-all maximum only from verified tenant-scoped spendable funds',async()=>{
+  const f=fixture({usdcDebt:10000000n}),readSpendable=vi.fn(async()=>10000000000n);f.deps.readSpendableBalance=readSpendable;
+  const row=(await f.adapter.read(customer)).assets[1]!;
+  expect(row.repayable).toBe('1.0000000');expect(row.repay_all_amount).toBe('1.0010002');expect(row.can_prepare_repay_all).toBe(true);
+  expect(readSpendable).toHaveBeenCalledWith(BORROW_USDC_ID,customer);
+  await f.adapter.prepare('repay',f.input(BORROW_USDC_RESERVE,BORROW_USDC_ID,'1.0010002'),customer);expect(f.prepare).toHaveBeenCalledOnce();
+  await expect(f.adapter.prepare('repay',f.input(BORROW_USDC_RESERVE,BORROW_USDC_ID,'1.0010003'),customer)).rejects.toMatchObject({code:'EXECUTION_UNAVAILABLE'});expect(f.prepare).toHaveBeenCalledOnce();
+ });
+ it('does not expose repay-all from a public wallet read without verified tenant context',async()=>{
+  const f=fixture({usdcDebt:10000000n}),readSpendable=vi.fn(async()=>10000000000n);f.deps.readSpendableBalance=readSpendable;
+  expect((await f.adapter.readWallet(WALLET)).assets[1]!).toMatchObject({repay_all_amount:null,can_prepare_repay_all:false});expect(readSpendable).not.toHaveBeenCalled();
+ });
+ it.each(['missing','failed','insufficient','negative'] as const)('keeps ordinary repayment available but hides Max for %s spendable evidence',async kind=>{
+  const f=fixture({usdcDebt:10000000n});
+  if(kind!=='missing')f.deps.readSpendableBalance=async()=>{if(kind==='failed')throw Error('Unavailable spendable');return kind==='negative'?-1n:10010001n;};
+  expect((await f.adapter.read(customer)).assets[1]!).toMatchObject({repay_all_amount:null,can_prepare_repay_all:false,can_prepare_repay:true});
+  await f.adapter.prepare('repay',f.input(),customer);expect(f.prepare).toHaveBeenCalledOnce();
+  await expect(f.adapter.prepare('repay',f.input(BORROW_USDC_RESERVE,BORROW_USDC_ID,'1.0010002'),customer)).rejects.toMatchObject({code:'EXECUTION_UNAVAILABLE'});
+ });
+ it('caps spendable by raw wallet funds and reserves one XLM fee ceiling for native Max only',async()=>{
+  const f=fixture({usdcDebt:10000000n}),user=await f.pool.loadUser(WALLET);user.positions.liabilities.set(0,10000000n);
+  f.deps.readSpendableBalance=async()=>20010001n;
+  let rows=(await f.adapter.read(customer)).assets;expect(rows[0]!).toMatchObject({repay_all_amount:null,can_prepare_repay_all:false});
+  f.deps.readSpendableBalance=async()=>20010002n;
+  rows=(await f.adapter.read(customer)).assets;expect(rows[0]!).toMatchObject({repay_all_amount:'1.0010002',can_prepare_repay_all:true});
+  f.deps.readBalance=async(_reserve,owner)=>owner===BORROW_POOL_ID?10000000000n:10000000n;
+  rows=(await f.adapter.read(customer)).assets;expect(rows[1]!).toMatchObject({repay_all_amount:null,can_prepare_repay_all:false});
+ });
+ it('calculates the 0.1-percent ceiling without floats and rejects zero or overflowing debt',()=>{
+  expect(borrowRepayAllMaximum(1n)).toBe(4n);expect(borrowRepayAllMaximum(10000000n)).toBe(10010002n);expect(borrowRepayAllMaximum(10000001n)).toBe(10010004n);expect(borrowRepayAllMaximum(0n)).toBeNull();expect(borrowRepayAllMaximum((1n<<127n)-1n)).toBeNull();
+ });
  it('rejects repayment above actual current debt',async()=>{const f=fixture({usdcDebt:100n});await expect(f.adapter.prepare('repay',f.input(),customer)).rejects.toMatchObject({code:'EXECUTION_UNAVAILABLE'});expect(f.prepare).not.toHaveBeenCalled();});
  it('builds only the approved one-request borrow invocation',async()=>{const f=fixture({xlmCollateral:100000000n});await f.adapter.prepare('borrow',f.input(),customer);const action=f.prepare.mock.calls[0]![0] as any;expect(action.summary).toMatchObject({action:'blend.borrow',fromAssetId:BORROW_USDC_ID,amount:'1.0000000',contractId:BORROW_POOL_ID,recipient:WALLET});const invocation=xdr.Operation.fromXDR(action.operationXdr,'base64').body().invokeHostFunctionOp().hostFunction().invokeContract();expect(AddressFrom(invocation.contractAddress())).toBe(BORROW_POOL_ID);});
  it('requires exact market and asset identities',async()=>{const f=fixture({xlmCollateral:100000000n});await expect(f.adapter.prepare('borrow',{...f.input(),assetId:XLM.id},customer)).rejects.toMatchObject({code:'ASSET_MISMATCH'});await expect(f.adapter.prepare('borrow',{...f.input(),marketId:'other-pool'},customer)).rejects.toMatchObject({code:'NOT_FOUND'});expect(f.prepare).not.toHaveBeenCalled();});
