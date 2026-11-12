@@ -1,0 +1,93 @@
+{
+  "capturedAt": "2026-11-12T19:59:20.493Z",
+  "rpc": "https://ethereum-sepolia-rpc.publicnode.com",
+  "officialSource": "https://docs.robinhood.com/chain/protocol-contracts/",
+  "chain": {
+    "request": {
+      "jsonrpc": "2.0",
+      "id": 1,
+      "method": "eth_chainId",
+      "params": []
+    },
+    "response": {
+      "jsonrpc": "2.0",
+      "result": "0xaa36a7",
+      "id": 1
+    }
+  },
+  "block": "0xb8f3f1",
+  "inbox": "0xF2939afA86F6f933A3CE17fCAB007907B6b0B7a4",
+  "bridge": {
+    "request": {
+      "jsonrpc": "2.0",
+      "id": 3,
+      "method": "eth_call",
+      "params": [
+        {
+          "to": "0xF2939afA86F6f933A3CE17fCAB007907B6b0B7a4",
+          "data": "0xe78cea92"
+        },
+        "0xb8f3f1"
+      ]
+    },
+    "response": {
+      "jsonrpc": "2.0",
+      "id": 3,
+      "result": "0x00000000000000000000000096295bdad104ead97cc08797b3dc68eff59ccf30"
+    },
+    "decoded": "0x96295BDad104eaD97cC08797b3dC68efF59CcF30"
+  },
+  "rollup": {
+    "request": {
+      "jsonrpc": "2.0",
+      "id": 4,
+      "method": "eth_call",
+      "params": [
+        {
+          "to": "0x96295BDad104eaD97cC08797b3dC68efF59CcF30",
+          "data": "0xcb23bcb5"
+        },
+        "0xb8f3f1"
+      ]
+    },
+    "response": {
+      "jsonrpc": "2.0",
+      "id": 4,
+      "result": "0x000000000000000000000000dc5f8e399dbd8a9f5f87aec4c23beb12431b386d"
+    },
+    "decoded": "0xdc5F8E399DBd8a9F5F87AeC4C23Beb12431b386D"
+  },
+  "destination": {
+    "request": {
+      "jsonrpc": "2.0",
+      "id": 5,
+      "method": "eth_call",
+      "params": [
+        {
+          "to": "0xdc5F8E399DBd8a9F5F87AeC4C23Beb12431b386D",
+          "data": "0x9a8a0592"
+        },
+        "0xb8f3f1"
+      ]
+    },
+    "response": {
+      "jsonrpc": "2.0",
+      "id": 5,
+      "result": "0x000000000000000000000000000000000000000000000000000000000000b626"
+    },
+    "decoded": "46630"
+  },
+  "inboxCodeHash": "0x69a469ef198a7f785b09fb0783fe42576faef7635e2d56426ec8746bad638e64",
+  "implementation": "0x8d3b93dffff4842e7b61fb553b383db2c6bc91c6",
+  "implementationCodeHash": "0xfb23336c542bccb67fdc522ef210ed21082aa19c658c9ccb182f78f9ca4c6ae8",
+  "depositEthSelector": "0x439370b1",
+  "verifiedSource": {
+    "url": "https://eth-sepolia.blockscout.com/api/v2/smart-contracts/0x8d3b93dffff4842e7b61fb553b383db2c6bc91c6",
+    "name": "Inbox",
+    "compiler": "0.8.17+commit.8df45f5f",
+    "file": "src/bridge/Inbox.sol",
+    "verified": true,
+    "verifiedRuntimeHash": "0xfb23336c542bccb67fdc522ef210ed21082aa19c658c9ccb182f78f9ca4c6ae8",
+    "depositEthSnippet": "function depositEth() public payable whenNotPaused onlyAllowed returns (uint256) {\n        address dest = msg.sender;\n\n        // solhint-disable-next-line avoid-tx-origin\n        if (AddressUpgradeable.isContract(msg.sender) || tx.origin != msg.sender) {\n            // isContract check fails if this function is called during a contract's constructor.\n            dest = AddressAliasHelper.applyL1ToL2Alias(msg.sender);\n        }\n\n        return _deliverMessage(\n            L1MessageType_ethDeposit, msg.sender, abi.encodePacked(dest, msg.value), msg.value\n        );\n    }"
+  }
+}
