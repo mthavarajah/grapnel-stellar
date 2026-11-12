@@ -1,0 +1,22 @@
+# Soroswap bridge → Hyperliquid: primary-source route review
+
+Read-only review, 2026-11-12 UTC. No wallet connection, terms acceptance, quote/order creation, transaction/signature, financial API write or third-party messaging occurred. Existing execution code is unchanged.
+
+**Finding:** Soroswap does offer a bridge interface. Current ROZO production discovery advertises Stellar USDC and Hyperliquid/HyperEVM USDC in both source and destination directions. That does **not** establish the requested **Stellar Testnet → HyperEVM998 → HyperCore Testnet** route or its return. Do not describe Soroswap as having no bridge; do not substitute the advertised mainnet route for Testnet support.
+
+| Primary evidence | Observed result |
+| --- | --- |
+| [Live Soroswap Bridge](https://app.soroswap.finance/bridge) | Beta bridge page explicitly displays **Powered by ROZO**, linking ROZO documentation and bridge terms. Current served application bundle compiles `NEXT_PUBLIC_ENV:"mainnet"` and includes HyperEVM **999**, mainnet RPC, `testnet:false`. A generic Testnet constant elsewhere in wallet libraries is not route support. |
+| [Official ROZO supported-matrix documentation](https://docs.rozo.ai/start/supported-tokens-and-chains.md) | Names the live endpoint below and distinguishes `providers` (pay-in) from `destinationProviders` (pay-out). Documents HyperEVM **999** USDC contract `0xb88339cb7199b77e23db6e890353e22632ba630f`, six decimals; Stellar production USDC is a separate issuer-based asset, seven decimals. |
+| [Live production supported matrix](https://intentapiv4.rozo.ai/functions/v1/payment-api/payments/supported) | Actual unauthenticated **GET200**: Stellar chain1500/USDC has ROZO on both legs; Hyperliquid chain999/USDC has `providers:["rozo"]` and `destinationProviders:["rozo"]`, EVM address format and aliases `hl`, `hyperevm`, `hyperliquid`. Chain998 was absent. This is supported-leg discovery, not an executed bridge or liquidity guarantee. |
+| [Official ROZO Testnet guide](https://docs.rozo.ai/integration/api-doc/bridge-api/testnet.md) | Actual **GET200** documents **Base Sepolia84532 → Stellar Testnet1500**, 0.01–1.00 test USDC, using `intentapitestnet.rozo.ai/functions/v1/payment-api`. It does not document Stellar Testnet as the source, HyperEVM998/HyperCore as the destination, or the reverse return. The guide explicitly limits inference about other Testnet features. |
+| [Analogous Testnet matrix GET probe](https://intentapitestnet.rozo.ai/functions/v1/payment-api/payments/supported) | Actual **GET404**, `paymentNotFound`, message `payment supported not found`. This URL is a read-only probe of the production matrix path on the documented Testnet host, **not** a claimed documented Testnet catalog endpoint. It cannot prove additional supported routes. |
+| [ROZO CCTP product](https://docs.rozo.ai/products/intent-based-bridge/cctp-bridge.md) | Documents native USDC routes both ways between Stellar and Base/Ethereum/Solana. It does not establish HyperEVM998 support or automatic HyperCore funding. |
+
+## Allbridge distinction
+
+The official [Soroswap Allbridge integration repository](https://github.com/soroswap/allbridge-implementation) is real, but its [sample source](https://github.com/soroswap/allbridge-implementation/blob/main/src/allBridgeCore.ts) imports `mainnet` and uses `mainnet.sorobanNetworkPassphrase`, with BSC ↔ Soroban sample transfers. It supplies no current Stellar-Testnet/HyperEVM998 roundtrip proof. The current [Allbridge contract documentation](https://docs-core.allbridge.io/product/how-does-allbridge-core-work/allbridge-core-contracts.md) marks the older pool-based bridge contracts deprecated; the old sample must not be treated as current Testnet deployment evidence. The currently served Soroswap bridge identifies ROZO, so current ROZO evidence is the relevant route-discovery source.
+
+## Exact remaining blocker
+
+Need official supported **Testnet** source/destination contracts and token identities for Stellar → HyperEVM998, an eligible attributable HyperCore Testnet deposit stage, and the reverse settlement back to the exact Stellar Testnet USDC issuer. A HyperEVM token balance alone is not HyperCore trading collateral. No documentation or live read in this review establishes that full route. Existing Grapnel issued Testnet USDC cannot be assumed compatible merely because its ticker is USDC. No provider capability or funding proof was promoted.
