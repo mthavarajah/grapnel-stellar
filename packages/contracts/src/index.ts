@@ -1,5 +1,5 @@
 import { z } from 'zod';
-export const CONTRACT_VERSION = '0.2.3' as const;
+export const CONTRACT_VERSION = '0.2.4' as const;
 export const NETWORK = 'stellar-testnet' as const;
 export const NETWORK_PASSPHRASE = 'Test SDF Network ; September 2015' as const;
 export const MODULE_IDS = ['capital.wallets','capital.testnet_funding','capital.lending','trade.spot','trade.stocks','trade.perps','trade.commodities'] as const;
@@ -40,7 +40,7 @@ export const CapabilitySchema = z.object({module:ModuleIdSchema,enabled:z.boolea
 export type Capability = z.infer<typeof CapabilitySchema>;
 export const OperationStatusSchema = z.enum(['accepted','validating','preparing','awaiting_customer_authorization','submitted','confirming','completed','rejected','expired','failed','recovery_required']);
 export type OperationStatus = z.infer<typeof OperationStatusSchema>;
-export const PreparedActionSchema = z.object({operationId:z.string(),customerId:z.string(),network:z.literal(NETWORK),walletAddress:z.string(),unsignedXdr:z.string(),signingHashHex:z.string().regex(/^[a-f0-9]{64}$/),summary:z.object({action:z.string(),fromAssetId:z.string().optional(),toAssetId:z.string().optional(),amount:z.string().optional(),recipient:z.string().optional(),contractId:z.string().optional(),maxFeeStroops:z.string().optional(),minReceive:z.string().optional(),expiresAt:z.string().datetime()}),authorization:z.object({method:z.literal('privy_stellar'),expiresAt:z.string().datetime()})});
+export const PreparedActionSchema = z.object({operationId:z.string(),customerId:z.string(),network:z.literal(NETWORK),walletAddress:z.string(),unsignedXdr:z.string(),signingHashHex:z.string().regex(/^[a-f0-9]{64}$/),summary:z.object({action:z.string(),positionId:z.string().regex(/^[1-9]\d{0,19}$/).optional(),fromAssetId:z.string().optional(),toAssetId:z.string().optional(),amount:z.string().optional(),recipient:z.string().optional(),contractId:z.string().optional(),maxFeeStroops:z.string().optional(),minReceive:z.string().optional(),expiresAt:z.string().datetime()}),authorization:z.object({method:z.literal('privy_stellar'),expiresAt:z.string().datetime()})});
 export type PreparedAction = z.infer<typeof PreparedActionSchema>;
 export const OperationSchema = z.object({operation_id:z.string(),customer_id:z.string(),wallet_id:z.string(),module:ModuleIdSchema,type:z.string(),status:OperationStatusSchema,network:z.literal(NETWORK),tx_hash:z.string().nullable(),provider:z.string(),created_at:z.string(),updated_at:z.string(),error:z.object({code:z.string(),message:z.string()}).nullable(),prepared_action:PreparedActionSchema.optional(),customer_action_token:z.string().optional(),display_amount:AmountSchema.optional(),display_asset_id:z.string().optional()});
 export type Operation = z.infer<typeof OperationSchema>;
@@ -49,7 +49,7 @@ export const ModulesInputSchema = z.object({modules:z.array(ModuleIdSchema).max(
 export const WalletInputSchema = z.object({customer_id:z.string().uuid(),privy_identity_proof:z.string().min(1)}).strict();
 export const FundingInputSchema = z.object({customer_id:z.string().uuid(),wallet_id:z.string().uuid(),asset_id:z.string(),amount:AmountSchema}).strict();
 export const LendingInputSchema = FundingInputSchema.extend({market_id:z.string()});
-export const MARGIN_STEP_IDS=['vault_deposit','margin_transfer','open_begin','open_swap','open_activate','open_cancel','close_prepare','close_swap','close_short_swap','close_finish','close_cancel','margin_return','vault_withdraw'] as const;
+export const MARGIN_STEP_IDS=['vault_deposit','margin_transfer','open_begin','open_swap','open_activate','open_cancel','close_atomic','close_prepare','close_swap','close_short_swap','close_finish','close_cancel','margin_return','vault_withdraw'] as const;
 export const MarginStepSchema=z.enum(MARGIN_STEP_IDS);
 export const MarginPhaseSchema=z.enum(['awaiting_collateral','awaiting_margin_transfer','awaiting_open_begin','opening_pending','opening_swapped','open','closing_prepared','closing_swapped','closed','awaiting_vault_withdraw','recovered']);
 const MarginAtomicSchema=z.string().regex(/^(0|[1-9]\d{0,37})$/);

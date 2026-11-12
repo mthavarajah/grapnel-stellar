@@ -2,7 +2,7 @@
   "openapi": "3.1.0",
   "info": {
     "title": "Grapnel Testnet API",
-    "version": "0.2.3",
+    "version": "0.2.4",
     "description": "Stellar Testnet only. See docs/03_API.md and packages/contracts for frozen payload schemas."
   },
   "servers": [
@@ -3627,6 +3627,7 @@
                 "open_swap",
                 "open_activate",
                 "open_cancel",
+                "close_atomic",
                 "close_prepare",
                 "close_swap",
                 "close_short_swap",
@@ -3699,6 +3700,7 @@
                 "open_swap",
                 "open_activate",
                 "open_cancel",
+                "close_atomic",
                 "close_prepare",
                 "close_swap",
                 "close_short_swap",

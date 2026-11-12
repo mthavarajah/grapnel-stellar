@@ -1,5 +1,10 @@
 # Gate 0 freeze — contract v0.1.0
 
+## Lead-approved additive revision 0.2.4 — 2026-11-12
+Adds `close_atomic` / `margin.close_atomic`: a separately customer-approved `close_position_v3(user,position_id,minimum_output)` operation from Open directly to verified Closed/receipt-return state. The deployed atomic method independently simulated full canonical v3 debt repayment and collateral return; no execution is claimed until an actual confirmed transaction. Exact owner/position/pool/pins/auth/108RO+39RW footprint, no restoration, source signature/sequence, at most1XLM fee,150M local instruction ceiling and current network compute limit are required. Minimum must cover fresh99.5% pool quote,5% oracle floor and actual vault debt. Transaction metadata must prove debt/principal/snapshot cleared, exact swap/payout arithmetic and owned records removed. Legacy zero debt_shares/PendingClose.debt_amount are never proof of zero v3 debt.
+
+`PreparedAction.summary.positionId` optionally binds known existing Margin positions; their customer approvals must match the selected workflow's actual position ID. New-position begin does not rely on a preexisting caller-chosen ID. Atomic close is added to the public step enum and DB step CHECK in0005; historical split-close states remain readable but unproven split steps are not enabled by atomic proof. Provider adapters remain unavailable until complete current round-trip verification.
+
 ## Lead-approved additive revision 0.2.3 — 2026-11-11
 Borrow reads add `repay_all_amount` (nullable exact decimal string) and `can_prepare_repay_all` (boolean). The maximum debit is current raw debt +ceil(debt/1000)+2atomic, at most0.1% plus2atomic rounding buffer, and is exposed only with confirmed tenant/customer/wallet reservation-adjusted spendable funds sufficient for the whole bound. XLM Max additionally reserves the conservative1XLM transaction fee ceiling. Missing/failed confirmed spendable reads disable Repay All rather than guessing from raw token balance. Display truncation is never used as a repayment input.
 

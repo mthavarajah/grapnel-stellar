@@ -7,6 +7,17 @@ function p(status:MarginPositionEvidence['status'],debt='0',output='0'):MarginPo
 function evidence(step:MarginStep):MarginEvidence{return{network:'stellar-testnet',chainStatus:'SUCCESS',txHash:hash,ledger:42,owner:'owner',step,intentHash:intent,observedAt:new Date(now).toISOString(),before:{walletUnderlyingAtomic:'20000000',walletReceiptAtomic:'0',marginReceiptAtomic:'0',position:null},after:{walletUnderlyingAtomic:'10000000',walletReceiptAtomic:'9999780',marginReceiptAtomic:'0',position:null}};}
 const apply=(w:MarginWorkflow,e:MarginEvidence)=>({...w,...applyMarginEvidence(w,e.step,intent,hash,e,now)});
 describe('Margin workflow phase/evidence defense (offline fixtures, not chain proof)',()=>{
+ it('accepts one atomic close only with actual repaid debt and observed returned receipts',()=>{
+  const w={...fixture(),phase:'open' as const,receiptAtomic:'9999780',positionId:'42'},e=evidence('close_atomic');
+  e.before.position=p('Open','9999998');e.after.position=p('Closed','0','19880180');e.after.marginReceiptAtomic='9879964';
+  expect(()=>assertNextMarginStep(w,'close_atomic',{minimumOutputAtomic:'19780780'})).not.toThrow();
+  expect(apply(w,e)).toMatchObject({phase:'closed',receiptAtomic:'9879964',positionId:'42'});
+  e.after.position.debtAtomic='1';expect(()=>apply(w,e)).toThrow();e.after.position.debtAtomic='0';e.after.position.owner='foreign';expect(()=>apply(w,e)).toThrow();
+ });
+ it('does not treat an atomic close as success with a missing minimum or unchanged debt',()=>{
+  const w={...fixture(),phase:'open' as const,positionId:'42'};expect(()=>assertNextMarginStep(w,'close_atomic',{})).toThrow();
+  const e=evidence('close_atomic');e.before.position=p('Open','9999998');e.after.position=p('Closed','9999998','19880180');expect(()=>apply(w,e)).toThrow();
+ });
  it('requires actual deposit and transfer deltas before begin can be prepared',()=>{
   let w=fixture();expect(()=>assertNextMarginStep(w,'open_begin',{minimumOutputAtomic:'1'})).toThrow();
   w=apply(w,evidence('vault_deposit'));expect(w.phase).toBe('awaiting_margin_transfer');expect(w.receiptAtomic).toBe('9999780');

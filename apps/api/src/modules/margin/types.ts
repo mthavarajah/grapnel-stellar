@@ -1,9 +1,9 @@
 import type {CustomerContext, PreparedAction} from '@grapnel/contracts';
 import type {ReservationInput} from '../operations/service.js';
 
-export const MARGIN_STEPS = ['vault_deposit','margin_transfer','open_begin','open_swap','open_activate','open_cancel','close_prepare','close_swap','close_short_swap','close_finish','close_cancel','margin_return','vault_withdraw'] as const;
+export const MARGIN_STEPS = ['vault_deposit','margin_transfer','open_begin','open_swap','open_activate','open_cancel','close_atomic','close_prepare','close_swap','close_short_swap','close_finish','close_cancel','margin_return','vault_withdraw'] as const;
 export type MarginStep = typeof MARGIN_STEPS[number];
-export const MARGIN_STEP_ACTIONS:Record<MarginStep,string>={vault_deposit:'margin.vault_deposit',vault_withdraw:'margin.vault_withdraw',margin_transfer:'margin.transfer',margin_return:'margin.return',open_begin:'margin.open_begin',open_swap:'margin.open_swap',open_activate:'margin.open_activate',open_cancel:'margin.open_cancel',close_prepare:'margin.close_prepare',close_swap:'margin.close_swap',close_short_swap:'margin.close_short_swap',close_finish:'margin.close_finish',close_cancel:'margin.close_cancel'};
+export const MARGIN_STEP_ACTIONS:Record<MarginStep,string>={vault_deposit:'margin.vault_deposit',vault_withdraw:'margin.vault_withdraw',margin_transfer:'margin.transfer',margin_return:'margin.return',open_begin:'margin.open_begin',open_swap:'margin.open_swap',open_activate:'margin.open_activate',open_cancel:'margin.open_cancel',close_atomic:'margin.close_atomic',close_prepare:'margin.close_prepare',close_swap:'margin.close_swap',close_short_swap:'margin.close_short_swap',close_finish:'margin.close_finish',close_cancel:'margin.close_cancel'};
 export type MarginPhase = 'awaiting_collateral'|'awaiting_margin_transfer'|'awaiting_open_begin'|'opening_pending'|'opening_swapped'|'open'|'closing_prepared'|'closing_swapped'|'closed'|'awaiting_vault_withdraw'|'recovered';
 export interface MarginTerms {
  network:'stellar-testnet'; provider:'peridot'; marketId:string; poolId:string;

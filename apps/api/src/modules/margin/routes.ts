@@ -30,7 +30,7 @@ function idempotencyKey(request:FastifyRequest):string {
  const result=keySchema.safeParse(request.headers['idempotency-key']);if(!result.success)throw new GrapnelError(400,'IDEMPOTENCY_KEY_REQUIRED','Idempotency-Key must contain 1–200 visible ASCII characters');return result.data;
 }
 function exactStepTerms(step:MarginStep,terms:MarginStepTerms):MarginStepTerms {
- const shape=step==='open_begin'||step==='close_swap'?z.object({minimumOutputAtomic:atomicInput}).strict():step==='close_short_swap'?z.object({maximumInputAtomic:atomicInput,minimumDebtOutputAtomic:atomicInput}).strict():z.object({}).strict();return shape.parse(terms);
+ const shape=step==='open_begin'||step==='close_atomic'||step==='close_swap'?z.object({minimumOutputAtomic:atomicInput}).strict():step==='close_short_swap'?z.object({maximumInputAtomic:atomicInput,minimumDebtOutputAtomic:atomicInput}).strict():z.object({}).strict();return shape.parse(terms);
 }
 async function readiness(deps:MarginRoutesDependencies,w:MarginWorkflow,c:CustomerContext):Promise<MarginWorkflowReadiness>{
  if(!deps.readinessFor)return{execution_status:'blocked',preparation_available:false,steps:[]};
