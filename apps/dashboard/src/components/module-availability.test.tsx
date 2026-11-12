@@ -16,9 +16,8 @@ describe("module access and provider readiness", () => {
     expect(html).toContain('access-enabled'); expect(html).toContain('Blocked');
     expect(html).not.toContain('on save'); expect(html).not.toContain('Read-only access');
   });
-  it("reports jurisdiction and commodity requirements in plain language", () => {
+  it("reports jurisdiction requirements in plain language", () => {
     expect(render({ module: 'trade.perps', reason: 'REGION_RESTRICTED' })).toContain('unavailable in this jurisdiction');
-    expect(render({ module: 'trade.commodities', reason: 'NO_VERIFIED_TESTNET_COMMODITY_ISSUER_OR_LIQUID_ROUTE' })).toContain('commodity issuer and liquid trading route');
   });
   it("does not infer public read availability from a discovery status", () => {
     expect(render({ execution_status: 'discovery_only' })).not.toContain('Market data');

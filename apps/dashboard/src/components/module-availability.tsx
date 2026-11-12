@@ -18,9 +18,6 @@ const reasons: Record<string, string> = {
   SODAX_DISCOVERY_ACCESS_REQUIRED: "Provider access is required to check stock availability.",
   REGION_RESTRICTED: "Trading is unavailable in this jurisdiction under the provider's restrictions.",
   NOT_IN_BETA: "Trading requires admission to the provider's beta.",
-  NO_VERIFIED_TESTNET_COMMODITY_ISSUER_OR_LIQUID_ROUTE: "A verified Testnet commodity issuer and liquid trading route are required.",
-  ISSUER_AND_LIVE_TESTNET_ROUTE_PROOF_REQUIRED: "The issuer and live Testnet trading route still need verification.",
-  COMMODITY_EXECUTION_INSPECTION_AND_CHAIN_PROOF_REQUIRED: "The commodity route still needs transaction checks and confirmed Testnet execution.",
   MAINNET_ASSET_NOT_TESTNET: "The listed asset is on mainnet and cannot be used for this Testnet demo.",
   ASSET_LIST_NETWORK_UNVERIFIED: "The asset list's network has not been verified as Testnet.",
 };

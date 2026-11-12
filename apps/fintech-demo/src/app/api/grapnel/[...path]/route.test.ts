@@ -221,7 +221,7 @@ it.each(['quote','order'])('blocks %s before a verified wallet signing gate',asy
  const response=await POST(request(route,body),context([route]));
  expect(response.status).toBe(409);expect(upstream).not.toHaveBeenCalled();
 });
-it.each(['stocks','perps','commodities'])('enforces disabled %s read entitlement',async assetClass=>{
+it.each(['stocks','perps'])('enforces disabled %s read entitlement',async assetClass=>{
  vi.mocked(server.requireModule).mockRejectedValueOnce(new server.BffError(403,'MODULE_NOT_ENABLED','This module is disabled'));
  const upstream=vi.spyOn(server,'grapnel');
  const response=await GET(request('markets?asset_class='+assetClass),context(['markets']));

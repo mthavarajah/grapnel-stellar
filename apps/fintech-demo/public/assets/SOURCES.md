@@ -10,7 +10,7 @@ Existing marks retained unchanged:
 
 PUMP uses the exact Pump.fun token image from public CoinGecko metadata, rather than the unrelated generic documentation favicon. CRCL uses Circle's own website favicon, rather than the similarly named Circle community-platform icon. Hims, Strategy and AMC artwork comes from their linked corporate/investor/store origins. ETF icons identify the named fund manager; they are not fund backing or execution claims. Lululemon's official white favicon is displayed on a neutral dark surface for visibility.
 
-Gold, Silver and Oil are original, code-native category illustrations (`gold.svg`, `silver.svg`, `oil.svg`), not issuer logos. They also cover GC=F, SI=F and CL=F reference symbols. `asset.svg` is an original generic geometric asset icon used only for unknown symbols; there are no colored-letter fallback marks. Original category/generic SVG code follows the repository license.
+`asset.svg` is an original generic geometric asset icon used only for unknown symbols; there are no colored-letter fallback marks. Original category/generic SVG code follows the repository license.
 
 ## Exact sources
 

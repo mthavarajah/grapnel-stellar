@@ -16,7 +16,7 @@ const money = z
   .string()
   .regex(/^(0|[1-9]\d*)(\.\d+)?$/)
   .max(100);
-const tradeClasses = ["crypto_spot", "stocks", "perps", "commodities"];
+const tradeClasses = ["crypto_spot", "stocks", "perps"];
 async function ownOperation(
   id: string,
   session: Awaited<ReturnType<typeof requireSession>>,

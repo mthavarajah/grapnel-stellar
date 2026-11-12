@@ -27,6 +27,6 @@ export default async function Page({
   )
     notFound();
   const requestedCategory=(await searchParams).category;
-  const initialCategory=typeof requestedCategory==="string"&&["crypto_spot","perps","stocks","commodities"].includes(requestedCategory)?requestedCategory:undefined;
+  const initialCategory=typeof requestedCategory==="string"&&["crypto_spot","perps","stocks"].includes(requestedCategory)?requestedCategory:undefined;
   return <Finance page={page} initialCategory={initialCategory} />;
 }

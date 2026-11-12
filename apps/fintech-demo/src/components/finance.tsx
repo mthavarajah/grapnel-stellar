@@ -150,7 +150,7 @@ function Icon({ name, size = 20 }: { name: string; size?: number }) {
     </svg>
   );
 }
-const tradeCategories = [["crypto_spot", "Crypto"], ["stocks", "Stocks"], ["perps", "Margin"], ["commodities", "Commodities"]] as const;
+const tradeCategories = [["crypto_spot", "Crypto"], ["stocks", "Stocks"], ["perps", "Margin"]] as const;
 const nav = [
   ["home", "Overview"],
   ["funds", "Funds"],
@@ -173,12 +173,11 @@ type MarketHistory = {
   price_basis?:string; source_url?:string; interval?:string;
   metrics?:{day_high?:string|null;day_low?:string|null;day_volume?:string|null;fifty_two_week_high?:string|null;fifty_two_week_low?:string|null;previous_close?:string|null;market_time?:string|null};
 };
-type OverviewSection = {id:"spot"|"perps"|"stocks"|"commodities"|"lending";label:string;items:{symbol:string;name:string;value:string;unit:"USD"|"percent";unit_detail?:string;as_of:string}[];available:boolean};
+type OverviewSection = {id:"spot"|"perps"|"stocks"|"lending";label:string;items:{symbol:string;name:string;value:string;unit:"USD"|"percent";unit_detail?:string;as_of:string}[];available:boolean};
 const overviewGroups = [
   {id:"spot",label:"Spot prices",module:"trade.spot",href:"/markets?category=crypto_spot"},
   {id:"perps",label:"Margin prices",module:"trade.perps",href:"/markets?category=perps"},
   {id:"stocks",label:"Stock prices",module:"trade.stocks",href:"/markets?category=stocks"},
-  {id:"commodities",label:"Commodity prices",module:"trade.commodities",href:"/markets?category=commodities"},
   {id:"lending",label:"Lending rates",module:"capital.lending",href:"/earn"},
 ] as const;
 type HistoryRange = "live"|"1d"|"1w"|"1m"|"1y"|"all";
