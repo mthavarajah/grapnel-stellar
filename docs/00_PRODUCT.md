@@ -22,8 +22,8 @@ Grapnel is a modular **B2B2C REST financial infrastructure platform**, not a con
 | `capital.testnet_funding` | Testnet Funding & Return | Stellar Friendbot for activation, Grapnel Testnet treasury for transfers | P0 fund and authorized return |
 | `capital.lending` | Lending, Borrowing & Yield | Blend v2 on Stellar Testnet | P0 actual supply/withdraw; P1 borrow/repay |
 | `trade.spot` | Crypto | Soroswap + Stellar DEX / Aquarius as routed | P0 real testnet swap |
-| `trade.stocks` | Tokenized Stocks | Testnet-only reference asset if approved; future SODAX route | P2; no real shares implied |
-| `trade.perps` | Margin Trading | Peridot Stellar Testnet XLM/MockUSDT | P2; customer workflow remains gated until accepted |
+| `trade.stocks` | Stock and index perpetuals | Hyperliquid Testnet source-classified equity/index instruments | Discovery verified; live orders pending, no shares implied |
+| `trade.perps` | Perpetuals | Hyperliquid Testnet; canonical Circle-USDC funding/return integration | Discovery verified; live funding and orders pending |
 
 **Dependency rule:** `capital.wallets` is required for Testnet funding/return, lending and trade writes. UI may auto-enable wallets; backend must enforce the dependency. Internal coordinator, reserve management and portfolio reconciliation remain noncommercial internals. No on/off-ramp, cross-chain, extended bridging, venue-funding, capital-router product or separate Ledger product for this hackathon.
 
@@ -35,3 +35,5 @@ Each module has tenant entitlement and actual provider execution state: `testnet
 
 ## Definition of working
 At minimum: public dashboard + live REST API + independent sample fintech, real business entitlements and key behavior, customer-linked Stellar Testnet account and real confirmed transfer with hash. **Full MVP target before submission:** confirmed Soroswap swap and Blend supply/withdraw in addition to funding and return. Do not claim these until their actual chain and position checks succeed.
+
+The November11 owner-authorized Hyperliquid/CCTP revision supersedes earlier crosschain exclusions for this one Testnet workflow under `trade.perps`; it does not create a bridge product or permit mainnet writes. See `docs/16_PERPETUALS_INTEGRATION.md`. Peridot remains historical QA only.

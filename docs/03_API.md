@@ -121,3 +121,12 @@ Invalid key (401); revoked key (401); Spot disabled (403); enable Spot with same
 ### Borrow full repayment
 
 `GET /v1/capital/lending/borrowing` includes optional `repay_all_amount` and `can_prepare_repay_all` per asset. The UI uses the exact fresh maximum string, never the rounded debt display. `POST /v1/capital/lending/repay` keeps its existing body; `amount` is the approved maximum transfer, bounded by current debt plus0.1% and2atomic units and by confirmed spendable funds. XLM Max additionally allows for the1XLM fee ceiling. Actual excess must be refunded and proved in transaction metadata. Debt and collateral stay in the separately pinned borrowing pool; existing Earn collateral is not moved.
+
+
+## Hyperliquid Testnet market discovery extension — November12
+
+`GET /v1/trade/markets?asset_class=perps` returns all active source catalog identities; `asset_class=stocks` returns source-classified equity/index aliases. These are perpetual futures, not ownership of shares. Global market IDs are `hyperliquid-testnet:perps:<index>` and `hyperliquid-testnet:stocks:<index>`; the corresponding live entitlement is checked on every catalog/detail/history call.
+
+`GET /v1/trade/markets/:id` loads only the selected venue's fresh source context and preserves its exact collateral and price units. Catalog-only rows can have null prices. `GET /v1/trade/markets/:id/history?range=live|1d|1w|1m|1y|all` uses exact qualified source symbols and range-specific source candles. No history is invented for an empty source response. Stock aliases cannot resolve a crypto instrument. Provider metadata does not establish customer balances, account eligibility or live execution.
+
+Crypto history may expose `price_basis: underlying_reference`, `reference_symbol`, `related_asset_id`, `source_url`, and the actual quote unit for a first-party reference price series. This series describes the underlying reference; it is not the Soroswap execution quote or the token balance valuation. Unsupported reference identities retain observed Testnet pool history without fabricated backfill.
