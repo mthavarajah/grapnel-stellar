@@ -1,0 +1,36 @@
+{
+  "observedAt": "2026-11-12T03:58:36.087Z",
+  "sourceRevision": "7588e2ba33da8220fae8a0123377a70e747b2063",
+  "releaseCount": 0,
+  "tagCount": 0,
+  "actionsArtifactCount": 0,
+  "currentProvingKeyPaths": [],
+  "currentLfsTrackingPaths": [],
+  "publicApiRoutes": [
+    "frontend/app/api/candles/route.ts",
+    "frontend/app/api/faucet/route.ts",
+    "frontend/app/api/oracle/route.ts",
+    "frontend/app/api/prices/route.ts",
+    "frontend/app/api/score/route.ts"
+  ],
+  "canonicalProvingKey": {
+    "url": "https://ztellar-edge.vercel.app/zk/tier_proof_0001.zkey",
+    "httpStatus": 404,
+    "sha256": null,
+    "gitHistoryForExactPath": []
+  },
+  "allPublicHistoryCommitCount": 25,
+  "allPublicHistoricalProvingKeyPaths": [],
+  "equItX": {
+    "sourceRevision": "987e4fbeeade02f7a744d5117a0ad14a5fe22140",
+    "sourceDate": "2024-08-19T01:35:52Z",
+    "testUrl": "https://test.equitx.com/",
+    "testUrlError": "ERR_TLS_CERT_ALTNAME_INVALID",
+    "publishedNetwork": "Standalone Network ; February 2017",
+    "currentPublicTestnetDeploymentFound": false
+  },
+  "onchainWritesPerformed": false,
+  "oraclePostPerformed": false,
+  "proofGenerated": false,
+  "txHash": null
+}

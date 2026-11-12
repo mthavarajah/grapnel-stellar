@@ -1,0 +1,28 @@
+{
+  "observedAt": "2026-11-12T03:57:33.089Z",
+  "networkPassphrase": "Test SDF Network ; September 2015",
+  "ledger": 5686441,
+  "publicKeyUrl": "https://ztellar-edge.vercel.app/zk/verification_key.json",
+  "publicKeySha256": "2f3b00a7b196b1cca19be66191b7a8c593fb75d22aae2e2d9652e7693c78139b",
+  "curve": "bls12381",
+  "protocol": "groth16",
+  "nPublic": 5,
+  "deployedVkXdrSha256": "cf5aa9c6e87cd401d2a732f318df93163059335aa55673f25cc05f1acae15d0f",
+  "comparisons": {
+    "alpha": true,
+    "beta": true,
+    "gamma": true,
+    "delta": true,
+    "icLength": true,
+    "ic": [
+      true,
+      true,
+      true,
+      true,
+      true,
+      true
+    ]
+  },
+  "txHash": null,
+  "onchainWritesPerformed": false
+}
