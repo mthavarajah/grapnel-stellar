@@ -84,7 +84,7 @@ export class PerpetualCustomerService {
   return this.get(scope,id);
  }
  async get(scope:PerpetualScope,id:string){const order=await this.d.store.order(scope,id);if(!order)throw new GrapnelError(404,'NOT_FOUND','Order not found');return this.publicOrder(order);}
- private publicOrder(order:PendingPerpetualOrder){return {id:order.id,intent:order.intent,approvalMessage:order.approvalMessage,approvalDigest:order.approvalDigest,unsignedAction:order.unsignedAction,state:order.state,result:order.result,createdAt:order.createdAt};}
+ private publicOrder(order:PendingPerpetualOrder){return {id:order.id,intent:order.intent,approvalMessage:order.approvalMessage,approvalDigest:order.approvalDigest,unsignedAction:order.unsignedAction,state:!order.signedAction&&Date.parse(order.intent.expiresAt)<=this.now()?'expired':order.state,result:order.result,createdAt:order.createdAt};}
  async authorize(scope:PerpetualScope,id:string,stellarSignature:string,evmSignature:`0x${string}`){
   const order=await this.d.store.order(scope,id),account=await this.d.store.account(scope);
   if(!order||!account||order.accountId!==account.id)throw new GrapnelError(404,'NOT_FOUND','Order not found');
