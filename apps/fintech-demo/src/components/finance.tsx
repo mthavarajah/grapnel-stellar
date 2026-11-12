@@ -1036,7 +1036,7 @@ function FinanceShell({ page, auth, initialCategory }: { page: string; auth?: Au
               </button>
             </div>
           )}
-          {error && !((page === "markets" || page === "trade") && swapError) && (
+          {error && !active && !((page === "markets" || page === "trade") && swapError) && (
             <div className="notice error" role="alert">
               <strong>Request unavailable</strong>
               <span>{customerMessage(error)}</span>
