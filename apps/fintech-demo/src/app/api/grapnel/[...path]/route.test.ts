@@ -288,3 +288,11 @@ it('blocks account valuation without a customer session or wallet entitlement',a
  const upstream=vi.spyOn(server,'grapnel');vi.mocked(server.requireSession).mockRejectedValueOnce(new server.BffError(401,'SESSION_REQUIRED','Sign in'));expect((await GET(request('account-valuation'),context(['account-valuation']))).status).toBe(401);expect(upstream).not.toHaveBeenCalled();
  vi.mocked(server.requireModule).mockRejectedValueOnce(new server.BffError(403,'MODULE_NOT_ENABLED','Disabled'));expect((await GET(request('account-valuation'),context(['account-valuation']))).status).toBe(403);expect(upstream).not.toHaveBeenCalled();
 });
+it('binds Hyperliquid Testnet history to the perpetuals entitlement',async()=>{
+ const market='hyperliquid-testnet:perps:0';const upstream=vi.spyOn(server,'grapnel').mockResolvedValue({market_id:market,points:[]});
+ const response=await GET(request('market-history?market_id='+encodeURIComponent(market)+'&range=1d'),context(['market-history']));
+ expect(response.status).toBe(200);expect(server.requireModule).toHaveBeenCalledWith('trade.perps',session);expect(upstream).toHaveBeenCalledWith('/trade/markets/'+encodeURIComponent(market)+'/history?range=1d',session);
+});
+it('rejects a mainnet perpetual history identity before reaching the provider',async()=>{
+ const upstream=vi.spyOn(server,'grapnel');const response=await GET(request('market-history?market_id=hyperliquid-mainnet:perps:0'),context(['market-history']));expect(response.status).toBe(404);expect(upstream).not.toHaveBeenCalled();
+});

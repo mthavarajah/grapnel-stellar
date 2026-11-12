@@ -1,0 +1,7 @@
+import{describe,it,expect}from'vitest';import{renderToStaticMarkup}from'react-dom/server';import{PerpetualOrderPreview,PerpetualMarketMetrics}from'./perpetual-order-preview';
+describe('perpetual trading preview',()=>{
+ it('shows USDC settlement while keeping unverified execution disabled',()=>{const html=renderToStaticMarkup(PerpetualOrderPreview({symbol:'BTC',price:'74500.12'}));expect(html).toContain('Trade BTC');expect(html).toContain('Available trading balance: — USDC');expect(html).toContain('Order size (USDC)');expect(html).toContain('Review BTC perpetual order');expect(html).toContain('disabled');expect(html).toContain('Trading is not available yet.');expect(html).not.toMatch(/Mock|Peridot|USDT|value="[1-9]/);});
+ it('never invents a price when the source has none',()=>{const html=renderToStaticMarkup(PerpetualOrderPreview({symbol:'ETH',price:null}));expect(html).toContain('<strong>—</strong>');expect(html).not.toContain('0 USD');});
+});
+
+it('keeps source funding fractions and open-interest units distinct from USDC volume',()=>{const html=renderToStaticMarkup(PerpetualMarketMetrics({symbol:'BTC',maxLeverage:40,stats:{mark_price:'74500.12',oracle_price:'74501',day_notional_volume:'12345',open_interest:'25.5',funding_rate:'0.0000125'}}));expect(html).toContain('40×');expect(html).toContain('25.5');expect(html).toContain('BTC');expect(html).toContain('Funding rate (fraction)');expect(html).toContain('0.0000125');expect(html).not.toContain('%');});
