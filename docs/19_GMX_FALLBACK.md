@@ -1,0 +1,18 @@
+# GMX Testnet fallback — lead freeze v1
+
+Owner requests a working alternative to HyperCore funding restrictions. GMX Arbitrum Sepolia421614 is being validated as an alternate provider under existing `trade.perps`; no mainnet writes, no claim of moving Stellar USDC. Provider switch is gated by our own actual mint/open/close and position/balance evidence. Existing Stellar Crypto/Earn/Borrow remain untouched. Use the customer's embedded Privy EVM wallet, exact signatures and verified current wallet ownership; no manual address/secret input.
+
+Adapter owns `apps/api/src/adapters/gmx/**`. Lead owns migrations, routes, runtime, BFF, finance integration and QA runner. Frontend owns only new GmxPerpetualExecution and helper files. No independent edits to shared contracts/dependencies.
+
+## Customer BFF freeze
+
+- `GET gmx-status?account_address=<0x>&market_id=gmx-testnet:perps:ETH`: `{provider:'gmx',network:'arbitrum-sepolia',chain_id:421614,account_address,asset:{symbol:'USDC',decimals:6,address,identity:'USDC.SG'},native_balance,collateral_balance,allowance,positions,market,execution_available,reason}`. Monetary fields decimal strings or null. Default no selected wallet returns metadata with null balances, never another customer's account. BFF injects authenticated customer/wallet IDs.
+- `POST gmx-prepare`: `{account_address,kind:'mint'|'approve'|'open'|'close',market_id,is_long?,amount?,collateral?,size_usd?,slippage_bps?}` returns public request below. Mint capped100tokens, approvals20, collateral20 and notional40 for acceptance. Exactly reviewed customer-owned recipient; no arbitrary contracts/calldata.
+- `POST gmx-authorize`: `{request_id,signed_transaction}`. Only fixed chain421614. Save exact recovered signature/nonce/hash before one-use broadcast. Unknown responses recover by GET, no new signature/send.
+- `GET gmx-request?request_id=<uuid>` reads/reconciles known request. WithoutID reads pending scoped request for uncertain preparation recovery; never signs/sends.
+
+Public request: `{id,business_id,customer_id,wallet_id,account_address,kind,market_id,state:'prepared'|'sending'|'confirming'|'completed'|'cancelled'|'reverted'|'unknown',expires_at,intent,transaction:{chainId:421614,type:'eip1559',to,data,value,nonce,gas,maxFeePerGas,maxPriorityFeePerGas},tx_hash:null|0xhex,proof:null|object}`. Transaction number quantities (including nonce) are decimal strings; value/fee/gas fields are strings, never float. `intent` is exact provider adapter intent plus customer-review fields `{kind,account,amountAtomic6?,symbol,isLong?,collateralAtomic6?,sizeUsd30?,executionFeeWei?,slippageBps?}`. `proof` distinguishes token receipt and actual keeper execution+position change. An order creation receipt is not a fill.
+
+Before signing, browser independently decodes exact token mint/approve or router multicall/createOrder using the reviewed fixed registry/ABI, checks chain/account/recipient/asset/value/fee/nonce/expiry/amount/market/side and recovers the returned raw EVM signature to the expected wallet. Do not trust a server-provided hash or opaque arbitrary calldata. GET pending recovery after uncertain POST; no automatic retries or blind resigning. Scope every lookup to business/customer/Stellar identity wallet plus currently verified Privy EVM wallet ownership.
+
+User-facing funding is direct protocol Testnet collateral mint plus native Testnet gas. It is not Circle USDC, CCTP or a Stellar conversion. No success/position/balance fabricated from local records. `execution_available` stays false until actual acceptance proof.
