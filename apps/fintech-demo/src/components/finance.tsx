@@ -1,9 +1,11 @@
 "use client";
+import {createIdentityTokenResolver} from '@/lib/identity-token';
 import Link from "next/link";
 import {VelocityBrand} from "./velocity-brand";
 import {OperationProgress,ProgressIndicator} from "./operation-progress";
 import {trackApproval,type ApprovalPhase} from "@/lib/operation-progress";
 import { AssetLogo } from "./asset-logo";
+import {PrivyPerpetualExecution} from "./perpetual-execution";
 import {PerpetualOrderPreview,PerpetualMarketMetrics} from "./perpetual-order-preview";
 import {isCurrentDerivativeMarket,isRecognizedDerivativeMarket,bindMarketDetail,clearMarketLiveFields} from "@/lib/perpetual-market";
 import {assertMarginPositionBinding,marginPositionAction,type MarginReviewBinding} from "@/lib/margin-workflow";
@@ -13,7 +15,7 @@ import {
   PrivyProvider,
   getIdentityToken,
   usePrivy,
-  useUser,
+  useIdentityToken,
 } from "@privy-io/react-auth";
 import { useSignRawHash } from "@privy-io/react-auth/extended-chains";
 import { formatTokenAmount, fromAtomic, toAtomic, type PreparedAction, type AssetIdentity } from "@grapnel/contracts";
@@ -81,6 +83,7 @@ type Auth = {
   connect: () => Promise<void>;
   logout: () => Promise<void>;
   sign: (action: PreparedAction, address: string) => Promise<string>;
+  signRawHash?: (input:{address:string;chainType:"stellar";hash:`0x${string}`})=>Promise<{signature:`0x${string}`}>;
 };
 function Icon({ name, size = 20 }: { name: string; size?: number }) {
   const paths: Record<string, React.ReactNode> = {
@@ -313,23 +316,17 @@ export default function Finance({ page, initialCategory }: { page: string; initi
     <FinanceShell page={page} initialCategory={initialCategory} />
   );
 }
-async function loginToken(): Promise<string | null> {
-  let timer: ReturnType<typeof setTimeout>;
-  try {
-    return await Promise.race([getIdentityToken(), new Promise<never>((_, reject) => {
-      timer = setTimeout(() => reject(Error("Sign-in timed out. Please try again.")), 15000);
-    })]);
-  } finally { clearTimeout(timer!); }
-}
+const identityTokens=createIdentityTokenResolver();
 function PrivyFinance({ page, initialCategory }: { page: string; initialCategory?:string }) {
-  const { ready, authenticated, login, logout } = usePrivy();
-  const { refreshUser } = useUser();
+  const { ready, authenticated, login, logout, user } = usePrivy();
+  const { identityToken } = useIdentityToken();
+  const privyAppId=process.env.NEXT_PUBLIC_PRIVY_APP_ID??"";
+  if(ready)identityTokens.setIdentity({appId:privyAppId,userId:authenticated?user?.id??null:null});
   const { signRawHash } = useSignRawHash();
   const connect = async () => {
-    const token = await loginToken();
+    const token = await identityTokens.resolve({currentToken:identityToken,refresh:getIdentityToken});
     if (!token) throw Error("Please sign in first");
     await api("session", { identity_token: token });
-    void refreshUser().catch(() => {});
   };
   const auth: Auth = {
     ready,
@@ -337,10 +334,12 @@ function PrivyFinance({ page, initialCategory }: { page: string; initialCategory
     login,
     connect,
     logout: async () => {
+      identityTokens.setIdentity({appId:privyAppId,userId:null});
       await api("session", undefined, "DELETE");
       await logout();
     },
     sign: (a, address) => signPreparedAction(a, signRawHash, address),
+    signRawHash,
   };
   return <FinanceShell page={page} auth={auth} initialCategory={initialCategory} />;
 }
@@ -1343,7 +1342,7 @@ function FinanceShell({ page, auth, initialCategory }: { page: string; auth?: Au
                         {(selectedSpotMarket.stats.pool?.stale===true||selectedSpotMarket.stats.custody?.stale===true)&&<p className="small muted">Market activity delayed</p>}
                       </>}
                     </section>
-                    {(category==="perps"||selectedSpotMarket.instrument_type==="perpetual_futures") ? <PerpetualOrderPreview symbol={selectedSpotMarket.underlying?.symbol??selectedSpotMarket.label} price={selectedSpotMarket.reference_price} quoteSymbol={selectedSpotMarket.quote_symbol} settlementAsset={selectedSpotMarket.settlement_asset} stock={category==="stocks"||selectedSpotMarket.asset_category==="equity"} index={selectedSpotMarket.asset_category==="index"} error={detailError} loading={detailLoading}/> : <section className="market-order-card" aria-label="Trade market" data-testid="market-order-card">
+                    {(category==="perps"||selectedSpotMarket.instrument_type==="perpetual_futures") ? (auth?.signRawHash&&session?<PrivyPerpetualExecution key={`${session.customer_id}:${session.wallet_id}:${selectedSpotMarket.market_id}`} api={api} customerId={session.customer_id} walletId={session.wallet_id} stellarAddress={session.stellar_address} signRawHash={auth.signRawHash} market={selectedSpotMarket}/>:<PerpetualOrderPreview symbol={selectedSpotMarket.underlying?.symbol??selectedSpotMarket.label} price={selectedSpotMarket.reference_price} quoteSymbol={selectedSpotMarket.quote_symbol} settlementAsset={selectedSpotMarket.settlement_asset} stock={category==="stocks"||selectedSpotMarket.asset_category==="equity"} index={selectedSpotMarket.asset_category==="index"} error={detailError} loading={detailLoading}/>) : <section className="market-order-card" aria-label="Trade market" data-testid="market-order-card">
                       <h2>Trade {selectedSpotMarket.underlying?.symbol}</h2>
                       <div className="public-order-direction" role="group" aria-label="Order direction"><button type="button" disabled>Buy</button><button type="button" disabled>Sell</button></div>
                       <p className="small muted">Available: {formatTokenAmount(swapBalance(selectedSpotMarket.base?.id??selectedSpotMarket.asset_in_id))} {selectedSpotMarket.base?.code??selectedSpotMarket.underlying?.symbol}</p>
