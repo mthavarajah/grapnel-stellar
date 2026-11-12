@@ -1714,11 +1714,12 @@ footer strong {
 .margin-collateral { display: flex; align-items: center; gap: 7px; }
 .margin-trading-reason { margin: 20px 0 0; padding: 11px; color: #8a642b; background: #faf5e8; border-radius: 9px; font-size: 11px; line-height: 1.6; }
 
-.local-finance-brand { display: flex; align-items: center; min-height: 39px; padding: 0; }
-.local-finance-wordmark { display: block; width: 200px; max-width: 100%; height: auto; }
-.local-finance-compact-mark { display: none; }
-.local-finance-login-brand { margin-bottom: 34px; }
-.local-finance-login-brand img { display: block; width: 250px; max-width: 100%; height: auto; }
+.velocity-brand { display: flex; align-items: center; min-height: 39px; padding: 0; }
+.velocity-wordmark { display: block; position: relative; overflow: hidden; width: 140px; max-width: 100%; aspect-ratio: 174 / 67; }
+.velocity-wordmark img { position: absolute; top: 0; left: -177.5862069%; width: 277.5862069%; max-width: none; height: 100%; filter: grayscale(1); }
+.velocity-compact-mark { display: none; object-fit: contain; border-radius: 3px; }
+.velocity-login-brand { margin-bottom: 34px; }
+.velocity-login-brand .velocity-wordmark { width: 200px; }
 .wallet-hero-content { display: grid; grid-template-columns: minmax(0,1.1fr) minmax(0,1fr); gap: 30px; align-items: center; }
 .wallet-hero-account { min-width: 0; }
 .wallet-hero-account > p { color: #c4d0f5; font-size: 11px; line-height: 1.8; margin-top: 10px; }
@@ -1726,7 +1727,7 @@ footer strong {
 .account-assets-label { font-size: 13px; color: #e5ebff; font-weight: 500; }
 .account-assets-value { font-family: "Manrope",system-ui,sans-serif; font-size: clamp(34px,4.1vw,58px); font-weight: 650; line-height: 1.25; letter-spacing: -1.8px; color: white; overflow-wrap: anywhere; }
 .account-assets-total > small { color: #c4d0f5; font-size: 10px; line-height: 1.5; }
-@media(max-width: 1100px) { .sidebar .local-finance-wordmark { display: none; } .sidebar .local-finance-compact-mark { display: block; } }
+@media(max-width: 1100px) { .sidebar .velocity-wordmark { display: none; } .sidebar .velocity-compact-mark { display: block; } }
 @media(max-width: 700px) { .wallet-hero-content { grid-template-columns: minmax(0,1fr); gap: 23px; } .account-assets-total { border-left: 0; border-top: 1px solid #ffffff24; padding: 22px 0 0; } .account-assets-value { font-size: 42px; } }
 
 .margin-workflow-card .public-order-direction button[aria-pressed="true"] { color: var(--ink); background: var(--paper); border-color: var(--ink); font-weight: 650; }

@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import "./globals.css";
 export const metadata: Metadata = {
-  title: "Local Finance",
+  title: "Velocity",
+  icons: {icon:"/brand/velocity-official-icon.png"},
   description:
     "Your balances, markets and savings in one place.",
 };

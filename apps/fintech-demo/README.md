@@ -1,4 +1,4 @@
-# Local Finance Demo
+# Velocity Demo
 
 Independent customer fintech frontend/backend consuming Grapnel's REST API. Stellar Testnet only; no fiat or real money.
 

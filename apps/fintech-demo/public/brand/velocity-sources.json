@@ -1,0 +1,19 @@
+{
+  "observed_at": "2026-11-12T04:37:11.505Z",
+  "official_page": "https://www.velocityincubator.com/",
+  "presentation": "Original source bitmaps retained unchanged. CSS wordmark viewport exposes only the Velocity portion of the official compound header logo; no co-branding or institutional tagline is displayed.",
+  "sources": [
+    {
+      "file": "velocity-official-header.png",
+      "source": "https://cdn.prod.website-files.com/66cf2b351f83db4be55cbc38/67daf138c637dbd416378020_UW_Velocity_footer_Logo.png",
+      "sha256": "b0d7157a955d4b470e608cf0af902182fd7888bb30fbd4fdce90a2759039c6b1",
+      "license": "Official brand artwork; no open license or endorsement asserted"
+    },
+    {
+      "file": "velocity-official-icon.png",
+      "source": "https://cdn.prod.website-files.com/66cf2b351f83db4be55cbc38/66f0dcbdf1293286c1aca6c6_Velocity-reportfav.png",
+      "sha256": "1c842f848353f988842b0c3174a03087e79fe0da7879e1e301f9ce3941862a39",
+      "license": "Official brand artwork; no open license or endorsement asserted"
+    }
+  ]
+}

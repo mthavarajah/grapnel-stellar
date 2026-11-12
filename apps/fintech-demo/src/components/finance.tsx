@@ -1,5 +1,6 @@
 "use client";
 import Link from "next/link";
+import {VelocityBrand} from "./velocity-brand";
 import {OperationProgress,ProgressIndicator} from "./operation-progress";
 import {trackApproval,type ApprovalPhase} from "@/lib/operation-progress";
 import { AssetLogo } from "./asset-logo";
@@ -922,9 +923,9 @@ function FinanceShell({ page, auth, initialCategory }: { page: string; auth?: Au
     return (
       <main className="login-screen">
         <section className="login-card">
-          <div className="local-finance-login-brand"><img src="/brand/local-finance-wordmark.svg" alt="Local Finance" width={250} height={48}/></div>
+          <div className="velocity-login-brand"><VelocityBrand/></div>
 
-          <h1>{loading ? "Opening your workspace…" : "Welcome to Local Finance."}</h1>
+          <h1>{loading ? "Opening your workspace…" : "Welcome to Velocity."}</h1>
           <p>Sign in to connect your wallet and open your dashboard.</p>
           {loginTimedOut && <p className="login-error" role="alert">Sign-in is taking too long. Retry the connection.</p>}
           {error && <p className="login-error" role="alert">{customerMessage(error)}</p>}
@@ -941,12 +942,12 @@ function FinanceShell({ page, auth, initialCategory }: { page: string; auth?: Au
   return (
     <div className="app">
       <aside className="sidebar">
-        <Link className="brand local-finance-brand" href="/home" aria-label="Local Finance home">
-          <img className="local-finance-wordmark" src="/brand/local-finance-wordmark.svg" alt="Local Finance" width={200} height={39}/>
-          <img className="local-finance-compact-mark" src="/brand/local-finance-mark.svg" alt="Local Finance" width={36} height={36}/>
+        <Link className="brand velocity-brand" href="/home" aria-label="Velocity home">
+          <VelocityBrand/>
+          <VelocityBrand compact/>
         </Link>
         <div className="workspace">
-          <span className="workspace-avatar">L</span>
+          <span className="workspace-avatar">V</span>
           <div>
             Personal workspace
           </div>
@@ -983,7 +984,7 @@ function FinanceShell({ page, auth, initialCategory }: { page: string; auth?: Au
 
             {session ? (
               <div className="profile-container" ref={profileContainer} onBlur={event=>{if(event.relatedTarget instanceof Node&&!event.currentTarget.contains(event.relatedTarget))setProfileOpen(false);}}>
-                <button className="avatar" ref={profileTrigger} type="button" aria-label="Open account menu" aria-expanded={profileOpen} aria-controls="account-profile-menu" aria-haspopup="dialog" data-testid="profile-button" onClick={()=>setProfileOpen(current=>!current)}>LF</button>
+                <button className="avatar" ref={profileTrigger} type="button" aria-label="Open account menu" aria-expanded={profileOpen} aria-controls="account-profile-menu" aria-haspopup="dialog" data-testid="profile-button" onClick={()=>setProfileOpen(current=>!current)}>V</button>
                 {profileOpen&&<section className="profile-panel" id="account-profile-menu" ref={profilePanel} tabIndex={-1} role="dialog" aria-label="Your account" data-testid="account-menu">
                   <div className="profile-panel-heading"><strong>Your account</strong><span className="profile-connected"><span aria-hidden="true"/>Wallet connected</span></div>
                   <div className="profile-valuation" aria-live="polite" aria-busy={valuationLoading}>
