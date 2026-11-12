@@ -1,0 +1,63 @@
+import { describe, it, expect, vi } from 'vitest';
+import { randomUUID } from 'node:crypto';
+import { privateKeyToAccount, generatePrivateKey } from 'viem/accounts';
+import { encodeAbiParameters, encodeEventTopics, zeroAddress, getAddress, decodeFunctionData, encodeFunctionData, encodeFunctionResult, parseAbi, serializeTransaction, keccak256, type Hex } from 'viem';
+import { GmxTestnetAdapter, createGmxReadTransport, GMX_TESTNET as P } from './index.js';
+import { READER_ABI, EXCHANGE_ABI } from './abi.js';
+import type { GmxReadTransport, GmxPrepared } from './contracts.js';
+const ERC = parseAbi(['function balanceOf(address) view returns(uint256)', 'function allowance(address,address) view returns(uint256)', 'function mint(address,uint256)', 'function approve(address,uint256) returns(bool)', 'event Transfer(address indexed from,address indexed to,uint256 value)']);
+const DATA = parseAbi(['function getBool(bytes32) view returns(bool)']);
+const now = Date.parse('2026-11-12T19:15:00Z');
+function fixture() { const signer = privateKeyToAccount(generatePrivateKey()), account = signer.address.toLowerCase() as Hex, m = P.markets.ETH; let positions: any[] = []; const call = vi.fn(async (method: string, params: unknown[]):Promise<any> => { if (method === 'eth_chainId') return '0x66eee'; if (method === 'eth_getBlockByNumber')
+    return { number: '0x64', timestamp: '0x' + Math.floor(now / 1000).toString(16) }; if (method === 'eth_getBalance')
+    return '0x2386f26fc10000'; if (method === 'eth_getTransactionCount')
+    return '0x0'; if (method === 'eth_gasPrice')
+    return '0x5f5e100'; if (method === 'eth_estimateGas')
+    return '0x186a0'; if (method === 'eth_call') {
+    const p = params[0] as {
+        to: string;
+        data: Hex;
+    };
+    if (p.to === P.pins.collateral.address) {
+        const d = decodeFunctionData({ abi: ERC, data: p.data });
+        if (d.functionName === 'balanceOf' || d.functionName === 'allowance')
+            return encodeFunctionResult({ abi: ERC, functionName: d.functionName, result: 100000000n });
+        if (d.functionName === 'mint')
+            return '0x';
+        if (d.functionName === 'approve')
+            return encodeFunctionResult({ abi: ERC, functionName: 'approve', result: true });
+    }
+    if (p.to === P.pins.reader.address) {
+        const d = decodeFunctionData({ abi: READER_ABI, data: p.data });
+        if (d.functionName === 'getAccountPositions')
+            return encodeFunctionResult({ abi: READER_ABI, functionName: d.functionName, result: positions });
+        if (d.functionName === 'getMarkets')
+            return encodeFunctionResult({ abi: READER_ABI, functionName: d.functionName, result: [{ marketToken: m.market, indexToken: m.indexToken, longToken: m.indexToken, shortToken: P.pins.collateral.address }] });
+    }
+    if (p.to === P.pins.dataStore.address)
+        return encodeFunctionResult({ abi: DATA, functionName: 'getBool', result: false });
+    if (p.to === P.pins.exchange.address)
+        return '0x';
+} throw Error('Unexpected offline read ' + method); }); const a = new GmxTestnetAdapter({ transport: { request: call } as GmxReadTransport, now: () => now, fetcher: vi.fn(async () => new Response(JSON.stringify({ originTs: now, prices: { [m.indexToken]: { minPrice: (2000n * 10n ** 30n).toString(), maxPrice: (2001n * 10n ** 30n).toString() } } }))) }); vi.spyOn(a, 'verifyRegistry').mockResolvedValue({ network: P.network, chainId: P.chainId, blockNumber: '100', observedAt: new Date(now).toISOString(), router: P.pins.exchange.address, handler: P.pins.handler.address, collateral: P.pins.collateral.address }); const base = { id: randomUUID(), account, expiresAt: new Date(now + 90000).toISOString() }; return { a, signer, account, base, call, setPositions: (v: any[]) => { positions = v; } }; }
+async function sign(f: ReturnType<typeof fixture>, p: GmxPrepared, patch: Record<string, unknown> = {}) { return f.signer.signTransaction({ ...p.transaction, ...patch }); }
+describe('GMX exact Testnet preparation (offline transport fixtures)', () => {
+    it('never exposes a write transport method', async () => { const fetcher = vi.fn(); await expect(createGmxReadTransport(fetcher).request('eth_sendRawTransaction', [])).rejects.toThrow(); expect(fetcher).not.toHaveBeenCalled(); });
+    it('prepares only fixed publicly mintable USDC.SG and exact router approval', async () => { const f = fixture(), mint = await f.a.prepareMint({ ...f.base, amountAtomic6: '100000000' }); expect(mint.transaction.chainId).toBe(421614); expect(mint.transaction.to).toBe(P.pins.collateral.address); expect(decodeFunctionData({ abi: ERC, data: mint.transaction.data })).toMatchObject({ functionName: 'mint', args: [f.signer.address, 100000000n] }); const approval = await f.a.prepareApproval({ ...f.base, amountAtomic6: '20000000' }); expect(decodeFunctionData({ abi: ERC, data: approval.transaction.data })).toMatchObject({ functionName: 'approve', args: [getAddress(P.pins.router.address), 20000000n] }); await expect(f.a.prepareMint({ ...f.base, amountAtomic6: '100000001' })).rejects.toThrow(); await expect(f.a.prepareApproval({ ...f.base, amountAtomic6: '20000001' })).rejects.toThrow(); });
+    it('constructs bounded long order with exact custody, outward price rounding and immutable quote', async () => { const f = fixture(), p = await f.a.prepareOpen({ ...f.base, symbol: 'ETH', isLong: true, collateralAtomic6: '20000000', sizeUsd30: (40n * 10n ** 30n).toString(), executionFeeWei: '500000000000000', slippageBps: 50 }); const d = decodeFunctionData({ abi: EXCHANGE_ABI, data: p.transaction.data }); expect(d.functionName).toBe('multicall'); if (d.functionName !== 'multicall')
+        throw Error('unexpected'); expect(d.args[0]).toHaveLength(3); const o = decodeFunctionData({ abi: EXCHANGE_ABI, data: d.args[0][2]! }); expect(o.functionName).toBe('createOrder'); if (o.functionName !== 'createOrder')
+        throw Error('unexpected'); expect(o.args[0]).toMatchObject({ orderType: 2, isLong: true, numbers: { sizeDeltaUsd: 40n * 10n ** 30n, acceptablePrice: 2011005000000000n, executionFee: 500000000000000n }, addresses: { receiver: f.signer.address, market: getAddress(P.markets.ETH.market), initialCollateralToken: getAddress(P.pins.collateral.address) } }); expect(p.intent).toMatchObject({ quoteMinPrice30: (2000n * 10n ** 30n).toString(), quoteMaxPrice30: (2001n * 10n ** 30n).toString(), quoteObservedAt: new Date(now).toISOString(), indexDecimals: 18 }); expect(await f.a.verifySigned(p, await sign(f, p))).toBe(keccak256(await sign(f, p))); });
+    it('rejects raw mainnet, wrong signer, target, calldata, nonce and fee substitutions', async () => { const f = fixture(), p = await f.a.prepareMint({ ...f.base, amountAtomic6: '1000000' }); for (const patch of [{ chainId: 42161 }, { nonce: 1 }, { to: f.account }, { value: 1n }, { data: '0x' }, { gas: p.transaction.gas + 1n }, { maxFeePerGas: p.transaction.maxFeePerGas + 1n }])
+        await expect(f.a.verifySigned(p, await sign(f, p, patch))).rejects.toThrow(); const foreign = privateKeyToAccount(generatePrivateKey()); await expect(f.a.verifySigned(p, await foreign.signTransaction(p.transaction))).rejects.toThrow(); });
+    it('rejects mutated order intent even if attacker recomputes unsigned digest', async () => { const f = fixture(), p = await f.a.prepareOpen({ ...f.base, symbol: 'ETH', isLong: false, collateralAtomic6: '10000000', sizeUsd30: (20n * 10n ** 30n).toString(), executionFeeWei: '500000000000000', slippageBps: 50 }); const bad = structuredClone(p); bad.intent.acceptablePrice = '1'; await expect(f.a.verifySigned(bad, await sign(f, bad))).rejects.toThrow(); const wrongMarket = structuredClone(p); wrongMarket.intent.market = P.markets.BTC.market; await expect(f.a.verifySigned(wrongMarket, await sign(f, wrongMarket))).rejects.toThrow(); const fee = structuredClone(p); fee.transaction.value = 2000000000000000n; fee.signingHash = keccak256(serializeTransaction(fee.transaction)); await expect(f.a.verifySigned(fee, await sign(f, fee))).rejects.toThrow(); });
+    it('closes only an actual full matching position using MarketDecrease and no extra collateral send', async () => { const f = fixture(); await expect(f.a.prepareClose({ ...f.base, symbol: 'ETH', isLong: true, executionFeeWei: '500000000000000', slippageBps: 50 })).rejects.toThrow(); f.setPositions([{ addresses: { account: f.account, market: P.markets.ETH.market, collateralToken: P.pins.collateral.address }, numbers: { sizeInUsd: 40n * 10n ** 30n, sizeInTokens: 20000000000000000n, collateralAmount: 20000000n, pendingImpactAmount: 0n, borrowingFactor: 0n, fundingFeeAmountPerSize: 0n, longTokenClaimableFundingAmountPerSize: 0n, shortTokenClaimableFundingAmountPerSize: 0n, increasedAtTime: 1n, decreasedAtTime: 0n }, flags: { isLong: true } }]); const p = await f.a.prepareClose({ ...f.base, symbol: 'ETH', isLong: true, executionFeeWei: '500000000000000', slippageBps: 50 }); const d = decodeFunctionData({ abi: EXCHANGE_ABI, data: p.transaction.data }); if (d.functionName !== 'multicall')
+        throw Error('unexpected'); expect(d.args[0]).toHaveLength(2); const o = decodeFunctionData({ abi: EXCHANGE_ABI, data: d.args[0][1]! }); if (o.functionName !== 'createOrder')
+        throw Error('unexpected'); expect(o.args[0].orderType).toBe(4); expect(o.args[0].numbers.sizeDeltaUsd).toBe(40n * 10n ** 30n); expect(o.args[0].numbers.initialCollateralDeltaAmount).toBe(0n); expect(p.baseline.positions[0]?.sizeUsd30).toBe((40n * 10n ** 30n).toString()); });
+    it('requires successful canonical receipt, exact mint event and actual historical balance delta', async () => { const f = fixture(), p = await f.a.prepareMint({ ...f.base, amountAtomic6: '1000000' }), txHash = keccak256(await sign(f, p)), blockHash = ('0x' + 'b'.repeat(64)) as Hex; const original = f.call.getMockImplementation()!; let bad = false; const receipt = { transactionHash: txHash, status: '0x1', blockNumber: '0x65', blockHash, logs: [{ address: P.pins.collateral.address, transactionHash: txHash, blockHash, removed: false, topics: encodeEventTopics({ abi: ERC, eventName: 'Transfer', args: { from: zeroAddress, to: f.account } }), data: encodeAbiParameters([{ type: 'uint256' }], [1000000n]) }] }; f.call.mockImplementation(async (method, params) => { if (method === 'eth_getTransactionReceipt')
+        return receipt; if (method === 'eth_blockNumber')
+        return '0x67'; if (method === 'eth_getBlockByNumber')
+        return { hash: blockHash }; if (method === 'eth_getTransactionByHash') {
+        const t = p.transaction;
+        return { hash: txHash, blockHash, from: p.account, to: t.to, input: t.data, value: '0x0', nonce: '0x0', chainId: '0x66eee', gas: '0x' + t.gas.toString(16), maxFeePerGas: '0x' + t.maxFeePerGas.toString(16), maxPriorityFeePerGas: '0x0' };
+    } if (method === 'eth_call' && params[1] !== 'latest')
+        return encodeFunctionResult({ abi: ERC, functionName: 'balanceOf', result: params[1] === '0x64' ? 0n : bad ? 999999n : 1000000n }); return original(method, params); }); expect(await f.a.confirmTransaction(p, txHash)).toMatchObject({ kind: 'mint', confirmed: true, beforeAtomic6: '0', afterAtomic6: '1000000' }); bad = true; await expect(f.a.confirmTransaction(p, txHash)).rejects.toThrow(); });
+});
