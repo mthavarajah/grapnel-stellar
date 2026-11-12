@@ -51,9 +51,9 @@ describe('Peridot customer policy and fail-closed readiness',()=>{
   expect(terms).toMatchObject({marketId:PERIDOT_MARKET_ID,leverage:2,direction:'long',collateralAtomic:'10000000',receiptAssetId:PERIDOT_RECEIPT_ID,...PERIDOT_CUSTOMER_POLICY});
   for(const changed of [{market_id:'mainnet:NVDA'},{direction:'short'},{leverage:5},{amount:'1.0000001'},{amount:'0'},{slippage_bps:51}])expect(()=>createCustomerTerms({...input,...changed}as typeof input,customer)).toThrow();
  });
- it('does not turn a callback or credentials into missing phase execution guards',async()=>{
+ it('keeps new exposure blocked without independently verified swapped-recovery proof',async()=>{
   const proof=vi.fn(async()=>true),adapter=new PeridotCustomerAdapter({...dependencies(),verifyRoundTripProof:proof});
-  expect(await adapter.executionReady()).toBe(false);expect(proof).not.toHaveBeenCalled();
+  expect(await adapter.executionReady()).toBe(false);expect(proof).toHaveBeenCalledOnce();
   expect(await adapter.readinessFor(context().workflow,customer)).toMatchObject({execution_status:'blocked',preparation_available:false,steps:[]});
   await expect(adapter.prepareStep(context(),customer)).rejects.toMatchObject({details:{reason:'PERIDOT_ROUND_TRIP_PROOF_REQUIRED'}});
  });

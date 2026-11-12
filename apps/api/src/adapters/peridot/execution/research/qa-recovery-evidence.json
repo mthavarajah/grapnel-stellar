@@ -120,6 +120,17 @@
       "send_status": "PENDING",
       "ledger": 5685684,
       "return_value": null
+    },
+    {
+      "label": "qa_vault_withdraw_recovered_underlying",
+      "hash": "96fee4b166a406bebff02cd1791c1da0898ec6b913bc3e3e4912d42bbbe94ae3",
+      "sequence": "24403398585483275",
+      "max_fee_stroops": "45037",
+      "status": "SUCCESS",
+      "explorer": "https://stellar.expert/explorer/testnet/tx/96fee4b166a406bebff02cd1791c1da0898ec6b913bc3e3e4912d42bbbe94ae3",
+      "send_status": "PENDING",
+      "ledger": 5685880,
+      "return_value": null
     }
   ],
   "snapshots": [
@@ -1027,6 +1038,36 @@
         "snapshotInterestIndex": "1000050736357816808",
         "ledger": 5685684
       }
+    },
+    {
+      "phase": "qa_vault_withdraw",
+      "intent": {
+        "step": "vault_withdraw",
+        "walletAddress": "GAJZ5PEECGFB46QXKFW2QTWRXHYL4SOBS5VE2JDGJ4TDUIAUWEAHKV34",
+        "receiptAtomic": "9879964",
+        "repaidPositionId": "13844"
+      },
+      "expected_underlying_atomic": "9880181",
+      "before": {
+        "native": "9984.4317537",
+        "mock_usdt_atomic": "5300316",
+        "vault_receipt_atomic": "9879964",
+        "margin_receipt_atomic": "0"
+      },
+      "after": {
+        "native": "9984.4281574",
+        "mock_usdt_atomic": "15180497",
+        "vault_receipt_atomic": "0",
+        "margin_receipt_atomic": "0"
+      },
+      "debt": {
+        "principalAtomic": "0",
+        "balanceAtomic": "0",
+        "borrowIndex": "1000050736357816808",
+        "snapshotInterestIndex": "1000050736357816808",
+        "ledger": 5685880
+      },
+      "positions": []
     }
   ],
   "last_error": "The QA open swap exceeds its exact reviewed Testnet scope",
@@ -1039,5 +1080,6 @@
   "limit_extension": "Lead approved one cancel plus one replacement begin recovery; other scopes unchanged",
   "cancelled_position_id": "13843",
   "active_begin_label": "qa_replacement_two_x_long_begin",
-  "closed_position_id": "13844"
+  "closed_position_id": "13844",
+  "protocol_round_trip_verified": true
 }

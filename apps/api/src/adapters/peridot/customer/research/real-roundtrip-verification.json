@@ -1,0 +1,61 @@
+{
+  "verified": true,
+  "reason": "",
+  "checked_at": "2026-11-12T03:12:09.342Z",
+  "customer_privy_proof": false,
+  "manifest_proposal": {
+    "version": 1,
+    "network": "stellar-testnet",
+    "network_passphrase": "Test SDF Network ; September 2015",
+    "signer": "own_QA_ed25519_NOT_Privy_customer_flow",
+    "customer_privy_proof": false,
+    "owner": "GAJZ5PEECGFB46QXKFW2QTWRXHYL4SOBS5VE2JDGJ4TDUIAUWEAHKV34",
+    "pins_hash": "49f3ef935fe3f1dbf063d5006a066e0f1d13df46316f2f153d7e6480852c69bf",
+    "steps": [
+      {
+        "step": "collateral_swap",
+        "tx_hash": "27189228854fbcf81a2c063e3b25e8295b6db36a5eadb1ca3672e14fc9534b8f"
+      },
+      {
+        "step": "vault_deposit",
+        "tx_hash": "b2088aa2520e9d7bb33f616b10440768623798810e92e4cef23e2c67449f2f20"
+      },
+      {
+        "step": "margin_transfer",
+        "tx_hash": "08f66fe5aae7d5370211b17cad157dc82826bc14385a6359769498c41814ec60"
+      },
+      {
+        "step": "open_begin",
+        "tx_hash": "b9bdc9a7232497eff5cb993cd7f867173948d73e635170d621b13e50a7dd9ffe"
+      },
+      {
+        "step": "open_cancel",
+        "tx_hash": "c8523772688a0b5bea9fd4d6fc4a78434aa7cad6d7f530582e177c8979b901a4"
+      },
+      {
+        "step": "open_begin",
+        "tx_hash": "a4d7828550519d8f5bd5fc7778cf9806e9bc95c9a53aa91fab80b30942ae61d4"
+      },
+      {
+        "step": "open_swap",
+        "tx_hash": "24702136dc0aa0c2da2f430774de7a344dffc039bedb93dd999f9d49b17abb35"
+      },
+      {
+        "step": "open_activate",
+        "tx_hash": "797550610176258f13500f3107ab23968d5087748180763f85ff3a285d71aec1"
+      },
+      {
+        "step": "close_atomic",
+        "tx_hash": "e138fc04699431deb405526670427853a532d37a3795616d842f42ec26da4a3b"
+      },
+      {
+        "step": "margin_return",
+        "tx_hash": "9f9fe59ddedc24480747057af60cf4ca7f965821786a52e3e0c28a43efdeffbe"
+      },
+      {
+        "step": "vault_withdraw",
+        "tx_hash": "96fee4b166a406bebff02cd1791c1da0898ec6b913bc3e3e4912d42bbbe94ae3"
+      }
+    ]
+  }
+}

@@ -4,6 +4,8 @@ import type {MarginStepContext,MarginStep} from '../../../modules/margin/types.j
 import {canonicalJson} from '../../../lib/crypto.js';
 import type {PeridotStepIntent,PeridotPositionStep} from '../execution/intents.js';
 import type {QaAtomicCloseIntent} from '../execution/atomic-close.js';
+import type {QaMarginReturnIntent} from '../execution/margin-return.js';
+import type {QaVaultWithdrawIntent} from '../execution/vault-withdraw.js';
 import {PeridotQaVaultDepositPreparer,inspectQaVaultDepositTransaction,type QaPreparedVaultDeposit} from '../execution/vault-deposit.js';
 import {PeridotQaMarginTransferPreparer,inspectQaMarginTransferTransaction,type QaPreparedMarginTransfer} from '../execution/transfer.js';
 import {PeridotQaMarginBeginPreparer,inspectQaMarginBeginTransaction,type QaPreparedMarginBegin} from '../execution/begin.js';
@@ -12,7 +14,7 @@ import {invalid,unsigned} from './policy.js';
 import type {MarginEvidence} from '../../../modules/margin/types.js';
 export type KnownPrepared=QaPreparedVaultDeposit|QaPreparedMarginTransfer|QaPreparedMarginBegin;
 export interface PhasePrepared {
- intent:PeridotStepIntent|QaAtomicCloseIntent;unsignedXdr:string;signingHashHex:string;
+ intent:PeridotStepIntent|QaAtomicCloseIntent|QaMarginReturnIntent|QaVaultWithdrawIntent;unsignedXdr:string;signingHashHex:string;
  expiresAt:string;feeStroops:string;networkPassphrase:typeof NETWORK_PASSPHRASE;expectedPositionId?:string;[key:string]:unknown;
 }
 export interface CustomerPhaseBinding {
@@ -53,10 +55,11 @@ export function reviewedPhaseBindings(chain:PeridotCustomerChain):CustomerPhaseB
 }
 export function inspectPreparedHelper(p:PhasePrepared,context:MarginStepContext,customer:CustomerContext):void {
  if(p.networkPassphrase!==NETWORK_PASSPHRASE||p.intent.walletAddress!==customer.walletAddress||p.intent.step!==context.step||p.signingHashHex!==transaction(p).hash().toString('hex')||transaction(p).source!==customer.walletAddress||transaction(p).fee!==p.feeStroops)return invalid('HELPER_BINDING');
- const owner={walletAddress:customer.walletAddress};let expected:PeridotStepIntent|QaAtomicCloseIntent;
+ const owner={walletAddress:customer.walletAddress};let expected:PeridotStepIntent|QaAtomicCloseIntent|QaMarginReturnIntent|QaVaultWithdrawIntent;
  switch(context.step){
   case 'vault_deposit':expected={...owner,step:'vault_deposit',underlyingAtomic:context.workflow.terms.collateralAtomic};break;
-  case 'margin_transfer':case 'margin_return':case 'vault_withdraw':expected={...owner,step:context.step,receiptAtomic:unsigned(context.workflow.receiptAtomic,true).toString()};break;
+  case 'margin_transfer':expected={...owner,step:'margin_transfer',receiptAtomic:unsigned(context.workflow.receiptAtomic,true).toString()};break;
+  case 'margin_return':case 'vault_withdraw':expected={...owner,step:context.step,receiptAtomic:unsigned(context.workflow.receiptAtomic,true).toString(),repaidPositionId:unsigned(context.workflow.positionId,true).toString()};break;
   case 'open_begin':expected={...owner,step:'open_begin',marginReceiptAtomic:unsigned(context.workflow.receiptAtomic,true).toString(),leverage:2,direction:'long',minimumOutputAtomic:unsigned(context.terms.minimumOutputAtomic,true).toString()};break;
   case 'close_atomic':expected={...owner,step:'close_atomic',positionId:unsigned(context.workflow.positionId,true).toString(),minimumOutputAtomic:unsigned(context.terms.minimumOutputAtomic,true).toString()};break;
   case 'close_swap':expected={...owner,step:'close_swap',positionId:unsigned(context.workflow.positionId,true).toString(),minimumOutputAtomic:unsigned(context.terms.minimumOutputAtomic,true).toString()};break;

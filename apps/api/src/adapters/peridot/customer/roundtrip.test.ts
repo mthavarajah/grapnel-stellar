@@ -7,6 +7,7 @@ import {reviewedPhaseBindings,type CustomerPhaseBindings,type CustomerPhaseBindi
 import {reviewedPositionBindings} from './position-bindings.js';
 import {PeridotRoundTripVerifier} from './roundtrip.js';
 import {PERIDOT_CUSTOMER_POLICY} from './policy.js';
+import {reviewedExitBindings} from './exit-bindings.js';
 import {reviewedAtomicCloseBinding} from './atomic-binding.js';
 vi.mock('../execution/phase-reads.js',async original=>({...await original<typeof import('../execution/phase-reads.js')>(),verifyPeridotPhaseCodeBytes:vi.fn(async()=>{})}));
 const owner='GAJZ5PEECGFB46QXKFW2QTWRXHYL4SOBS5VE2JDGJ4TDUIAUWEAHKV34';
@@ -29,6 +30,17 @@ describe('Trusted round-trip verification never substitutes configured truth for
  });
  it.each([{network:'stellar-mainnet'},{network_passphrase:'Public Global Stellar Network ; September 2015'},{signer:'privy_stellar'},{customer_privy_proof:true},{pins_hash:'f'.repeat(64)},{owner:'attacker'}])('rejects identity/network/proof-label substitution',async changed=>{
   const source=chain(),get=vi.spyOn(source,'confirmed'),verifier=new PeridotRoundTripVerifier({chain:source,bindings:{},readManifest:async()=>({...base,...changed,steps:[...prefix(),...missingTail]})});expect(await verifier.verify()).toBe(false);expect(get).not.toHaveBeenCalled();
+ });
+ it('replays all actual signed transactions through final withdrawal and checks current zero exposure',async()=>{
+  const source=chain(),bindings={...reviewedPhaseBindings(source),...reviewedPositionBindings(source),...reviewedAtomicCloseBinding(source),...reviewedExitBindings(source)};
+  const all=[...labels,['close_atomic','atomic_close'],['margin_return','margin_return'],['vault_withdraw','vault_withdraw']],recorded=new Map(all.map(([,label])=>{const tx=fixture(label);return[tx.hash,tx]as const;}));
+  vi.spyOn(source,'confirmed').mockImplementation(async hash=>recorded.get(hash)!);
+  vi.spyOn(source,'positionSnapshot').mockResolvedValue(null);
+  const snapshot=vi.spyOn(source,'snapshot').mockResolvedValue({walletUnderlyingAtomic:'15180497',walletReceiptAtomic:'0',marginReceiptAtomic:'0',marginDebtAtomic:'0',nativeWalletAtomic:'99844281574',nativeSpendableAtomic:'99844281574',observedAt:new Date().toISOString(),ledger:5685880,position:null});
+  const manifest={...base,steps:all.map(([step,label])=>({step,tx_hash:fixture(label).hash}))};
+  const verifier=new PeridotRoundTripVerifier({chain:source,bindings,readManifest:async()=>manifest});expect(await verifier.verify(),verifier.lastFailureReason).toBe(true);
+  snapshot.mockResolvedValue({...await source.snapshot({}as never),marginDebtAtomic:'1'});
+  const poisoned=new PeridotRoundTripVerifier({chain:source,bindings,readManifest:async()=>manifest});expect(await poisoned.verify()).toBe(false);expect(poisoned.lastFailureReason).toBe('ROUND_TRIP_FINAL_BALANCES');
  });
  it('coalesces concurrent checks and does not persist a negative result as a verified cache',async()=>{
   let resolve!:(value:null)=>void;const read=vi.fn(()=>new Promise<null>(r=>{resolve=r;})),verifier=new PeridotRoundTripVerifier({chain:chain(),bindings:{},readManifest:read});const a=verifier.verify(),b=verifier.verify();resolve(null);expect(await Promise.all([a,b])).toEqual([false,false]);expect(read).toHaveBeenCalledTimes(1);const c=verifier.verify();resolve(null);expect(await c).toBe(false);expect(read).toHaveBeenCalledTimes(2);

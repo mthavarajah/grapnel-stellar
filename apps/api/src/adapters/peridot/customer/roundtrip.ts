@@ -48,8 +48,8 @@ function helperFor(step:ProofStep,tx:ConfirmedPeridotTransaction,owner:string,ar
  const sameOwner=()=>{if(args[0]!==owner)return invalid('ROUND_TRIP_OWNER_ARGUMENT');};let intent:Record<string,unknown>;
  switch(step){
   case'vault_deposit':sameOwner();intent={step,walletAddress:owner,underlyingAtomic:integer(args[1]).toString()};break;
-  case'margin_transfer':case'margin_return':sameOwner();if(args[1]!==P.mock_usdt.address)return invalid('ROUND_TRIP_MARGIN_ASSET');intent={step,walletAddress:owner,receiptAtomic:integer(args[2]).toString()};break;
-  case'vault_withdraw':sameOwner();intent={step,walletAddress:owner,receiptAtomic:integer(args[1]).toString()};break;
+  case'margin_transfer':case'margin_return':sameOwner();if(args[1]!==P.mock_usdt.address)return invalid('ROUND_TRIP_MARGIN_ASSET');intent={step,walletAddress:owner,receiptAtomic:integer(args[2]).toString(),...(step==='margin_return'?{repaidPositionId:model.positionId}: {})};break;
+  case'vault_withdraw':sameOwner();intent={step,walletAddress:owner,receiptAtomic:integer(args[1]).toString(),repaidPositionId:model.positionId};break;
   case'open_begin':sameOwner();intent={step,walletAddress:owner,marginReceiptAtomic:integer(args[3]).toString(),leverage:Number(integer(args[4])),direction:equal(args[5],['Long'])?'long':'invalid',minimumOutputAtomic:integer(args[9]).toString()};break;
   case'close_atomic':sameOwner();intent={step,walletAddress:owner,positionId:integer(args[1]).toString(),minimumOutputAtomic:integer(args[2]).toString()};break;
   default:sameOwner();intent={step,walletAddress:owner,positionId:integer(args[1]).toString()};

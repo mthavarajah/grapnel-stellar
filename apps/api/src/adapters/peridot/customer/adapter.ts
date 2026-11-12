@@ -17,6 +17,7 @@ import {assertSamePrepared,inspectCustomerSignature} from './signature.js';
 import {encodePrivate} from './encoding.js';
 import {reviewedPositionBindings} from './position-bindings.js';
 import {reviewedAtomicCloseBinding} from './atomic-binding.js';
+import {reviewedExitBindings} from './exit-bindings.js';
 
 export interface PeridotCustomerDependencies extends CustomerChainDependencies {
  /** Must independently verify an actual full current Testnet round trip. No flag or credentials establish this proof. */
@@ -38,7 +39,7 @@ export function publicMarginAction(context:MarginStepContext,helper:PhasePrepare
 }
 export class PeridotCustomerAdapter implements MarginAdapter {
  readonly chain:PeridotCustomerChain;readonly bindings:CustomerPhaseBindings;
- constructor(private readonly deps:PeridotCustomerDependencies){this.chain=new PeridotCustomerChain(deps);this.bindings={...reviewedPhaseBindings(this.chain),...reviewedPositionBindings(this.chain),...reviewedAtomicCloseBinding(this.chain),...deps.bindings};}
+ constructor(private readonly deps:PeridotCustomerDependencies){this.chain=new PeridotCustomerChain(deps);this.bindings={...reviewedPhaseBindings(this.chain),...reviewedPositionBindings(this.chain),...reviewedAtomicCloseBinding(this.chain),...reviewedExitBindings(this.chain),...deps.bindings};}
  async executionReady():Promise<boolean>{
   if(!REQUIRED_CUSTOMER_STEPS.every(step=>this.bindings[step]&&(['vault_deposit','margin_transfer','open_begin'].includes(step)||!!this.bindings[step]!.readEvidence&&!!this.bindings[step]!.publicAction)&&(!['close_swap','close_short_swap'].includes(step)||!!this.bindings[step]!.quoteTerms)))return false;
   try{return await this.deps.verifyRoundTripProof?.()===true&&await this.deps.verifySwappedRecoveryProof?.()===true;}catch{return false;}
@@ -62,7 +63,7 @@ export class PeridotCustomerAdapter implements MarginAdapter {
  }
  async prepareStep(context:MarginStepContext,customer:CustomerContext):Promise<MarginPreparation>{
   await this.assertStepReady(context,customer);const binding=this.bindings[context.step]!,helper=await binding.prepare(context,customer);inspectPreparedHelper(helper,context,customer);
-  const prepared=this.actionFor(context,helper,customer),before=await this.chain.snapshot(customer,context.workflow.positionId),fee=unsigned(helper.feeStroops,true),cap=unsigned(context.step==='vault_deposit'?context.workflow.terms.depositMaxFeeStroops:context.workflow.terms.maxFeeStroops,true);
+  const prepared=this.actionFor(context,helper,customer),before=await this.chain.snapshot(customer,context.workflow.positionId,['margin_return','vault_withdraw'].includes(context.step)),fee=unsigned(helper.feeStroops,true),cap=unsigned(context.step==='vault_deposit'?context.workflow.terms.depositMaxFeeStroops:context.workflow.terms.maxFeeStroops,true);
   if(fee>cap||Date.parse(helper.expiresAt)<=this.chain.now()||Date.parse(helper.expiresAt)>this.chain.now()+120000)return invalid('PREPARED_FEE_OR_EXPIRY');
   const reservations:MarginPreparation['reservations']=[{assetId:PERIDOT_BASE.id,amountAtomic:fee,spendableAtomic:unsigned(before.nativeSpendableAtomic),observedAt:new Date(before.observedAt)}];
   if(context.step==='vault_deposit')reservations.push({assetId:PERIDOT_COLLATERAL.id,amountAtomic:unsigned(context.workflow.terms.collateralAtomic,true),spendableAtomic:unsigned(before.walletUnderlyingAtomic),observedAt:new Date(before.observedAt)});
@@ -87,7 +88,7 @@ export class PeridotCustomerAdapter implements MarginAdapter {
   const baseline=this.baseline(context,context.baseline,customer),binding=this.bindings[context.step];if(!binding)return fail('PERIDOT_PHASE_EXTRACTOR_REQUIRED');
   const confirmed=await this.chain.confirmed(context.txHash,customer),prepared=this.actionFor(context,baseline.helper,customer);
   if(context.txHash!==prepared.signingHashHex)return invalid('STORED_CHAIN_HASH');inspectCustomerSignature(prepared,confirmed.transaction.toXDR(),customer);binding.inspectHistorical(baseline.helper,confirmed.transaction);
-  const positionId=context.step==='open_begin'?unsigned(baseline.helper.expectedPositionId,true).toString():context.workflow.positionId,after=await this.chain.snapshot(customer,positionId,['open_cancel','close_atomic','close_finish'].includes(context.step));
+  const positionId=context.step==='open_begin'?unsigned(baseline.helper.expectedPositionId,true).toString():context.workflow.positionId,after=await this.chain.snapshot(customer,positionId,['open_cancel','close_atomic','close_finish','margin_return','vault_withdraw'].includes(context.step));
   if(binding.readEvidence)return binding.readEvidence(context,baseline,confirmed,after,customer);
   return knownMarginEvidence(context,baseline,confirmed,after,customer,this.chain.now());
  }

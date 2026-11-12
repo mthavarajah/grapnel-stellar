@@ -66,6 +66,8 @@ export class PeridotCustomerChain {
   if(!(parsed instanceof Transaction)||parsed.source!==customer.walletAddress||parsed.hash().toString('hex')!==hash)return invalid('CONFIRMED_ENVELOPE');
   const horizon=await this.deps.horizonTransaction(hash),fee=unsigned(tx.resultXdr.feeCharged().toString(),true);
   if(!horizon.successful||horizon.hash!==hash||horizon.source_account!==customer.walletAddress||horizon.ledger_attr!==tx.ledger||unsigned(String(horizon.fee_charged),true)!==fee)return invalid('CONFIRMED_HORIZON_OR_FEE');
-  return{hash,ledger:tx.ledger,createdAt:tx.createdAt,feeAtomic:fee.toString(),meta:tx.resultMetaXdr,returnValue:tx.returnValue,transaction:parsed};
+  const timestamp:unknown=tx.createdAt,createdAt=typeof timestamp==='string'&&/^[1-9]\d{0,10}$/.test(timestamp)?Number(timestamp):timestamp;
+  if(typeof createdAt!=='number'||!Number.isSafeInteger(createdAt)||createdAt<=0)return invalid('CONFIRMED_TIMESTAMP');
+  return{hash,ledger:tx.ledger,createdAt,feeAtomic:fee.toString(),meta:tx.resultMetaXdr,returnValue:tx.returnValue,transaction:parsed};
  }
 }
