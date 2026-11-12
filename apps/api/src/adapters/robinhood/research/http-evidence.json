@@ -1,0 +1,150 @@
+{
+  "https://api.robinhood.com/rhj/assets": {
+    "http_status": 200,
+    "sha256": "aa9ed1a2633622431d56c728ea9dc71fbff94763d30f5b1262451135cc66359a",
+    "asset_count": 203,
+    "deployment_chain_counts": {
+      "4663": 203
+    },
+    "testnet_entries": []
+  },
+  "https://ghost-trading-api.synthra.org/v1/chains": {
+    "http_status": 200,
+    "response": {
+      "version": "2026-10-31.1",
+      "chains": [
+        {
+          "chainId": 1,
+          "key": "ETHEREUM",
+          "label": "Ethereum",
+          "vm": "evm",
+          "internalPools": false,
+          "externalRouting": true,
+          "crossChain": "bidirectional"
+        },
+        {
+          "chainId": 10,
+          "key": "OPTIMISM",
+          "label": "Optimism",
+          "vm": "evm",
+          "internalPools": false,
+          "externalRouting": true,
+          "crossChain": "bidirectional"
+        },
+        {
+          "chainId": 56,
+          "key": "BNB",
+          "label": "BNB Chain",
+          "vm": "evm",
+          "internalPools": false,
+          "externalRouting": true,
+          "crossChain": "bidirectional"
+        },
+        {
+          "chainId": 137,
+          "key": "POLYGON",
+          "label": "Polygon",
+          "vm": "evm",
+          "internalPools": false,
+          "externalRouting": true,
+          "crossChain": "bidirectional"
+        },
+        {
+          "chainId": 143,
+          "key": "MONAD",
+          "label": "Monad",
+          "vm": "evm",
+          "internalPools": false,
+          "externalRouting": true,
+          "crossChain": "bidirectional"
+        },
+        {
+          "chainId": 480,
+          "key": "WORLDCHAIN",
+          "label": "World Chain",
+          "vm": "evm",
+          "internalPools": false,
+          "externalRouting": true,
+          "crossChain": "bidirectional"
+        },
+        {
+          "chainId": 999,
+          "key": "HYPEREVM",
+          "label": "HyperEVM",
+          "vm": "evm",
+          "internalPools": false,
+          "externalRouting": true,
+          "crossChain": "bidirectional"
+        },
+        {
+          "chainId": 4663,
+          "key": "ROBINHOOD",
+          "label": "Robinhood Chain",
+          "vm": "evm",
+          "internalPools": true,
+          "externalRouting": true,
+          "crossChain": "bidirectional"
+        },
+        {
+          "chainId": 5042,
+          "key": "ARC",
+          "label": "Arc",
+          "vm": "evm",
+          "internalPools": true,
+          "externalRouting": true,
+          "crossChain": "bidirectional"
+        },
+        {
+          "chainId": 8453,
+          "key": "BASE",
+          "label": "Base",
+          "vm": "evm",
+          "internalPools": false,
+          "externalRouting": true,
+          "crossChain": "bidirectional"
+        },
+        {
+          "chainId": 42161,
+          "key": "ARBITRUM",
+          "label": "Arbitrum",
+          "vm": "evm",
+          "internalPools": false,
+          "externalRouting": true,
+          "crossChain": "bidirectional"
+        },
+        {
+          "chainId": 43114,
+          "key": "AVALANCHE",
+          "label": "Avalanche",
+          "vm": "evm",
+          "internalPools": false,
+          "externalRouting": true,
+          "crossChain": "bidirectional"
+        },
+        {
+          "chainId": 99901,
+          "key": "ELYSIUM",
+          "label": "Elysium",
+          "vm": "evm",
+          "internalPools": true,
+          "externalRouting": true,
+          "crossChain": "bidirectional"
+        },
+        {
+          "chainId": 792703809,
+          "key": "SOLANA",
+          "label": "Solana",
+          "vm": "svm",
+          "internalPools": false,
+          "externalRouting": true,
+          "crossChain": "bidirectional"
+        }
+      ]
+    }
+  },
+  "https://faucet.paxos.com/assets/index-Cnwrg2YM.js": {
+    "sha256": "0aa4a9022cebc526d3875ce6e91bc033c7b425e9382784a278cfda7e1bd62bfe",
+    "address_config_excerpt": "a05B567C600B78C0b41892`],[`INK_USDG`,`${PT}/address/0xAA6870F78AA8A3427C9fF808c5De901f08B83fcd`],[`ROBINHOOD_USDG`,`${FT}/address/0x7E955252E15c84f5768B83c41a71F9eba181802F`],[`INK_PYUSD`,`${PT}/address/0x9083F99285Ffd1791D1307060367bDA61A597Db0`],[`XLAYER_PYUSD`,`${NT}/address/0xBA4966F36c90B28098346"
+  },
+  "captured_at": "2026-11-12T15:32:06.625Z"
+}

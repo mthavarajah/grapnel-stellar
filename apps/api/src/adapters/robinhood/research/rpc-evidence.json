@@ -1,0 +1,4110 @@
+{
+  "captured_at": "2026-11-12T15:31:41.483Z",
+  "rpc": "https://rpc.testnet.chain.robinhood.com",
+  "execution_status": "discovery_only",
+  "transactions_submitted": 0,
+  "chain": {
+    "jsonrpc": "2.0",
+    "id": 1,
+    "result": "0xb626"
+  },
+  "block": {
+    "jsonrpc": "2.0",
+    "id": 2,
+    "result": "0x9150915"
+  },
+  "tokens": [
+    {
+      "label": "TSLA",
+      "address": "0xC9f9c86933092BbbfFF3CCb4b105A4A94bf3Bd4E",
+      "provenance": "project primary; official faucet provenance pending",
+      "code_bytes": 283,
+      "code_hash": "0x2f367e6a678e7b30ab613d5963e541e6f4d3ca586de76e2f441fbfeb1a27c440",
+      "reads": {
+        "name": {
+          "request": {
+            "method": "eth_call",
+            "params": [
+              {
+                "to": "0xC9f9c86933092BbbfFF3CCb4b105A4A94bf3Bd4E",
+                "data": "0x06fdde03"
+              },
+              "0x9150915"
+            ]
+          },
+          "response": {
+            "jsonrpc": "2.0",
+            "id": 4,
+            "result": "0x000000000000000000000000000000000000000000000000000000000000002000000000000000000000000000000000000000000000000000000000000000055465736c61000000000000000000000000000000000000000000000000000000"
+          },
+          "decoded": "Tesla"
+        },
+        "symbol": {
+          "request": {
+            "method": "eth_call",
+            "params": [
+              {
+                "to": "0xC9f9c86933092BbbfFF3CCb4b105A4A94bf3Bd4E",
+                "data": "0x95d89b41"
+              },
+              "0x9150915"
+            ]
+          },
+          "response": {
+            "jsonrpc": "2.0",
+            "id": 5,
+            "result": "0x0000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000000454534c4100000000000000000000000000000000000000000000000000000000"
+          },
+          "decoded": "TSLA"
+        },
+        "decimals": {
+          "request": {
+            "method": "eth_call",
+            "params": [
+              {
+                "to": "0xC9f9c86933092BbbfFF3CCb4b105A4A94bf3Bd4E",
+                "data": "0x313ce567"
+              },
+              "0x9150915"
+            ]
+          },
+          "response": {
+            "jsonrpc": "2.0",
+            "id": 6,
+            "result": "0x0000000000000000000000000000000000000000000000000000000000000012"
+          },
+          "decoded": 18
+        },
+        "totalSupply": {
+          "request": {
+            "method": "eth_call",
+            "params": [
+              {
+                "to": "0xC9f9c86933092BbbfFF3CCb4b105A4A94bf3Bd4E",
+                "data": "0x18160ddd"
+              },
+              "0x9150915"
+            ]
+          },
+          "response": {
+            "jsonrpc": "2.0",
+            "id": 7,
+            "result": "0x000000000000000000000000000000000000000000057a56daddf0f813600000"
+          },
+          "decoded": "6622360000000000000000000"
+        }
+      }
+    },
+    {
+      "label": "AMZN",
+      "address": "0x5884aD2f920c162CFBbACc88C9C51AA75eC09E02",
+      "provenance": "project primary; official faucet provenance pending",
+      "code_bytes": 283,
+      "code_hash": "0x2f367e6a678e7b30ab613d5963e541e6f4d3ca586de76e2f441fbfeb1a27c440",
+      "reads": {
+        "name": {
+          "request": {
+            "method": "eth_call",
+            "params": [
+              {
+                "to": "0x5884aD2f920c162CFBbACc88C9C51AA75eC09E02",
+                "data": "0x06fdde03"
+              },
+              "0x9150915"
+            ]
+          },
+          "response": {
+            "jsonrpc": "2.0",
+            "id": 9,
+            "result": "0x00000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000006416d617a6f6e0000000000000000000000000000000000000000000000000000"
+          },
+          "decoded": "Amazon"
+        },
+        "symbol": {
+          "request": {
+            "method": "eth_call",
+            "params": [
+              {
+                "to": "0x5884aD2f920c162CFBbACc88C9C51AA75eC09E02",
+                "data": "0x95d89b41"
+              },
+              "0x9150915"
+            ]
+          },
+          "response": {
+            "jsonrpc": "2.0",
+            "id": 10,
+            "result": "0x00000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000004414d5a4e00000000000000000000000000000000000000000000000000000000"
+          },
+          "decoded": "AMZN"
+        },
+        "decimals": {
+          "request": {
+            "method": "eth_call",
+            "params": [
+              {
+                "to": "0x5884aD2f920c162CFBbACc88C9C51AA75eC09E02",
+                "data": "0x313ce567"
+              },
+              "0x9150915"
+            ]
+          },
+          "response": {
+            "jsonrpc": "2.0",
+            "id": 11,
+            "result": "0x0000000000000000000000000000000000000000000000000000000000000012"
+          },
+          "decoded": 18
+        },
+        "totalSupply": {
+          "request": {
+            "method": "eth_call",
+            "params": [
+              {
+                "to": "0x5884aD2f920c162CFBbACc88C9C51AA75eC09E02",
+                "data": "0x18160ddd"
+              },
+              "0x9150915"
+            ]
+          },
+          "response": {
+            "jsonrpc": "2.0",
+            "id": 12,
+            "result": "0x000000000000000000000000000000000000000000057a56daddf0f813600000"
+          },
+          "decoded": "6622360000000000000000000"
+        }
+      }
+    },
+    {
+      "label": "PLTR",
+      "address": "0x1FBE1a0e43594b3455993B5dE5Fd0A7A266298d0",
+      "provenance": "project primary; official faucet provenance pending",
+      "code_bytes": 283,
+      "code_hash": "0x2f367e6a678e7b30ab613d5963e541e6f4d3ca586de76e2f441fbfeb1a27c440",
+      "reads": {
+        "name": {
+          "request": {
+            "method": "eth_call",
+            "params": [
+              {
+                "to": "0x1FBE1a0e43594b3455993B5dE5Fd0A7A266298d0",
+                "data": "0x06fdde03"
+              },
+              "0x9150915"
+            ]
+          },
+          "response": {
+            "jsonrpc": "2.0",
+            "id": 14,
+            "result": "0x0000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000001550616c616e74697220546563686e6f6c6f676965730000000000000000000000"
+          },
+          "decoded": "Palantir Technologies"
+        },
+        "symbol": {
+          "request": {
+            "method": "eth_call",
+            "params": [
+              {
+                "to": "0x1FBE1a0e43594b3455993B5dE5Fd0A7A266298d0",
+                "data": "0x95d89b41"
+              },
+              "0x9150915"
+            ]
+          },
+          "response": {
+            "jsonrpc": "2.0",
+            "id": 15,
+            "result": "0x00000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000004504c545200000000000000000000000000000000000000000000000000000000"
+          },
+          "decoded": "PLTR"
+        },
+        "decimals": {
+          "request": {
+            "method": "eth_call",
+            "params": [
+              {
+                "to": "0x1FBE1a0e43594b3455993B5dE5Fd0A7A266298d0",
+                "data": "0x313ce567"
+              },
+              "0x9150915"
+            ]
+          },
+          "response": {
+            "jsonrpc": "2.0",
+            "id": 16,
+            "result": "0x0000000000000000000000000000000000000000000000000000000000000012"
+          },
+          "decoded": 18
+        },
+        "totalSupply": {
+          "request": {
+            "method": "eth_call",
+            "params": [
+              {
+                "to": "0x1FBE1a0e43594b3455993B5dE5Fd0A7A266298d0",
+                "data": "0x18160ddd"
+              },
+              "0x9150915"
+            ]
+          },
+          "response": {
+            "jsonrpc": "2.0",
+            "id": 17,
+            "result": "0x000000000000000000000000000000000000000000057a56daddf0f813600000"
+          },
+          "decoded": "6622360000000000000000000"
+        }
+      }
+    },
+    {
+      "label": "NFLX",
+      "address": "0x3b8262A63d25f0477c4DDE23F83cfe22Cb768C93",
+      "provenance": "project primary; official faucet provenance pending",
+      "code_bytes": 283,
+      "code_hash": "0x2f367e6a678e7b30ab613d5963e541e6f4d3ca586de76e2f441fbfeb1a27c440",
+      "reads": {
+        "name": {
+          "request": {
+            "method": "eth_call",
+            "params": [
+              {
+                "to": "0x3b8262A63d25f0477c4DDE23F83cfe22Cb768C93",
+                "data": "0x06fdde03"
+              },
+              "0x9150915"
+            ]
+          },
+          "response": {
+            "jsonrpc": "2.0",
+            "id": 19,
+            "result": "0x000000000000000000000000000000000000000000000000000000000000002000000000000000000000000000000000000000000000000000000000000000074e6574666c697800000000000000000000000000000000000000000000000000"
+          },
+          "decoded": "Netflix"
+        },
+        "symbol": {
+          "request": {
+            "method": "eth_call",
+            "params": [
+              {
+                "to": "0x3b8262A63d25f0477c4DDE23F83cfe22Cb768C93",
+                "data": "0x95d89b41"
+              },
+              "0x9150915"
+            ]
+          },
+          "response": {
+            "jsonrpc": "2.0",
+            "id": 20,
+            "result": "0x000000000000000000000000000000000000000000000000000000000000002000000000000000000000000000000000000000000000000000000000000000044e464c5800000000000000000000000000000000000000000000000000000000"
+          },
+          "decoded": "NFLX"
+        },
+        "decimals": {
+          "request": {
+            "method": "eth_call",
+            "params": [
+              {
+                "to": "0x3b8262A63d25f0477c4DDE23F83cfe22Cb768C93",
+                "data": "0x313ce567"
+              },
+              "0x9150915"
+            ]
+          },
+          "response": {
+            "jsonrpc": "2.0",
+            "id": 21,
+            "result": "0x0000000000000000000000000000000000000000000000000000000000000012"
+          },
+          "decoded": 18
+        },
+        "totalSupply": {
+          "request": {
+            "method": "eth_call",
+            "params": [
+              {
+                "to": "0x3b8262A63d25f0477c4DDE23F83cfe22Cb768C93",
+                "data": "0x18160ddd"
+              },
+              "0x9150915"
+            ]
+          },
+          "response": {
+            "jsonrpc": "2.0",
+            "id": 22,
+            "result": "0x000000000000000000000000000000000000000000057a56daddf0f813600000"
+          },
+          "decoded": "6622360000000000000000000"
+        }
+      }
+    },
+    {
+      "label": "AMD",
+      "address": "0x71178BAc73cBeb415514eB542a8995b82669778d",
+      "provenance": "project primary; official faucet provenance pending",
+      "code_bytes": 283,
+      "code_hash": "0x2f367e6a678e7b30ab613d5963e541e6f4d3ca586de76e2f441fbfeb1a27c440",
+      "reads": {
+        "name": {
+          "request": {
+            "method": "eth_call",
+            "params": [
+              {
+                "to": "0x71178BAc73cBeb415514eB542a8995b82669778d",
+                "data": "0x06fdde03"
+              },
+              "0x9150915"
+            ]
+          },
+          "response": {
+            "jsonrpc": "2.0",
+            "id": 24,
+            "result": "0x00000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000003414d440000000000000000000000000000000000000000000000000000000000"
+          },
+          "decoded": "AMD"
+        },
+        "symbol": {
+          "request": {
+            "method": "eth_call",
+            "params": [
+              {
+                "to": "0x71178BAc73cBeb415514eB542a8995b82669778d",
+                "data": "0x95d89b41"
+              },
+              "0x9150915"
+            ]
+          },
+          "response": {
+            "jsonrpc": "2.0",
+            "id": 25,
+            "result": "0x00000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000003414d440000000000000000000000000000000000000000000000000000000000"
+          },
+          "decoded": "AMD"
+        },
+        "decimals": {
+          "request": {
+            "method": "eth_call",
+            "params": [
+              {
+                "to": "0x71178BAc73cBeb415514eB542a8995b82669778d",
+                "data": "0x313ce567"
+              },
+              "0x9150915"
+            ]
+          },
+          "response": {
+            "jsonrpc": "2.0",
+            "id": 26,
+            "result": "0x0000000000000000000000000000000000000000000000000000000000000012"
+          },
+          "decoded": 18
+        },
+        "totalSupply": {
+          "request": {
+            "method": "eth_call",
+            "params": [
+              {
+                "to": "0x71178BAc73cBeb415514eB542a8995b82669778d",
+                "data": "0x18160ddd"
+              },
+              "0x9150915"
+            ]
+          },
+          "response": {
+            "jsonrpc": "2.0",
+            "id": 27,
+            "result": "0x000000000000000000000000000000000000000000057a56daddf0f813600000"
+          },
+          "decoded": "6622360000000000000000000"
+        }
+      }
+    },
+    {
+      "label": "USDG",
+      "address": "0x7E955252E15c84f5768B83c41a71F9eba181802F",
+      "provenance": "official faucet.paxos.com bundle configuration",
+      "code_bytes": 170,
+      "code_hash": "0x864cc9ad53b338b82da1f7cab85ab0b3d5c8861acb422b6fec63cf36234f36a6",
+      "reads": {
+        "name": {
+          "request": {
+            "method": "eth_call",
+            "params": [
+              {
+                "to": "0x7E955252E15c84f5768B83c41a71F9eba181802F",
+                "data": "0x06fdde03"
+              },
+              "0x9150915"
+            ]
+          },
+          "response": {
+            "jsonrpc": "2.0",
+            "id": 29,
+            "result": "0x0000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000000d476c6f62616c20446f6c6c617200000000000000000000000000000000000000"
+          },
+          "decoded": "Global Dollar"
+        },
+        "symbol": {
+          "request": {
+            "method": "eth_call",
+            "params": [
+              {
+                "to": "0x7E955252E15c84f5768B83c41a71F9eba181802F",
+                "data": "0x95d89b41"
+              },
+              "0x9150915"
+            ]
+          },
+          "response": {
+            "jsonrpc": "2.0",
+            "id": 30,
+            "result": "0x000000000000000000000000000000000000000000000000000000000000002000000000000000000000000000000000000000000000000000000000000000045553444700000000000000000000000000000000000000000000000000000000"
+          },
+          "decoded": "USDG"
+        },
+        "decimals": {
+          "request": {
+            "method": "eth_call",
+            "params": [
+              {
+                "to": "0x7E955252E15c84f5768B83c41a71F9eba181802F",
+                "data": "0x313ce567"
+              },
+              "0x9150915"
+            ]
+          },
+          "response": {
+            "jsonrpc": "2.0",
+            "id": 31,
+            "result": "0x0000000000000000000000000000000000000000000000000000000000000006"
+          },
+          "decoded": 6
+        },
+        "totalSupply": {
+          "request": {
+            "method": "eth_call",
+            "params": [
+              {
+                "to": "0x7E955252E15c84f5768B83c41a71F9eba181802F",
+                "data": "0x18160ddd"
+              },
+              "0x9150915"
+            ]
+          },
+          "response": {
+            "jsonrpc": "2.0",
+            "id": 32,
+            "result": "0x00000000000000000000000000000000000000000000000000003d8294435951"
+          },
+          "decoded": "67631042484561"
+        }
+      }
+    },
+    {
+      "label": "USDC claimed",
+      "address": "0xbf4479C07Dc6fdc6dAa764A0ccA06969e894275F",
+      "provenance": "project claim; canonical issuer unverified",
+      "code_bytes": 4147,
+      "code_hash": "0x642c73f233f09c821e18fa52a7f96105745c74183e221a0e561a26f1250f945b",
+      "reads": {
+        "name": {
+          "request": {
+            "method": "eth_call",
+            "params": [
+              {
+                "to": "0xbf4479C07Dc6fdc6dAa764A0ccA06969e894275F",
+                "data": "0x06fdde03"
+              },
+              "0x9150915"
+            ]
+          },
+          "response": {
+            "jsonrpc": "2.0",
+            "id": 34,
+            "result": "0x000000000000000000000000000000000000000000000000000000000000002000000000000000000000000000000000000000000000000000000000000000045553444300000000000000000000000000000000000000000000000000000000"
+          },
+          "decoded": "USDC"
+        },
+        "symbol": {
+          "request": {
+            "method": "eth_call",
+            "params": [
+              {
+                "to": "0xbf4479C07Dc6fdc6dAa764A0ccA06969e894275F",
+                "data": "0x95d89b41"
+              },
+              "0x9150915"
+            ]
+          },
+          "response": {
+            "jsonrpc": "2.0",
+            "id": 35,
+            "result": "0x000000000000000000000000000000000000000000000000000000000000002000000000000000000000000000000000000000000000000000000000000000045553444300000000000000000000000000000000000000000000000000000000"
+          },
+          "decoded": "USDC"
+        },
+        "decimals": {
+          "request": {
+            "method": "eth_call",
+            "params": [
+              {
+                "to": "0xbf4479C07Dc6fdc6dAa764A0ccA06969e894275F",
+                "data": "0x313ce567"
+              },
+              "0x9150915"
+            ]
+          },
+          "response": {
+            "jsonrpc": "2.0",
+            "id": 36,
+            "result": "0x0000000000000000000000000000000000000000000000000000000000000012"
+          },
+          "decoded": 18
+        },
+        "totalSupply": {
+          "request": {
+            "method": "eth_call",
+            "params": [
+              {
+                "to": "0xbf4479C07Dc6fdc6dAa764A0ccA06969e894275F",
+                "data": "0x18160ddd"
+              },
+              "0x9150915"
+            ]
+          },
+          "response": {
+            "jsonrpc": "2.0",
+            "id": 37,
+            "result": "0x00000000000000000000000000000000000000000000d3c21bcecceda1000000"
+          },
+          "decoded": "1000000000000000000000000"
+        }
+      }
+    },
+    {
+      "label": "USDC stand-in",
+      "address": "0xFF00eA84190AeD0B1AbEF4fbC45E51258f2799BA",
+      "provenance": "rwa-index self-deployed mintable MockERC20",
+      "code_bytes": 1883,
+      "code_hash": "0x0d79673600631b00b34f01da5b80e10d976add01e77a23a64efe5b9aa243c17e",
+      "reads": {
+        "name": {
+          "request": {
+            "method": "eth_call",
+            "params": [
+              {
+                "to": "0xFF00eA84190AeD0B1AbEF4fbC45E51258f2799BA",
+                "data": "0x06fdde03"
+              },
+              "0x9150915"
+            ]
+          },
+          "response": {
+            "jsonrpc": "2.0",
+            "id": 39,
+            "result": "0x000000000000000000000000000000000000000000000000000000000000002000000000000000000000000000000000000000000000000000000000000000045553444300000000000000000000000000000000000000000000000000000000"
+          },
+          "decoded": "USDC"
+        },
+        "symbol": {
+          "request": {
+            "method": "eth_call",
+            "params": [
+              {
+                "to": "0xFF00eA84190AeD0B1AbEF4fbC45E51258f2799BA",
+                "data": "0x95d89b41"
+              },
+              "0x9150915"
+            ]
+          },
+          "response": {
+            "jsonrpc": "2.0",
+            "id": 40,
+            "result": "0x000000000000000000000000000000000000000000000000000000000000002000000000000000000000000000000000000000000000000000000000000000045553444300000000000000000000000000000000000000000000000000000000"
+          },
+          "decoded": "USDC"
+        },
+        "decimals": {
+          "request": {
+            "method": "eth_call",
+            "params": [
+              {
+                "to": "0xFF00eA84190AeD0B1AbEF4fbC45E51258f2799BA",
+                "data": "0x313ce567"
+              },
+              "0x9150915"
+            ]
+          },
+          "response": {
+            "jsonrpc": "2.0",
+            "id": 41,
+            "result": "0x0000000000000000000000000000000000000000000000000000000000000012"
+          },
+          "decoded": 18
+        },
+        "totalSupply": {
+          "request": {
+            "method": "eth_call",
+            "params": [
+              {
+                "to": "0xFF00eA84190AeD0B1AbEF4fbC45E51258f2799BA",
+                "data": "0x18160ddd"
+              },
+              "0x9150915"
+            ]
+          },
+          "response": {
+            "jsonrpc": "2.0",
+            "id": 42,
+            "result": "0x00000000000000000000000000000000000000000000d3e80e42602b56700000"
+          },
+          "decoded": "1000700000000000000000000"
+        }
+      }
+    }
+  ],
+  "pools": [
+    {
+      "address": "0xfedC57791E6d17c484742C84174424243592E6a8",
+      "provenance": "rwa-index Testnet deployment; stand-in USDC pairs",
+      "reads": {
+        "token0": {
+          "request": {
+            "method": "eth_call",
+            "params": [
+              {
+                "to": "0xfedC57791E6d17c484742C84174424243592E6a8",
+                "data": "0x0dfe1681"
+              },
+              "0x9150915"
+            ]
+          },
+          "response": {
+            "jsonrpc": "2.0",
+            "id": 43,
+            "result": "0x000000000000000000000000c9f9c86933092bbbfff3ccb4b105a4a94bf3bd4e"
+          },
+          "decoded": "0xC9f9c86933092BbbfFF3CCb4b105A4A94bf3Bd4E"
+        },
+        "token1": {
+          "request": {
+            "method": "eth_call",
+            "params": [
+              {
+                "to": "0xfedC57791E6d17c484742C84174424243592E6a8",
+                "data": "0xd21220a7"
+              },
+              "0x9150915"
+            ]
+          },
+          "response": {
+            "jsonrpc": "2.0",
+            "id": 44,
+            "result": "0x000000000000000000000000ff00ea84190aed0b1abef4fbc45e51258f2799ba"
+          },
+          "decoded": "0xFF00eA84190AeD0B1AbEF4fbC45E51258f2799BA"
+        },
+        "fee": {
+          "request": {
+            "method": "eth_call",
+            "params": [
+              {
+                "to": "0xfedC57791E6d17c484742C84174424243592E6a8",
+                "data": "0xddca3f43"
+              },
+              "0x9150915"
+            ]
+          },
+          "response": {
+            "jsonrpc": "2.0",
+            "id": 45,
+            "result": "0x0000000000000000000000000000000000000000000000000000000000000064"
+          },
+          "decoded": 100
+        },
+        "liquidity": {
+          "request": {
+            "method": "eth_call",
+            "params": [
+              {
+                "to": "0xfedC57791E6d17c484742C84174424243592E6a8",
+                "data": "0x1a686502"
+              },
+              "0x9150915"
+            ]
+          },
+          "response": {
+            "jsonrpc": "2.0",
+            "id": 46,
+            "result": "0x000000000000000000000000000000000000000000000003ff9336b17ee9a870"
+          },
+          "decoded": "73756355658343098480"
+        },
+        "slot0": {
+          "request": {
+            "method": "eth_call",
+            "params": [
+              {
+                "to": "0xfedC57791E6d17c484742C84174424243592E6a8",
+                "data": "0x3850c7bd"
+              },
+              "0x9150915"
+            ]
+          },
+          "response": {
+            "jsonrpc": "2.0",
+            "id": 47,
+            "result": "0x000000000000000000000000000000000000001510b1c14d507b7a48871e84f7000000000000000000000000000000000000000000000000000000000000ee1b00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001000000000000000000000000000000000000000000000000000000000000000100000000000000000000000000000000000000000000000000000000000000330000000000000000000000000000000000000000000000000000000000000001"
+          },
+          "decoded": [
+            "1668958065669694250842196968695",
+            60955,
+            0,
+            1,
+            1,
+            51,
+            true
+          ]
+        }
+      }
+    },
+    {
+      "address": "0x8A970d79CEEF300AF8a3bc040101455C8155295e",
+      "provenance": "rwa-index Testnet deployment; stand-in USDC pairs",
+      "reads": {
+        "token0": {
+          "request": {
+            "method": "eth_call",
+            "params": [
+              {
+                "to": "0x8A970d79CEEF300AF8a3bc040101455C8155295e",
+                "data": "0x0dfe1681"
+              },
+              "0x9150915"
+            ]
+          },
+          "response": {
+            "jsonrpc": "2.0",
+            "id": 48,
+            "result": "0x0000000000000000000000005884ad2f920c162cfbbacc88c9c51aa75ec09e02"
+          },
+          "decoded": "0x5884aD2f920c162CFBbACc88C9C51AA75eC09E02"
+        },
+        "token1": {
+          "request": {
+            "method": "eth_call",
+            "params": [
+              {
+                "to": "0x8A970d79CEEF300AF8a3bc040101455C8155295e",
+                "data": "0xd21220a7"
+              },
+              "0x9150915"
+            ]
+          },
+          "response": {
+            "jsonrpc": "2.0",
+            "id": 49,
+            "result": "0x000000000000000000000000ff00ea84190aed0b1abef4fbc45e51258f2799ba"
+          },
+          "decoded": "0xFF00eA84190AeD0B1AbEF4fbC45E51258f2799BA"
+        },
+        "fee": {
+          "request": {
+            "method": "eth_call",
+            "params": [
+              {
+                "to": "0x8A970d79CEEF300AF8a3bc040101455C8155295e",
+                "data": "0xddca3f43"
+              },
+              "0x9150915"
+            ]
+          },
+          "response": {
+            "jsonrpc": "2.0",
+            "id": 50,
+            "result": "0x0000000000000000000000000000000000000000000000000000000000000064"
+          },
+          "decoded": 100
+        },
+        "liquidity": {
+          "request": {
+            "method": "eth_call",
+            "params": [
+              {
+                "to": "0x8A970d79CEEF300AF8a3bc040101455C8155295e",
+                "data": "0x1a686502"
+              },
+              "0x9150915"
+            ]
+          },
+          "response": {
+            "jsonrpc": "2.0",
+            "id": 51,
+            "result": "0x000000000000000000000000000000000000000000000003375d09d9b902cb25"
+          },
+          "decoded": "59329587896765303589"
+        },
+        "slot0": {
+          "request": {
+            "method": "eth_call",
+            "params": [
+              {
+                "to": "0x8A970d79CEEF300AF8a3bc040101455C8155295e",
+                "data": "0x3850c7bd"
+              },
+              "0x9150915"
+            ]
+          },
+          "response": {
+            "jsonrpc": "2.0",
+            "id": 52,
+            "result": "0x00000000000000000000000000000000000000109a3cdce31f98ae49de6b2b05000000000000000000000000000000000000000000000000000000000000db8100000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001000000000000000000000000000000000000000000000000000000000000000100000000000000000000000000000000000000000000000000000000000000330000000000000000000000000000000000000000000000000000000000000001"
+          },
+          "decoded": [
+            "1315384870400207317128740285189",
+            56193,
+            0,
+            1,
+            1,
+            51,
+            true
+          ]
+        }
+      }
+    },
+    {
+      "address": "0x315F7A44299FfA359f36D09468D1E22F1bfE65db",
+      "provenance": "rwa-index Testnet deployment; stand-in USDC pairs",
+      "reads": {
+        "token0": {
+          "request": {
+            "method": "eth_call",
+            "params": [
+              {
+                "to": "0x315F7A44299FfA359f36D09468D1E22F1bfE65db",
+                "data": "0x0dfe1681"
+              },
+              "0x9150915"
+            ]
+          },
+          "response": {
+            "jsonrpc": "2.0",
+            "id": 53,
+            "result": "0x0000000000000000000000001fbe1a0e43594b3455993b5de5fd0a7a266298d0"
+          },
+          "decoded": "0x1FBE1a0e43594b3455993B5dE5Fd0A7A266298d0"
+        },
+        "token1": {
+          "request": {
+            "method": "eth_call",
+            "params": [
+              {
+                "to": "0x315F7A44299FfA359f36D09468D1E22F1bfE65db",
+                "data": "0xd21220a7"
+              },
+              "0x9150915"
+            ]
+          },
+          "response": {
+            "jsonrpc": "2.0",
+            "id": 54,
+            "result": "0x000000000000000000000000ff00ea84190aed0b1abef4fbc45e51258f2799ba"
+          },
+          "decoded": "0xFF00eA84190AeD0B1AbEF4fbC45E51258f2799BA"
+        },
+        "fee": {
+          "request": {
+            "method": "eth_call",
+            "params": [
+              {
+                "to": "0x315F7A44299FfA359f36D09468D1E22F1bfE65db",
+                "data": "0xddca3f43"
+              },
+              "0x9150915"
+            ]
+          },
+          "response": {
+            "jsonrpc": "2.0",
+            "id": 55,
+            "result": "0x0000000000000000000000000000000000000000000000000000000000000064"
+          },
+          "decoded": 100
+        },
+        "liquidity": {
+          "request": {
+            "method": "eth_call",
+            "params": [
+              {
+                "to": "0x315F7A44299FfA359f36D09468D1E22F1bfE65db",
+                "data": "0x1a686502"
+              },
+              "0x9150915"
+            ]
+          },
+          "response": {
+            "jsonrpc": "2.0",
+            "id": 56,
+            "result": "0x0000000000000000000000000000000000000000000000020ea0015459e04d30"
+          },
+          "decoded": "37947331922020551984"
+        },
+        "slot0": {
+          "request": {
+            "method": "eth_call",
+            "params": [
+              {
+                "to": "0x315F7A44299FfA359f36D09468D1E22F1bfE65db",
+                "data": "0x3850c7bd"
+              },
+              "0x9150915"
+            ]
+          },
+          "response": {
+            "jsonrpc": "2.0",
+            "id": 57,
+            "result": "0x000000000000000000000000000000000000000caebb90157f5d1d33073417c5000000000000000000000000000000000000000000000000000000000000c67700000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001000000000000000000000000000000000000000000000000000000000000000100000000000000000000000000000000000000000000000000000000000000330000000000000000000000000000000000000000000000000000000000000001"
+          },
+          "decoded": [
+            "1004815091425686711233773049797",
+            50807,
+            0,
+            1,
+            1,
+            51,
+            true
+          ]
+        }
+      }
+    },
+    {
+      "address": "0x8B903359fA8DEE42D4140Dfda10c96d8B4F5631E",
+      "provenance": "rwa-index Testnet deployment; stand-in USDC pairs",
+      "reads": {
+        "token0": {
+          "request": {
+            "method": "eth_call",
+            "params": [
+              {
+                "to": "0x8B903359fA8DEE42D4140Dfda10c96d8B4F5631E",
+                "data": "0x0dfe1681"
+              },
+              "0x9150915"
+            ]
+          },
+          "response": {
+            "jsonrpc": "2.0",
+            "id": 58,
+            "result": "0x0000000000000000000000003b8262a63d25f0477c4dde23f83cfe22cb768c93"
+          },
+          "decoded": "0x3b8262A63d25f0477c4DDE23F83cfe22Cb768C93"
+        },
+        "token1": {
+          "request": {
+            "method": "eth_call",
+            "params": [
+              {
+                "to": "0x8B903359fA8DEE42D4140Dfda10c96d8B4F5631E",
+                "data": "0xd21220a7"
+              },
+              "0x9150915"
+            ]
+          },
+          "response": {
+            "jsonrpc": "2.0",
+            "id": 59,
+            "result": "0x000000000000000000000000ff00ea84190aed0b1abef4fbc45e51258f2799ba"
+          },
+          "decoded": "0xFF00eA84190AeD0B1AbEF4fbC45E51258f2799BA"
+        },
+        "fee": {
+          "request": {
+            "method": "eth_call",
+            "params": [
+              {
+                "to": "0x8B903359fA8DEE42D4140Dfda10c96d8B4F5631E",
+                "data": "0xddca3f43"
+              },
+              "0x9150915"
+            ]
+          },
+          "response": {
+            "jsonrpc": "2.0",
+            "id": 60,
+            "result": "0x0000000000000000000000000000000000000000000000000000000000000064"
+          },
+          "decoded": 100
+        },
+        "liquidity": {
+          "request": {
+            "method": "eth_call",
+            "params": [
+              {
+                "to": "0x8B903359fA8DEE42D4140Dfda10c96d8B4F5631E",
+                "data": "0x1a686502"
+              },
+              "0x9150915"
+            ]
+          },
+          "response": {
+            "jsonrpc": "2.0",
+            "id": 61,
+            "result": "0x0000000000000000000000000000000000000000000000028cfa431c7e25cc43"
+          },
+          "decoded": "47051993846561229891"
+        },
+        "slot0": {
+          "request": {
+            "method": "eth_call",
+            "params": [
+              {
+                "to": "0x8B903359fA8DEE42D4140Dfda10c96d8B4F5631E",
+                "data": "0x3850c7bd"
+              },
+              "0x9150915"
+            ]
+          },
+          "response": {
+            "jsonrpc": "2.0",
+            "id": 62,
+            "result": "0x0000000000000000000000000000000000000009699ffc80d404fb53ea06fa9d000000000000000000000000000000000000000000000000000000000000af2b00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001000000000000000000000000000000000000000000000000000000000000000100000000000000000000000000000000000000000000000000000000000000330000000000000000000000000000000000000000000000000000000000000001"
+          },
+          "decoded": [
+            "745742800277753533355967052445",
+            44843,
+            0,
+            1,
+            1,
+            51,
+            true
+          ]
+        }
+      }
+    },
+    {
+      "address": "0xB8033384ce15A1112bFd58Dc6d5619708a1be98e",
+      "provenance": "rwa-index Testnet deployment; stand-in USDC pairs",
+      "reads": {
+        "token0": {
+          "request": {
+            "method": "eth_call",
+            "params": [
+              {
+                "to": "0xB8033384ce15A1112bFd58Dc6d5619708a1be98e",
+                "data": "0x0dfe1681"
+              },
+              "0x9150915"
+            ]
+          },
+          "response": {
+            "jsonrpc": "2.0",
+            "id": 63,
+            "result": "0x00000000000000000000000071178bac73cbeb415514eb542a8995b82669778d"
+          },
+          "decoded": "0x71178BAc73cBeb415514eB542a8995b82669778d"
+        },
+        "token1": {
+          "request": {
+            "method": "eth_call",
+            "params": [
+              {
+                "to": "0xB8033384ce15A1112bFd58Dc6d5619708a1be98e",
+                "data": "0xd21220a7"
+              },
+              "0x9150915"
+            ]
+          },
+          "response": {
+            "jsonrpc": "2.0",
+            "id": 64,
+            "result": "0x000000000000000000000000ff00ea84190aed0b1abef4fbc45e51258f2799ba"
+          },
+          "decoded": "0xFF00eA84190AeD0B1AbEF4fbC45E51258f2799BA"
+        },
+        "fee": {
+          "request": {
+            "method": "eth_call",
+            "params": [
+              {
+                "to": "0xB8033384ce15A1112bFd58Dc6d5619708a1be98e",
+                "data": "0xddca3f43"
+              },
+              "0x9150915"
+            ]
+          },
+          "response": {
+            "jsonrpc": "2.0",
+            "id": 65,
+            "result": "0x0000000000000000000000000000000000000000000000000000000000000064"
+          },
+          "decoded": 100
+        },
+        "liquidity": {
+          "request": {
+            "method": "eth_call",
+            "params": [
+              {
+                "to": "0xB8033384ce15A1112bFd58Dc6d5619708a1be98e",
+                "data": "0x1a686502"
+              },
+              "0x9150915"
+            ]
+          },
+          "response": {
+            "jsonrpc": "2.0",
+            "id": 66,
+            "result": "0x00000000000000000000000000000000000000000000000290d119be742e5954"
+          },
+          "decoded": "47328638264796928340"
+        },
+        "slot0": {
+          "request": {
+            "method": "eth_call",
+            "params": [
+              {
+                "to": "0xB8033384ce15A1112bFd58Dc6d5619708a1be98e",
+                "data": "0x3850c7bd"
+              },
+              "0x9150915"
+            ]
+          },
+          "response": {
+            "jsonrpc": "2.0",
+            "id": 67,
+            "result": "0x0000000000000000000000000000000000000016daf040ed0ad1b94336648149000000000000000000000000000000000000000000000000000000000000f47a00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001000000000000000000000000000000000000000000000000000000000000000100000000000000000000000000000000000000000000000000000000000000330000000000000000000000000000000000000000000000000000000000000001"
+          },
+          "decoded": [
+            "1810777756255689020077194379593",
+            62586,
+            0,
+            1,
+            1,
+            51,
+            true
+          ]
+        }
+      }
+    }
+  ],
+  "factory_routes": [
+    {
+      "stock": "0xC9f9c86933092BbbfFF3CCb4b105A4A94bf3Bd4E",
+      "settlement": "USDG",
+      "fee": 100,
+      "read": {
+        "request": {
+          "method": "eth_call",
+          "params": [
+            {
+              "to": "0x911b4000D3422F482F4062a913885f7b035382Df",
+              "data": "0x1698ee82000000000000000000000000c9f9c86933092bbbfff3ccb4b105a4a94bf3bd4e0000000000000000000000007e955252e15c84f5768b83c41a71f9eba181802f0000000000000000000000000000000000000000000000000000000000000064"
+            },
+            "0x9150915"
+          ]
+        },
+        "response": {
+          "jsonrpc": "2.0",
+          "id": 68,
+          "result": "0x0000000000000000000000000000000000000000000000000000000000000000"
+        },
+        "decoded": "0x0000000000000000000000000000000000000000"
+      }
+    },
+    {
+      "stock": "0xC9f9c86933092BbbfFF3CCb4b105A4A94bf3Bd4E",
+      "settlement": "USDG",
+      "fee": 500,
+      "read": {
+        "request": {
+          "method": "eth_call",
+          "params": [
+            {
+              "to": "0x911b4000D3422F482F4062a913885f7b035382Df",
+              "data": "0x1698ee82000000000000000000000000c9f9c86933092bbbfff3ccb4b105a4a94bf3bd4e0000000000000000000000007e955252e15c84f5768b83c41a71f9eba181802f00000000000000000000000000000000000000000000000000000000000001f4"
+            },
+            "0x9150915"
+          ]
+        },
+        "response": {
+          "jsonrpc": "2.0",
+          "id": 69,
+          "result": "0x0000000000000000000000000000000000000000000000000000000000000000"
+        },
+        "decoded": "0x0000000000000000000000000000000000000000"
+      }
+    },
+    {
+      "stock": "0xC9f9c86933092BbbfFF3CCb4b105A4A94bf3Bd4E",
+      "settlement": "USDG",
+      "fee": 3000,
+      "read": {
+        "request": {
+          "method": "eth_call",
+          "params": [
+            {
+              "to": "0x911b4000D3422F482F4062a913885f7b035382Df",
+              "data": "0x1698ee82000000000000000000000000c9f9c86933092bbbfff3ccb4b105a4a94bf3bd4e0000000000000000000000007e955252e15c84f5768b83c41a71f9eba181802f0000000000000000000000000000000000000000000000000000000000000bb8"
+            },
+            "0x9150915"
+          ]
+        },
+        "response": {
+          "jsonrpc": "2.0",
+          "id": 70,
+          "result": "0x00000000000000000000000033130082660ad87a99ad6120269f91329c82f7c2"
+        },
+        "decoded": "0x33130082660AD87a99Ad6120269F91329C82f7c2"
+      },
+      "pool_reads": {
+        "token0": {
+          "request": {
+            "method": "eth_call",
+            "params": [
+              {
+                "to": "0x33130082660AD87a99Ad6120269F91329C82f7c2",
+                "data": "0x0dfe1681"
+              },
+              "0x9150915"
+            ]
+          },
+          "response": {
+            "jsonrpc": "2.0",
+            "id": 108,
+            "result": "0x0000000000000000000000007e955252e15c84f5768b83c41a71f9eba181802f"
+          },
+          "decoded": "0x7E955252E15c84f5768B83c41a71F9eba181802F"
+        },
+        "token1": {
+          "request": {
+            "method": "eth_call",
+            "params": [
+              {
+                "to": "0x33130082660AD87a99Ad6120269F91329C82f7c2",
+                "data": "0xd21220a7"
+              },
+              "0x9150915"
+            ]
+          },
+          "response": {
+            "jsonrpc": "2.0",
+            "id": 109,
+            "result": "0x000000000000000000000000c9f9c86933092bbbfff3ccb4b105a4a94bf3bd4e"
+          },
+          "decoded": "0xC9f9c86933092BbbfFF3CCb4b105A4A94bf3Bd4E"
+        },
+        "fee": {
+          "request": {
+            "method": "eth_call",
+            "params": [
+              {
+                "to": "0x33130082660AD87a99Ad6120269F91329C82f7c2",
+                "data": "0xddca3f43"
+              },
+              "0x9150915"
+            ]
+          },
+          "response": {
+            "jsonrpc": "2.0",
+            "id": 110,
+            "result": "0x0000000000000000000000000000000000000000000000000000000000000bb8"
+          },
+          "decoded": 3000
+        },
+        "liquidity": {
+          "request": {
+            "method": "eth_call",
+            "params": [
+              {
+                "to": "0x33130082660AD87a99Ad6120269F91329C82f7c2",
+                "data": "0x1a686502"
+              },
+              "0x9150915"
+            ]
+          },
+          "response": {
+            "jsonrpc": "2.0",
+            "id": 111,
+            "result": "0x000000000000000000000000000000000000000000000000000000e8b0ea0544"
+          },
+          "decoded": "999400539460"
+        },
+        "slot0": {
+          "request": {
+            "method": "eth_call",
+            "params": [
+              {
+                "to": "0x33130082660AD87a99Ad6120269F91329C82f7c2",
+                "data": "0x3850c7bd"
+              },
+              "0x9150915"
+            ]
+          },
+          "response": {
+            "jsonrpc": "2.0",
+            "id": 112,
+            "result": "0x000000000000000000000000000000000026b130028f70aaac24604dc642edf80000000000000000000000000000000000000000000000000000000000048016000000000000000000000000000000000000000000000000000000000000001d0000000000000000000000000000000000000000000000000000000000000040000000000000000000000000000000000000000000000000000000000000004000000000000000000000000000000000000000000000000000000000000000330000000000000000000000000000000000000000000000000000000000000001"
+          },
+          "decoded": [
+            "200901070868348945481703215258070520",
+            294934,
+            29,
+            64,
+            64,
+            51,
+            true
+          ]
+        }
+      }
+    },
+    {
+      "stock": "0xC9f9c86933092BbbfFF3CCb4b105A4A94bf3Bd4E",
+      "settlement": "USDG",
+      "fee": 10000,
+      "read": {
+        "request": {
+          "method": "eth_call",
+          "params": [
+            {
+              "to": "0x911b4000D3422F482F4062a913885f7b035382Df",
+              "data": "0x1698ee82000000000000000000000000c9f9c86933092bbbfff3ccb4b105a4a94bf3bd4e0000000000000000000000007e955252e15c84f5768b83c41a71f9eba181802f0000000000000000000000000000000000000000000000000000000000002710"
+            },
+            "0x9150915"
+          ]
+        },
+        "response": {
+          "jsonrpc": "2.0",
+          "id": 71,
+          "result": "0x0000000000000000000000000000000000000000000000000000000000000000"
+        },
+        "decoded": "0x0000000000000000000000000000000000000000"
+      }
+    },
+    {
+      "stock": "0xC9f9c86933092BbbfFF3CCb4b105A4A94bf3Bd4E",
+      "settlement": "USDC claimed",
+      "fee": 100,
+      "read": {
+        "request": {
+          "method": "eth_call",
+          "params": [
+            {
+              "to": "0x911b4000D3422F482F4062a913885f7b035382Df",
+              "data": "0x1698ee82000000000000000000000000c9f9c86933092bbbfff3ccb4b105a4a94bf3bd4e000000000000000000000000bf4479c07dc6fdc6daa764a0cca06969e894275f0000000000000000000000000000000000000000000000000000000000000064"
+            },
+            "0x9150915"
+          ]
+        },
+        "response": {
+          "jsonrpc": "2.0",
+          "id": 72,
+          "result": "0x0000000000000000000000000000000000000000000000000000000000000000"
+        },
+        "decoded": "0x0000000000000000000000000000000000000000"
+      }
+    },
+    {
+      "stock": "0xC9f9c86933092BbbfFF3CCb4b105A4A94bf3Bd4E",
+      "settlement": "USDC claimed",
+      "fee": 500,
+      "read": {
+        "request": {
+          "method": "eth_call",
+          "params": [
+            {
+              "to": "0x911b4000D3422F482F4062a913885f7b035382Df",
+              "data": "0x1698ee82000000000000000000000000c9f9c86933092bbbfff3ccb4b105a4a94bf3bd4e000000000000000000000000bf4479c07dc6fdc6daa764a0cca06969e894275f00000000000000000000000000000000000000000000000000000000000001f4"
+            },
+            "0x9150915"
+          ]
+        },
+        "response": {
+          "jsonrpc": "2.0",
+          "id": 73,
+          "result": "0x0000000000000000000000008f1304370a11df1de9058597960686a01d747a72"
+        },
+        "decoded": "0x8f1304370A11Df1De9058597960686A01d747A72"
+      },
+      "pool_reads": {
+        "token0": {
+          "request": {
+            "method": "eth_call",
+            "params": [
+              {
+                "to": "0x8f1304370A11Df1De9058597960686A01d747A72",
+                "data": "0x0dfe1681"
+              },
+              "0x9150915"
+            ]
+          },
+          "response": {
+            "jsonrpc": "2.0",
+            "id": 113,
+            "result": "0x000000000000000000000000bf4479c07dc6fdc6daa764a0cca06969e894275f"
+          },
+          "decoded": "0xbf4479C07Dc6fdc6dAa764A0ccA06969e894275F"
+        },
+        "token1": {
+          "request": {
+            "method": "eth_call",
+            "params": [
+              {
+                "to": "0x8f1304370A11Df1De9058597960686A01d747A72",
+                "data": "0xd21220a7"
+              },
+              "0x9150915"
+            ]
+          },
+          "response": {
+            "jsonrpc": "2.0",
+            "id": 114,
+            "result": "0x000000000000000000000000c9f9c86933092bbbfff3ccb4b105a4a94bf3bd4e"
+          },
+          "decoded": "0xC9f9c86933092BbbfFF3CCb4b105A4A94bf3Bd4E"
+        },
+        "fee": {
+          "request": {
+            "method": "eth_call",
+            "params": [
+              {
+                "to": "0x8f1304370A11Df1De9058597960686A01d747A72",
+                "data": "0xddca3f43"
+              },
+              "0x9150915"
+            ]
+          },
+          "response": {
+            "jsonrpc": "2.0",
+            "id": 115,
+            "result": "0x00000000000000000000000000000000000000000000000000000000000001f4"
+          },
+          "decoded": 500
+        },
+        "liquidity": {
+          "request": {
+            "method": "eth_call",
+            "params": [
+              {
+                "to": "0x8f1304370A11Df1De9058597960686A01d747A72",
+                "data": "0x1a686502"
+              },
+              "0x9150915"
+            ]
+          },
+          "response": {
+            "jsonrpc": "2.0",
+            "id": 116,
+            "result": "0x00000000000000000000000000000000000000000000000f92dbea2a5629fbc2"
+          },
+          "decoded": "287283470322635504578"
+        },
+        "slot0": {
+          "request": {
+            "method": "eth_call",
+            "params": [
+              {
+                "to": "0x8f1304370A11Df1De9058597960686A01d747A72",
+                "data": "0x3850c7bd"
+              },
+              "0x9150915"
+            ]
+          },
+          "response": {
+            "jsonrpc": "2.0",
+            "id": 117,
+            "result": "0x00000000000000000000000000000000000000036b49bcdd34170473251905d8000000000000000000000000000000000000000000000000000000000000600c00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001000000000000000000000000000000000000000000000000000000000000000100000000000000000000000000000000000000000000000000000000000000330000000000000000000000000000000000000000000000000000000000000001"
+          },
+          "decoded": [
+            "270888527063891496554074801624",
+            24588,
+            0,
+            1,
+            1,
+            51,
+            true
+          ]
+        }
+      }
+    },
+    {
+      "stock": "0xC9f9c86933092BbbfFF3CCb4b105A4A94bf3Bd4E",
+      "settlement": "USDC claimed",
+      "fee": 3000,
+      "read": {
+        "request": {
+          "method": "eth_call",
+          "params": [
+            {
+              "to": "0x911b4000D3422F482F4062a913885f7b035382Df",
+              "data": "0x1698ee82000000000000000000000000c9f9c86933092bbbfff3ccb4b105a4a94bf3bd4e000000000000000000000000bf4479c07dc6fdc6daa764a0cca06969e894275f0000000000000000000000000000000000000000000000000000000000000bb8"
+            },
+            "0x9150915"
+          ]
+        },
+        "response": {
+          "jsonrpc": "2.0",
+          "id": 74,
+          "result": "0x000000000000000000000000ffef1147c3724a19ab7328f4e361c049ba452da9"
+        },
+        "decoded": "0xFfEf1147c3724a19AB7328F4e361C049ba452dA9"
+      },
+      "pool_reads": {
+        "token0": {
+          "request": {
+            "method": "eth_call",
+            "params": [
+              {
+                "to": "0xFfEf1147c3724a19AB7328F4e361C049ba452dA9",
+                "data": "0x0dfe1681"
+              },
+              "0x9150915"
+            ]
+          },
+          "response": {
+            "jsonrpc": "2.0",
+            "id": 118,
+            "result": "0x000000000000000000000000bf4479c07dc6fdc6daa764a0cca06969e894275f"
+          },
+          "decoded": "0xbf4479C07Dc6fdc6dAa764A0ccA06969e894275F"
+        },
+        "token1": {
+          "request": {
+            "method": "eth_call",
+            "params": [
+              {
+                "to": "0xFfEf1147c3724a19AB7328F4e361C049ba452dA9",
+                "data": "0xd21220a7"
+              },
+              "0x9150915"
+            ]
+          },
+          "response": {
+            "jsonrpc": "2.0",
+            "id": 119,
+            "result": "0x000000000000000000000000c9f9c86933092bbbfff3ccb4b105a4a94bf3bd4e"
+          },
+          "decoded": "0xC9f9c86933092BbbfFF3CCb4b105A4A94bf3Bd4E"
+        },
+        "fee": {
+          "request": {
+            "method": "eth_call",
+            "params": [
+              {
+                "to": "0xFfEf1147c3724a19AB7328F4e361C049ba452dA9",
+                "data": "0xddca3f43"
+              },
+              "0x9150915"
+            ]
+          },
+          "response": {
+            "jsonrpc": "2.0",
+            "id": 120,
+            "result": "0x0000000000000000000000000000000000000000000000000000000000000bb8"
+          },
+          "decoded": 3000
+        },
+        "liquidity": {
+          "request": {
+            "method": "eth_call",
+            "params": [
+              {
+                "to": "0xFfEf1147c3724a19AB7328F4e361C049ba452dA9",
+                "data": "0x1a686502"
+              },
+              "0x9150915"
+            ]
+          },
+          "response": {
+            "jsonrpc": "2.0",
+            "id": 121,
+            "result": "0x00000000000000000000000000000000000000000000119b5df84c62182fef1c"
+          },
+          "decoded": "83146246786232896974620"
+        },
+        "slot0": {
+          "request": {
+            "method": "eth_call",
+            "params": [
+              {
+                "to": "0xFfEf1147c3724a19AB7328F4e361C049ba452dA9",
+                "data": "0x3850c7bd"
+              },
+              "0x9150915"
+            ]
+          },
+          "response": {
+            "jsonrpc": "2.0",
+            "id": 122,
+            "result": "0x0000000000000000000000000000000000000003db95a982995c8feba38f3afc000000000000000000000000000000000000000000000000000000000000697b000000000000000000000000000000000000000000000000000000000000001c0000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000002000000000000000000000000000000000000000000000000000000000000000330000000000000000000000000000000000000000000000000000000000000001"
+          },
+          "decoded": [
+            "305642635129853362958557461244",
+            27003,
+            28,
+            32,
+            32,
+            51,
+            true
+          ]
+        }
+      }
+    },
+    {
+      "stock": "0xC9f9c86933092BbbfFF3CCb4b105A4A94bf3Bd4E",
+      "settlement": "USDC claimed",
+      "fee": 10000,
+      "read": {
+        "request": {
+          "method": "eth_call",
+          "params": [
+            {
+              "to": "0x911b4000D3422F482F4062a913885f7b035382Df",
+              "data": "0x1698ee82000000000000000000000000c9f9c86933092bbbfff3ccb4b105a4a94bf3bd4e000000000000000000000000bf4479c07dc6fdc6daa764a0cca06969e894275f0000000000000000000000000000000000000000000000000000000000002710"
+            },
+            "0x9150915"
+          ]
+        },
+        "response": {
+          "jsonrpc": "2.0",
+          "id": 75,
+          "result": "0x0000000000000000000000004df7effbd174d67fe9cdb9c349e0a89fd6cab957"
+        },
+        "decoded": "0x4df7eFFBd174D67fe9cDb9c349e0a89fD6Cab957"
+      },
+      "pool_reads": {
+        "token0": {
+          "request": {
+            "method": "eth_call",
+            "params": [
+              {
+                "to": "0x4df7eFFBd174D67fe9cDb9c349e0a89fD6Cab957",
+                "data": "0x0dfe1681"
+              },
+              "0x9150915"
+            ]
+          },
+          "response": {
+            "jsonrpc": "2.0",
+            "id": 123,
+            "result": "0x000000000000000000000000bf4479c07dc6fdc6daa764a0cca06969e894275f"
+          },
+          "decoded": "0xbf4479C07Dc6fdc6dAa764A0ccA06969e894275F"
+        },
+        "token1": {
+          "request": {
+            "method": "eth_call",
+            "params": [
+              {
+                "to": "0x4df7eFFBd174D67fe9cDb9c349e0a89fD6Cab957",
+                "data": "0xd21220a7"
+              },
+              "0x9150915"
+            ]
+          },
+          "response": {
+            "jsonrpc": "2.0",
+            "id": 124,
+            "result": "0x000000000000000000000000c9f9c86933092bbbfff3ccb4b105a4a94bf3bd4e"
+          },
+          "decoded": "0xC9f9c86933092BbbfFF3CCb4b105A4A94bf3Bd4E"
+        },
+        "fee": {
+          "request": {
+            "method": "eth_call",
+            "params": [
+              {
+                "to": "0x4df7eFFBd174D67fe9cDb9c349e0a89fD6Cab957",
+                "data": "0xddca3f43"
+              },
+              "0x9150915"
+            ]
+          },
+          "response": {
+            "jsonrpc": "2.0",
+            "id": 125,
+            "result": "0x0000000000000000000000000000000000000000000000000000000000002710"
+          },
+          "decoded": 10000
+        },
+        "liquidity": {
+          "request": {
+            "method": "eth_call",
+            "params": [
+              {
+                "to": "0x4df7eFFBd174D67fe9cDb9c349e0a89fD6Cab957",
+                "data": "0x1a686502"
+              },
+              "0x9150915"
+            ]
+          },
+          "response": {
+            "jsonrpc": "2.0",
+            "id": 126,
+            "result": "0x00000000000000000000000000000000000000000000001e38af102e5d338339"
+          },
+          "decoded": "557486823389653074745"
+        },
+        "slot0": {
+          "request": {
+            "method": "eth_call",
+            "params": [
+              {
+                "to": "0x4df7eFFBd174D67fe9cDb9c349e0a89fD6Cab957",
+                "data": "0x3850c7bd"
+              },
+              "0x9150915"
+            ]
+          },
+          "response": {
+            "jsonrpc": "2.0",
+            "id": 127,
+            "result": "0x0000000000000000000000000000000000000002fc53aa48627df10ae850f162000000000000000000000000000000000000000000000000000000000000557500000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001000000000000000000000000000000000000000000000000000000000000000100000000000000000000000000000000000000000000000000000000000000330000000000000000000000000000000000000000000000000000000000000001"
+          },
+          "decoded": [
+            "236547692484100401490962739554",
+            21877,
+            0,
+            1,
+            1,
+            51,
+            true
+          ]
+        }
+      }
+    },
+    {
+      "stock": "0x5884aD2f920c162CFBbACc88C9C51AA75eC09E02",
+      "settlement": "USDG",
+      "fee": 100,
+      "read": {
+        "request": {
+          "method": "eth_call",
+          "params": [
+            {
+              "to": "0x911b4000D3422F482F4062a913885f7b035382Df",
+              "data": "0x1698ee820000000000000000000000005884ad2f920c162cfbbacc88c9c51aa75ec09e020000000000000000000000007e955252e15c84f5768b83c41a71f9eba181802f0000000000000000000000000000000000000000000000000000000000000064"
+            },
+            "0x9150915"
+          ]
+        },
+        "response": {
+          "jsonrpc": "2.0",
+          "id": 76,
+          "result": "0x0000000000000000000000000000000000000000000000000000000000000000"
+        },
+        "decoded": "0x0000000000000000000000000000000000000000"
+      }
+    },
+    {
+      "stock": "0x5884aD2f920c162CFBbACc88C9C51AA75eC09E02",
+      "settlement": "USDG",
+      "fee": 500,
+      "read": {
+        "request": {
+          "method": "eth_call",
+          "params": [
+            {
+              "to": "0x911b4000D3422F482F4062a913885f7b035382Df",
+              "data": "0x1698ee820000000000000000000000005884ad2f920c162cfbbacc88c9c51aa75ec09e020000000000000000000000007e955252e15c84f5768b83c41a71f9eba181802f00000000000000000000000000000000000000000000000000000000000001f4"
+            },
+            "0x9150915"
+          ]
+        },
+        "response": {
+          "jsonrpc": "2.0",
+          "id": 77,
+          "result": "0x0000000000000000000000000000000000000000000000000000000000000000"
+        },
+        "decoded": "0x0000000000000000000000000000000000000000"
+      }
+    },
+    {
+      "stock": "0x5884aD2f920c162CFBbACc88C9C51AA75eC09E02",
+      "settlement": "USDG",
+      "fee": 3000,
+      "read": {
+        "request": {
+          "method": "eth_call",
+          "params": [
+            {
+              "to": "0x911b4000D3422F482F4062a913885f7b035382Df",
+              "data": "0x1698ee820000000000000000000000005884ad2f920c162cfbbacc88c9c51aa75ec09e020000000000000000000000007e955252e15c84f5768b83c41a71f9eba181802f0000000000000000000000000000000000000000000000000000000000000bb8"
+            },
+            "0x9150915"
+          ]
+        },
+        "response": {
+          "jsonrpc": "2.0",
+          "id": 78,
+          "result": "0x0000000000000000000000006c0a5ef3c4e0d29a56d3ab463f9c28f18482c047"
+        },
+        "decoded": "0x6C0a5Ef3C4e0D29a56D3AB463f9c28F18482c047"
+      },
+      "pool_reads": {
+        "token0": {
+          "request": {
+            "method": "eth_call",
+            "params": [
+              {
+                "to": "0x6C0a5Ef3C4e0D29a56D3AB463f9c28F18482c047",
+                "data": "0x0dfe1681"
+              },
+              "0x9150915"
+            ]
+          },
+          "response": {
+            "jsonrpc": "2.0",
+            "id": 128,
+            "result": "0x0000000000000000000000005884ad2f920c162cfbbacc88c9c51aa75ec09e02"
+          },
+          "decoded": "0x5884aD2f920c162CFBbACc88C9C51AA75eC09E02"
+        },
+        "token1": {
+          "request": {
+            "method": "eth_call",
+            "params": [
+              {
+                "to": "0x6C0a5Ef3C4e0D29a56D3AB463f9c28F18482c047",
+                "data": "0xd21220a7"
+              },
+              "0x9150915"
+            ]
+          },
+          "response": {
+            "jsonrpc": "2.0",
+            "id": 129,
+            "result": "0x0000000000000000000000007e955252e15c84f5768b83c41a71f9eba181802f"
+          },
+          "decoded": "0x7E955252E15c84f5768B83c41a71F9eba181802F"
+        },
+        "fee": {
+          "request": {
+            "method": "eth_call",
+            "params": [
+              {
+                "to": "0x6C0a5Ef3C4e0D29a56D3AB463f9c28F18482c047",
+                "data": "0xddca3f43"
+              },
+              "0x9150915"
+            ]
+          },
+          "response": {
+            "jsonrpc": "2.0",
+            "id": 130,
+            "result": "0x0000000000000000000000000000000000000000000000000000000000000bb8"
+          },
+          "decoded": 3000
+        },
+        "liquidity": {
+          "request": {
+            "method": "eth_call",
+            "params": [
+              {
+                "to": "0x6C0a5Ef3C4e0D29a56D3AB463f9c28F18482c047",
+                "data": "0x1a686502"
+              },
+              "0x9150915"
+            ]
+          },
+          "response": {
+            "jsonrpc": "2.0",
+            "id": 131,
+            "result": "0x0000000000000000000000000000000000000000000000000000039c5286df52"
+          },
+          "decoded": "3969934352210"
+        },
+        "slot0": {
+          "request": {
+            "method": "eth_call",
+            "params": [
+              {
+                "to": "0x6C0a5Ef3C4e0D29a56D3AB463f9c28F18482c047",
+                "data": "0x3850c7bd"
+              },
+              "0x9150915"
+            ]
+          },
+          "response": {
+            "jsonrpc": "2.0",
+            "id": 132,
+            "result": "0x0000000000000000000000000000000000000000000005094a921f07660b2412fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffb6a97000000000000000000000000000000000000000000000000000000000000001c0000000000000000000000000000000000000000000000000000000000000040000000000000000000000000000000000000000000000000000000000000004000000000000000000000000000000000000000000000000000000000000000330000000000000000000000000000000000000000000000000000000000000001"
+          },
+          "decoded": [
+            "23783226502433655694354",
+            -300393,
+            28,
+            64,
+            64,
+            51,
+            true
+          ]
+        }
+      }
+    },
+    {
+      "stock": "0x5884aD2f920c162CFBbACc88C9C51AA75eC09E02",
+      "settlement": "USDG",
+      "fee": 10000,
+      "read": {
+        "request": {
+          "method": "eth_call",
+          "params": [
+            {
+              "to": "0x911b4000D3422F482F4062a913885f7b035382Df",
+              "data": "0x1698ee820000000000000000000000005884ad2f920c162cfbbacc88c9c51aa75ec09e020000000000000000000000007e955252e15c84f5768b83c41a71f9eba181802f0000000000000000000000000000000000000000000000000000000000002710"
+            },
+            "0x9150915"
+          ]
+        },
+        "response": {
+          "jsonrpc": "2.0",
+          "id": 79,
+          "result": "0x0000000000000000000000000000000000000000000000000000000000000000"
+        },
+        "decoded": "0x0000000000000000000000000000000000000000"
+      }
+    },
+    {
+      "stock": "0x5884aD2f920c162CFBbACc88C9C51AA75eC09E02",
+      "settlement": "USDC claimed",
+      "fee": 100,
+      "read": {
+        "request": {
+          "method": "eth_call",
+          "params": [
+            {
+              "to": "0x911b4000D3422F482F4062a913885f7b035382Df",
+              "data": "0x1698ee820000000000000000000000005884ad2f920c162cfbbacc88c9c51aa75ec09e02000000000000000000000000bf4479c07dc6fdc6daa764a0cca06969e894275f0000000000000000000000000000000000000000000000000000000000000064"
+            },
+            "0x9150915"
+          ]
+        },
+        "response": {
+          "jsonrpc": "2.0",
+          "id": 80,
+          "result": "0x0000000000000000000000000000000000000000000000000000000000000000"
+        },
+        "decoded": "0x0000000000000000000000000000000000000000"
+      }
+    },
+    {
+      "stock": "0x5884aD2f920c162CFBbACc88C9C51AA75eC09E02",
+      "settlement": "USDC claimed",
+      "fee": 500,
+      "read": {
+        "request": {
+          "method": "eth_call",
+          "params": [
+            {
+              "to": "0x911b4000D3422F482F4062a913885f7b035382Df",
+              "data": "0x1698ee820000000000000000000000005884ad2f920c162cfbbacc88c9c51aa75ec09e02000000000000000000000000bf4479c07dc6fdc6daa764a0cca06969e894275f00000000000000000000000000000000000000000000000000000000000001f4"
+            },
+            "0x9150915"
+          ]
+        },
+        "response": {
+          "jsonrpc": "2.0",
+          "id": 81,
+          "result": "0x000000000000000000000000f5a09091c37dd686e600f006d67eded37a76d6e9"
+        },
+        "decoded": "0xf5A09091C37DD686E600F006D67eDeD37a76d6E9"
+      },
+      "pool_reads": {
+        "token0": {
+          "request": {
+            "method": "eth_call",
+            "params": [
+              {
+                "to": "0xf5A09091C37DD686E600F006D67eDeD37a76d6E9",
+                "data": "0x0dfe1681"
+              },
+              "0x9150915"
+            ]
+          },
+          "response": {
+            "jsonrpc": "2.0",
+            "id": 133,
+            "result": "0x0000000000000000000000005884ad2f920c162cfbbacc88c9c51aa75ec09e02"
+          },
+          "decoded": "0x5884aD2f920c162CFBbACc88C9C51AA75eC09E02"
+        },
+        "token1": {
+          "request": {
+            "method": "eth_call",
+            "params": [
+              {
+                "to": "0xf5A09091C37DD686E600F006D67eDeD37a76d6E9",
+                "data": "0xd21220a7"
+              },
+              "0x9150915"
+            ]
+          },
+          "response": {
+            "jsonrpc": "2.0",
+            "id": 134,
+            "result": "0x000000000000000000000000bf4479c07dc6fdc6daa764a0cca06969e894275f"
+          },
+          "decoded": "0xbf4479C07Dc6fdc6dAa764A0ccA06969e894275F"
+        },
+        "fee": {
+          "request": {
+            "method": "eth_call",
+            "params": [
+              {
+                "to": "0xf5A09091C37DD686E600F006D67eDeD37a76d6E9",
+                "data": "0xddca3f43"
+              },
+              "0x9150915"
+            ]
+          },
+          "response": {
+            "jsonrpc": "2.0",
+            "id": 135,
+            "result": "0x00000000000000000000000000000000000000000000000000000000000001f4"
+          },
+          "decoded": 500
+        },
+        "liquidity": {
+          "request": {
+            "method": "eth_call",
+            "params": [
+              {
+                "to": "0xf5A09091C37DD686E600F006D67eDeD37a76d6E9",
+                "data": "0x1a686502"
+              },
+              "0x9150915"
+            ]
+          },
+          "response": {
+            "jsonrpc": "2.0",
+            "id": 136,
+            "result": "0x0000000000000000000000000000000000000000000000000000000000000000"
+          },
+          "decoded": "0"
+        },
+        "slot0": {
+          "request": {
+            "method": "eth_call",
+            "params": [
+              {
+                "to": "0xf5A09091C37DD686E600F006D67eDeD37a76d6E9",
+                "data": "0x3850c7bd"
+              },
+              "0x9150915"
+            ]
+          },
+          "response": {
+            "jsonrpc": "2.0",
+            "id": 137,
+            "result": "0x000000000000000000000000000000000000000000000000000000017b7baf1afffffffffffffffffffffffffffffffffffffffffffffffffffffffffff294d800000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001000000000000000000000000000000000000000000000000000000000000000100000000000000000000000000000000000000000000000000000000000000330000000000000000000000000000000000000000000000000000000000000001"
+          },
+          "decoded": [
+            "6366670618",
+            -879400,
+            0,
+            1,
+            1,
+            51,
+            true
+          ]
+        }
+      }
+    },
+    {
+      "stock": "0x5884aD2f920c162CFBbACc88C9C51AA75eC09E02",
+      "settlement": "USDC claimed",
+      "fee": 3000,
+      "read": {
+        "request": {
+          "method": "eth_call",
+          "params": [
+            {
+              "to": "0x911b4000D3422F482F4062a913885f7b035382Df",
+              "data": "0x1698ee820000000000000000000000005884ad2f920c162cfbbacc88c9c51aa75ec09e02000000000000000000000000bf4479c07dc6fdc6daa764a0cca06969e894275f0000000000000000000000000000000000000000000000000000000000000bb8"
+            },
+            "0x9150915"
+          ]
+        },
+        "response": {
+          "jsonrpc": "2.0",
+          "id": 82,
+          "result": "0x0000000000000000000000000a837200fb77687ba9b749e5174bd9a09e51286a"
+        },
+        "decoded": "0x0A837200fB77687ba9b749E5174bd9a09E51286A"
+      },
+      "pool_reads": {
+        "token0": {
+          "request": {
+            "method": "eth_call",
+            "params": [
+              {
+                "to": "0x0A837200fB77687ba9b749E5174bd9a09E51286A",
+                "data": "0x0dfe1681"
+              },
+              "0x9150915"
+            ]
+          },
+          "response": {
+            "jsonrpc": "2.0",
+            "id": 138,
+            "result": "0x0000000000000000000000005884ad2f920c162cfbbacc88c9c51aa75ec09e02"
+          },
+          "decoded": "0x5884aD2f920c162CFBbACc88C9C51AA75eC09E02"
+        },
+        "token1": {
+          "request": {
+            "method": "eth_call",
+            "params": [
+              {
+                "to": "0x0A837200fB77687ba9b749E5174bd9a09E51286A",
+                "data": "0xd21220a7"
+              },
+              "0x9150915"
+            ]
+          },
+          "response": {
+            "jsonrpc": "2.0",
+            "id": 139,
+            "result": "0x000000000000000000000000bf4479c07dc6fdc6daa764a0cca06969e894275f"
+          },
+          "decoded": "0xbf4479C07Dc6fdc6dAa764A0ccA06969e894275F"
+        },
+        "fee": {
+          "request": {
+            "method": "eth_call",
+            "params": [
+              {
+                "to": "0x0A837200fB77687ba9b749E5174bd9a09E51286A",
+                "data": "0xddca3f43"
+              },
+              "0x9150915"
+            ]
+          },
+          "response": {
+            "jsonrpc": "2.0",
+            "id": 140,
+            "result": "0x0000000000000000000000000000000000000000000000000000000000000bb8"
+          },
+          "decoded": 3000
+        },
+        "liquidity": {
+          "request": {
+            "method": "eth_call",
+            "params": [
+              {
+                "to": "0x0A837200fB77687ba9b749E5174bd9a09E51286A",
+                "data": "0x1a686502"
+              },
+              "0x9150915"
+            ]
+          },
+          "response": {
+            "jsonrpc": "2.0",
+            "id": 141,
+            "result": "0x00000000000000000000000000000000000000000000141f820b82135c28a294"
+          },
+          "decoded": "95028549450147236979348"
+        },
+        "slot0": {
+          "request": {
+            "method": "eth_call",
+            "params": [
+              {
+                "to": "0x0A837200fB77687ba9b749E5174bd9a09E51286A",
+                "data": "0x3850c7bd"
+              },
+              "0x9150915"
+            ]
+          },
+          "response": {
+            "jsonrpc": "2.0",
+            "id": 142,
+            "result": "0x000000000000000000000000000000000000000042b98cb1e5b01572a0623e8bffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff96f200000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001000000000000000000000000000000000000000000000000000000000000002000000000000000000000000000000000000000000000000000000000000000330000000000000000000000000000000000000000000000000000000000000001"
+          },
+          "decoded": [
+            "20650326337769535942724566667",
+            -26894,
+            0,
+            1,
+            32,
+            51,
+            true
+          ]
+        }
+      }
+    },
+    {
+      "stock": "0x5884aD2f920c162CFBbACc88C9C51AA75eC09E02",
+      "settlement": "USDC claimed",
+      "fee": 10000,
+      "read": {
+        "request": {
+          "method": "eth_call",
+          "params": [
+            {
+              "to": "0x911b4000D3422F482F4062a913885f7b035382Df",
+              "data": "0x1698ee820000000000000000000000005884ad2f920c162cfbbacc88c9c51aa75ec09e02000000000000000000000000bf4479c07dc6fdc6daa764a0cca06969e894275f0000000000000000000000000000000000000000000000000000000000002710"
+            },
+            "0x9150915"
+          ]
+        },
+        "response": {
+          "jsonrpc": "2.0",
+          "id": 83,
+          "result": "0x00000000000000000000000028007aca8b2c9b1cb670ef6a277e9d7bd34b72b2"
+        },
+        "decoded": "0x28007aCa8B2c9b1cb670eF6a277E9d7bd34b72B2"
+      },
+      "pool_reads": {
+        "token0": {
+          "request": {
+            "method": "eth_call",
+            "params": [
+              {
+                "to": "0x28007aCa8B2c9b1cb670eF6a277E9d7bd34b72B2",
+                "data": "0x0dfe1681"
+              },
+              "0x9150915"
+            ]
+          },
+          "response": {
+            "jsonrpc": "2.0",
+            "id": 143,
+            "result": "0x0000000000000000000000005884ad2f920c162cfbbacc88c9c51aa75ec09e02"
+          },
+          "decoded": "0x5884aD2f920c162CFBbACc88C9C51AA75eC09E02"
+        },
+        "token1": {
+          "request": {
+            "method": "eth_call",
+            "params": [
+              {
+                "to": "0x28007aCa8B2c9b1cb670eF6a277E9d7bd34b72B2",
+                "data": "0xd21220a7"
+              },
+              "0x9150915"
+            ]
+          },
+          "response": {
+            "jsonrpc": "2.0",
+            "id": 144,
+            "result": "0x000000000000000000000000bf4479c07dc6fdc6daa764a0cca06969e894275f"
+          },
+          "decoded": "0xbf4479C07Dc6fdc6dAa764A0ccA06969e894275F"
+        },
+        "fee": {
+          "request": {
+            "method": "eth_call",
+            "params": [
+              {
+                "to": "0x28007aCa8B2c9b1cb670eF6a277E9d7bd34b72B2",
+                "data": "0xddca3f43"
+              },
+              "0x9150915"
+            ]
+          },
+          "response": {
+            "jsonrpc": "2.0",
+            "id": 145,
+            "result": "0x0000000000000000000000000000000000000000000000000000000000002710"
+          },
+          "decoded": 10000
+        },
+        "liquidity": {
+          "request": {
+            "method": "eth_call",
+            "params": [
+              {
+                "to": "0x28007aCa8B2c9b1cb670eF6a277E9d7bd34b72B2",
+                "data": "0x1a686502"
+              },
+              "0x9150915"
+            ]
+          },
+          "response": {
+            "jsonrpc": "2.0",
+            "id": 146,
+            "result": "0x0000000000000000000000000000000000000000000000104d30c246a8988150"
+          },
+          "decoded": "300710064327887454544"
+        },
+        "slot0": {
+          "request": {
+            "method": "eth_call",
+            "params": [
+              {
+                "to": "0x28007aCa8B2c9b1cb670eF6a277E9d7bd34b72B2",
+                "data": "0x3850c7bd"
+              },
+              "0x9150915"
+            ]
+          },
+          "response": {
+            "jsonrpc": "2.0",
+            "id": 147,
+            "result": "0x0000000000000000000000000000000000000000554f74f085f69c4b86727dddffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffaa2500000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001000000000000000000000000000000000000000000000000000000000000000100000000000000000000000000000000000000000000000000000000000000330000000000000000000000000000000000000000000000000000000000000001"
+          },
+          "decoded": [
+            "26402283205947551815052721629",
+            -21979,
+            0,
+            1,
+            1,
+            51,
+            true
+          ]
+        }
+      }
+    },
+    {
+      "stock": "0x1FBE1a0e43594b3455993B5dE5Fd0A7A266298d0",
+      "settlement": "USDG",
+      "fee": 100,
+      "read": {
+        "request": {
+          "method": "eth_call",
+          "params": [
+            {
+              "to": "0x911b4000D3422F482F4062a913885f7b035382Df",
+              "data": "0x1698ee820000000000000000000000001fbe1a0e43594b3455993b5de5fd0a7a266298d00000000000000000000000007e955252e15c84f5768b83c41a71f9eba181802f0000000000000000000000000000000000000000000000000000000000000064"
+            },
+            "0x9150915"
+          ]
+        },
+        "response": {
+          "jsonrpc": "2.0",
+          "id": 84,
+          "result": "0x0000000000000000000000000000000000000000000000000000000000000000"
+        },
+        "decoded": "0x0000000000000000000000000000000000000000"
+      }
+    },
+    {
+      "stock": "0x1FBE1a0e43594b3455993B5dE5Fd0A7A266298d0",
+      "settlement": "USDG",
+      "fee": 500,
+      "read": {
+        "request": {
+          "method": "eth_call",
+          "params": [
+            {
+              "to": "0x911b4000D3422F482F4062a913885f7b035382Df",
+              "data": "0x1698ee820000000000000000000000001fbe1a0e43594b3455993b5de5fd0a7a266298d00000000000000000000000007e955252e15c84f5768b83c41a71f9eba181802f00000000000000000000000000000000000000000000000000000000000001f4"
+            },
+            "0x9150915"
+          ]
+        },
+        "response": {
+          "jsonrpc": "2.0",
+          "id": 85,
+          "result": "0x0000000000000000000000000000000000000000000000000000000000000000"
+        },
+        "decoded": "0x0000000000000000000000000000000000000000"
+      }
+    },
+    {
+      "stock": "0x1FBE1a0e43594b3455993B5dE5Fd0A7A266298d0",
+      "settlement": "USDG",
+      "fee": 3000,
+      "read": {
+        "request": {
+          "method": "eth_call",
+          "params": [
+            {
+              "to": "0x911b4000D3422F482F4062a913885f7b035382Df",
+              "data": "0x1698ee820000000000000000000000001fbe1a0e43594b3455993b5de5fd0a7a266298d00000000000000000000000007e955252e15c84f5768b83c41a71f9eba181802f0000000000000000000000000000000000000000000000000000000000000bb8"
+            },
+            "0x9150915"
+          ]
+        },
+        "response": {
+          "jsonrpc": "2.0",
+          "id": 86,
+          "result": "0x0000000000000000000000005c82380e87db94f55dda0b1443eb046437158969"
+        },
+        "decoded": "0x5c82380e87dB94f55dda0B1443EB046437158969"
+      },
+      "pool_reads": {
+        "token0": {
+          "request": {
+            "method": "eth_call",
+            "params": [
+              {
+                "to": "0x5c82380e87dB94f55dda0B1443EB046437158969",
+                "data": "0x0dfe1681"
+              },
+              "0x9150915"
+            ]
+          },
+          "response": {
+            "jsonrpc": "2.0",
+            "id": 148,
+            "result": "0x0000000000000000000000001fbe1a0e43594b3455993b5de5fd0a7a266298d0"
+          },
+          "decoded": "0x1FBE1a0e43594b3455993B5dE5Fd0A7A266298d0"
+        },
+        "token1": {
+          "request": {
+            "method": "eth_call",
+            "params": [
+              {
+                "to": "0x5c82380e87dB94f55dda0B1443EB046437158969",
+                "data": "0xd21220a7"
+              },
+              "0x9150915"
+            ]
+          },
+          "response": {
+            "jsonrpc": "2.0",
+            "id": 149,
+            "result": "0x0000000000000000000000007e955252e15c84f5768b83c41a71f9eba181802f"
+          },
+          "decoded": "0x7E955252E15c84f5768B83c41a71F9eba181802F"
+        },
+        "fee": {
+          "request": {
+            "method": "eth_call",
+            "params": [
+              {
+                "to": "0x5c82380e87dB94f55dda0B1443EB046437158969",
+                "data": "0xddca3f43"
+              },
+              "0x9150915"
+            ]
+          },
+          "response": {
+            "jsonrpc": "2.0",
+            "id": 150,
+            "result": "0x0000000000000000000000000000000000000000000000000000000000000bb8"
+          },
+          "decoded": 3000
+        },
+        "liquidity": {
+          "request": {
+            "method": "eth_call",
+            "params": [
+              {
+                "to": "0x5c82380e87dB94f55dda0B1443EB046437158969",
+                "data": "0x1a686502"
+              },
+              "0x9150915"
+            ]
+          },
+          "response": {
+            "jsonrpc": "2.0",
+            "id": 151,
+            "result": "0x0000000000000000000000000000000000000000000000000000048a1039c66e"
+          },
+          "decoded": "4991024219758"
+        },
+        "slot0": {
+          "request": {
+            "method": "eth_call",
+            "params": [
+              {
+                "to": "0x5c82380e87dB94f55dda0B1443EB046437158969",
+                "data": "0x3850c7bd"
+              },
+              "0x9150915"
+            ]
+          },
+          "response": {
+            "jsonrpc": "2.0",
+            "id": 152,
+            "result": "0x00000000000000000000000000000000000000000000051c06b53f1ba1d6d5fbfffffffffffffffffffffffffffffffffffffffffffffffffffffffffffb6bb800000000000000000000000000000000000000000000000000000000000000100000000000000000000000000000000000000000000000000000000000000040000000000000000000000000000000000000000000000000000000000000004000000000000000000000000000000000000000000000000000000000000000330000000000000000000000000000000000000000000000000000000000000001"
+          },
+          "decoded": [
+            "24128824610335017588219",
+            -300104,
+            16,
+            64,
+            64,
+            51,
+            true
+          ]
+        }
+      }
+    },
+    {
+      "stock": "0x1FBE1a0e43594b3455993B5dE5Fd0A7A266298d0",
+      "settlement": "USDG",
+      "fee": 10000,
+      "read": {
+        "request": {
+          "method": "eth_call",
+          "params": [
+            {
+              "to": "0x911b4000D3422F482F4062a913885f7b035382Df",
+              "data": "0x1698ee820000000000000000000000001fbe1a0e43594b3455993b5de5fd0a7a266298d00000000000000000000000007e955252e15c84f5768b83c41a71f9eba181802f0000000000000000000000000000000000000000000000000000000000002710"
+            },
+            "0x9150915"
+          ]
+        },
+        "response": {
+          "jsonrpc": "2.0",
+          "id": 87,
+          "result": "0x0000000000000000000000000000000000000000000000000000000000000000"
+        },
+        "decoded": "0x0000000000000000000000000000000000000000"
+      }
+    },
+    {
+      "stock": "0x1FBE1a0e43594b3455993B5dE5Fd0A7A266298d0",
+      "settlement": "USDC claimed",
+      "fee": 100,
+      "read": {
+        "request": {
+          "method": "eth_call",
+          "params": [
+            {
+              "to": "0x911b4000D3422F482F4062a913885f7b035382Df",
+              "data": "0x1698ee820000000000000000000000001fbe1a0e43594b3455993b5de5fd0a7a266298d0000000000000000000000000bf4479c07dc6fdc6daa764a0cca06969e894275f0000000000000000000000000000000000000000000000000000000000000064"
+            },
+            "0x9150915"
+          ]
+        },
+        "response": {
+          "jsonrpc": "2.0",
+          "id": 88,
+          "result": "0x0000000000000000000000000000000000000000000000000000000000000000"
+        },
+        "decoded": "0x0000000000000000000000000000000000000000"
+      }
+    },
+    {
+      "stock": "0x1FBE1a0e43594b3455993B5dE5Fd0A7A266298d0",
+      "settlement": "USDC claimed",
+      "fee": 500,
+      "read": {
+        "request": {
+          "method": "eth_call",
+          "params": [
+            {
+              "to": "0x911b4000D3422F482F4062a913885f7b035382Df",
+              "data": "0x1698ee820000000000000000000000001fbe1a0e43594b3455993b5de5fd0a7a266298d0000000000000000000000000bf4479c07dc6fdc6daa764a0cca06969e894275f00000000000000000000000000000000000000000000000000000000000001f4"
+            },
+            "0x9150915"
+          ]
+        },
+        "response": {
+          "jsonrpc": "2.0",
+          "id": 89,
+          "result": "0x000000000000000000000000b6adc34e20afadc739e6587565fd9443ee0a9b2a"
+        },
+        "decoded": "0xb6AdC34E20afADc739E6587565fD9443ee0a9b2A"
+      },
+      "pool_reads": {
+        "token0": {
+          "request": {
+            "method": "eth_call",
+            "params": [
+              {
+                "to": "0xb6AdC34E20afADc739E6587565fD9443ee0a9b2A",
+                "data": "0x0dfe1681"
+              },
+              "0x9150915"
+            ]
+          },
+          "response": {
+            "jsonrpc": "2.0",
+            "id": 153,
+            "result": "0x0000000000000000000000001fbe1a0e43594b3455993b5de5fd0a7a266298d0"
+          },
+          "decoded": "0x1FBE1a0e43594b3455993B5dE5Fd0A7A266298d0"
+        },
+        "token1": {
+          "request": {
+            "method": "eth_call",
+            "params": [
+              {
+                "to": "0xb6AdC34E20afADc739E6587565fD9443ee0a9b2A",
+                "data": "0xd21220a7"
+              },
+              "0x9150915"
+            ]
+          },
+          "response": {
+            "jsonrpc": "2.0",
+            "id": 154,
+            "result": "0x000000000000000000000000bf4479c07dc6fdc6daa764a0cca06969e894275f"
+          },
+          "decoded": "0xbf4479C07Dc6fdc6dAa764A0ccA06969e894275F"
+        },
+        "fee": {
+          "request": {
+            "method": "eth_call",
+            "params": [
+              {
+                "to": "0xb6AdC34E20afADc739E6587565fD9443ee0a9b2A",
+                "data": "0xddca3f43"
+              },
+              "0x9150915"
+            ]
+          },
+          "response": {
+            "jsonrpc": "2.0",
+            "id": 155,
+            "result": "0x00000000000000000000000000000000000000000000000000000000000001f4"
+          },
+          "decoded": 500
+        },
+        "liquidity": {
+          "request": {
+            "method": "eth_call",
+            "params": [
+              {
+                "to": "0xb6AdC34E20afADc739E6587565fD9443ee0a9b2A",
+                "data": "0x1a686502"
+              },
+              "0x9150915"
+            ]
+          },
+          "response": {
+            "jsonrpc": "2.0",
+            "id": 156,
+            "result": "0x000000000000000000000000000000000000000000000000a30bf3c68e3489f5"
+          },
+          "decoded": "11748752087040952821"
+        },
+        "slot0": {
+          "request": {
+            "method": "eth_call",
+            "params": [
+              {
+                "to": "0xb6AdC34E20afADc739E6587565fD9443ee0a9b2A",
+                "data": "0x3850c7bd"
+              },
+              "0x9150915"
+            ]
+          },
+          "response": {
+            "jsonrpc": "2.0",
+            "id": 157,
+            "result": "0x0000000000000000000000000000000000000000ffd1e149531d81b5989c196cfffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff100000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001000000000000000000000000000000000000000000000000000000000000000100000000000000000000000000000000000000000000000000000000000000330000000000000000000000000000000000000000000000000000000000000001"
+          },
+          "decoded": [
+            "79172406885802498769725167980",
+            -15,
+            0,
+            1,
+            1,
+            51,
+            true
+          ]
+        }
+      }
+    },
+    {
+      "stock": "0x1FBE1a0e43594b3455993B5dE5Fd0A7A266298d0",
+      "settlement": "USDC claimed",
+      "fee": 3000,
+      "read": {
+        "request": {
+          "method": "eth_call",
+          "params": [
+            {
+              "to": "0x911b4000D3422F482F4062a913885f7b035382Df",
+              "data": "0x1698ee820000000000000000000000001fbe1a0e43594b3455993b5de5fd0a7a266298d0000000000000000000000000bf4479c07dc6fdc6daa764a0cca06969e894275f0000000000000000000000000000000000000000000000000000000000000bb8"
+            },
+            "0x9150915"
+          ]
+        },
+        "response": {
+          "jsonrpc": "2.0",
+          "id": 90,
+          "result": "0x00000000000000000000000082a81e9edb32958104a2c9514b8fc85f972b53af"
+        },
+        "decoded": "0x82A81E9EdB32958104A2c9514b8Fc85F972b53Af"
+      },
+      "pool_reads": {
+        "token0": {
+          "request": {
+            "method": "eth_call",
+            "params": [
+              {
+                "to": "0x82A81E9EdB32958104A2c9514b8Fc85F972b53Af",
+                "data": "0x0dfe1681"
+              },
+              "0x9150915"
+            ]
+          },
+          "response": {
+            "jsonrpc": "2.0",
+            "id": 158,
+            "result": "0x0000000000000000000000001fbe1a0e43594b3455993b5de5fd0a7a266298d0"
+          },
+          "decoded": "0x1FBE1a0e43594b3455993B5dE5Fd0A7A266298d0"
+        },
+        "token1": {
+          "request": {
+            "method": "eth_call",
+            "params": [
+              {
+                "to": "0x82A81E9EdB32958104A2c9514b8Fc85F972b53Af",
+                "data": "0xd21220a7"
+              },
+              "0x9150915"
+            ]
+          },
+          "response": {
+            "jsonrpc": "2.0",
+            "id": 159,
+            "result": "0x000000000000000000000000bf4479c07dc6fdc6daa764a0cca06969e894275f"
+          },
+          "decoded": "0xbf4479C07Dc6fdc6dAa764A0ccA06969e894275F"
+        },
+        "fee": {
+          "request": {
+            "method": "eth_call",
+            "params": [
+              {
+                "to": "0x82A81E9EdB32958104A2c9514b8Fc85F972b53Af",
+                "data": "0xddca3f43"
+              },
+              "0x9150915"
+            ]
+          },
+          "response": {
+            "jsonrpc": "2.0",
+            "id": 160,
+            "result": "0x0000000000000000000000000000000000000000000000000000000000000bb8"
+          },
+          "decoded": 3000
+        },
+        "liquidity": {
+          "request": {
+            "method": "eth_call",
+            "params": [
+              {
+                "to": "0x82A81E9EdB32958104A2c9514b8Fc85F972b53Af",
+                "data": "0x1a686502"
+              },
+              "0x9150915"
+            ]
+          },
+          "response": {
+            "jsonrpc": "2.0",
+            "id": 161,
+            "result": "0x0000000000000000000000000000000000000000000010c85b0f22a7d3fe19f8"
+          },
+          "decoded": "79253774041942547372536"
+        },
+        "slot0": {
+          "request": {
+            "method": "eth_call",
+            "params": [
+              {
+                "to": "0x82A81E9EdB32958104A2c9514b8Fc85F972b53Af",
+                "data": "0x3850c7bd"
+              },
+              "0x9150915"
+            ]
+          },
+          "response": {
+            "jsonrpc": "2.0",
+            "id": 162,
+            "result": "0x00000000000000000000000000000000000000003c939f0f21b0c18aabe03069ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff8f6500000000000000000000000000000000000000000000000000000000000000010000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000002000000000000000000000000000000000000000000000000000000000000000330000000000000000000000000000000000000000000000000000000000000001"
+          },
+          "decoded": [
+            "18747563820163644991886864489",
+            -28827,
+            1,
+            32,
+            32,
+            51,
+            true
+          ]
+        }
+      }
+    },
+    {
+      "stock": "0x1FBE1a0e43594b3455993B5dE5Fd0A7A266298d0",
+      "settlement": "USDC claimed",
+      "fee": 10000,
+      "read": {
+        "request": {
+          "method": "eth_call",
+          "params": [
+            {
+              "to": "0x911b4000D3422F482F4062a913885f7b035382Df",
+              "data": "0x1698ee820000000000000000000000001fbe1a0e43594b3455993b5de5fd0a7a266298d0000000000000000000000000bf4479c07dc6fdc6daa764a0cca06969e894275f0000000000000000000000000000000000000000000000000000000000002710"
+            },
+            "0x9150915"
+          ]
+        },
+        "response": {
+          "jsonrpc": "2.0",
+          "id": 91,
+          "result": "0x0000000000000000000000001ca65f8bbc5e3676e28fe5fd51f7efec10348b19"
+        },
+        "decoded": "0x1cA65F8BbC5e3676e28fE5fd51f7efec10348B19"
+      },
+      "pool_reads": {
+        "token0": {
+          "request": {
+            "method": "eth_call",
+            "params": [
+              {
+                "to": "0x1cA65F8BbC5e3676e28fE5fd51f7efec10348B19",
+                "data": "0x0dfe1681"
+              },
+              "0x9150915"
+            ]
+          },
+          "response": {
+            "jsonrpc": "2.0",
+            "id": 163,
+            "result": "0x0000000000000000000000001fbe1a0e43594b3455993b5de5fd0a7a266298d0"
+          },
+          "decoded": "0x1FBE1a0e43594b3455993B5dE5Fd0A7A266298d0"
+        },
+        "token1": {
+          "request": {
+            "method": "eth_call",
+            "params": [
+              {
+                "to": "0x1cA65F8BbC5e3676e28fE5fd51f7efec10348B19",
+                "data": "0xd21220a7"
+              },
+              "0x9150915"
+            ]
+          },
+          "response": {
+            "jsonrpc": "2.0",
+            "id": 164,
+            "result": "0x000000000000000000000000bf4479c07dc6fdc6daa764a0cca06969e894275f"
+          },
+          "decoded": "0xbf4479C07Dc6fdc6dAa764A0ccA06969e894275F"
+        },
+        "fee": {
+          "request": {
+            "method": "eth_call",
+            "params": [
+              {
+                "to": "0x1cA65F8BbC5e3676e28fE5fd51f7efec10348B19",
+                "data": "0xddca3f43"
+              },
+              "0x9150915"
+            ]
+          },
+          "response": {
+            "jsonrpc": "2.0",
+            "id": 165,
+            "result": "0x0000000000000000000000000000000000000000000000000000000000002710"
+          },
+          "decoded": 10000
+        },
+        "liquidity": {
+          "request": {
+            "method": "eth_call",
+            "params": [
+              {
+                "to": "0x1cA65F8BbC5e3676e28fE5fd51f7efec10348B19",
+                "data": "0x1a686502"
+              },
+              "0x9150915"
+            ]
+          },
+          "response": {
+            "jsonrpc": "2.0",
+            "id": 166,
+            "result": "0x00000000000000000000000000000000000000000000001324bd494442e32631"
+          },
+          "decoded": "353135490113973986865"
+        },
+        "slot0": {
+          "request": {
+            "method": "eth_call",
+            "params": [
+              {
+                "to": "0x1cA65F8BbC5e3676e28fE5fd51f7efec10348B19",
+                "data": "0x3850c7bd"
+              },
+              "0x9150915"
+            ]
+          },
+          "response": {
+            "jsonrpc": "2.0",
+            "id": 167,
+            "result": "0x000000000000000000000000000000000000000058f7dab024c853e09212caf5ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffad6c00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001000000000000000000000000000000000000000000000000000000000000000100000000000000000000000000000000000000000000000000000000000000330000000000000000000000000000000000000000000000000000000000000001"
+          },
+          "decoded": [
+            "27534318266893862614166850293",
+            -21140,
+            0,
+            1,
+            1,
+            51,
+            true
+          ]
+        }
+      }
+    },
+    {
+      "stock": "0x3b8262A63d25f0477c4DDE23F83cfe22Cb768C93",
+      "settlement": "USDG",
+      "fee": 100,
+      "read": {
+        "request": {
+          "method": "eth_call",
+          "params": [
+            {
+              "to": "0x911b4000D3422F482F4062a913885f7b035382Df",
+              "data": "0x1698ee820000000000000000000000003b8262a63d25f0477c4dde23f83cfe22cb768c930000000000000000000000007e955252e15c84f5768b83c41a71f9eba181802f0000000000000000000000000000000000000000000000000000000000000064"
+            },
+            "0x9150915"
+          ]
+        },
+        "response": {
+          "jsonrpc": "2.0",
+          "id": 92,
+          "result": "0x0000000000000000000000000000000000000000000000000000000000000000"
+        },
+        "decoded": "0x0000000000000000000000000000000000000000"
+      }
+    },
+    {
+      "stock": "0x3b8262A63d25f0477c4DDE23F83cfe22Cb768C93",
+      "settlement": "USDG",
+      "fee": 500,
+      "read": {
+        "request": {
+          "method": "eth_call",
+          "params": [
+            {
+              "to": "0x911b4000D3422F482F4062a913885f7b035382Df",
+              "data": "0x1698ee820000000000000000000000003b8262a63d25f0477c4dde23f83cfe22cb768c930000000000000000000000007e955252e15c84f5768b83c41a71f9eba181802f00000000000000000000000000000000000000000000000000000000000001f4"
+            },
+            "0x9150915"
+          ]
+        },
+        "response": {
+          "jsonrpc": "2.0",
+          "id": 93,
+          "result": "0x0000000000000000000000000000000000000000000000000000000000000000"
+        },
+        "decoded": "0x0000000000000000000000000000000000000000"
+      }
+    },
+    {
+      "stock": "0x3b8262A63d25f0477c4DDE23F83cfe22Cb768C93",
+      "settlement": "USDG",
+      "fee": 3000,
+      "read": {
+        "request": {
+          "method": "eth_call",
+          "params": [
+            {
+              "to": "0x911b4000D3422F482F4062a913885f7b035382Df",
+              "data": "0x1698ee820000000000000000000000003b8262a63d25f0477c4dde23f83cfe22cb768c930000000000000000000000007e955252e15c84f5768b83c41a71f9eba181802f0000000000000000000000000000000000000000000000000000000000000bb8"
+            },
+            "0x9150915"
+          ]
+        },
+        "response": {
+          "jsonrpc": "2.0",
+          "id": 94,
+          "result": "0x00000000000000000000000081eda513eb0f5fdaf3903220432ebdb0a5fc6b02"
+        },
+        "decoded": "0x81EDa513eb0f5FdAf3903220432ebDb0a5FC6B02"
+      },
+      "pool_reads": {
+        "token0": {
+          "request": {
+            "method": "eth_call",
+            "params": [
+              {
+                "to": "0x81EDa513eb0f5FdAf3903220432ebDb0a5FC6B02",
+                "data": "0x0dfe1681"
+              },
+              "0x9150915"
+            ]
+          },
+          "response": {
+            "jsonrpc": "2.0",
+            "id": 168,
+            "result": "0x0000000000000000000000003b8262a63d25f0477c4dde23f83cfe22cb768c93"
+          },
+          "decoded": "0x3b8262A63d25f0477c4DDE23F83cfe22Cb768C93"
+        },
+        "token1": {
+          "request": {
+            "method": "eth_call",
+            "params": [
+              {
+                "to": "0x81EDa513eb0f5FdAf3903220432ebDb0a5FC6B02",
+                "data": "0xd21220a7"
+              },
+              "0x9150915"
+            ]
+          },
+          "response": {
+            "jsonrpc": "2.0",
+            "id": 169,
+            "result": "0x0000000000000000000000007e955252e15c84f5768b83c41a71f9eba181802f"
+          },
+          "decoded": "0x7E955252E15c84f5768B83c41a71F9eba181802F"
+        },
+        "fee": {
+          "request": {
+            "method": "eth_call",
+            "params": [
+              {
+                "to": "0x81EDa513eb0f5FdAf3903220432ebDb0a5FC6B02",
+                "data": "0xddca3f43"
+              },
+              "0x9150915"
+            ]
+          },
+          "response": {
+            "jsonrpc": "2.0",
+            "id": 170,
+            "result": "0x0000000000000000000000000000000000000000000000000000000000000bb8"
+          },
+          "decoded": 3000
+        },
+        "liquidity": {
+          "request": {
+            "method": "eth_call",
+            "params": [
+              {
+                "to": "0x81EDa513eb0f5FdAf3903220432ebDb0a5FC6B02",
+                "data": "0x1a686502"
+              },
+              "0x9150915"
+            ]
+          },
+          "response": {
+            "jsonrpc": "2.0",
+            "id": 171,
+            "result": "0x000000000000000000000000000000000000000000000000000001a3112c0b31"
+          },
+          "decoded": "1799879396145"
+        },
+        "slot0": {
+          "request": {
+            "method": "eth_call",
+            "params": [
+              {
+                "to": "0x81EDa513eb0f5FdAf3903220432ebDb0a5FC6B02",
+                "data": "0x3850c7bd"
+              },
+              "0x9150915"
+            ]
+          },
+          "response": {
+            "jsonrpc": "2.0",
+            "id": 172,
+            "result": "0x000000000000000000000000000000000000000000000a8ea998a6c24fb8aca1fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffba46b00000000000000000000000000000000000000000000000000000000000000120000000000000000000000000000000000000000000000000000000000000040000000000000000000000000000000000000000000000000000000000000004000000000000000000000000000000000000000000000000000000000000000330000000000000000000000000000000000000000000000000000000000000001"
+          },
+          "decoded": [
+            "49855323188105569676449",
+            -285589,
+            18,
+            64,
+            64,
+            51,
+            true
+          ]
+        }
+      }
+    },
+    {
+      "stock": "0x3b8262A63d25f0477c4DDE23F83cfe22Cb768C93",
+      "settlement": "USDG",
+      "fee": 10000,
+      "read": {
+        "request": {
+          "method": "eth_call",
+          "params": [
+            {
+              "to": "0x911b4000D3422F482F4062a913885f7b035382Df",
+              "data": "0x1698ee820000000000000000000000003b8262a63d25f0477c4dde23f83cfe22cb768c930000000000000000000000007e955252e15c84f5768b83c41a71f9eba181802f0000000000000000000000000000000000000000000000000000000000002710"
+            },
+            "0x9150915"
+          ]
+        },
+        "response": {
+          "jsonrpc": "2.0",
+          "id": 95,
+          "result": "0x0000000000000000000000000000000000000000000000000000000000000000"
+        },
+        "decoded": "0x0000000000000000000000000000000000000000"
+      }
+    },
+    {
+      "stock": "0x3b8262A63d25f0477c4DDE23F83cfe22Cb768C93",
+      "settlement": "USDC claimed",
+      "fee": 100,
+      "read": {
+        "request": {
+          "method": "eth_call",
+          "params": [
+            {
+              "to": "0x911b4000D3422F482F4062a913885f7b035382Df",
+              "data": "0x1698ee820000000000000000000000003b8262a63d25f0477c4dde23f83cfe22cb768c93000000000000000000000000bf4479c07dc6fdc6daa764a0cca06969e894275f0000000000000000000000000000000000000000000000000000000000000064"
+            },
+            "0x9150915"
+          ]
+        },
+        "response": {
+          "jsonrpc": "2.0",
+          "id": 96,
+          "result": "0x0000000000000000000000000000000000000000000000000000000000000000"
+        },
+        "decoded": "0x0000000000000000000000000000000000000000"
+      }
+    },
+    {
+      "stock": "0x3b8262A63d25f0477c4DDE23F83cfe22Cb768C93",
+      "settlement": "USDC claimed",
+      "fee": 500,
+      "read": {
+        "request": {
+          "method": "eth_call",
+          "params": [
+            {
+              "to": "0x911b4000D3422F482F4062a913885f7b035382Df",
+              "data": "0x1698ee820000000000000000000000003b8262a63d25f0477c4dde23f83cfe22cb768c93000000000000000000000000bf4479c07dc6fdc6daa764a0cca06969e894275f00000000000000000000000000000000000000000000000000000000000001f4"
+            },
+            "0x9150915"
+          ]
+        },
+        "response": {
+          "jsonrpc": "2.0",
+          "id": 97,
+          "result": "0x0000000000000000000000001e56a3d850abb031f707571196245fe008346128"
+        },
+        "decoded": "0x1E56A3d850aBB031F707571196245FE008346128"
+      },
+      "pool_reads": {
+        "token0": {
+          "request": {
+            "method": "eth_call",
+            "params": [
+              {
+                "to": "0x1E56A3d850aBB031F707571196245FE008346128",
+                "data": "0x0dfe1681"
+              },
+              "0x9150915"
+            ]
+          },
+          "response": {
+            "jsonrpc": "2.0",
+            "id": 173,
+            "result": "0x0000000000000000000000003b8262a63d25f0477c4dde23f83cfe22cb768c93"
+          },
+          "decoded": "0x3b8262A63d25f0477c4DDE23F83cfe22Cb768C93"
+        },
+        "token1": {
+          "request": {
+            "method": "eth_call",
+            "params": [
+              {
+                "to": "0x1E56A3d850aBB031F707571196245FE008346128",
+                "data": "0xd21220a7"
+              },
+              "0x9150915"
+            ]
+          },
+          "response": {
+            "jsonrpc": "2.0",
+            "id": 174,
+            "result": "0x000000000000000000000000bf4479c07dc6fdc6daa764a0cca06969e894275f"
+          },
+          "decoded": "0xbf4479C07Dc6fdc6dAa764A0ccA06969e894275F"
+        },
+        "fee": {
+          "request": {
+            "method": "eth_call",
+            "params": [
+              {
+                "to": "0x1E56A3d850aBB031F707571196245FE008346128",
+                "data": "0xddca3f43"
+              },
+              "0x9150915"
+            ]
+          },
+          "response": {
+            "jsonrpc": "2.0",
+            "id": 175,
+            "result": "0x00000000000000000000000000000000000000000000000000000000000001f4"
+          },
+          "decoded": 500
+        },
+        "liquidity": {
+          "request": {
+            "method": "eth_call",
+            "params": [
+              {
+                "to": "0x1E56A3d850aBB031F707571196245FE008346128",
+                "data": "0x1a686502"
+              },
+              "0x9150915"
+            ]
+          },
+          "response": {
+            "jsonrpc": "2.0",
+            "id": 176,
+            "result": "0x000000000000000000000000000000000000000000000004d71ce73ec625c2f4"
+          },
+          "decoded": "89287494569138963188"
+        },
+        "slot0": {
+          "request": {
+            "method": "eth_call",
+            "params": [
+              {
+                "to": "0x1E56A3d850aBB031F707571196245FE008346128",
+                "data": "0x3850c7bd"
+              },
+              "0x9150915"
+            ]
+          },
+          "response": {
+            "jsonrpc": "2.0",
+            "id": 177,
+            "result": "0x0000000000000000000000000000000000000000486a0dd07bf27f9952f4a656ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff9d5700000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001000000000000000000000000000000000000000000000000000000000000000100000000000000000000000000000000000000000000000000000000000000330000000000000000000000000000000000000000000000000000000000000001"
+          },
+          "decoded": [
+            "22411132080634381585205208662",
+            -25257,
+            0,
+            1,
+            1,
+            51,
+            true
+          ]
+        }
+      }
+    },
+    {
+      "stock": "0x3b8262A63d25f0477c4DDE23F83cfe22Cb768C93",
+      "settlement": "USDC claimed",
+      "fee": 3000,
+      "read": {
+        "request": {
+          "method": "eth_call",
+          "params": [
+            {
+              "to": "0x911b4000D3422F482F4062a913885f7b035382Df",
+              "data": "0x1698ee820000000000000000000000003b8262a63d25f0477c4dde23f83cfe22cb768c93000000000000000000000000bf4479c07dc6fdc6daa764a0cca06969e894275f0000000000000000000000000000000000000000000000000000000000000bb8"
+            },
+            "0x9150915"
+          ]
+        },
+        "response": {
+          "jsonrpc": "2.0",
+          "id": 98,
+          "result": "0x000000000000000000000000cd8a64d13d5b99dc546a3d6ffd8e5c7dd0ecb1a0"
+        },
+        "decoded": "0xcD8a64d13D5B99Dc546a3D6FFD8e5C7dD0Ecb1a0"
+      },
+      "pool_reads": {
+        "token0": {
+          "request": {
+            "method": "eth_call",
+            "params": [
+              {
+                "to": "0xcD8a64d13D5B99Dc546a3D6FFD8e5C7dD0Ecb1a0",
+                "data": "0x0dfe1681"
+              },
+              "0x9150915"
+            ]
+          },
+          "response": {
+            "jsonrpc": "2.0",
+            "id": 178,
+            "result": "0x0000000000000000000000003b8262a63d25f0477c4dde23f83cfe22cb768c93"
+          },
+          "decoded": "0x3b8262A63d25f0477c4DDE23F83cfe22Cb768C93"
+        },
+        "token1": {
+          "request": {
+            "method": "eth_call",
+            "params": [
+              {
+                "to": "0xcD8a64d13D5B99Dc546a3D6FFD8e5C7dD0Ecb1a0",
+                "data": "0xd21220a7"
+              },
+              "0x9150915"
+            ]
+          },
+          "response": {
+            "jsonrpc": "2.0",
+            "id": 179,
+            "result": "0x000000000000000000000000bf4479c07dc6fdc6daa764a0cca06969e894275f"
+          },
+          "decoded": "0xbf4479C07Dc6fdc6dAa764A0ccA06969e894275F"
+        },
+        "fee": {
+          "request": {
+            "method": "eth_call",
+            "params": [
+              {
+                "to": "0xcD8a64d13D5B99Dc546a3D6FFD8e5C7dD0Ecb1a0",
+                "data": "0xddca3f43"
+              },
+              "0x9150915"
+            ]
+          },
+          "response": {
+            "jsonrpc": "2.0",
+            "id": 180,
+            "result": "0x0000000000000000000000000000000000000000000000000000000000000bb8"
+          },
+          "decoded": 3000
+        },
+        "liquidity": {
+          "request": {
+            "method": "eth_call",
+            "params": [
+              {
+                "to": "0xcD8a64d13D5B99Dc546a3D6FFD8e5C7dD0Ecb1a0",
+                "data": "0x1a686502"
+              },
+              "0x9150915"
+            ]
+          },
+          "response": {
+            "jsonrpc": "2.0",
+            "id": 181,
+            "result": "0x000000000000000000000000000000000000000000001280cdb2ba7cdda72742"
+          },
+          "decoded": "87378602047457523607362"
+        },
+        "slot0": {
+          "request": {
+            "method": "eth_call",
+            "params": [
+              {
+                "to": "0xcD8a64d13D5B99Dc546a3D6FFD8e5C7dD0Ecb1a0",
+                "data": "0x3850c7bd"
+              },
+              "0x9150915"
+            ]
+          },
+          "response": {
+            "jsonrpc": "2.0",
+            "id": 182,
+            "result": "0x000000000000000000000000000000000000000039713b5ad1b3764b6c67a841ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff8b3e00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001000000000000000000000000000000000000000000000000000000000000002000000000000000000000000000000000000000000000000000000000000000330000000000000000000000000000000000000000000000000000000000000001"
+          },
+          "decoded": [
+            "17777534472373129198053075009",
+            -29890,
+            0,
+            1,
+            32,
+            51,
+            true
+          ]
+        }
+      }
+    },
+    {
+      "stock": "0x3b8262A63d25f0477c4DDE23F83cfe22Cb768C93",
+      "settlement": "USDC claimed",
+      "fee": 10000,
+      "read": {
+        "request": {
+          "method": "eth_call",
+          "params": [
+            {
+              "to": "0x911b4000D3422F482F4062a913885f7b035382Df",
+              "data": "0x1698ee820000000000000000000000003b8262a63d25f0477c4dde23f83cfe22cb768c93000000000000000000000000bf4479c07dc6fdc6daa764a0cca06969e894275f0000000000000000000000000000000000000000000000000000000000002710"
+            },
+            "0x9150915"
+          ]
+        },
+        "response": {
+          "jsonrpc": "2.0",
+          "id": 99,
+          "result": "0x000000000000000000000000c0b6f7c201fbc8e2ff7ec2d99b1eed2f41240e26"
+        },
+        "decoded": "0xC0b6F7C201fbC8e2fF7eC2D99B1eeD2F41240E26"
+      },
+      "pool_reads": {
+        "token0": {
+          "request": {
+            "method": "eth_call",
+            "params": [
+              {
+                "to": "0xC0b6F7C201fbC8e2fF7eC2D99B1eeD2F41240E26",
+                "data": "0x0dfe1681"
+              },
+              "0x9150915"
+            ]
+          },
+          "response": {
+            "jsonrpc": "2.0",
+            "id": 183,
+            "result": "0x0000000000000000000000003b8262a63d25f0477c4dde23f83cfe22cb768c93"
+          },
+          "decoded": "0x3b8262A63d25f0477c4DDE23F83cfe22Cb768C93"
+        },
+        "token1": {
+          "request": {
+            "method": "eth_call",
+            "params": [
+              {
+                "to": "0xC0b6F7C201fbC8e2fF7eC2D99B1eeD2F41240E26",
+                "data": "0xd21220a7"
+              },
+              "0x9150915"
+            ]
+          },
+          "response": {
+            "jsonrpc": "2.0",
+            "id": 184,
+            "result": "0x000000000000000000000000bf4479c07dc6fdc6daa764a0cca06969e894275f"
+          },
+          "decoded": "0xbf4479C07Dc6fdc6dAa764A0ccA06969e894275F"
+        },
+        "fee": {
+          "request": {
+            "method": "eth_call",
+            "params": [
+              {
+                "to": "0xC0b6F7C201fbC8e2fF7eC2D99B1eeD2F41240E26",
+                "data": "0xddca3f43"
+              },
+              "0x9150915"
+            ]
+          },
+          "response": {
+            "jsonrpc": "2.0",
+            "id": 185,
+            "result": "0x0000000000000000000000000000000000000000000000000000000000002710"
+          },
+          "decoded": 10000
+        },
+        "liquidity": {
+          "request": {
+            "method": "eth_call",
+            "params": [
+              {
+                "to": "0xC0b6F7C201fbC8e2fF7eC2D99B1eeD2F41240E26",
+                "data": "0x1a686502"
+              },
+              "0x9150915"
+            ]
+          },
+          "response": {
+            "jsonrpc": "2.0",
+            "id": 186,
+            "result": "0x00000000000000000000000000000000000000000000000437e8933b2c0a101e"
+          },
+          "decoded": "77815608043872325662"
+        },
+        "slot0": {
+          "request": {
+            "method": "eth_call",
+            "params": [
+              {
+                "to": "0xC0b6F7C201fbC8e2fF7eC2D99B1eeD2F41240E26",
+                "data": "0x3850c7bd"
+              },
+              "0x9150915"
+            ]
+          },
+          "response": {
+            "jsonrpc": "2.0",
+            "id": 187,
+            "result": "0x000000000000000000000000000000000000000048fc732e58e5f3d11d7dd132ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff9df400000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001000000000000000000000000000000000000000000000000000000000000000100000000000000000000000000000000000000000000000000000000000000330000000000000000000000000000000000000000000000000000000000000001"
+          },
+          "decoded": [
+            "22588113940781283024522039602",
+            -25100,
+            0,
+            1,
+            1,
+            51,
+            true
+          ]
+        }
+      }
+    },
+    {
+      "stock": "0x71178BAc73cBeb415514eB542a8995b82669778d",
+      "settlement": "USDG",
+      "fee": 100,
+      "read": {
+        "request": {
+          "method": "eth_call",
+          "params": [
+            {
+              "to": "0x911b4000D3422F482F4062a913885f7b035382Df",
+              "data": "0x1698ee8200000000000000000000000071178bac73cbeb415514eb542a8995b82669778d0000000000000000000000007e955252e15c84f5768b83c41a71f9eba181802f0000000000000000000000000000000000000000000000000000000000000064"
+            },
+            "0x9150915"
+          ]
+        },
+        "response": {
+          "jsonrpc": "2.0",
+          "id": 100,
+          "result": "0x0000000000000000000000000000000000000000000000000000000000000000"
+        },
+        "decoded": "0x0000000000000000000000000000000000000000"
+      }
+    },
+    {
+      "stock": "0x71178BAc73cBeb415514eB542a8995b82669778d",
+      "settlement": "USDG",
+      "fee": 500,
+      "read": {
+        "request": {
+          "method": "eth_call",
+          "params": [
+            {
+              "to": "0x911b4000D3422F482F4062a913885f7b035382Df",
+              "data": "0x1698ee8200000000000000000000000071178bac73cbeb415514eb542a8995b82669778d0000000000000000000000007e955252e15c84f5768b83c41a71f9eba181802f00000000000000000000000000000000000000000000000000000000000001f4"
+            },
+            "0x9150915"
+          ]
+        },
+        "response": {
+          "jsonrpc": "2.0",
+          "id": 101,
+          "result": "0x0000000000000000000000000000000000000000000000000000000000000000"
+        },
+        "decoded": "0x0000000000000000000000000000000000000000"
+      }
+    },
+    {
+      "stock": "0x71178BAc73cBeb415514eB542a8995b82669778d",
+      "settlement": "USDG",
+      "fee": 3000,
+      "read": {
+        "request": {
+          "method": "eth_call",
+          "params": [
+            {
+              "to": "0x911b4000D3422F482F4062a913885f7b035382Df",
+              "data": "0x1698ee8200000000000000000000000071178bac73cbeb415514eb542a8995b82669778d0000000000000000000000007e955252e15c84f5768b83c41a71f9eba181802f0000000000000000000000000000000000000000000000000000000000000bb8"
+            },
+            "0x9150915"
+          ]
+        },
+        "response": {
+          "jsonrpc": "2.0",
+          "id": 102,
+          "result": "0x000000000000000000000000e3abea804606228c89cc3196ecd2fedf27d2a586"
+        },
+        "decoded": "0xe3abEa804606228C89CC3196ECD2fedf27d2A586"
+      },
+      "pool_reads": {
+        "token0": {
+          "request": {
+            "method": "eth_call",
+            "params": [
+              {
+                "to": "0xe3abEa804606228C89CC3196ECD2fedf27d2A586",
+                "data": "0x0dfe1681"
+              },
+              "0x9150915"
+            ]
+          },
+          "response": {
+            "jsonrpc": "2.0",
+            "id": 188,
+            "result": "0x00000000000000000000000071178bac73cbeb415514eb542a8995b82669778d"
+          },
+          "decoded": "0x71178BAc73cBeb415514eB542a8995b82669778d"
+        },
+        "token1": {
+          "request": {
+            "method": "eth_call",
+            "params": [
+              {
+                "to": "0xe3abEa804606228C89CC3196ECD2fedf27d2A586",
+                "data": "0xd21220a7"
+              },
+              "0x9150915"
+            ]
+          },
+          "response": {
+            "jsonrpc": "2.0",
+            "id": 189,
+            "result": "0x0000000000000000000000007e955252e15c84f5768b83c41a71f9eba181802f"
+          },
+          "decoded": "0x7E955252E15c84f5768B83c41a71F9eba181802F"
+        },
+        "fee": {
+          "request": {
+            "method": "eth_call",
+            "params": [
+              {
+                "to": "0xe3abEa804606228C89CC3196ECD2fedf27d2A586",
+                "data": "0xddca3f43"
+              },
+              "0x9150915"
+            ]
+          },
+          "response": {
+            "jsonrpc": "2.0",
+            "id": 190,
+            "result": "0x0000000000000000000000000000000000000000000000000000000000000bb8"
+          },
+          "decoded": 3000
+        },
+        "liquidity": {
+          "request": {
+            "method": "eth_call",
+            "params": [
+              {
+                "to": "0xe3abEa804606228C89CC3196ECD2fedf27d2A586",
+                "data": "0x1a686502"
+              },
+              "0x9150915"
+            ]
+          },
+          "response": {
+            "jsonrpc": "2.0",
+            "id": 191,
+            "result": "0x000000000000000000000000000000000000000000000000000003c434615bbf"
+          },
+          "decoded": "4141227269055"
+        },
+        "slot0": {
+          "request": {
+            "method": "eth_call",
+            "params": [
+              {
+                "to": "0xe3abEa804606228C89CC3196ECD2fedf27d2A586",
+                "data": "0x3850c7bd"
+              },
+              "0x9150915"
+            ]
+          },
+          "response": {
+            "jsonrpc": "2.0",
+            "id": 192,
+            "result": "0x0000000000000000000000000000000000000000000005f634cdedf25c464036fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffb77c500000000000000000000000000000000000000000000000000000000000000140000000000000000000000000000000000000000000000000000000000000040000000000000000000000000000000000000000000000000000000000000004000000000000000000000000000000000000000000000000000000000000000330000000000000000000000000000000000000000000000000000000000000001"
+          },
+          "decoded": [
+            "28153536415366159679542",
+            -297019,
+            20,
+            64,
+            64,
+            51,
+            true
+          ]
+        }
+      }
+    },
+    {
+      "stock": "0x71178BAc73cBeb415514eB542a8995b82669778d",
+      "settlement": "USDG",
+      "fee": 10000,
+      "read": {
+        "request": {
+          "method": "eth_call",
+          "params": [
+            {
+              "to": "0x911b4000D3422F482F4062a913885f7b035382Df",
+              "data": "0x1698ee8200000000000000000000000071178bac73cbeb415514eb542a8995b82669778d0000000000000000000000007e955252e15c84f5768b83c41a71f9eba181802f0000000000000000000000000000000000000000000000000000000000002710"
+            },
+            "0x9150915"
+          ]
+        },
+        "response": {
+          "jsonrpc": "2.0",
+          "id": 103,
+          "result": "0x0000000000000000000000000000000000000000000000000000000000000000"
+        },
+        "decoded": "0x0000000000000000000000000000000000000000"
+      }
+    },
+    {
+      "stock": "0x71178BAc73cBeb415514eB542a8995b82669778d",
+      "settlement": "USDC claimed",
+      "fee": 100,
+      "read": {
+        "request": {
+          "method": "eth_call",
+          "params": [
+            {
+              "to": "0x911b4000D3422F482F4062a913885f7b035382Df",
+              "data": "0x1698ee8200000000000000000000000071178bac73cbeb415514eb542a8995b82669778d000000000000000000000000bf4479c07dc6fdc6daa764a0cca06969e894275f0000000000000000000000000000000000000000000000000000000000000064"
+            },
+            "0x9150915"
+          ]
+        },
+        "response": {
+          "jsonrpc": "2.0",
+          "id": 104,
+          "result": "0x0000000000000000000000000000000000000000000000000000000000000000"
+        },
+        "decoded": "0x0000000000000000000000000000000000000000"
+      }
+    },
+    {
+      "stock": "0x71178BAc73cBeb415514eB542a8995b82669778d",
+      "settlement": "USDC claimed",
+      "fee": 500,
+      "read": {
+        "request": {
+          "method": "eth_call",
+          "params": [
+            {
+              "to": "0x911b4000D3422F482F4062a913885f7b035382Df",
+              "data": "0x1698ee8200000000000000000000000071178bac73cbeb415514eb542a8995b82669778d000000000000000000000000bf4479c07dc6fdc6daa764a0cca06969e894275f00000000000000000000000000000000000000000000000000000000000001f4"
+            },
+            "0x9150915"
+          ]
+        },
+        "response": {
+          "jsonrpc": "2.0",
+          "id": 105,
+          "result": "0x00000000000000000000000044697c5f09b301bc116859f0f5541167b7879b08"
+        },
+        "decoded": "0x44697c5f09b301Bc116859F0F5541167B7879b08"
+      },
+      "pool_reads": {
+        "token0": {
+          "request": {
+            "method": "eth_call",
+            "params": [
+              {
+                "to": "0x44697c5f09b301Bc116859F0F5541167B7879b08",
+                "data": "0x0dfe1681"
+              },
+              "0x9150915"
+            ]
+          },
+          "response": {
+            "jsonrpc": "2.0",
+            "id": 193,
+            "result": "0x00000000000000000000000071178bac73cbeb415514eb542a8995b82669778d"
+          },
+          "decoded": "0x71178BAc73cBeb415514eB542a8995b82669778d"
+        },
+        "token1": {
+          "request": {
+            "method": "eth_call",
+            "params": [
+              {
+                "to": "0x44697c5f09b301Bc116859F0F5541167B7879b08",
+                "data": "0xd21220a7"
+              },
+              "0x9150915"
+            ]
+          },
+          "response": {
+            "jsonrpc": "2.0",
+            "id": 194,
+            "result": "0x000000000000000000000000bf4479c07dc6fdc6daa764a0cca06969e894275f"
+          },
+          "decoded": "0xbf4479C07Dc6fdc6dAa764A0ccA06969e894275F"
+        },
+        "fee": {
+          "request": {
+            "method": "eth_call",
+            "params": [
+              {
+                "to": "0x44697c5f09b301Bc116859F0F5541167B7879b08",
+                "data": "0xddca3f43"
+              },
+              "0x9150915"
+            ]
+          },
+          "response": {
+            "jsonrpc": "2.0",
+            "id": 195,
+            "result": "0x00000000000000000000000000000000000000000000000000000000000001f4"
+          },
+          "decoded": 500
+        },
+        "liquidity": {
+          "request": {
+            "method": "eth_call",
+            "params": [
+              {
+                "to": "0x44697c5f09b301Bc116859F0F5541167B7879b08",
+                "data": "0x1a686502"
+              },
+              "0x9150915"
+            ]
+          },
+          "response": {
+            "jsonrpc": "2.0",
+            "id": 196,
+            "result": "0x000000000000000000000000000000000000000000000005e5f25bf9d6f016c2"
+          },
+          "decoded": "108803127476208277186"
+        },
+        "slot0": {
+          "request": {
+            "method": "eth_call",
+            "params": [
+              {
+                "to": "0x44697c5f09b301Bc116859F0F5541167B7879b08",
+                "data": "0x3850c7bd"
+              },
+              "0x9150915"
+            ]
+          },
+          "response": {
+            "jsonrpc": "2.0",
+            "id": 197,
+            "result": "0x00000000000000000000000000000000000000005d6a737938dc1ae91fd8c53affffffffffffffffffffffffffffffffffffffffffffffffffffffffffffb13c00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001000000000000000000000000000000000000000000000000000000000000000100000000000000000000000000000000000000000000000000000000000000330000000000000000000000000000000000000000000000000000000000000001"
+          },
+          "decoded": [
+            "28910797358562984361543124282",
+            -20164,
+            0,
+            1,
+            1,
+            51,
+            true
+          ]
+        }
+      }
+    },
+    {
+      "stock": "0x71178BAc73cBeb415514eB542a8995b82669778d",
+      "settlement": "USDC claimed",
+      "fee": 3000,
+      "read": {
+        "request": {
+          "method": "eth_call",
+          "params": [
+            {
+              "to": "0x911b4000D3422F482F4062a913885f7b035382Df",
+              "data": "0x1698ee8200000000000000000000000071178bac73cbeb415514eb542a8995b82669778d000000000000000000000000bf4479c07dc6fdc6daa764a0cca06969e894275f0000000000000000000000000000000000000000000000000000000000000bb8"
+            },
+            "0x9150915"
+          ]
+        },
+        "response": {
+          "jsonrpc": "2.0",
+          "id": 106,
+          "result": "0x000000000000000000000000ae12d50f75ea3f4cf983af1272614754e7f5e813"
+        },
+        "decoded": "0xae12d50f75ea3f4Cf983Af1272614754e7F5e813"
+      },
+      "pool_reads": {
+        "token0": {
+          "request": {
+            "method": "eth_call",
+            "params": [
+              {
+                "to": "0xae12d50f75ea3f4Cf983Af1272614754e7F5e813",
+                "data": "0x0dfe1681"
+              },
+              "0x9150915"
+            ]
+          },
+          "response": {
+            "jsonrpc": "2.0",
+            "id": 198,
+            "result": "0x00000000000000000000000071178bac73cbeb415514eb542a8995b82669778d"
+          },
+          "decoded": "0x71178BAc73cBeb415514eB542a8995b82669778d"
+        },
+        "token1": {
+          "request": {
+            "method": "eth_call",
+            "params": [
+              {
+                "to": "0xae12d50f75ea3f4Cf983Af1272614754e7F5e813",
+                "data": "0xd21220a7"
+              },
+              "0x9150915"
+            ]
+          },
+          "response": {
+            "jsonrpc": "2.0",
+            "id": 199,
+            "result": "0x000000000000000000000000bf4479c07dc6fdc6daa764a0cca06969e894275f"
+          },
+          "decoded": "0xbf4479C07Dc6fdc6dAa764A0ccA06969e894275F"
+        },
+        "fee": {
+          "request": {
+            "method": "eth_call",
+            "params": [
+              {
+                "to": "0xae12d50f75ea3f4Cf983Af1272614754e7F5e813",
+                "data": "0xddca3f43"
+              },
+              "0x9150915"
+            ]
+          },
+          "response": {
+            "jsonrpc": "2.0",
+            "id": 200,
+            "result": "0x0000000000000000000000000000000000000000000000000000000000000bb8"
+          },
+          "decoded": 3000
+        },
+        "liquidity": {
+          "request": {
+            "method": "eth_call",
+            "params": [
+              {
+                "to": "0xae12d50f75ea3f4Cf983Af1272614754e7F5e813",
+                "data": "0x1a686502"
+              },
+              "0x9150915"
+            ]
+          },
+          "response": {
+            "jsonrpc": "2.0",
+            "id": 201,
+            "result": "0x0000000000000000000000000000000000000000000012cae0d12cc6ddea50cb"
+          },
+          "decoded": "88745038773110209925323"
+        },
+        "slot0": {
+          "request": {
+            "method": "eth_call",
+            "params": [
+              {
+                "to": "0xae12d50f75ea3f4Cf983Af1272614754e7F5e813",
+                "data": "0x3850c7bd"
+              },
+              "0x9150915"
+            ]
+          },
+          "response": {
+            "jsonrpc": "2.0",
+            "id": 202,
+            "result": "0x00000000000000000000000000000000000000003bf8c16ba68bf36e7da9f15effffffffffffffffffffffffffffffffffffffffffffffffffffffffffff8e9c000000000000000000000000000000000000000000000000000000000000001c0000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000002000000000000000000000000000000000000000000000000000000000000000330000000000000000000000000000000000000000000000000000000000000001"
+          },
+          "decoded": [
+            "18560342585257550106476540254",
+            -29028,
+            28,
+            32,
+            32,
+            51,
+            true
+          ]
+        }
+      }
+    },
+    {
+      "stock": "0x71178BAc73cBeb415514eB542a8995b82669778d",
+      "settlement": "USDC claimed",
+      "fee": 10000,
+      "read": {
+        "request": {
+          "method": "eth_call",
+          "params": [
+            {
+              "to": "0x911b4000D3422F482F4062a913885f7b035382Df",
+              "data": "0x1698ee8200000000000000000000000071178bac73cbeb415514eb542a8995b82669778d000000000000000000000000bf4479c07dc6fdc6daa764a0cca06969e894275f0000000000000000000000000000000000000000000000000000000000002710"
+            },
+            "0x9150915"
+          ]
+        },
+        "response": {
+          "jsonrpc": "2.0",
+          "id": 107,
+          "result": "0x0000000000000000000000006b4b28ca45ea4b368c22dffe56b66d1e8b9ee414"
+        },
+        "decoded": "0x6B4b28CA45Ea4b368C22DFFE56b66d1E8b9EE414"
+      },
+      "pool_reads": {
+        "token0": {
+          "request": {
+            "method": "eth_call",
+            "params": [
+              {
+                "to": "0x6B4b28CA45Ea4b368C22DFFE56b66d1E8b9EE414",
+                "data": "0x0dfe1681"
+              },
+              "0x9150915"
+            ]
+          },
+          "response": {
+            "jsonrpc": "2.0",
+            "id": 203,
+            "result": "0x00000000000000000000000071178bac73cbeb415514eb542a8995b82669778d"
+          },
+          "decoded": "0x71178BAc73cBeb415514eB542a8995b82669778d"
+        },
+        "token1": {
+          "request": {
+            "method": "eth_call",
+            "params": [
+              {
+                "to": "0x6B4b28CA45Ea4b368C22DFFE56b66d1E8b9EE414",
+                "data": "0xd21220a7"
+              },
+              "0x9150915"
+            ]
+          },
+          "response": {
+            "jsonrpc": "2.0",
+            "id": 204,
+            "result": "0x000000000000000000000000bf4479c07dc6fdc6daa764a0cca06969e894275f"
+          },
+          "decoded": "0xbf4479C07Dc6fdc6dAa764A0ccA06969e894275F"
+        },
+        "fee": {
+          "request": {
+            "method": "eth_call",
+            "params": [
+              {
+                "to": "0x6B4b28CA45Ea4b368C22DFFE56b66d1E8b9EE414",
+                "data": "0xddca3f43"
+              },
+              "0x9150915"
+            ]
+          },
+          "response": {
+            "jsonrpc": "2.0",
+            "id": 205,
+            "result": "0x0000000000000000000000000000000000000000000000000000000000002710"
+          },
+          "decoded": 10000
+        },
+        "liquidity": {
+          "request": {
+            "method": "eth_call",
+            "params": [
+              {
+                "to": "0x6B4b28CA45Ea4b368C22DFFE56b66d1E8b9EE414",
+                "data": "0x1a686502"
+              },
+              "0x9150915"
+            ]
+          },
+          "response": {
+            "jsonrpc": "2.0",
+            "id": 206,
+            "result": "0x0000000000000000000000000000000000000000000000953dd41fbd1e929961"
+          },
+          "decoded": "2753020087811221657953"
+        },
+        "slot0": {
+          "request": {
+            "method": "eth_call",
+            "params": [
+              {
+                "to": "0x6B4b28CA45Ea4b368C22DFFE56b66d1E8b9EE414",
+                "data": "0x3850c7bd"
+              },
+              "0x9150915"
+            ]
+          },
+          "response": {
+            "jsonrpc": "2.0",
+            "id": 207,
+            "result": "0x000000000000000000000000000000000000000042041628a2bd9578623c25a8ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff961d00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001000000000000000000000000000000000000000000000000000000000000000100000000000000000000000000000000000000000000000000000000000000330000000000000000000000000000000000000000000000000000000000000001"
+          },
+          "decoded": [
+            "20430950993146312482130503080",
+            -27107,
+            0,
+            1,
+            1,
+            51,
+            true
+          ]
+        }
+      }
+    }
+  ]
+}

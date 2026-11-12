@@ -1,0 +1,8 @@
+{
+  "source_url": "https://explorer.testnet.chain.robinhood.com/api/v2/smart-contracts/0xbf4479C07Dc6fdc6dAa764A0ccA06969e894275F",
+  "response_sha256": "90adee763cf99f67bb5dfa954ab4ea36712a1a84d04dbc17ed816fdc4ea2e08e",
+  "name": "USDC",
+  "compiler_version": "v0.8.27+commit.40a35a09",
+  "source_code": "// SPDX-License-Identifier: MIT\npragma solidity ^0.8.27;\n\nimport {ERC20} from \"@openzeppelin/contracts/token/ERC20/ERC20.sol\";\nimport {ERC20Permit} from \"@openzeppelin/contracts/token/ERC20/extensions/ERC20Permit.sol\";\nimport {Ownable} from \"@openzeppelin/contracts/access/Ownable.sol\";\n\ncontract USDC is ERC20, Ownable, ERC20Permit {\n    constructor(address recipient)\n        ERC20(\"USDC\", \"USDC\")\n        Ownable(msg.sender)\n        ERC20Permit(\"USDC\")\n    {\n        _mint(recipient, 1000000 * 10 ** decimals());\n    }\n\n    function mint(address to, uint256 amount) public onlyOwner {\n        _mint(to, amount);\n    }\n}\n",
+  "interpretation": "Owner-mintable OpenZeppelin ERC20 named USDC; name is not canonical Circle issuer provenance."
+}
