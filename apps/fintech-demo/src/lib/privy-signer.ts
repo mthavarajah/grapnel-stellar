@@ -1,6 +1,7 @@
 "use client";
 import { Buffer } from "buffer";
 import {inspectBorrowApproval,isBorrowApprovalAction} from './borrow-approval';
+import {inspectMarginApproval,isMarginApprovalAction} from './margin-approval';
 import { Address, Asset, Keypair, Transaction, TransactionBuilder, scValToNative } from "@stellar/stellar-sdk";
 import {
   NETWORK,
@@ -148,7 +149,7 @@ export async function signPreparedAction(
       );
     }
   } else if (operation.type === "invokeHostFunction") {
-    if(action.summary.action==='spot.swap')inspectSpotApproval(action,operation);else if(isBorrowApprovalAction(action.summary.action))inspectBorrowApproval(action,operation);else inspectBlendApproval(action,operation);
+    if(action.summary.action==='spot.swap')inspectSpotApproval(action,operation);else if(isBorrowApprovalAction(action.summary.action))inspectBorrowApproval(action,operation);else if(isMarginApprovalAction(action.summary.action))inspectMarginApproval(action,operation);else inspectBlendApproval(action,operation);
   } else {
     throw Error(
       "This transaction operation has no supported approval inspector",
