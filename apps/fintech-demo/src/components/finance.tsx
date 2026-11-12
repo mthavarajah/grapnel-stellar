@@ -416,7 +416,17 @@ function FinanceShell({ page, auth, initialCategory }: { page: string; auth?: Au
   const [overviewLoading,setOverviewLoading] = useState(false);
   const [balances, setBalances] = useState<any[]>([]);
   const [networkAssets,setNetworkAssets]=useState<any[]>([]);
-  useEffect(()=>{let alive=true,inFlight=false;setNetworkAssets([]);const read=async()=>{if(!session||inFlight)return;inFlight=true;try{const value=await api("grapnel/network-assets");if(alive&&value.scope?.customer_id===session.customer_id&&value.scope?.wallet_id===session.wallet_id&&Array.isArray(value.balances))setNetworkAssets(value.balances);}catch{}finally{inFlight=false;}};void read();const changed=()=>{void read();};window.addEventListener('grapnel:stocks-updated',changed);return()=>{alive=false;window.removeEventListener('grapnel:stocks-updated',changed);};},[session?.customer_id,session?.wallet_id,balances]);
+  useEffect(()=>{
+    let alive=true,inFlight=false,queued=false;setNetworkAssets([]);
+    const read=async()=>{if(!session||!alive)return;if(inFlight){queued=true;return;}inFlight=true;
+      try{const value=await api("grapnel/network-assets");if(alive&&value.scope?.customer_id===session.customer_id&&value.scope?.wallet_id===session.wallet_id&&Array.isArray(value.balances))setNetworkAssets(value.balances);}
+      catch{}finally{inFlight=false;if(alive&&queued){queued=false;void read();}}
+    };
+    void read();const changed=()=>{void read();},visible=()=>{if(document.visibilityState==="visible")void read();};
+    const timer=setInterval(()=>{if(document.visibilityState==="visible")void read();},15000);
+    window.addEventListener('grapnel:stocks-updated',changed);document.addEventListener('visibilitychange',visible);
+    return()=>{alive=false;clearInterval(timer);window.removeEventListener('grapnel:stocks-updated',changed);document.removeEventListener('visibilitychange',visible);};
+  },[session?.customer_id,session?.wallet_id,page]);
   const [assets, setAssets] = useState<any[]>([]);
   const [fundingError, setFundingError] = useState("");
   const [markets, setMarkets] = useState<any[]>([]);
@@ -1201,7 +1211,7 @@ function FinanceShell({ page, auth, initialCategory }: { page: string; auth?: Au
           {fundingPage === "fund" && <>
             <section className="section" aria-label="Current wallet balances">
               <div className="section-heading"><h2>Your wallet balances</h2></div>
-              <BalanceTable valuation={walletValuation} balances={[...balances.map(b=>({...b,network_label:"Stellar",feature_label:"Wallet"})),...networkAssets.filter(b=>!(["TSLA","AMZN","PLTR","NFLX","AMD"].includes(b.asset?.code)&&typeof b.wallet_amount==="string"&&/^0+(?:\.0+)?$/.test(b.wallet_amount)))]} connected={!!session} />
+              <BalanceTable valuation={walletValuation} balances={[...balances.map(b=>({...b,network_label:"Stellar",feature_label:"Wallet"})),...networkAssets.filter(b=>!(["TSLA","AMZN","PLTR","NFLX","AMD"].includes(b.asset?.code)&&typeof b.wallet_amount==="string"&&/^0+(?:\.0+)?$/.test(b.wallet_amount)))]} connected={!!session} hideZeroBalances />
             </section>
           </>}
           {(fundingPage === "fund" || fundingPage === "return") && (

@@ -39,7 +39,7 @@ export async function readNetworkAssets(c:CustomerContext,readWallets:NetworkAss
    if(source.chain===46630&&source.code!=='USDG'){const multiplier=await createRobinhoodReader().readStockMultiplier(source.code as typeof STOCKS[number]['symbol']);if(multiplier.multiplierBaseUnits!=='1000000000000000000')throw Error('Stock multiplier changed');}
    amount=fromAtomic(values.reduce((sum,v)=>sum+v,0n),source.decimals);observed_at=new Date(Number(block.timestamp)*1000).toISOString();verified=true;
   }catch{/* Missing observations remain unknown. */}}
-  return {asset_id,asset:{id:asset_id,code:source.code,name:source.code,kind:'erc20',network:source.id,decimals:source.decimals,verified:true},balance_verified:verified,wallet_amount:amount,reserved:null,spendable:null,network_label:source.label,feature_label:'Wallet',observed_at};
+  return {asset_id,asset:{id:asset_id,code:source.code,name:source.code,kind:'erc20',network:source.id,decimals:source.decimals,verified:true},balance_verified:verified,wallet_amount:amount,reserved:verified&&source.code==='USDG'?'0':null,spendable:verified&&source.code==='USDG'?amount:null,value_usd:verified&&source.code==='USDG'?amount:null,valuation_basis:verified&&source.code==='USDG'?'testnet_settlement_unit':null,network_label:source.label,feature_label:'Wallet',observed_at};
  }));
  return {scope:{business_id:c.businessId,customer_id:c.customerId,wallet_id:c.walletId},balances};
 }

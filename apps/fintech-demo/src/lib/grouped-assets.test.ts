@@ -16,3 +16,10 @@ describe('source-backed grouped wallet amounts',()=>{
  it('requires matching verified metadata before grouping and never rounds excess token precision',()=>{const unverified=row(stellar,'1');unverified.asset!.verified=false;expect(buildGroupedAssets([unverified])[0]!.expandable).toBe(false);const invalid=row(hyper,'1.0000001');expect(buildGroupedAssets([invalid])[0]!.wallet_amount).toBeNull();const wrong=row(stellar,'1');wrong.asset!.id='other';expect(buildGroupedAssets([wrong])[0]).toMatchObject({expandable:false,wallet_amount:null});});
  it('preserves integer amounts beyond Number precision and rounds USD cents exactly',()=>{const g=buildGroupedAssets([row(stellar,'9007199254740993.01'),row(hyper,'0.01')])[0]!;expect(g.wallet_amount).toBe('9007199254740993.02');expect(groupedUsd('9007199254740993.015')).toBe('$9,007,199,254,740,993.02');expect(groupedUsd(null)).toBe('—');expect(groupedUsd('0')).toBe('$0.00');});
 });
+
+it('uses only the exact verified USDG settlement-unit value and never guesses a same-symbol peg',()=>{
+ const id='robinhood-testnet:erc20:0x7e955252e15c84f5768b83c41a71f9eba181802f';
+ const source={asset_id:id,asset:{id,code:'USDG',verified:true,decimals:6},wallet_amount:'220.125',reserved:'0',spendable:'220.125',balance_verified:true,value_usd:'220.125',valuation_basis:'testnet_settlement_unit'};
+ expect(buildGroupedAssets([source])[0]).toMatchObject({wallet_amount:'220.125',reserved:'0',spendable:'220.125',value_usd:'220.125'});
+ for(const change of [{balance_verified:false},{value_usd:'221'},{valuation_basis:null},{asset_id:'other',asset:{...source.asset,id:'other'}}])expect(buildGroupedAssets([{...source,...change}])[0]!.value_usd).toBeNull();
+});

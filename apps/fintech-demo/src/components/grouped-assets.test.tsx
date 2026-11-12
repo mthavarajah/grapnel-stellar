@@ -6,3 +6,9 @@ describe('flat asset balance table',()=>{
  it('hides exact zero balances on the main page while preserving unknown and positive balances',()=>{const html=renderToStaticMarkup(createElement(GroupedAssets,{balances:[...balances,row('zero-native','0','Zero network'),row('zero-decimal','0.0000000','Other zero network'),row('unknown',null,'Updating network')],connected:true,hideZeroBalances:true}));expect(html).not.toContain('Zero network');expect(html).not.toContain('Other zero network');expect(html).toContain('Updating network');expect(html).toContain('—');expect(html).toContain('>10<');});
  it('does not expose old balances after disconnect or invent a zero when no read exists',()=>{expect(renderToStaticMarkup(createElement(GroupedAssets,{balances,connected:false}))).not.toContain('<table');expect(renderToStaticMarkup(createElement(GroupedAssets,{balances:[],connected:true}))).toContain('Waiting for a live balance read.');expect(renderToStaticMarkup(createElement(GroupedAssets,{balances:[row('zero','0','Stellar')],connected:true,hideZeroBalances:true}))).toContain('No assets with a balance.');});
 });
+
+it('shows confirmed purchased stock holdings alongside USDG and hides sold-out stocks',()=>{
+ const stock=(code:string,amount:string)=>({asset_id:'robinhood-testnet:erc20:'+code,asset:{id:'robinhood-testnet:erc20:'+code,code,verified:true,decimals:18,network:'robinhood-testnet'},wallet_amount:amount,reserved:null,spendable:null});
+ const html=renderToStaticMarkup(createElement(GroupedAssets,{balances:[stock('TSLA','0.125'),stock('AMD','0')],connected:true,hideZeroBalances:true}));
+ expect(html).toContain('TSLA');expect(html).toContain('>0.125<');expect(html).not.toContain('>AMD<');
+});

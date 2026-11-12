@@ -1,6 +1,6 @@
 /** Asset presentation aggregation only. No balance, price or dollar peg is inferred. */
 import {formatTokenAmount} from '@grapnel/contracts';
-export type AssetBalanceRow={asset_id:string;asset?:{id:string;code:string;name?:string;verified?:boolean;kind?:string;network?:string;decimals?:number};wallet_amount:string|null;reserved?:string|null;spendable?:string|null;network_label?:string;feature_label?:string};
+export type AssetBalanceRow={asset_id:string;asset?:{id:string;code:string;name?:string;verified?:boolean;kind?:string;network?:string;decimals?:number};wallet_amount:string|null;reserved?:string|null;spendable?:string|null;network_label?:string;feature_label?:string;balance_verified?:boolean;value_usd?:string|null;valuation_basis?:string|null};
 export type AssetBalanceValuation={assets?:{asset_id:string;wallet_amount:string;value_usd:string|null}[]}|null;
 export type GroupedAssetSource=AssetBalanceRow&{code:string;label:string;name?:string;wallet_amount:string|null;reserved:string|null;spendable:string|null;value_usd:string|null;conflicted:boolean};
 export type GroupedAsset={key:string;code:string;label:string;name?:string;expandable:boolean;children:GroupedAssetSource[];wallet_amount:string|null;reserved:string|null;spendable:string|null;value_usd:string|null;known_wallet_amount:string|null;unknown_wallet_count:number};
@@ -19,7 +19,10 @@ const exactSg=(row:AssetBalanceRow)=>(row.asset_id.toLowerCase()===GMX_SG||row.a
 function code(row:AssetBalanceRow):string{if(exactSg(row))return 'USDC.SG';const asset=metadata(row);if(asset?.code?.trim())return asset.code.trim();if(row.asset_id==='stellar-testnet:native:XLM')return 'XLM';const classic=/^stellar-testnet:classic:([^:]+):/.exec(row.asset_id);return classic?.[1]??'Asset';}
 function identityKey(row:AssetBalanceRow):string{const a=metadata(row);return JSON.stringify(a?{id:a.id,code:a.code,verified:a.verified===true,kind:a.kind??null,network:a.network??null,decimals:a.decimals??null}:null);}
 function valuationFor(row:AssetBalanceRow,amount:string|null,valuation?:AssetBalanceValuation):string|null{
- if(amount===null)return null;const matches=valuation?.assets?.filter(v=>v.asset_id===row.asset_id&&normalize(v.wallet_amount,precision(row))===amount)??[];if(!matches.length)return null;
+ if(amount===null)return null;
+ // Explicit server accounting basis for the pinned Robinhood Testnet settlement token.
+ if(row.balance_verified===true&&metadata(row)?.verified===true&&row.asset_id==='robinhood-testnet:erc20:0x7e955252e15c84f5768b83c41a71f9eba181802f'&&row.valuation_basis==='testnet_settlement_unit'&&normalize(row.value_usd,38)===amount)return amount;
+ const matches=valuation?.assets?.filter(v=>v.asset_id===row.asset_id&&normalize(v.wallet_amount,precision(row))===amount)??[];if(!matches.length)return null;
  const values=matches.map(v=>normalize(v.value_usd,38));return values.every(value=>value!==null&&value===values[0])?values[0]!:null;
 }
 const labels=(rows:AssetBalanceRow[],key:'network_label'|'feature_label')=>[...new Set(rows.map(r=>r[key]?.trim()).filter((v):v is string=>!!v))].join(' · ')||undefined;
