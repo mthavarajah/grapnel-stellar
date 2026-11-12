@@ -1,0 +1,1488 @@
+{
+  "startedAt": "2026-11-12T05:10:00.085Z",
+  "completedAt": "2026-11-12T05:10:02.222Z",
+  "mode": "independent_read_only_catalog_qa",
+  "source": {
+    "infoUrl": "https://api.hyperliquid-testnet.xyz/info",
+    "receivedAt": "2026-11-12T05:10:01.432Z",
+    "cacheExpiresAt": "2026-11-12T05:11:00.954Z",
+    "metadataCacheTtlMs": 60000,
+    "metricAvailability": "not_requested",
+    "providerMarketTimestamp": null,
+    "observations": [
+      {
+        "type": "perpDexs",
+        "receivedAt": "2026-11-12T05:10:00.954Z",
+        "httpDate": "Thu, 12 Nov 2026 05:10:00 GMT"
+      },
+      {
+        "type": "allPerpMetas",
+        "receivedAt": "2026-11-12T05:10:01.427Z",
+        "httpDate": "Thu, 12 Nov 2026 05:10:00 GMT"
+      },
+      {
+        "type": "spotMeta",
+        "receivedAt": "2026-11-12T05:10:01.432Z",
+        "httpDate": "Thu, 12 Nov 2026 05:10:00 GMT"
+      },
+      {
+        "type": "perpConciseAnnotations",
+        "receivedAt": "2026-11-12T05:10:00.812Z",
+        "httpDate": "Thu, 12 Nov 2026 05:10:00 GMT"
+      }
+    ],
+    "annotationMeaning": "provider_declared_not_verified_ownership_or_eligibility"
+  },
+  "directSourceFingerprints": [
+    {
+      "type": "perpDexs",
+      "sha256": "b8f72ac62b3cb25255908367c4cb94981819fc60d5ad34c40f2852af55047fed",
+      "observedAt": "2026-11-12T05:10:01.819Z"
+    },
+    {
+      "type": "allPerpMetas",
+      "sha256": "58f5558f50510aac2bc1f7b056d3ebfd77345f69031a783dbe169e979742e478",
+      "observedAt": "2026-11-12T05:10:01.794Z"
+    },
+    {
+      "type": "spotMeta",
+      "sha256": "9c25422dc415ac157c76f5a328d22e69e70b4facc4ca6f07ea43ae0bb2ec2853",
+      "observedAt": "2026-11-12T05:10:01.989Z"
+    }
+  ],
+  "counts": {
+    "dexes": 279,
+    "total": 1008,
+    "active": 658,
+    "directTotal": 1008,
+    "directActive": 658,
+    "stockAliases": 39
+  },
+  "categories": {
+    "(unannotated)": 588,
+    "preipo": 3,
+    "test": 2,
+    "all": 1,
+    "ai": 1,
+    "BIG MEONG": 1,
+    "indices": 4,
+    "stocks": 30,
+    "commodities": 8,
+    "FX": 2,
+    "funding": 1,
+    "Test": 1,
+    "crypto": 7,
+    "Crypto": 1,
+    "RWA": 2,
+    "fx": 4,
+    "Goy": 1,
+    "equity": 1
+  },
+  "mappedCategories": {
+    "crypto": 167,
+    "other": 436,
+    "index": 5,
+    "equity": 34,
+    "commodity": 10,
+    "fx": 6
+  },
+  "activeCollateral": [
+    {
+      "tokenIndex": 0,
+      "identity": {
+        "tokenIndex": 0,
+        "tokenId": "0xeb62eee3685fc4c43992febcd9e75443",
+        "name": "USDC",
+        "fullName": null,
+        "szDecimals": 8,
+        "weiDecimals": 8,
+        "isCanonical": true,
+        "linkedEvmContract": {
+          "address": "0x0b80659a4076e9e93c7dbe0f10675a16a3e5c206",
+          "evmExtraWeiDecimals": -2
+        }
+      },
+      "activeCount": 553,
+      "compatibility": [
+        "usdc"
+      ]
+    },
+    {
+      "tokenIndex": 1424,
+      "identity": {
+        "tokenIndex": 1424,
+        "tokenId": "0x104c26d7b6ad42f0b3aba9daf8972bb3",
+        "name": "NQ",
+        "fullName": null,
+        "szDecimals": 2,
+        "weiDecimals": 8,
+        "isCanonical": false,
+        "linkedEvmContract": null
+      },
+      "activeCount": 1,
+      "compatibility": [
+        "other"
+      ]
+    },
+    {
+      "tokenIndex": 1204,
+      "identity": {
+        "tokenIndex": 1204,
+        "tokenId": "0x7d25dbd93e357dc3e423706e826e6994",
+        "name": "TZERO",
+        "fullName": null,
+        "szDecimals": 2,
+        "weiDecimals": 8,
+        "isCanonical": false,
+        "linkedEvmContract": {
+          "address": "0x779ded0c9e1022225f8e0630b35a9b54be713736",
+          "evmExtraWeiDecimals": -2
+        }
+      },
+      "activeCount": 11,
+      "compatibility": [
+        "other"
+      ]
+    },
+    {
+      "tokenIndex": 1295,
+      "identity": {
+        "tokenIndex": 1295,
+        "tokenId": "0x0fd728eb06cbed4d5a3dfee49de53834",
+        "name": "USDEEE",
+        "fullName": "USDEEE",
+        "szDecimals": 2,
+        "weiDecimals": 8,
+        "isCanonical": false,
+        "linkedEvmContract": {
+          "address": "0xe0166f6c98aea0fd135d474b69471ca96dc797c4",
+          "evmExtraWeiDecimals": 10
+        }
+      },
+      "activeCount": 14,
+      "compatibility": [
+        "other"
+      ]
+    },
+    {
+      "tokenIndex": 1328,
+      "identity": {
+        "tokenIndex": 1328,
+        "tokenId": "0x7bc98b970531175951be66e5307ce3bc",
+        "name": "USDZZ",
+        "fullName": null,
+        "szDecimals": 2,
+        "weiDecimals": 8,
+        "isCanonical": false,
+        "linkedEvmContract": null
+      },
+      "activeCount": 3,
+      "compatibility": [
+        "other"
+      ]
+    },
+    {
+      "tokenIndex": 1452,
+      "identity": {
+        "tokenIndex": 1452,
+        "tokenId": "0x471fd4480bb9943a1fe080ab0d4ff36c",
+        "name": "USDH",
+        "fullName": "USDH",
+        "szDecimals": 2,
+        "weiDecimals": 8,
+        "isCanonical": false,
+        "linkedEvmContract": {
+          "address": "0x22222245c52c817f95b74664ae8546b490222222",
+          "evmExtraWeiDecimals": -2
+        }
+      },
+      "activeCount": 27,
+      "compatibility": [
+        "other"
+      ]
+    },
+    {
+      "tokenIndex": 1435,
+      "identity": {
+        "tokenIndex": 1435,
+        "tokenId": "0xfdc6f325bec5cd57b107ef501a6f1d9d",
+        "name": "HORSE",
+        "fullName": null,
+        "szDecimals": 2,
+        "weiDecimals": 8,
+        "isCanonical": false,
+        "linkedEvmContract": null
+      },
+      "activeCount": 7,
+      "compatibility": [
+        "other"
+      ]
+    },
+    {
+      "tokenIndex": 1493,
+      "identity": {
+        "tokenIndex": 1493,
+        "tokenId": "0xa8469cf6df9c92f729a4bfa0f3643479",
+        "name": "TUSDC",
+        "fullName": "USDC Coin",
+        "szDecimals": 2,
+        "weiDecimals": 8,
+        "isCanonical": false,
+        "linkedEvmContract": null
+      },
+      "activeCount": 3,
+      "compatibility": [
+        "other"
+      ]
+    },
+    {
+      "tokenIndex": 1535,
+      "identity": {
+        "tokenIndex": 1535,
+        "tokenId": "0x56f10e3bb9697465565c2f2ab4088781",
+        "name": "TGUSD",
+        "fullName": "TGUSD",
+        "szDecimals": 2,
+        "weiDecimals": 8,
+        "isCanonical": false,
+        "linkedEvmContract": null
+      },
+      "activeCount": 7,
+      "compatibility": [
+        "other"
+      ]
+    },
+    {
+      "tokenIndex": 1508,
+      "identity": {
+        "tokenIndex": 1508,
+        "tokenId": "0x537e41409d69d1d41e654c3b6baa868b",
+        "name": "XAG",
+        "fullName": null,
+        "szDecimals": 2,
+        "weiDecimals": 8,
+        "isCanonical": false,
+        "linkedEvmContract": {
+          "address": "0xa3f385ec9a4b0fcdf4fecc937ba820b8ffc0a97c",
+          "evmExtraWeiDecimals": 10
+        }
+      },
+      "activeCount": 1,
+      "compatibility": [
+        "other"
+      ]
+    },
+    {
+      "tokenIndex": 1576,
+      "identity": {
+        "tokenIndex": 1576,
+        "tokenId": "0xb9c737ff4e40f3ab62deff08d54a6114",
+        "name": "USDYP",
+        "fullName": "USDyp Test Stablecoin",
+        "szDecimals": 2,
+        "weiDecimals": 8,
+        "isCanonical": false,
+        "linkedEvmContract": null
+      },
+      "activeCount": 3,
+      "compatibility": [
+        "other"
+      ]
+    },
+    {
+      "tokenIndex": 1583,
+      "identity": {
+        "tokenIndex": 1583,
+        "tokenId": "0x9546e27fe9b996e590690781e250e892",
+        "name": "EZSUSD",
+        "fullName": null,
+        "szDecimals": 2,
+        "weiDecimals": 8,
+        "isCanonical": false,
+        "linkedEvmContract": {
+          "address": "0xa80360e0aaf140699dcdaa429109d776a10cf152",
+          "evmExtraWeiDecimals": 10
+        }
+      },
+      "activeCount": 4,
+      "compatibility": [
+        "other"
+      ]
+    },
+    {
+      "tokenIndex": 3032,
+      "identity": {
+        "tokenIndex": 3032,
+        "tokenId": "0x8b36c9269f2331c61c83e15884b5835a",
+        "name": "USDPR",
+        "fullName": "Perpetual Alpha USD (rehearsal)",
+        "szDecimals": 2,
+        "weiDecimals": 8,
+        "isCanonical": false,
+        "linkedEvmContract": null
+      },
+      "activeCount": 13,
+      "compatibility": [
+        "other"
+      ]
+    },
+    {
+      "tokenIndex": 3168,
+      "identity": {
+        "tokenIndex": 3168,
+        "tokenId": "0x1eab3a63fcb4d62a76faba56eebccb1c",
+        "name": "USDGOY",
+        "fullName": "Goy USD",
+        "szDecimals": 2,
+        "weiDecimals": 8,
+        "isCanonical": false,
+        "linkedEvmContract": null
+      },
+      "activeCount": 1,
+      "compatibility": [
+        "other"
+      ]
+    },
+    {
+      "tokenIndex": 3307,
+      "identity": {
+        "tokenIndex": 3307,
+        "tokenId": "0xa7ab296859c43140a4e71f1464c137dc",
+        "name": "USDP",
+        "fullName": "Perpetual Alpha USD",
+        "szDecimals": 2,
+        "weiDecimals": 8,
+        "isCanonical": false,
+        "linkedEvmContract": null
+      },
+      "activeCount": 10,
+      "compatibility": [
+        "other"
+      ]
+    }
+  ],
+  "mismatches": [],
+  "duplicateIds": false,
+  "inventedCatalogMetrics": [],
+  "sourceStockAliasesMissing": [],
+  "unaliasedPreipoMarkets": [
+    {
+      "name": "vntls:vSPACEX",
+      "assetIndex": 280001
+    },
+    {
+      "name": "nq:TEST",
+      "assetIndex": 450000
+    }
+  ],
+  "aliasesUsingReviewedFallback": [
+    {
+      "name": "xyz:SMSN",
+      "sourceCategory": null,
+      "mappedCategory": "equity"
+    },
+    {
+      "name": "xyz:USAR",
+      "sourceCategory": null,
+      "mappedCategory": "equity"
+    },
+    {
+      "name": "xyz:CRWV",
+      "sourceCategory": null,
+      "mappedCategory": "equity"
+    },
+    {
+      "name": "xyz:VIX",
+      "sourceCategory": "preipo",
+      "mappedCategory": "index"
+    }
+  ],
+  "unsafeAliasNames": [],
+  "stockAliases": [
+    {
+      "marketId": "hyperliquid-testnet:stocks:750000",
+      "providerSymbol": "xyz:XYZ100",
+      "dex": "xyz",
+      "sourceCategory": "indices",
+      "mappedCategory": "index",
+      "instrumentType": "perpetual_futures",
+      "collateral": {
+        "code": "USDC",
+        "decimals": 8,
+        "transfer_decimals": 6,
+        "network": "hyperliquid-testnet",
+        "token_id": "0xeb62eee3685fc4c43992febcd9e75443",
+        "compatibility": "usdc"
+      },
+      "price": null,
+      "executable": false,
+      "reason": "HYPERLIQUID_FUNDING_AND_EXECUTION_PROOF_REQUIRED"
+    },
+    {
+      "marketId": "hyperliquid-testnet:stocks:750001",
+      "providerSymbol": "xyz:TSLA",
+      "dex": "xyz",
+      "sourceCategory": "stocks",
+      "mappedCategory": "equity",
+      "instrumentType": "perpetual_futures",
+      "collateral": {
+        "code": "USDC",
+        "decimals": 8,
+        "transfer_decimals": 6,
+        "network": "hyperliquid-testnet",
+        "token_id": "0xeb62eee3685fc4c43992febcd9e75443",
+        "compatibility": "usdc"
+      },
+      "price": null,
+      "executable": false,
+      "reason": "HYPERLIQUID_FUNDING_AND_EXECUTION_PROOF_REQUIRED"
+    },
+    {
+      "marketId": "hyperliquid-testnet:stocks:750002",
+      "providerSymbol": "xyz:NVDA",
+      "dex": "xyz",
+      "sourceCategory": "stocks",
+      "mappedCategory": "equity",
+      "instrumentType": "perpetual_futures",
+      "collateral": {
+        "code": "USDC",
+        "decimals": 8,
+        "transfer_decimals": 6,
+        "network": "hyperliquid-testnet",
+        "token_id": "0xeb62eee3685fc4c43992febcd9e75443",
+        "compatibility": "usdc"
+      },
+      "price": null,
+      "executable": false,
+      "reason": "HYPERLIQUID_FUNDING_AND_EXECUTION_PROOF_REQUIRED"
+    },
+    {
+      "marketId": "hyperliquid-testnet:stocks:750004",
+      "providerSymbol": "xyz:HOOD",
+      "dex": "xyz",
+      "sourceCategory": "stocks",
+      "mappedCategory": "equity",
+      "instrumentType": "perpetual_futures",
+      "collateral": {
+        "code": "USDC",
+        "decimals": 8,
+        "transfer_decimals": 6,
+        "network": "hyperliquid-testnet",
+        "token_id": "0xeb62eee3685fc4c43992febcd9e75443",
+        "compatibility": "usdc"
+      },
+      "price": null,
+      "executable": false,
+      "reason": "HYPERLIQUID_FUNDING_AND_EXECUTION_PROOF_REQUIRED"
+    },
+    {
+      "marketId": "hyperliquid-testnet:stocks:750005",
+      "providerSymbol": "xyz:INTC",
+      "dex": "xyz",
+      "sourceCategory": "stocks",
+      "mappedCategory": "equity",
+      "instrumentType": "perpetual_futures",
+      "collateral": {
+        "code": "USDC",
+        "decimals": 8,
+        "transfer_decimals": 6,
+        "network": "hyperliquid-testnet",
+        "token_id": "0xeb62eee3685fc4c43992febcd9e75443",
+        "compatibility": "usdc"
+      },
+      "price": null,
+      "executable": false,
+      "reason": "HYPERLIQUID_FUNDING_AND_EXECUTION_PROOF_REQUIRED"
+    },
+    {
+      "marketId": "hyperliquid-testnet:stocks:750006",
+      "providerSymbol": "xyz:PLTR",
+      "dex": "xyz",
+      "sourceCategory": "stocks",
+      "mappedCategory": "equity",
+      "instrumentType": "perpetual_futures",
+      "collateral": {
+        "code": "USDC",
+        "decimals": 8,
+        "transfer_decimals": 6,
+        "network": "hyperliquid-testnet",
+        "token_id": "0xeb62eee3685fc4c43992febcd9e75443",
+        "compatibility": "usdc"
+      },
+      "price": null,
+      "executable": false,
+      "reason": "HYPERLIQUID_FUNDING_AND_EXECUTION_PROOF_REQUIRED"
+    },
+    {
+      "marketId": "hyperliquid-testnet:stocks:750007",
+      "providerSymbol": "xyz:COIN",
+      "dex": "xyz",
+      "sourceCategory": "stocks",
+      "mappedCategory": "equity",
+      "instrumentType": "perpetual_futures",
+      "collateral": {
+        "code": "USDC",
+        "decimals": 8,
+        "transfer_decimals": 6,
+        "network": "hyperliquid-testnet",
+        "token_id": "0xeb62eee3685fc4c43992febcd9e75443",
+        "compatibility": "usdc"
+      },
+      "price": null,
+      "executable": false,
+      "reason": "HYPERLIQUID_FUNDING_AND_EXECUTION_PROOF_REQUIRED"
+    },
+    {
+      "marketId": "hyperliquid-testnet:stocks:750008",
+      "providerSymbol": "xyz:META",
+      "dex": "xyz",
+      "sourceCategory": "stocks",
+      "mappedCategory": "equity",
+      "instrumentType": "perpetual_futures",
+      "collateral": {
+        "code": "USDC",
+        "decimals": 8,
+        "transfer_decimals": 6,
+        "network": "hyperliquid-testnet",
+        "token_id": "0xeb62eee3685fc4c43992febcd9e75443",
+        "compatibility": "usdc"
+      },
+      "price": null,
+      "executable": false,
+      "reason": "HYPERLIQUID_FUNDING_AND_EXECUTION_PROOF_REQUIRED"
+    },
+    {
+      "marketId": "hyperliquid-testnet:stocks:750009",
+      "providerSymbol": "xyz:AAPL",
+      "dex": "xyz",
+      "sourceCategory": "stocks",
+      "mappedCategory": "equity",
+      "instrumentType": "perpetual_futures",
+      "collateral": {
+        "code": "USDC",
+        "decimals": 8,
+        "transfer_decimals": 6,
+        "network": "hyperliquid-testnet",
+        "token_id": "0xeb62eee3685fc4c43992febcd9e75443",
+        "compatibility": "usdc"
+      },
+      "price": null,
+      "executable": false,
+      "reason": "HYPERLIQUID_FUNDING_AND_EXECUTION_PROOF_REQUIRED"
+    },
+    {
+      "marketId": "hyperliquid-testnet:stocks:750010",
+      "providerSymbol": "xyz:MSFT",
+      "dex": "xyz",
+      "sourceCategory": "stocks",
+      "mappedCategory": "equity",
+      "instrumentType": "perpetual_futures",
+      "collateral": {
+        "code": "USDC",
+        "decimals": 8,
+        "transfer_decimals": 6,
+        "network": "hyperliquid-testnet",
+        "token_id": "0xeb62eee3685fc4c43992febcd9e75443",
+        "compatibility": "usdc"
+      },
+      "price": null,
+      "executable": false,
+      "reason": "HYPERLIQUID_FUNDING_AND_EXECUTION_PROOF_REQUIRED"
+    },
+    {
+      "marketId": "hyperliquid-testnet:stocks:750011",
+      "providerSymbol": "xyz:ORCL",
+      "dex": "xyz",
+      "sourceCategory": "stocks",
+      "mappedCategory": "equity",
+      "instrumentType": "perpetual_futures",
+      "collateral": {
+        "code": "USDC",
+        "decimals": 8,
+        "transfer_decimals": 6,
+        "network": "hyperliquid-testnet",
+        "token_id": "0xeb62eee3685fc4c43992febcd9e75443",
+        "compatibility": "usdc"
+      },
+      "price": null,
+      "executable": false,
+      "reason": "HYPERLIQUID_FUNDING_AND_EXECUTION_PROOF_REQUIRED"
+    },
+    {
+      "marketId": "hyperliquid-testnet:stocks:750012",
+      "providerSymbol": "xyz:GOOGL",
+      "dex": "xyz",
+      "sourceCategory": "stocks",
+      "mappedCategory": "equity",
+      "instrumentType": "perpetual_futures",
+      "collateral": {
+        "code": "USDC",
+        "decimals": 8,
+        "transfer_decimals": 6,
+        "network": "hyperliquid-testnet",
+        "token_id": "0xeb62eee3685fc4c43992febcd9e75443",
+        "compatibility": "usdc"
+      },
+      "price": null,
+      "executable": false,
+      "reason": "HYPERLIQUID_FUNDING_AND_EXECUTION_PROOF_REQUIRED"
+    },
+    {
+      "marketId": "hyperliquid-testnet:stocks:750013",
+      "providerSymbol": "xyz:AMZN",
+      "dex": "xyz",
+      "sourceCategory": "stocks",
+      "mappedCategory": "equity",
+      "instrumentType": "perpetual_futures",
+      "collateral": {
+        "code": "USDC",
+        "decimals": 8,
+        "transfer_decimals": 6,
+        "network": "hyperliquid-testnet",
+        "token_id": "0xeb62eee3685fc4c43992febcd9e75443",
+        "compatibility": "usdc"
+      },
+      "price": null,
+      "executable": false,
+      "reason": "HYPERLIQUID_FUNDING_AND_EXECUTION_PROOF_REQUIRED"
+    },
+    {
+      "marketId": "hyperliquid-testnet:stocks:750014",
+      "providerSymbol": "xyz:AMD",
+      "dex": "xyz",
+      "sourceCategory": "stocks",
+      "mappedCategory": "equity",
+      "instrumentType": "perpetual_futures",
+      "collateral": {
+        "code": "USDC",
+        "decimals": 8,
+        "transfer_decimals": 6,
+        "network": "hyperliquid-testnet",
+        "token_id": "0xeb62eee3685fc4c43992febcd9e75443",
+        "compatibility": "usdc"
+      },
+      "price": null,
+      "executable": false,
+      "reason": "HYPERLIQUID_FUNDING_AND_EXECUTION_PROOF_REQUIRED"
+    },
+    {
+      "marketId": "hyperliquid-testnet:stocks:750015",
+      "providerSymbol": "xyz:MU",
+      "dex": "xyz",
+      "sourceCategory": "stocks",
+      "mappedCategory": "equity",
+      "instrumentType": "perpetual_futures",
+      "collateral": {
+        "code": "USDC",
+        "decimals": 8,
+        "transfer_decimals": 6,
+        "network": "hyperliquid-testnet",
+        "token_id": "0xeb62eee3685fc4c43992febcd9e75443",
+        "compatibility": "usdc"
+      },
+      "price": null,
+      "executable": false,
+      "reason": "HYPERLIQUID_FUNDING_AND_EXECUTION_PROOF_REQUIRED"
+    },
+    {
+      "marketId": "hyperliquid-testnet:stocks:750016",
+      "providerSymbol": "xyz:SNDK",
+      "dex": "xyz",
+      "sourceCategory": "stocks",
+      "mappedCategory": "equity",
+      "instrumentType": "perpetual_futures",
+      "collateral": {
+        "code": "USDC",
+        "decimals": 8,
+        "transfer_decimals": 6,
+        "network": "hyperliquid-testnet",
+        "token_id": "0xeb62eee3685fc4c43992febcd9e75443",
+        "compatibility": "usdc"
+      },
+      "price": null,
+      "executable": false,
+      "reason": "HYPERLIQUID_FUNDING_AND_EXECUTION_PROOF_REQUIRED"
+    },
+    {
+      "marketId": "hyperliquid-testnet:stocks:750017",
+      "providerSymbol": "xyz:MSTR",
+      "dex": "xyz",
+      "sourceCategory": "stocks",
+      "mappedCategory": "equity",
+      "instrumentType": "perpetual_futures",
+      "collateral": {
+        "code": "USDC",
+        "decimals": 8,
+        "transfer_decimals": 6,
+        "network": "hyperliquid-testnet",
+        "token_id": "0xeb62eee3685fc4c43992febcd9e75443",
+        "compatibility": "usdc"
+      },
+      "price": null,
+      "executable": false,
+      "reason": "HYPERLIQUID_FUNDING_AND_EXECUTION_PROOF_REQUIRED"
+    },
+    {
+      "marketId": "hyperliquid-testnet:stocks:750018",
+      "providerSymbol": "xyz:CRCL",
+      "dex": "xyz",
+      "sourceCategory": "stocks",
+      "mappedCategory": "equity",
+      "instrumentType": "perpetual_futures",
+      "collateral": {
+        "code": "USDC",
+        "decimals": 8,
+        "transfer_decimals": 6,
+        "network": "hyperliquid-testnet",
+        "token_id": "0xeb62eee3685fc4c43992febcd9e75443",
+        "compatibility": "usdc"
+      },
+      "price": null,
+      "executable": false,
+      "reason": "HYPERLIQUID_FUNDING_AND_EXECUTION_PROOF_REQUIRED"
+    },
+    {
+      "marketId": "hyperliquid-testnet:stocks:750019",
+      "providerSymbol": "xyz:NFLX",
+      "dex": "xyz",
+      "sourceCategory": "stocks",
+      "mappedCategory": "equity",
+      "instrumentType": "perpetual_futures",
+      "collateral": {
+        "code": "USDC",
+        "decimals": 8,
+        "transfer_decimals": 6,
+        "network": "hyperliquid-testnet",
+        "token_id": "0xeb62eee3685fc4c43992febcd9e75443",
+        "compatibility": "usdc"
+      },
+      "price": null,
+      "executable": false,
+      "reason": "HYPERLIQUID_FUNDING_AND_EXECUTION_PROOF_REQUIRED"
+    },
+    {
+      "marketId": "hyperliquid-testnet:stocks:750020",
+      "providerSymbol": "xyz:COST",
+      "dex": "xyz",
+      "sourceCategory": "stocks",
+      "mappedCategory": "equity",
+      "instrumentType": "perpetual_futures",
+      "collateral": {
+        "code": "USDC",
+        "decimals": 8,
+        "transfer_decimals": 6,
+        "network": "hyperliquid-testnet",
+        "token_id": "0xeb62eee3685fc4c43992febcd9e75443",
+        "compatibility": "usdc"
+      },
+      "price": null,
+      "executable": false,
+      "reason": "HYPERLIQUID_FUNDING_AND_EXECUTION_PROOF_REQUIRED"
+    },
+    {
+      "marketId": "hyperliquid-testnet:stocks:750021",
+      "providerSymbol": "xyz:LLY",
+      "dex": "xyz",
+      "sourceCategory": "stocks",
+      "mappedCategory": "equity",
+      "instrumentType": "perpetual_futures",
+      "collateral": {
+        "code": "USDC",
+        "decimals": 8,
+        "transfer_decimals": 6,
+        "network": "hyperliquid-testnet",
+        "token_id": "0xeb62eee3685fc4c43992febcd9e75443",
+        "compatibility": "usdc"
+      },
+      "price": null,
+      "executable": false,
+      "reason": "HYPERLIQUID_FUNDING_AND_EXECUTION_PROOF_REQUIRED"
+    },
+    {
+      "marketId": "hyperliquid-testnet:stocks:750022",
+      "providerSymbol": "xyz:SKHX",
+      "dex": "xyz",
+      "sourceCategory": "stocks",
+      "mappedCategory": "equity",
+      "instrumentType": "perpetual_futures",
+      "collateral": {
+        "code": "USDC",
+        "decimals": 8,
+        "transfer_decimals": 6,
+        "network": "hyperliquid-testnet",
+        "token_id": "0xeb62eee3685fc4c43992febcd9e75443",
+        "compatibility": "usdc"
+      },
+      "price": null,
+      "executable": false,
+      "reason": "HYPERLIQUID_FUNDING_AND_EXECUTION_PROOF_REQUIRED"
+    },
+    {
+      "marketId": "hyperliquid-testnet:stocks:750023",
+      "providerSymbol": "xyz:TSM",
+      "dex": "xyz",
+      "sourceCategory": "stocks",
+      "mappedCategory": "equity",
+      "instrumentType": "perpetual_futures",
+      "collateral": {
+        "code": "USDC",
+        "decimals": 8,
+        "transfer_decimals": 6,
+        "network": "hyperliquid-testnet",
+        "token_id": "0xeb62eee3685fc4c43992febcd9e75443",
+        "compatibility": "usdc"
+      },
+      "price": null,
+      "executable": false,
+      "reason": "HYPERLIQUID_FUNDING_AND_EXECUTION_PROOF_REQUIRED"
+    },
+    {
+      "marketId": "hyperliquid-testnet:stocks:750027",
+      "providerSymbol": "xyz:RIVN",
+      "dex": "xyz",
+      "sourceCategory": "stocks",
+      "mappedCategory": "equity",
+      "instrumentType": "perpetual_futures",
+      "collateral": {
+        "code": "USDC",
+        "decimals": 8,
+        "transfer_decimals": 6,
+        "network": "hyperliquid-testnet",
+        "token_id": "0xeb62eee3685fc4c43992febcd9e75443",
+        "compatibility": "usdc"
+      },
+      "price": null,
+      "executable": false,
+      "reason": "HYPERLIQUID_FUNDING_AND_EXECUTION_PROOF_REQUIRED"
+    },
+    {
+      "marketId": "hyperliquid-testnet:stocks:750028",
+      "providerSymbol": "xyz:BABA",
+      "dex": "xyz",
+      "sourceCategory": "stocks",
+      "mappedCategory": "equity",
+      "instrumentType": "perpetual_futures",
+      "collateral": {
+        "code": "USDC",
+        "decimals": 8,
+        "transfer_decimals": 6,
+        "network": "hyperliquid-testnet",
+        "token_id": "0xeb62eee3685fc4c43992febcd9e75443",
+        "compatibility": "usdc"
+      },
+      "price": null,
+      "executable": false,
+      "reason": "HYPERLIQUID_FUNDING_AND_EXECUTION_PROOF_REQUIRED"
+    },
+    {
+      "marketId": "hyperliquid-testnet:stocks:750034",
+      "providerSymbol": "xyz:SMSN",
+      "dex": "xyz",
+      "sourceCategory": null,
+      "mappedCategory": "equity",
+      "instrumentType": "perpetual_futures",
+      "collateral": {
+        "code": "USDC",
+        "decimals": 8,
+        "transfer_decimals": 6,
+        "network": "hyperliquid-testnet",
+        "token_id": "0xeb62eee3685fc4c43992febcd9e75443",
+        "compatibility": "usdc"
+      },
+      "price": null,
+      "executable": false,
+      "reason": "HYPERLIQUID_FUNDING_AND_EXECUTION_PROOF_REQUIRED"
+    },
+    {
+      "marketId": "hyperliquid-testnet:stocks:750036",
+      "providerSymbol": "xyz:USAR",
+      "dex": "xyz",
+      "sourceCategory": null,
+      "mappedCategory": "equity",
+      "instrumentType": "perpetual_futures",
+      "collateral": {
+        "code": "USDC",
+        "decimals": 8,
+        "transfer_decimals": 6,
+        "network": "hyperliquid-testnet",
+        "token_id": "0xeb62eee3685fc4c43992febcd9e75443",
+        "compatibility": "usdc"
+      },
+      "price": null,
+      "executable": false,
+      "reason": "HYPERLIQUID_FUNDING_AND_EXECUTION_PROOF_REQUIRED"
+    },
+    {
+      "marketId": "hyperliquid-testnet:stocks:750037",
+      "providerSymbol": "xyz:CRWV",
+      "dex": "xyz",
+      "sourceCategory": null,
+      "mappedCategory": "equity",
+      "instrumentType": "perpetual_futures",
+      "collateral": {
+        "code": "USDC",
+        "decimals": 8,
+        "transfer_decimals": 6,
+        "network": "hyperliquid-testnet",
+        "token_id": "0xeb62eee3685fc4c43992febcd9e75443",
+        "compatibility": "usdc"
+      },
+      "price": null,
+      "executable": false,
+      "reason": "HYPERLIQUID_FUNDING_AND_EXECUTION_PROOF_REQUIRED"
+    },
+    {
+      "marketId": "hyperliquid-testnet:stocks:750050",
+      "providerSymbol": "xyz:VIX",
+      "dex": "xyz",
+      "sourceCategory": "preipo",
+      "mappedCategory": "index",
+      "instrumentType": "perpetual_futures",
+      "collateral": {
+        "code": "USDC",
+        "decimals": 8,
+        "transfer_decimals": 6,
+        "network": "hyperliquid-testnet",
+        "token_id": "0xeb62eee3685fc4c43992febcd9e75443",
+        "compatibility": "usdc"
+      },
+      "price": null,
+      "executable": false,
+      "reason": "HYPERLIQUID_FUNDING_AND_EXECUTION_PROOF_REQUIRED"
+    },
+    {
+      "marketId": "hyperliquid-testnet:stocks:1960004",
+      "providerSymbol": "osrs:ETEST",
+      "dex": "osrs",
+      "sourceCategory": "stocks",
+      "mappedCategory": "equity",
+      "instrumentType": "perpetual_futures",
+      "collateral": {
+        "code": "USDC",
+        "decimals": 8,
+        "transfer_decimals": 6,
+        "network": "hyperliquid-testnet",
+        "token_id": "0xeb62eee3685fc4c43992febcd9e75443",
+        "compatibility": "usdc"
+      },
+      "price": null,
+      "executable": false,
+      "reason": "HYPERLIQUID_FUNDING_AND_EXECUTION_PROOF_REQUIRED"
+    },
+    {
+      "marketId": "hyperliquid-testnet:stocks:1980000",
+      "providerSymbol": "idx:IDX0",
+      "dex": "idx",
+      "sourceCategory": "indices",
+      "mappedCategory": "index",
+      "instrumentType": "perpetual_futures",
+      "collateral": {
+        "code": "USDC",
+        "decimals": 8,
+        "transfer_decimals": 6,
+        "network": "hyperliquid-testnet",
+        "token_id": "0xeb62eee3685fc4c43992febcd9e75443",
+        "compatibility": "usdc"
+      },
+      "price": null,
+      "executable": false,
+      "reason": "HYPERLIQUID_FUNDING_AND_EXECUTION_PROOF_REQUIRED"
+    },
+    {
+      "marketId": "hyperliquid-testnet:stocks:2540000",
+      "providerSymbol": "mmmm:ZHIPU",
+      "dex": "mmmm",
+      "sourceCategory": "stocks",
+      "mappedCategory": "equity",
+      "instrumentType": "perpetual_futures",
+      "collateral": {
+        "code": "USDC",
+        "decimals": 8,
+        "transfer_decimals": 6,
+        "network": "hyperliquid-testnet",
+        "token_id": "0xeb62eee3685fc4c43992febcd9e75443",
+        "compatibility": "usdc"
+      },
+      "price": null,
+      "executable": false,
+      "reason": "HYPERLIQUID_FUNDING_AND_EXECUTION_PROOF_REQUIRED"
+    },
+    {
+      "marketId": "hyperliquid-testnet:stocks:2670003",
+      "providerSymbol": "par:SP500",
+      "dex": "par",
+      "sourceCategory": "indices",
+      "mappedCategory": "index",
+      "instrumentType": "perpetual_futures",
+      "collateral": {
+        "code": "USDPR",
+        "decimals": 8,
+        "transfer_decimals": null,
+        "network": "hyperliquid-testnet",
+        "token_id": "0x8b36c9269f2331c61c83e15884b5835a",
+        "compatibility": "other"
+      },
+      "price": null,
+      "executable": false,
+      "reason": "UNSUPPORTED_PERPETUAL_COLLATERAL"
+    },
+    {
+      "marketId": "hyperliquid-testnet:stocks:2670004",
+      "providerSymbol": "par:EWY",
+      "dex": "par",
+      "sourceCategory": "stocks",
+      "mappedCategory": "equity",
+      "instrumentType": "perpetual_futures",
+      "collateral": {
+        "code": "USDPR",
+        "decimals": 8,
+        "transfer_decimals": null,
+        "network": "hyperliquid-testnet",
+        "token_id": "0x8b36c9269f2331c61c83e15884b5835a",
+        "compatibility": "other"
+      },
+      "price": null,
+      "executable": false,
+      "reason": "UNSUPPORTED_PERPETUAL_COLLATERAL"
+    },
+    {
+      "marketId": "hyperliquid-testnet:stocks:2670005",
+      "providerSymbol": "par:EWJ",
+      "dex": "par",
+      "sourceCategory": "stocks",
+      "mappedCategory": "equity",
+      "instrumentType": "perpetual_futures",
+      "collateral": {
+        "code": "USDPR",
+        "decimals": 8,
+        "transfer_decimals": null,
+        "network": "hyperliquid-testnet",
+        "token_id": "0x8b36c9269f2331c61c83e15884b5835a",
+        "compatibility": "other"
+      },
+      "price": null,
+      "executable": false,
+      "reason": "UNSUPPORTED_PERPETUAL_COLLATERAL"
+    },
+    {
+      "marketId": "hyperliquid-testnet:stocks:2780000",
+      "providerSymbol": "eqde:SAP",
+      "dex": "eqde",
+      "sourceCategory": "equity",
+      "mappedCategory": "equity",
+      "instrumentType": "perpetual_futures",
+      "collateral": {
+        "code": "USDC",
+        "decimals": 8,
+        "transfer_decimals": 6,
+        "network": "hyperliquid-testnet",
+        "token_id": "0xeb62eee3685fc4c43992febcd9e75443",
+        "compatibility": "usdc"
+      },
+      "price": null,
+      "executable": false,
+      "reason": "HYPERLIQUID_FUNDING_AND_EXECUTION_PROOF_REQUIRED"
+    },
+    {
+      "marketId": "hyperliquid-testnet:stocks:2810003",
+      "providerSymbol": "pas:SP500",
+      "dex": "pas",
+      "sourceCategory": "indices",
+      "mappedCategory": "index",
+      "instrumentType": "perpetual_futures",
+      "collateral": {
+        "code": "USDP",
+        "decimals": 8,
+        "transfer_decimals": null,
+        "network": "hyperliquid-testnet",
+        "token_id": "0xa7ab296859c43140a4e71f1464c137dc",
+        "compatibility": "other"
+      },
+      "price": null,
+      "executable": false,
+      "reason": "UNSUPPORTED_PERPETUAL_COLLATERAL"
+    },
+    {
+      "marketId": "hyperliquid-testnet:stocks:2810004",
+      "providerSymbol": "pas:EWY",
+      "dex": "pas",
+      "sourceCategory": "stocks",
+      "mappedCategory": "equity",
+      "instrumentType": "perpetual_futures",
+      "collateral": {
+        "code": "USDP",
+        "decimals": 8,
+        "transfer_decimals": null,
+        "network": "hyperliquid-testnet",
+        "token_id": "0xa7ab296859c43140a4e71f1464c137dc",
+        "compatibility": "other"
+      },
+      "price": null,
+      "executable": false,
+      "reason": "UNSUPPORTED_PERPETUAL_COLLATERAL"
+    },
+    {
+      "marketId": "hyperliquid-testnet:stocks:2810005",
+      "providerSymbol": "pas:EWJ",
+      "dex": "pas",
+      "sourceCategory": "stocks",
+      "mappedCategory": "equity",
+      "instrumentType": "perpetual_futures",
+      "collateral": {
+        "code": "USDP",
+        "decimals": 8,
+        "transfer_decimals": null,
+        "network": "hyperliquid-testnet",
+        "token_id": "0xa7ab296859c43140a4e71f1464c137dc",
+        "compatibility": "other"
+      },
+      "price": null,
+      "executable": false,
+      "reason": "UNSUPPORTED_PERPETUAL_COLLATERAL"
+    }
+  ],
+  "selections": [
+    {
+      "status": "fulfilled",
+      "dex": "",
+      "source": {
+        "infoUrl": "https://api.hyperliquid-testnet.xyz/info",
+        "requestType": "metaAndAssetCtxs",
+        "receivedAt": "2026-11-12T05:10:02.194Z",
+        "httpDate": "Thu, 12 Nov 2026 05:10:02 GMT",
+        "catalogReceivedAt": "2026-11-12T05:10:01.432Z",
+        "providerMarketTimestamp": null,
+        "freshnessBasis": "http_response_receipt"
+      },
+      "total": 213,
+      "active": 159,
+      "missingMidpoint": 2,
+      "zeroVolume": 18,
+      "collateralCompatibility": [
+        "usdc"
+      ],
+      "examples": [
+        {
+          "assetIndex": 3,
+          "globalAssetIndex": 3,
+          "localAssetIndex": 3,
+          "dex": "",
+          "dexIndex": 0,
+          "name": "BTC",
+          "szDecimals": 5,
+          "maxLeverage": 40,
+          "isDelisted": false,
+          "onlyIsolated": false,
+          "marginMode": null,
+          "collateralToken": 0,
+          "collateral": {
+            "tokenIndex": 0,
+            "tokenId": "0xeb62eee3685fc4c43992febcd9e75443",
+            "name": "USDC",
+            "fullName": null,
+            "szDecimals": 8,
+            "weiDecimals": 8,
+            "isCanonical": true,
+            "linkedEvmContract": {
+              "address": "0x0b80659a4076e9e93c7dbe0f10675a16a3e5c206",
+              "evmExtraWeiDecimals": -2
+            }
+          },
+          "collateralCompatibility": "usdc",
+          "sourceCategory": null,
+          "displayName": null,
+          "markPrice": "74628.0",
+          "oraclePrice": "73666.1",
+          "midPrice": "74644.5",
+          "previousDayPrice": "74662.0",
+          "fundingRate": "0.0002716684",
+          "openInterest": "59.80284",
+          "dayNotionalVolume": "1514203.50431",
+          "dayBaseVolume": "20.27914",
+          "premium": "0.0029701586",
+          "metricsStatus": "source_context",
+          "executable": false
+        }
+      ],
+      "executable": false
+    },
+    {
+      "status": "fulfilled",
+      "dex": "xyz",
+      "source": {
+        "infoUrl": "https://api.hyperliquid-testnet.xyz/info",
+        "requestType": "metaAndAssetCtxs",
+        "receivedAt": "2026-11-12T05:10:02.193Z",
+        "httpDate": "Thu, 12 Nov 2026 05:10:02 GMT",
+        "catalogReceivedAt": "2026-11-12T05:10:01.432Z",
+        "providerMarketTimestamp": null,
+        "freshnessBasis": "http_response_receipt"
+      },
+      "total": 70,
+      "active": 37,
+      "missingMidpoint": 30,
+      "zeroVolume": 31,
+      "collateralCompatibility": [
+        "usdc"
+      ],
+      "examples": [
+        {
+          "assetIndex": 750009,
+          "globalAssetIndex": 750009,
+          "localAssetIndex": 9,
+          "dex": "xyz",
+          "dexIndex": 65,
+          "name": "xyz:AAPL",
+          "szDecimals": 3,
+          "maxLeverage": 20,
+          "isDelisted": false,
+          "onlyIsolated": false,
+          "marginMode": null,
+          "collateralToken": 0,
+          "collateral": {
+            "tokenIndex": 0,
+            "tokenId": "0xeb62eee3685fc4c43992febcd9e75443",
+            "name": "USDC",
+            "fullName": null,
+            "szDecimals": 8,
+            "weiDecimals": 8,
+            "isCanonical": true,
+            "linkedEvmContract": {
+              "address": "0x0b80659a4076e9e93c7dbe0f10675a16a3e5c206",
+              "evmExtraWeiDecimals": -2
+            }
+          },
+          "collateralCompatibility": "usdc",
+          "sourceCategory": "stocks",
+          "displayName": null,
+          "markPrice": "310.37",
+          "oraclePrice": "330.98",
+          "midPrice": "283.925",
+          "previousDayPrice": "312.0",
+          "fundingRate": "0.0",
+          "openInterest": "15.41",
+          "dayNotionalVolume": "42.432",
+          "dayBaseVolume": "0.136",
+          "premium": null,
+          "metricsStatus": "source_context",
+          "executable": false
+        },
+        {
+          "assetIndex": 750024,
+          "globalAssetIndex": 750024,
+          "localAssetIndex": 24,
+          "dex": "xyz",
+          "dexIndex": 65,
+          "name": "xyz:JPY",
+          "szDecimals": 2,
+          "maxLeverage": 50,
+          "isDelisted": false,
+          "onlyIsolated": true,
+          "marginMode": "noCross",
+          "collateralToken": 0,
+          "collateral": {
+            "tokenIndex": 0,
+            "tokenId": "0xeb62eee3685fc4c43992febcd9e75443",
+            "name": "USDC",
+            "fullName": null,
+            "szDecimals": 8,
+            "weiDecimals": 8,
+            "isCanonical": true,
+            "linkedEvmContract": {
+              "address": "0x0b80659a4076e9e93c7dbe0f10675a16a3e5c206",
+              "evmExtraWeiDecimals": -2
+            }
+          },
+          "collateralCompatibility": "usdc",
+          "sourceCategory": "FX",
+          "displayName": null,
+          "markPrice": "155.735",
+          "oraclePrice": "158.17",
+          "midPrice": null,
+          "previousDayPrice": "155.69",
+          "fundingRate": "0.0",
+          "openInterest": "197.52",
+          "dayNotionalVolume": "0.0",
+          "dayBaseVolume": "0.0",
+          "premium": null,
+          "metricsStatus": "source_context",
+          "executable": false
+        },
+        {
+          "assetIndex": 750029,
+          "globalAssetIndex": 750029,
+          "localAssetIndex": 29,
+          "dex": "xyz",
+          "dexIndex": 65,
+          "name": "xyz:CL",
+          "szDecimals": 3,
+          "maxLeverage": 20,
+          "isDelisted": false,
+          "onlyIsolated": true,
+          "marginMode": "noCross",
+          "collateralToken": 0,
+          "collateral": {
+            "tokenIndex": 0,
+            "tokenId": "0xeb62eee3685fc4c43992febcd9e75443",
+            "name": "USDC",
+            "fullName": null,
+            "szDecimals": 8,
+            "weiDecimals": 8,
+            "isCanonical": true,
+            "linkedEvmContract": {
+              "address": "0x0b80659a4076e9e93c7dbe0f10675a16a3e5c206",
+              "evmExtraWeiDecimals": -2
+            }
+          },
+          "collateralCompatibility": "usdc",
+          "sourceCategory": "commodities",
+          "displayName": null,
+          "markPrice": "88.671",
+          "oraclePrice": "94.37",
+          "midPrice": null,
+          "previousDayPrice": "97.2",
+          "fundingRate": "0.0",
+          "openInterest": "11.976",
+          "dayNotionalVolume": "0.0",
+          "dayBaseVolume": "0.0",
+          "premium": null,
+          "metricsStatus": "source_context",
+          "executable": false
+        }
+      ],
+      "executable": false
+    },
+    {
+      "status": "fulfilled",
+      "dex": "eqde",
+      "source": {
+        "infoUrl": "https://api.hyperliquid-testnet.xyz/info",
+        "requestType": "metaAndAssetCtxs",
+        "receivedAt": "2026-11-12T05:10:02.184Z",
+        "httpDate": "Thu, 12 Nov 2026 05:10:02 GMT",
+        "catalogReceivedAt": "2026-11-12T05:10:01.432Z",
+        "providerMarketTimestamp": null,
+        "freshnessBasis": "http_response_receipt"
+      },
+      "total": 1,
+      "active": 1,
+      "missingMidpoint": 1,
+      "zeroVolume": 1,
+      "collateralCompatibility": [
+        "usdc"
+      ],
+      "examples": [
+        {
+          "assetIndex": 2780000,
+          "globalAssetIndex": 2780000,
+          "localAssetIndex": 0,
+          "dex": "eqde",
+          "dexIndex": 268,
+          "name": "eqde:SAP",
+          "szDecimals": 2,
+          "maxLeverage": 2,
+          "isDelisted": false,
+          "onlyIsolated": true,
+          "marginMode": "strictIsolated",
+          "collateralToken": 0,
+          "collateral": {
+            "tokenIndex": 0,
+            "tokenId": "0xeb62eee3685fc4c43992febcd9e75443",
+            "name": "USDC",
+            "fullName": null,
+            "szDecimals": 8,
+            "weiDecimals": 8,
+            "isCanonical": true,
+            "linkedEvmContract": {
+              "address": "0x0b80659a4076e9e93c7dbe0f10675a16a3e5c206",
+              "evmExtraWeiDecimals": -2
+            }
+          },
+          "collateralCompatibility": "usdc",
+          "sourceCategory": "equity",
+          "displayName": "SAP",
+          "markPrice": "212.21",
+          "oraclePrice": "212.36",
+          "midPrice": null,
+          "previousDayPrice": "210.92",
+          "fundingRate": "0.0",
+          "openInterest": "14.68",
+          "dayNotionalVolume": "0.0",
+          "dayBaseVolume": "0.0",
+          "premium": null,
+          "metricsStatus": "source_context",
+          "executable": false
+        }
+      ],
+      "executable": false
+    },
+    {
+      "status": "fulfilled",
+      "dex": "flx",
+      "source": {
+        "infoUrl": "https://api.hyperliquid-testnet.xyz/info",
+        "requestType": "metaAndAssetCtxs",
+        "receivedAt": "2026-11-12T05:10:02.218Z",
+        "httpDate": "Thu, 12 Nov 2026 05:10:02 GMT",
+        "catalogReceivedAt": "2026-11-12T05:10:01.432Z",
+        "providerMarketTimestamp": null,
+        "freshnessBasis": "http_response_receipt"
+      },
+      "total": 2,
+      "active": 0,
+      "missingMidpoint": 0,
+      "zeroVolume": 0,
+      "collateralCompatibility": [],
+      "examples": [],
+      "executable": false
+    },
+    {
+      "status": "fulfilled",
+      "dex": "pas",
+      "source": {
+        "infoUrl": "https://api.hyperliquid-testnet.xyz/info",
+        "requestType": "metaAndAssetCtxs",
+        "receivedAt": "2026-11-12T05:10:02.221Z",
+        "httpDate": "Thu, 12 Nov 2026 05:10:02 GMT",
+        "catalogReceivedAt": "2026-11-12T05:10:01.432Z",
+        "providerMarketTimestamp": null,
+        "freshnessBasis": "http_response_receipt"
+      },
+      "total": 10,
+      "active": 10,
+      "missingMidpoint": 0,
+      "zeroVolume": 0,
+      "collateralCompatibility": [
+        "other"
+      ],
+      "examples": [],
+      "executable": false
+    }
+  ],
+  "financialWritesPerformed": false,
+  "customerAccountReadsPerformed": false,
+  "mainnetRequestsPerformed": false,
+  "txHash": null,
+  "executionVerified": false,
+  "validation": {
+    "scopedTestsPassed": 53,
+    "readOnlyProbeSucceeded": true,
+    "sourceFanout": "bulk metadata plus five selected venues; never all 279 context endpoints",
+    "fullApiTypecheck": "blocked by existing privy.test.ts:42 APIPromise mock typing error; root owns fix"
+  },
+  "customerReadiness": {
+    "catalogAndSelectedData": "verified_read_only",
+    "stockAliases": "39 perpetual derivatives; not share ownership",
+    "financialExecution": "not_verified",
+    "limitations": [
+      "Catalog-only prices remain null until a selected venue read.",
+      "HTTP response receipt does not establish oracle update time.",
+      "XYZ has 30 of 37 active markets without a midpoint and 31 with zero day volume at observation.",
+      "EQDE SAP has no midpoint and zero day volume; FLX has no active markets.",
+      "Six Stocks aliases use other collateral and remain blocked for USDC execution.",
+      "Four reviewed xyz classifications supplement rather than directly follow current equity/index annotations.",
+      "Source preipo entries vntls:vSPACEX and nq:TEST remain in Perpetuals as other, outside Stocks aliases.",
+      "No customer funding, order fill, close, withdrawal or Stellar payout was tested."
+    ]
+  }
+}
