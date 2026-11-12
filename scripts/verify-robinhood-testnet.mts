@@ -17,9 +17,12 @@ const INBOX_CODE='0x69a469ef198a7f785b09fb0783fe42576faef7635e2d56426ec8746bad63
 const INBOX_IMPL='0x8d3b93dffff4842e7b61fb553b383db2c6bc91c6';
 const INBOX_IMPL_CODE='0xfb23336c542bccb67fdc522ef210ed21082aa19c658c9ccb182f78f9ca4c6ae8';
 const abi=parseAbi(['function balanceOf(address) view returns(uint256)','function bridge() view returns(address)','function rollup() view returns(address)','function chainId() view returns(uint256)','function depositEth() payable returns(uint256)','event Transfer(address indexed from,address indexed to,uint256 value)']);
+const requestedSymbol=process.argv.find(a=>a.startsWith('--symbol='))?.slice(9)??'TSLA';
+if(!STOCKS.some(s=>s.symbol===requestedSymbol))throw Error('Unsupported exact Testnet stock');
+const SYMBOL=requestedSymbol as (typeof STOCKS)[number]['symbol'];
 const root=resolve(process.env.GRAPNEL_QA_ROOT??process.cwd());
-const stateFile=resolve(root,'.codex/robinhood-own-roundtrip.state.json');
-const evidenceFile=new URL('../evidence/robinhood-own-roundtrip.json',import.meta.url);
+const stateFile=resolve(root,SYMBOL==='TSLA'?'.codex/robinhood-own-roundtrip.state.json':`.codex/robinhood-${SYMBOL.toLowerCase()}-roundtrip.state.json`);
+const evidenceFile=new URL(SYMBOL==='TSLA'?'../evidence/robinhood-own-roundtrip.json':`../evidence/robinhood-${SYMBOL.toLowerCase()}-roundtrip.json`,import.meta.url);
 const args=new Set(process.argv.slice(2));const execute=args.has('--execute')||args.has('--gas-deposit');
 if(execute&&process.env.GRAPNEL_ROBINHOOD_QA_EXECUTE!=='46630')throw Error('Explicit GRAPNEL_ROBINHOOD_QA_EXECUTE=46630 is required');
 const chain=(id:number,rpc:string)=>defineChain({id,name:`Controlled QA Testnet ${id}`,nativeCurrency:{name:'Ether',symbol:'ETH',decimals:18},rpcUrls:{default:{http:[rpc]}}});
@@ -30,7 +33,11 @@ let state:any={version:1,qa:QA,network:'robinhood-testnet',chainId:46630,created
 try{state=JSON.parse(await readFile(stateFile,'utf8'));}catch(error:any){if(error.code!=='ENOENT')throw Error('QA checkpoint could not be read');}
 if(state.qa!==QA||state.chainId!==46630||state.version!==1)throw Error('QA checkpoint scope mismatch');
 async function save(){await mkdir(dirname(stateFile),{recursive:true});const tmp=stateFile+'.tmp';await writeFile(tmp,JSON.stringify(state,(_k,v)=>typeof v==='bigint'?v.toString():v,2)+'\n',{mode:0o600});await rename(tmp,stateFile);}
-async function publish(){const safe={...state,steps:state.steps.map(({rawSigned,...s}:any)=>s),gas:state.gas?(({rawSigned,...g}:any)=>g)(state.gas):null};await mkdir(new URL('../evidence/',import.meta.url),{recursive:true});await writeFile(evidenceFile,JSON.stringify(safe,(_k,v)=>typeof v==='bigint'?v.toString():v,2)+'\n');}
+async function publish(){
+ const entry=(kind:string)=>{const s=state.steps.find((x:any)=>x.kind===kind);return s?{prepared:s.prepared,tx_hash:s.hash??null,proof:s.proof??null}:null;};
+ const safe={network:'robinhood-testnet',chain_id:46630,account:QA,symbol:SYMBOL,complete:state.completed===true,steps:{buy:entry('buy-'+SYMBOL),sell:entry('sell-'+SYMBOL)},approvals:state.steps.filter((s:any)=>s.kind.startsWith('approve-')).map(({rawSigned,...s}:any)=>s),funding:state.fundingProof??null,gas:state.gas?(({rawSigned,...g}:any)=>g)(state.gas):null,balances:{before:state.before,after:state.after},completed_at:state.completedAt??null};
+ await mkdir(new URL('../evidence/',import.meta.url),{recursive:true});await writeFile(evidenceFile,JSON.stringify(safe,(_k,v)=>typeof v==='bigint'?v.toString():v,2)+'\n');
+}
 async function balances(){if(await rh.getChainId()!==46630)throw Error('Wrong Robinhood network');const assets:any={ETH:(await rh.getBalance({address:QA})).toString()};for(const token of [RH_TESTNET.settlement,...STOCKS])assets[token.symbol]=(await rh.readContract({address:token.address,abi,functionName:'balanceOf',args:[QA]})).toString();return {observedAt:new Date().toISOString(),baseUnits:assets,decimals:{ETH:18,USDG:6,TSLA:18,AMZN:18,PLTR:18,NFLX:18,AMD:18}};}
 async function key(){const value=JSON.parse(await readFile(resolve(root,'.codex/qa-hypercore-wallet.json'),'utf8'));const account=privateKeyToAccount(value.privateKey);if(value.address.toLowerCase()!==QA||account.address.toLowerCase()!==QA)throw Error('Only the authorized owned QA signer is permitted');return account;}
 function cleanError(){console.error('QA step stopped. Durable transaction hash/checkpoint retained; use read-only recovery. No automatic resend.');process.exitCode=1;}
@@ -92,12 +99,13 @@ async function roundtrip(){
  if(!state.before){state.before=await balances();await save();}
  if(BigInt((await balances()).baseUnits.USDG)<1000000n||BigInt((await balances()).baseUnits.ETH)===0n)throw Error('Actual canonical USDG and Robinhood ETH are required');
  await stage('approve-USDG',()=>adapter.prepareApproval({customerAddress:QA,asset:'USDG',amountBaseUnits:'1000000'}));
- const buy=await stage('buy-TSLA',()=>adapter.prepareSwap({customerAddress:QA,symbol:'TSLA',side:'buy',amountInBaseUnits:'1000000',slippageBps:100}));
+ const buy=await stage('buy-'+SYMBOL,()=>adapter.prepareSwap({customerAddress:QA,symbol:SYMBOL,side:'buy',amountInBaseUnits:'1000000',slippageBps:100}));
  const bought=buy.proof.amountOutBaseUnits;if(!bought||BigInt(bought)<=0n)throw Error('No verified stock fill');
- await stage('approve-TSLA',()=>adapter.prepareApproval({customerAddress:QA,asset:'TSLA',amountBaseUnits:bought}));
- await stage('sell-TSLA',()=>adapter.prepareSwap({customerAddress:QA,symbol:'TSLA',side:'sell',amountInBaseUnits:bought,slippageBps:100}));
- state.after=await balances();if(BigInt(state.after.baseUnits.TSLA)!==BigInt(state.before.baseUnits.TSLA))throw Error('Roundtrip stock delta did not return to original balance');state.completed=true;state.completedAt=new Date().toISOString();await save();await publish();console.log('Actual TSLA buy/sell roundtrip verified',state.steps.map((x:any)=>({kind:x.kind,hash:x.hash,state:x.state})));
+ await stage('approve-'+SYMBOL,()=>adapter.prepareApproval({customerAddress:QA,asset:SYMBOL,amountBaseUnits:bought}));
+ await stage('sell-'+SYMBOL,()=>adapter.prepareSwap({customerAddress:QA,symbol:SYMBOL,side:'sell',amountInBaseUnits:bought,slippageBps:100}));
+ state.after=await balances();if(BigInt(state.after.baseUnits[SYMBOL])!==BigInt(state.before.baseUnits[SYMBOL]))throw Error('Roundtrip stock delta did not return to original balance');state.completed=true;state.completedAt=new Date().toISOString();await save();await publish();console.log('Actual '+SYMBOL+' buy/sell roundtrip verified',state.steps.map((x:any)=>({kind:x.kind,hash:x.hash,state:x.state})));
 }
 try{
+ if(args.has('--publish'))await publish();
  if(args.has('--gas-deposit'))await gasDeposit();else if(args.has('--execute'))await roundtrip();else if(args.has('--recover')){if(state.gas)await gasDeposit();for(const s of state.steps)if(s.hash&&s.state!=='confirmed')await reconcile(s);console.log('Existing hashes reconciled; no relay performed');}else console.log(JSON.stringify({qa:QA,deployment:await createRobinhoodReader().verifyDeployment(),balances:await balances(),checkpoint:{gasState:state.gas?.state??null,steps:state.steps.map((s:any)=>({kind:s.kind,hash:s.hash,state:s.state})),completed:state.completed}},null,2));
 }catch{cleanError();}

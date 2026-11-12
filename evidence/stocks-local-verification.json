@@ -1,0 +1,57 @@
+{
+  "observed_at": "2026-11-12T21:26:49.641436+00:00",
+  "network": "robinhood-testnet",
+  "chain_id": 46630,
+  "public_deployment": false,
+  "customer_stock_trade_verified": false,
+  "stocks": [
+    {
+      "symbol": "TSLA",
+      "buy_tx_hash": "0x47c3c20eca6f3d07b1bbaddb393c9b93a464bdd569740096a29c71207047ebe3",
+      "sell_tx_hash": "0x07203ad06250b6c6e0b06ab0f224cb77a6c79747cdd30b1ead9cbb8d39ee90c4",
+      "evidence_file": "evidence/robinhood-own-roundtrip.json",
+      "own_qa_roundtrip_confirmed": true
+    },
+    {
+      "symbol": "AMZN",
+      "buy_tx_hash": "0x99cc4748d13f16155e414114d1092c2328169859127214117311d8136c492120",
+      "sell_tx_hash": "0x09dc058fa32b72b9a9b6c9a3765b5540678949cabb7cf96bf0c6d2a3285135f8",
+      "evidence_file": "evidence/robinhood-amzn-roundtrip.json",
+      "own_qa_roundtrip_confirmed": true
+    },
+    {
+      "symbol": "PLTR",
+      "buy_tx_hash": "0x9445f094b6d49affda015637a1a47a990c2b8a0754e23f9f295f660a2399a485",
+      "sell_tx_hash": "0x3ae6754d2439b64303a6acd53e7d992430f55d59cfe5e9eaa4a0f064d27c441a",
+      "evidence_file": "evidence/robinhood-pltr-roundtrip.json",
+      "own_qa_roundtrip_confirmed": true
+    },
+    {
+      "symbol": "NFLX",
+      "buy_tx_hash": "0xa82a9e231a06ba660caf788527e6a48cc501eb86657499a9c4a8b2126c68a6ab",
+      "sell_tx_hash": "0x560261e727e517050cdb971d758ac46955ba2a9fbe6a55185966f3437b278e14",
+      "evidence_file": "evidence/robinhood-nflx-roundtrip.json",
+      "own_qa_roundtrip_confirmed": true
+    },
+    {
+      "symbol": "AMD",
+      "buy_tx_hash": "0x207ebefa103bfe43941c9a4615e1dde7b0a69cbed2e97bb4c5ccf1d19ca54566",
+      "sell_tx_hash": "0x006d7bfae934653a0acdb6086d2e59713f7a8c189eeac31fa7acc7cdec5ff49d",
+      "evidence_file": "evidence/robinhood-amd-roundtrip.json",
+      "own_qa_roundtrip_confirmed": true
+    }
+  ],
+  "funding_evidence": "evidence/robinhood-customer-funding.json",
+  "checks": {
+    "offline_tests_passed": 2157,
+    "offline_tests_skipped": 184,
+    "stock_order_real_pg_tests_passed": 12,
+    "stock_treasury_real_pg_tests_passed": 12,
+    "frontend_build": "passed",
+    "workspace_types": "passed",
+    "api_health_http": 200,
+    "stocks_page_http": 200,
+    "all_five_markets_testnet_verified": true
+  },
+  "coordination": "All subagents stopped; Stocks-only sequential work; customer Privy execution testing is next."
+}

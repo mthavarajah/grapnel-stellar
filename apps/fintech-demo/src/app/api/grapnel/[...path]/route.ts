@@ -64,6 +64,33 @@ export async function GET(
       return json(await grapnel("/capabilities"));
     const s = await requireSession();
     const key = path.join("/");
+    if(key==='network-assets'){
+      await requireModule('capital.wallets',s);
+      return json(await grapnel(`/capital/wallets/${s.walletId}/network-assets?customer_id=${s.customerId}`,s));
+    }
+    if(key==='stocks-grants'){
+      await requireModule('trade.stocks',s);await requireModule('capital.wallets',s);
+      const address=z.string().regex(/^0x[0-9a-fA-F]{40}$/).parse(request.nextUrl.searchParams.get('account_address'));
+      return json(await grapnel(`/trade/stocks/grants?customer_id=${s.customerId}&wallet_id=${s.walletId}&account_address=${address}`,s));
+    }
+    if(key==='stocks-status'||key==='stocks-request'){
+      await requireModule('trade.stocks',s);await requireModule('capital.wallets',s);
+      if(key==='stocks-status'){
+        const address=z.string().regex(/^0x[0-9a-fA-F]{40}$/).optional().parse(request.nextUrl.searchParams.get('account_address')??undefined),id=z.string().regex(/^robinhood-testnet:stocks:(TSLA|AMZN|PLTR|NFLX|AMD)$/).parse(request.nextUrl.searchParams.get('market_id'));
+        return json(await grapnel(`/trade/stocks/status?customer_id=${s.customerId}&wallet_id=${s.walletId}&market_id=${encodeURIComponent(id)}${address?'&account_address='+address:''}`,s));
+      }
+      const id=z.string().uuid().optional().parse(request.nextUrl.searchParams.get('request_id')??undefined);
+      return json(await grapnel(`/trade/stocks/requests?customer_id=${s.customerId}&wallet_id=${s.walletId}${id?'&request_id='+id:''}`,s));
+    }
+    if(key==='gmx-status'||key==='gmx-request'){
+      await requireModule('trade.perps',s);await requireModule('capital.wallets',s);
+      if(key==='gmx-status'){
+        const address=z.string().regex(/^0x[0-9a-fA-F]{40}$/).optional().parse(request.nextUrl.searchParams.get('account_address')??undefined),id=z.enum(['gmx-testnet:perps:ETH','gmx-testnet:perps:BTC']).parse(request.nextUrl.searchParams.get('market_id'));
+        return json(await grapnel(`/trade/gmx/status?customer_id=${s.customerId}&wallet_id=${s.walletId}&market_id=${encodeURIComponent(id)}${address?'&account_address='+address:''}`,s));
+      }
+      const id=z.string().uuid().optional().parse(request.nextUrl.searchParams.get('request_id')??undefined);
+      return json(await grapnel(`/trade/gmx/requests?customer_id=${s.customerId}&wallet_id=${s.walletId}${id?'&request_id='+id:''}`,s));
+    }
     if(key==='stocks-funding'){
       await requireModule('trade.stocks',s);await requireModule('capital.wallets',s);
       const address=z.string().regex(/^0x[0-9a-fA-F]{40}$/).optional().parse(request.nextUrl.searchParams.get('account_address')??undefined);
@@ -206,6 +233,28 @@ export async function POST(
         "A request identifier is required",
       );
     const binding = { customer_id: s.customerId, wallet_id: s.walletId };
+    if(route==='stocks-fund'){
+      await requireModule('trade.stocks',s);await requireModule('capital.wallets',s);
+      const body=z.object({account_address:z.string().regex(/^0x[0-9a-fA-F]{40}$/)}).strict().parse(raw);
+      return json(await grapnel('/trade/stocks/fund',s,{method:'POST',body:{...body,...binding},idempotencyKey:key}));
+    }
+    if(route==='stocks-prepare'||route==='stocks-authorize'){
+      await requireModule('trade.stocks',s);await requireModule('capital.wallets',s);
+      const schema=route==='stocks-prepare'?z.object({account_address:z.string().regex(/^0x[0-9a-fA-F]{40}$/),kind:z.enum(['approval','swap']),market_id:z.string().regex(/^robinhood-testnet:stocks:(TSLA|AMZN|PLTR|NFLX|AMD)$/),side:z.enum(['buy','sell']),amount:money,slippage_bps:z.number().int().min(0).max(100).optional()}).strict():z.object({request_id:z.string().uuid(),signed_transaction:z.string().regex(/^0x[0-9a-fA-F]+$/).max(100000)}).strict();
+      const body=schema.parse(raw);
+      return json(await grapnel('/trade/stocks/'+route.slice(7),s,{method:'POST',body:{...body,...binding},idempotencyKey:key}));
+    }
+    if(route==='gmx-prepare'||route==='gmx-authorize'||route==='gmx-gas'){
+      await requireModule('trade.perps',s);await requireModule('capital.wallets',s);
+      const address=z.string().regex(/^0x[0-9a-fA-F]{40}$/);
+      const schemas={
+        'gmx-prepare':z.object({account_address:address,kind:z.enum(['mint','approve','open','close']),market_id:z.enum(['gmx-testnet:perps:ETH','gmx-testnet:perps:BTC']),is_long:z.boolean().optional(),amount:money.optional(),collateral:money.optional(),size_usd:money.optional(),slippage_bps:z.number().int().min(1).max(100).optional()}).strict(),
+        'gmx-authorize':z.object({request_id:z.string().uuid(),signed_transaction:z.string().regex(/^0x[0-9a-fA-F]+$/).max(100000)}).strict(),
+        'gmx-gas':z.object({account_address:address}).strict(),
+      };
+      const body=schemas[route].parse(raw);
+      return json(await grapnel('/trade/gmx/'+route.slice(4),s,{method:'POST',body:{...body,...binding},idempotencyKey:key}));
+    }
     if(['perps-funding-prepare','perps-funding-source-review','perps-funding-source-authorize','perps-funding-stage-prepare','perps-funding-stage-authorize'].includes(route)){
       await requireModule('trade.perps',s);await requireModule('capital.wallets',s);
       const identifier=z.string().uuid(),stage=z.enum(['cctp.receive','core.approve','core.deposit']);

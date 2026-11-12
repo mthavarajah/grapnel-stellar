@@ -2,7 +2,7 @@ import type {GmxPrepared,GmxCreationProof,GmxTokenProof,GmxExecutionResult} from
 import type {PerpetualScope} from '../perpetuals/workflow-contract.js';
 export type GmxScope=PerpetualScope;
 export interface GmxRequest {
- id:string;scope:GmxScope;accountAddress:`0x${string}`;kind:GmxPrepared['kind'];marketId:string;
+ id:string;idempotencyKey?:string;requestHash?:string;scope:GmxScope;accountAddress:`0x${string}`;kind:GmxPrepared['kind'];marketId:string;
  state:'prepared'|'sending'|'confirming'|'completed'|'cancelled'|'reverted'|'unknown';
  prepared:GmxPrepared;signedTransaction:`0x${string}`|null;txHash:`0x${string}`|null;
  creationProof:GmxCreationProof|GmxTokenProof|null;settlement:GmxExecutionResult|null;

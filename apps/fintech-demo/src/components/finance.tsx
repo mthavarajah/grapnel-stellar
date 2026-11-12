@@ -1,12 +1,16 @@
 "use client";
+import {RobinhoodExecution} from "./robinhood-execution";
+import {GroupedAssets} from "./grouped-assets";
 import {RobinhoodFunding} from './robinhood-funding';
-import {hyperliquidEvmTestnet} from 'viem/chains';
+import {defineChain} from 'viem';
+import {arbitrumSepolia,hyperliquidEvmTestnet} from 'viem/chains';
 import {createIdentityTokenResolver} from '@/lib/identity-token';
 import Link from "next/link";
 import {VelocityBrand} from "./velocity-brand";
 import {OperationProgress,ProgressIndicator} from "./operation-progress";
 import {trackApproval,type ApprovalPhase} from "@/lib/operation-progress";
 import { AssetLogo } from "./asset-logo";
+import {GmxPerpetualExecution} from "./gmx-perpetual-execution";
 import {PrivyPerpetualExecution} from "./perpetual-execution";
 import {PerpetualOrderPreview,PerpetualMarketMetrics} from "./perpetual-order-preview";
 import {isCurrentDerivativeMarket,isRecognizedDerivativeMarket,bindMarketDetail,clearMarketLiveFields} from "@/lib/perpetual-market";
@@ -24,6 +28,7 @@ import { formatTokenAmount, fromAtomic, toAtomic, type PreparedAction, type Asse
 import {borrowingReasonMessage,borrowingAmountMessage} from "@/lib/borrowing-feedback";
 import { api, ClientError, operationRequestKey, clearOperationRequest } from "@/lib/client";
 import { signPreparedAction } from "@/lib/privy-signer";
+const robinhoodTestnet=defineChain({id:46630,name:'Robinhood Testnet',nativeCurrency:{name:'Ether',symbol:'ETH',decimals:18},rpcUrls:{default:{http:['https://rpc.testnet.chain.robinhood.com']}},blockExplorers:{default:{name:'Robinhood Explorer',url:'https://explorer.testnet.chain.robinhood.com'}},testnet:true});
 type Capability = {
   module: string;
   enabled: boolean;
@@ -311,8 +316,9 @@ export default function Finance({ page, initialCategory }: { page: string; initi
       appId={id}
       config={{
         loginMethods: ["email"],
-        supportedChains: [hyperliquidEvmTestnet],
-        defaultChain: hyperliquidEvmTestnet,
+        embeddedWallets: {ethereum:{createOnLogin:"users-without-wallets"}},
+        supportedChains: [robinhoodTestnet,arbitrumSepolia,hyperliquidEvmTestnet],
+        defaultChain: arbitrumSepolia,
         appearance: { theme: "light", accentColor: "#2555d7" },
       }}
     >
@@ -409,6 +415,8 @@ function FinanceShell({ page, auth, initialCategory }: { page: string; auth?: Au
   const [overviewSections,setOverviewSections] = useState<OverviewSection[]>([]);
   const [overviewLoading,setOverviewLoading] = useState(false);
   const [balances, setBalances] = useState<any[]>([]);
+  const [networkAssets,setNetworkAssets]=useState<any[]>([]);
+  useEffect(()=>{let alive=true;setNetworkAssets([]);if(session){void api("grapnel/network-assets").then(value=>{if(alive&&value.scope?.customer_id===session.customer_id&&value.scope?.wallet_id===session.wallet_id&&Array.isArray(value.balances))setNetworkAssets(value.balances);}).catch(()=>{});}return()=>{alive=false;};},[session?.customer_id,session?.wallet_id,balances]);
   const [assets, setAssets] = useState<any[]>([]);
   const [fundingError, setFundingError] = useState("");
   const [markets, setMarkets] = useState<any[]>([]);
@@ -1157,7 +1165,7 @@ function FinanceShell({ page, auth, initialCategory }: { page: string; auth?: Au
                     Wallet balances
                   </span>
                 </div>
-                <BalanceTable valuation={walletValuation} balances={balances} connected={!!session} />
+                <BalanceTable valuation={walletValuation} balances={[...balances.map(b=>({...b,network_label:"Stellar",feature_label:"Wallet"})),...networkAssets]} connected={!!session} />
               </section>
               <section className="market-overview" aria-label="Market overview" data-testid="market-overview">
                 {overviewGroups.filter(group=>capability(group.module)?.enabled).map(group=>{
@@ -1193,7 +1201,7 @@ function FinanceShell({ page, auth, initialCategory }: { page: string; auth?: Au
           {fundingPage === "fund" && <>
             <section className="section" aria-label="Current wallet balances">
               <div className="section-heading"><h2>Your wallet balances</h2></div>
-              <BalanceTable valuation={walletValuation} balances={balances} connected={!!session} />
+              <BalanceTable valuation={walletValuation} balances={[...balances.map(b=>({...b,network_label:"Stellar",feature_label:"Wallet"})),...networkAssets]} connected={!!session} />
             </section>
           </>}
           {(fundingPage === "fund" || fundingPage === "return") && (
@@ -1309,7 +1317,7 @@ function FinanceShell({ page, auth, initialCategory }: { page: string; auth?: Au
                   </button>
                 ))}
               </div>
-              {category==="stocks"&&session&&<RobinhoodFunding key={`${session.customer_id}:${session.wallet_id}`} api={api}/>}
+              {category==="stocks"&&session&&<RobinhoodFunding key={`${session.customer_id}:${session.wallet_id}`} api={api} customerId={session.customer_id} walletId={session.wallet_id}/>}
               {category !== "crypto_spot" && category !== "unavailable" && (
                 <section className="card public-market-browser" aria-label="Available markets" data-testid="market-list">
                   <div className="section-heading"><h2>Find a market</h2><span className="small muted">{markets.length} markets</span></div>
@@ -1349,7 +1357,7 @@ function FinanceShell({ page, auth, initialCategory }: { page: string; auth?: Au
                         {(selectedSpotMarket.stats.pool?.stale===true||selectedSpotMarket.stats.custody?.stale===true)&&<p className="small muted">Market activity delayed</p>}
                       </>}
                     </section>
-                    {(category==="perps"||selectedSpotMarket.instrument_type==="perpetual_futures") ? (auth?.signRawHash&&session?<PrivyPerpetualExecution key={`${session.customer_id}:${session.wallet_id}:${selectedSpotMarket.market_id}`} api={api} customerId={session.customer_id} walletId={session.wallet_id} stellarAddress={session.stellar_address} signRawHash={auth.signRawHash} market={selectedSpotMarket} onSetup={async(kind,amount)=>{openOperation(await api(`grapnel/perps-funding-${kind}`,{asset_class:"perps",...(amount?{amount}:{})}));}}/>:<PerpetualOrderPreview symbol={selectedSpotMarket.underlying?.symbol??selectedSpotMarket.label} price={selectedSpotMarket.reference_price} quoteSymbol={selectedSpotMarket.quote_symbol} settlementAsset={selectedSpotMarket.settlement_asset} stock={category==="stocks"||selectedSpotMarket.asset_category==="equity"} index={selectedSpotMarket.asset_category==="index"} error={detailError} loading={detailLoading}/>) : <section className="market-order-card" aria-label="Trade market" data-testid="market-order-card">
+                    {selectedSpotMarket.provider==="robinhood"&&session ? <RobinhoodExecution key={`${session.customer_id}:${session.wallet_id}:${selectedSpotMarket.market_id}`} api={api} customerId={session.customer_id} walletId={session.wallet_id} symbol={selectedSpotMarket.underlying?.symbol as "TSLA"|"AMZN"|"PLTR"|"NFLX"|"AMD"}/> : selectedSpotMarket.provider==="gmx"&&session ? <GmxPerpetualExecution key={`${session.customer_id}:${session.wallet_id}:${selectedSpotMarket.market_id}`} api={api} customerId={session.customer_id} walletId={session.wallet_id} symbol={selectedSpotMarket.underlying?.symbol==="BTC"?"BTC":"ETH"}/> : (category==="perps"||selectedSpotMarket.instrument_type==="perpetual_futures") ? (auth?.signRawHash&&session?<PrivyPerpetualExecution key={`${session.customer_id}:${session.wallet_id}:${selectedSpotMarket.market_id}`} api={api} customerId={session.customer_id} walletId={session.wallet_id} stellarAddress={session.stellar_address} signRawHash={auth.signRawHash} market={selectedSpotMarket} onSetup={async(kind,amount)=>{openOperation(await api(`grapnel/perps-funding-${kind}`,{asset_class:"perps",...(amount?{amount}:{})}));}}/>:<PerpetualOrderPreview symbol={selectedSpotMarket.underlying?.symbol??selectedSpotMarket.label} price={selectedSpotMarket.reference_price} quoteSymbol={selectedSpotMarket.quote_symbol} settlementAsset={selectedSpotMarket.settlement_asset} stock={category==="stocks"||selectedSpotMarket.asset_category==="equity"} index={selectedSpotMarket.asset_category==="index"} error={detailError} loading={detailLoading}/>) : <section className="market-order-card" aria-label="Trade market" data-testid="market-order-card">
                       <h2>Trade {selectedSpotMarket.underlying?.symbol}</h2>
                       <div className="public-order-direction" role="group" aria-label="Order direction"><button type="button" disabled>Buy</button><button type="button" disabled>Sell</button></div>
                       <p className="small muted">Available: {formatTokenAmount(swapBalance(selectedSpotMarket.base?.id??selectedSpotMarket.asset_in_id))} {selectedSpotMarket.base?.code??selectedSpotMarket.underlying?.symbol}</p>
@@ -1821,62 +1829,5 @@ function BalanceTable({
   balances: any[];
   connected: boolean;
 }) {
-  const identities: SwapAsset[] = balances.map(balance => {
-    const metadata=balance.asset?.id===balance.asset_id?balance.asset:null;
-    return {id:balance.asset_id,code:typeof metadata?.code==="string"&&metadata.code?metadata.code:assetCode(balance.asset_id),name:metadata?.verified===true&&typeof metadata.name==="string"&&metadata.name.trim()?metadata.name.trim():undefined};
-  });
-  const zero=(value:unknown)=>typeof value==="string"&&/^0+(?:\.0+)?$/.test(value);
-  const visibleBalances=balances.filter(balance=>{
-    const standalone=balance.asset?.id===balance.asset_id&&balance.asset.kind==="soroban"||typeof balance.asset_id==="string"&&balance.asset_id.startsWith("stellar-testnet:soroban:");
-    return !(standalone&&zero(balance.wallet_amount)&&(!balance.reserved||zero(balance.reserved))&&(!balance.spendable||zero(balance.spendable)));
-  });
-  return visibleBalances.length ? (
-    <div className="table-wrap">
-      <table>
-        <thead>
-          <tr>
-            <th>Asset</th>
-            <th>Wallet amount</th>
-            <th>Value (USD)</th>
-            <th>Reserved</th>
-            <th>Spendable</th>
-          </tr>
-        </thead>
-        <tbody>
-          {visibleBalances.map((b) => {
-            const identity=identities.find(item=>item.id===b.asset_id)!;
-            const label=displayAssetIdentity(identity,identities);
-            return <tr key={b.asset_id}>
-              <td>
-                <span className="asset-mark" aria-hidden="true">
-                  <AssetLogo symbol={identity.code} name={identity.name} assetId={identity.id} size={26} />
-                </span>
-                <div>
-                  <strong>{label}</strong>
-                  {identity.name&&identity.name!==identity.code&&!label.includes(identity.name)&&<small>{identity.name}</small>}
-
-                </div>
-              </td>
-              <td>{formatTokenAmount(b.wallet_amount)}</td>
-              <td>{(()=>{const item=valuation?.assets?.find(row=>row.asset_id===b.asset_id&&row.wallet_amount===b.wallet_amount);return item?.value_usd!=null&&/^(0|[1-9]\d*)(\.\d+)?$/.test(item.value_usd)?new Intl.NumberFormat("en-US",{style:"currency",currency:"USD",minimumFractionDigits:2,maximumFractionDigits:2}).format(Number(item.value_usd)):"—";})()}</td>
-              <td>{formatTokenAmount(b.reserved)}</td>
-              <td>
-                <strong>{formatTokenAmount(b.spendable)}</strong>
-              </td>
-            </tr>;
-          })}
-        </tbody>
-      </table>
-    </div>
-  ) : (
-    <Empty
-      icon="wallet"
-      title={
-        connected
-          ? balances.length ? "No assets with a balance." : "Waiting for a live balance read."
-          : "Connect to see your assets."
-      }
-      text="Refresh to check your current balances."
-    />
-  );
+  return <GroupedAssets valuation={valuation} balances={balances} connected={connected}/>;
 }

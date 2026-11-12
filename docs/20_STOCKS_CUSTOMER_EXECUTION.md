@@ -22,3 +22,11 @@ Provider verification is own-controlled Testnet buy/sell roundtrip with canonica
 ## Additive swap quote verification fields
 
 A public execution request additionally returns `quote:null` for an approval or `quote:{amountOutBaseUnits,minimumOutBaseUnits,slippageBps,observedAt,expiresAt,blockNumber}` for a swap. These are the actual verified adapter quote fields, durably preserved with the prepared request. Decimal base-unit strings remain exact. The minimum must equal `floor(amountOutBaseUnits * (10000 - slippageBps) / 10000)` and match the exact transaction intent; quote observation/expiry must match the intent timestamps. The browser independently verifies this against its captured slippage choice before signing. This quote is the Testnet pool quote, never the official underlying-equity reference price.
+
+## In-app treasury funding — v2
+
+Customers use their existing Privy EVM wallet. No faucet visit, address copy, second login or manual wallet import is required. `GET /v1/trade/stocks/grants` takes scoped identity plus account_address; `POST /v1/trade/stocks/fund` takes the same body and an Idempotency-Key. The BFF injects customer/wallet identity. Current wallet ownership, entitlements and Gate1 are required.
+
+A separate server-only Robinhood Testnet treasury holds actual canonical USDG and ETH. Each recipient can receive20USDG and0.001ETH once; at most two recipients are permitted in this prototype. Migration0012 persists a parent grant and exact signed native/token stages before one-use relays, with globally unique treasury nonces/hashes. GET only reconciles canonical two-confirmation native transfer and exact USDG Transfer logs. Timeout/202 does not establish funding. Secrets remain ignored server environment only (`ROBINHOOD_TESTNET_TREASURY_SECRET`); no customer keys are used.
+
+Because the public RPC prunes historical state, readiness uses an explicit canonical receipt verifier in addition to the initial captured balance evidence. It independently checks current deployment/multiplier, actual exact router transactions, deadlines, canonical two-confirmation receipts, exact token Transfer deltas, equal bought/sold share quantities, proper ordering and current flat stock balance. Existing stricter historical adapter reconciliation and tests remain unchanged. A local complete/proof flag cannot enable a market.

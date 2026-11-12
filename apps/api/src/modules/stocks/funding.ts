@@ -32,6 +32,6 @@ export async function registerRobinhoodFundingRoutes(app:FastifyInstance,deps:Ro
    balances={USDG:fromAtomic(usd,6),ETH:fromAtomic(BigInt(eth),18)};balanceStatus='ready';observedAt=new Date().toISOString();
   }catch{/* An unavailable read is unknown, never a fabricated zero balance. */}}
   reply.header('Cache-Control','private, no-store');
-  return success(request,{funding:ROBINHOOD_FUNDING,accounts,selectedAddress,balances,balanceStatus,observedAt});
+  return success(request,{scope:{business_id:customer.businessId,customer_id:customer.customerId,wallet_id:customer.walletId},funding:ROBINHOOD_FUNDING,accounts,selectedAddress,balances,balanceStatus,observedAt});
  });
 }

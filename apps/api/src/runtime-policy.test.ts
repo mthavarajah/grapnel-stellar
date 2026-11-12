@@ -6,6 +6,7 @@ describe('provider write entitlement routing',()=>{
   for(const path of ['/v1/trade/margin/workflows','/v1/trade/margin/workflows/id/steps/open_swap','/v1/trade/margin/workflows/id/reconcile?ignored=true'])
    expect(financialRouteModule(path)).toBe('trade.perps');
  });
+ it('keeps Stocks and GMX writes independent of Spot permission',()=>{for(const path of ['/v1/trade/stocks/fund','/v1/trade/stocks/prepare','/v1/trade/stocks/authorize'])expect(financialRouteModule(path)).toBe('trade.stocks');expect(financialRouteModule('/v1/trade/gmx/prepare')).toBe('trade.perps');});
  it('preserves separate spot, lending and funding permissions',()=>{
   expect(financialRouteModule('/v1/trade/quotes')).toBe('trade.spot');
   expect(financialRouteModule('/v1/capital/lending/borrowing/collateral/supply')).toBe('capital.lending');

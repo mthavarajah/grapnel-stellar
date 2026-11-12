@@ -59,3 +59,7 @@ The owner replaced customer Peridot Margin with Hyperliquid Testnet Perpetuals a
 ## Latest owner direction — Nov. 12, 2026
 
 The proposed custom Stellar mock-stock/perpetual engine is canceled. Do not implement or deploy it. Perpetuals uses Hyperliquid Testnet; the separate Stocks market targets canonical Robinhood Chain Testnet Stock Tokens (chain46630), subject to actual verified token/settlement/venue support. Source funds are Stellar Testnet USDC; a solver may allocate actual prefunded destination liquidity after reconciled Stellar escrow deposits. This is backed settlement/mirroring, not physical token bridging or invented balances. Freighter is explicitly authorized for this new Stellar intent flow; existing Privy flows remain unchanged. Never present stock perpetuals as the separate Stocks market, silently replace USDC with another destination token, mint lookalike Robinhood tokens, or use mainnet routes. See `docs/18_SOLVER_PROVIDER_FREEZE.md`. Recording task is canceled. Public deployment remains deferred.
+
+## Owner coordination update — November12, 2026
+
+All subagents are stopped at the owner’s request. Continue sequentially, focused on Stocks funding and actual Robinhood Testnet buy/sell execution first. Do not spawn or resume agents or continue Perpetuals work until the owner changes this direction. Preserve completed work and Testnet-only/exact-authorization/proof invariants.

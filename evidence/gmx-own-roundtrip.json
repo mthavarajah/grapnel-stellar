@@ -1,0 +1,486 @@
+{
+  "network": "arbitrum-sepolia",
+  "chain_id": 421614,
+  "account": "0x80bd216c39869cec85e37ee37c020530d144799a",
+  "complete": true,
+  "steps": {
+    "open": {
+      "prepared": {
+        "account": "0x80bd216c39869cec85e37ee37c020530d144799a",
+        "baseline": {
+          "positions": [],
+          "status": {
+            "allowanceAtomic6": "20000000",
+            "blockNumber": "328595887",
+            "collateralAtomic6": "100000000",
+            "nativeWei": "9998049810550000",
+            "observedAt": "2026-11-12T19:19:39.000Z"
+          }
+        },
+        "expiresAt": "2026-11-12T19:21:09.800Z",
+        "id": "0faa19f5-dcfd-4283-9948-0123fa91ac24",
+        "intent": {
+          "acceptablePrice": "2023602732527811",
+          "collateralAtomic6": "10000000",
+          "executionFeeWei": "500000000000000",
+          "indexDecimals": 18,
+          "isLong": true,
+          "market": "0xb6fc4c9eb02c35a134044526c62bb15014ac0bcc",
+          "quoteMaxPrice30": "2013535057241602000000000000000000",
+          "quoteMinPrice30": "2013502612017206000000000000000000",
+          "quoteObservedAt": "2026-11-12T19:19:40.000Z",
+          "sizeUsd30": "20000000000000000000000000000000",
+          "slippageBps": 50,
+          "symbol": "ETH"
+        },
+        "kind": "open",
+        "network": "arbitrum-sepolia",
+        "signingHash": "0x99f3a32e33a60ba18f6bf5a5dddc87a53de39ac7d915e1e0d1084f59c94174f6",
+        "transaction": {
+          "chainId": 421614,
+          "data": "0xac9650d800000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000003000000000000000000000000000000000000000000000000000000000000006000000000000000000000000000000000000000000000000000000000000000e0000000000000000000000000000000000000000000000000000000000000018000000000000000000000000000000000000000000000000000000000000000447d39aaf10000000000000000000000001b8ac606de71686fd2a1aedecb6e0efba28909a20000000000000000000000000000000000000000000000000001c6bf52634000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000064e6d66ac80000000000000000000000003253a335e7bffb4790aa4c25c4250d206e9b97730000000000000000000000001b8ac606de71686fd2a1aedecb6e0efba28909a20000000000000000000000000000000000000000000000000000000000989680000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000344f59c48eb0000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000fc6f7c40458122964d000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000073074ba09f0c30000000000000000000000000000000000000000000000000001c6bf52634000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000030000000000000000000000000080bd216c39869cec85e37ee37c020530d144799a000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000b6fc4c9eb02c35a134044526c62bb15014ac0bcc0000000000000000000000003253a335e7bffb4790aa4c25c4250d206e9b977300000000000000000000000000000000000000000000000000000000000000e00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+          "gas": "1239284",
+          "maxFeePerGas": "40028000",
+          "maxPriorityFeePerGas": "0",
+          "nonce": 2,
+          "to": "0x3fb6d5429612588510341ea60aacc282db264295",
+          "type": "eip1559",
+          "value": "500000000000000"
+        }
+      },
+      "creationProof": {
+        "network": "arbitrum-sepolia",
+        "account": "0x80bd216c39869cec85e37ee37c020530d144799a",
+        "creationTxHash": "0x6ab38ae1f64b123cc898dd6be61ba5e6e44c624173f70435a4da348a69644a98",
+        "creationBlock": "328595900",
+        "orderKey": "0xf313ef0eb4f1fc49a37b65e44032525e5ac374336460c79054b7a4968dd7d01f",
+        "kind": "open"
+      },
+      "settlement": {
+        "state": "executed",
+        "execution_status": "testnet_verified",
+        "orderKey": "0xf313ef0eb4f1fc49a37b65e44032525e5ac374336460c79054b7a4968dd7d01f",
+        "creationTxHash": "0x6ab38ae1f64b123cc898dd6be61ba5e6e44c624173f70435a4da348a69644a98",
+        "executionTxHash": "0xc3443cc5273fa4b5ba9c8b516b72dca18d8945c112f13b03d77d3b01f413b7f2",
+        "positionBefore": null,
+        "positionAfter": {
+          "account": "0x80bd216c39869cec85e37ee37c020530d144799a",
+          "market": "0xb6fc4c9eb02c35a134044526c62bb15014ac0bcc",
+          "collateralToken": "0x3253a335e7bffb4790aa4c25c4250d206e9b9773",
+          "isLong": true,
+          "sizeUsd30": "20000000000000000000000000000000",
+          "sizeTokens": "9931797596384579",
+          "collateralAtomic6": "9991998",
+          "key": "0xc56241a05e014e0bf571832dad5c2cb5c099bea889988c92470b4ece78a5a671"
+        },
+        "collateralBalanceAtomic6": "90000000",
+        "event": {
+          "addressItems": {
+            "items": [
+              {
+                "key": "account",
+                "value": "0x80BD216C39869Cec85E37ee37c020530D144799a"
+              },
+              {
+                "key": "market",
+                "value": "0xb6fC4C9eB02C35A134044526C62bb15014Ac0Bcc"
+              },
+              {
+                "key": "collateralToken",
+                "value": "0x3253a335E7bFfB4790Aa4C25C4250d206E9b9773"
+              }
+            ],
+            "arrayItems": []
+          },
+          "uintItems": {
+            "items": [
+              {
+                "key": "sizeInUsd",
+                "value": "20000000000000000000000000000000"
+              },
+              {
+                "key": "sizeInTokens",
+                "value": "9931797596384579"
+              },
+              {
+                "key": "collateralAmount",
+                "value": "9991998"
+              },
+              {
+                "key": "borrowingFactor",
+                "value": "173916143325090057985609739166"
+              },
+              {
+                "key": "fundingFeeAmountPerSize",
+                "value": "570464868668554717258"
+              },
+              {
+                "key": "longTokenClaimableFundingAmountPerSize",
+                "value": "7288420741012012811072525431"
+              },
+              {
+                "key": "shortTokenClaimableFundingAmountPerSize",
+                "value": "21409424038511616576434"
+              },
+              {
+                "key": "executionPrice",
+                "value": "2005711305710770"
+              },
+              {
+                "key": "indexTokenPrice.max",
+                "value": "2013734150933613"
+              },
+              {
+                "key": "indexTokenPrice.min",
+                "value": "2013697708995106"
+              },
+              {
+                "key": "collateralTokenPrice.max",
+                "value": "999714226364387275000000"
+              },
+              {
+                "key": "collateralTokenPrice.min",
+                "value": "999693882121462425000000"
+              },
+              {
+                "key": "sizeDeltaUsd",
+                "value": "20000000000000000000000000000000"
+              },
+              {
+                "key": "sizeDeltaInTokens",
+                "value": "9931797596384579"
+              },
+              {
+                "key": "orderType",
+                "value": "2"
+              },
+              {
+                "key": "increasedAtTime",
+                "value": "1794511185"
+              }
+            ],
+            "arrayItems": []
+          },
+          "intItems": {
+            "items": [
+              {
+                "key": "collateralDeltaAmount",
+                "value": "9991998"
+              },
+              {
+                "key": "pendingPriceImpactUsd",
+                "value": "80000000000000000000000000000"
+              },
+              {
+                "key": "pendingPriceImpactAmount",
+                "value": "39727190385538"
+              }
+            ],
+            "arrayItems": []
+          },
+          "boolItems": {
+            "items": [
+              {
+                "key": "isLong",
+                "value": true
+              },
+              {
+                "key": "balanceWasImproved",
+                "value": true
+              }
+            ],
+            "arrayItems": []
+          },
+          "bytes32Items": {
+            "items": [
+              {
+                "key": "orderKey",
+                "value": "0xf313ef0eb4f1fc49a37b65e44032525e5ac374336460c79054b7a4968dd7d01f"
+              },
+              {
+                "key": "positionKey",
+                "value": "0xc56241a05e014e0bf571832dad5c2cb5c099bea889988c92470b4ece78a5a671"
+              }
+            ],
+            "arrayItems": []
+          },
+          "bytesItems": {
+            "items": [],
+            "arrayItems": []
+          },
+          "stringItems": {
+            "items": [],
+            "arrayItems": []
+          }
+        }
+      }
+    },
+    "close": {
+      "prepared": {
+        "account": "0x80bd216c39869cec85e37ee37c020530d144799a",
+        "baseline": {
+          "positions": [
+            {
+              "account": "0x80bd216c39869cec85e37ee37c020530d144799a",
+              "collateralAtomic6": "9991998",
+              "collateralToken": "0x3253a335e7bffb4790aa4c25c4250d206e9b9773",
+              "isLong": true,
+              "key": "0xc56241a05e014e0bf571832dad5c2cb5c099bea889988c92470b4ece78a5a671",
+              "market": "0xb6fc4c9eb02c35a134044526c62bb15014ac0bcc",
+              "pendingImpactAmount": "39727190385538",
+              "sizeTokens": "9931797596384579",
+              "sizeUsd30": "20000000000000000000000000000000"
+            }
+          ],
+          "status": {
+            "allowanceAtomic6": "10000000",
+            "blockNumber": "328604692",
+            "collateralAtomic6": "90000000",
+            "nativeWei": "9454842140404000",
+            "observedAt": "2026-11-12T20:00:24.000Z"
+          }
+        },
+        "expiresAt": "2026-11-12T20:01:55.193Z",
+        "id": "f67df4bc-9c0c-4564-9add-03bc72edefe2",
+        "intent": {
+          "acceptablePrice": "1717993792888529",
+          "collateralAtomic6": "0",
+          "executionFeeWei": "500000000000000",
+          "executionPrice": "1726626927526160",
+          "executionQuoteBlock": "328604696",
+          "executionQuoteSource": "gmx_reader_getExecutionPrice",
+          "indexDecimals": 18,
+          "isLong": true,
+          "market": "0xb6fc4c9eb02c35a134044526c62bb15014ac0bcc",
+          "priceImpactDiffUsd": "2686333726914377885402630897568",
+          "priceImpactUsd": "-2866393336936753050351589500000",
+          "proportionalPendingImpactUsd": "80059610022375164948958602432",
+          "quoteMaxPrice30": "2015280419908194000000000000000000",
+          "quoteMinPrice30": "2015234635156064000000000000000000",
+          "quoteObservedAt": "2026-11-12T20:00:25.000Z",
+          "sizeUsd30": "20000000000000000000000000000000",
+          "slippageBps": 50,
+          "symbol": "ETH",
+          "totalImpactUsd": "-100000000000000000000000000000"
+        },
+        "kind": "close",
+        "network": "arbitrum-sepolia",
+        "signingHash": "0xe8bf9eec8c6ebbbfa7159de036e05550449ebbab6c6cb895f83a3d0e4e783b43",
+        "transaction": {
+          "chainId": 421614,
+          "data": "0xac9650d800000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000002000000000000000000000000000000000000000000000000000000000000004000000000000000000000000000000000000000000000000000000000000000c000000000000000000000000000000000000000000000000000000000000000447d39aaf10000000000000000000000001b8ac606de71686fd2a1aedecb6e0efba28909a20000000000000000000000000000000000000000000000000001c6bf52634000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000344f59c48eb0000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000fc6f7c40458122964d000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000061a8199c05ed10000000000000000000000000000000000000000000000000001c6bf52634000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000400000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000030000000000000000000000000080bd216c39869cec85e37ee37c020530d144799a000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000b6fc4c9eb02c35a134044526c62bb15014ac0bcc0000000000000000000000003253a335e7bffb4790aa4c25c4250d206e9b977300000000000000000000000000000000000000000000000000000000000000e00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+          "gas": "1144315",
+          "maxFeePerGas": "40264000",
+          "maxPriorityFeePerGas": "0",
+          "nonce": 4,
+          "to": "0x3fb6d5429612588510341ea60aacc282db264295",
+          "type": "eip1559",
+          "value": "500000000000000"
+        }
+      },
+      "creationProof": {
+        "network": "arbitrum-sepolia",
+        "account": "0x80bd216c39869cec85e37ee37c020530d144799a",
+        "creationTxHash": "0x75fa64b446a3f71ddf3ea436648bcf6e7d35febf728fb9ba43f08ba3ce36b563",
+        "creationBlock": "328604709",
+        "orderKey": "0x5f718618ea248863a4971aa86261e0aba91969d11c8b9bd4f4d9c68245c58c3c",
+        "kind": "close"
+      },
+      "settlement": {
+        "state": "executed",
+        "execution_status": "testnet_verified",
+        "orderKey": "0x5f718618ea248863a4971aa86261e0aba91969d11c8b9bd4f4d9c68245c58c3c",
+        "creationTxHash": "0x75fa64b446a3f71ddf3ea436648bcf6e7d35febf728fb9ba43f08ba3ce36b563",
+        "executionTxHash": "0x3e368dd35a8e73421d99e7e30f8c9fa48a26c263f045fc47b82d324ba2709ca1",
+        "positionBefore": {
+          "account": "0x80bd216c39869cec85e37ee37c020530d144799a",
+          "market": "0xb6fc4c9eb02c35a134044526c62bb15014ac0bcc",
+          "collateralToken": "0x3253a335e7bffb4790aa4c25c4250d206e9b9773",
+          "isLong": true,
+          "sizeUsd30": "20000000000000000000000000000000",
+          "sizeTokens": "9931797596384579",
+          "collateralAtomic6": "9991998",
+          "pendingImpactAmount": "39727190385538",
+          "key": "0xc56241a05e014e0bf571832dad5c2cb5c099bea889988c92470b4ece78a5a671"
+        },
+        "positionAfter": null,
+        "collateralBalanceAtomic6": "97192700",
+        "event": {
+          "addressItems": {
+            "items": [
+              {
+                "key": "account",
+                "value": "0x80BD216C39869Cec85E37ee37c020530D144799a"
+              },
+              {
+                "key": "market",
+                "value": "0xb6fC4C9eB02C35A134044526C62bb15014Ac0Bcc"
+              },
+              {
+                "key": "collateralToken",
+                "value": "0x3253a335E7bFfB4790Aa4C25C4250d206E9b9773"
+              }
+            ],
+            "arrayItems": []
+          },
+          "uintItems": {
+            "items": [
+              {
+                "key": "sizeInUsd",
+                "value": "0"
+              },
+              {
+                "key": "sizeInTokens",
+                "value": "0"
+              },
+              {
+                "key": "collateralAmount",
+                "value": "0"
+              },
+              {
+                "key": "borrowingFactor",
+                "value": "173916143325090057985609739166"
+              },
+              {
+                "key": "fundingFeeAmountPerSize",
+                "value": "570464868668554717258"
+              },
+              {
+                "key": "longTokenClaimableFundingAmountPerSize",
+                "value": "7288420741012012811072525431"
+              },
+              {
+                "key": "shortTokenClaimableFundingAmountPerSize",
+                "value": "21409424038511616576434"
+              },
+              {
+                "key": "executionPrice",
+                "value": "1726638446857140"
+              },
+              {
+                "key": "indexTokenPrice.max",
+                "value": "2015293306138494"
+              },
+              {
+                "key": "indexTokenPrice.min",
+                "value": "2015250233867860"
+              },
+              {
+                "key": "collateralTokenPrice.max",
+                "value": "999694398603568825000000"
+              },
+              {
+                "key": "collateralTokenPrice.min",
+                "value": "999670016563103675000000"
+              },
+              {
+                "key": "sizeDeltaUsd",
+                "value": "20000000000000000000000000000000"
+              },
+              {
+                "key": "sizeDeltaInTokens",
+                "value": "9931797596384579"
+              },
+              {
+                "key": "collateralDeltaAmount",
+                "value": "9991998"
+              },
+              {
+                "key": "values.priceImpactDiffUsd",
+                "value": "2686373622805964131290001991320"
+              },
+              {
+                "key": "orderType",
+                "value": "4"
+              },
+              {
+                "key": "decreasedAtTime",
+                "value": "1794513631"
+              },
+              {
+                "key": "cappedPnlPoolTokenAmount",
+                "value": "0"
+              },
+              {
+                "key": "cappedPnlAllowancePerPrice",
+                "value": "0"
+              }
+            ],
+            "arrayItems": []
+          },
+          "intItems": {
+            "items": [
+              {
+                "key": "priceImpactUsd",
+                "value": "-2866433852521332585068349000000"
+              },
+              {
+                "key": "basePnlUsd",
+                "value": "15057428842272649355227730940"
+              },
+              {
+                "key": "uncappedBasePnlUsd",
+                "value": "15057428842272649355227730940"
+              },
+              {
+                "key": "proportionalPendingImpactUsd",
+                "value": "80060229715368453778347008680"
+              },
+              {
+                "key": "totalImpactUsd",
+                "value": "-100000000000000000000000000000"
+              },
+              {
+                "key": "realizedUncappedPnlUsd",
+                "value": "0"
+              },
+              {
+                "key": "realizedPnlUsd",
+                "value": "0"
+              },
+              {
+                "key": "cappedPnlReferencePoolPnlUsd",
+                "value": "0"
+              }
+            ],
+            "arrayItems": []
+          },
+          "boolItems": {
+            "items": [
+              {
+                "key": "isLong",
+                "value": true
+              },
+              {
+                "key": "balanceWasImproved",
+                "value": false
+              }
+            ],
+            "arrayItems": []
+          },
+          "bytes32Items": {
+            "items": [
+              {
+                "key": "orderKey",
+                "value": "0x5f718618ea248863a4971aa86261e0aba91969d11c8b9bd4f4d9c68245c58c3c"
+              },
+              {
+                "key": "positionKey",
+                "value": "0xc56241a05e014e0bf571832dad5c2cb5c099bea889988c92470b4ece78a5a671"
+              }
+            ],
+            "arrayItems": []
+          },
+          "bytesItems": {
+            "items": [],
+            "arrayItems": []
+          },
+          "stringItems": {
+            "items": [],
+            "arrayItems": []
+          }
+        }
+      }
+    }
+  }
+}

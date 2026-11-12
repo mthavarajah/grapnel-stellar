@@ -1,0 +1,45 @@
+{
+  "id": "48515abf-6395-492a-a44e-eb717aaf29c4",
+  "scope": {
+    "business_id": "00000000-0000-4000-8000-000000000001",
+    "customer_id": "0b605eed-5649-4334-97b9-52d43256c374",
+    "wallet_id": "aa1efbe3-187c-46e4-9ebe-1eec16e36839"
+  },
+  "account_address": "0x023274335f7e2ae6102f8a1c987378d896177699",
+  "state": "completed",
+  "stages": [
+    {
+      "kind": "gas",
+      "state": "completed",
+      "tx_hash": "0x43a1ff415e4dcfd759c6dfc6f72082c7841630008165efccda4463748c1ff15c",
+      "proof": {
+        "network": "robinhood-testnet",
+        "chain_id": 46630,
+        "tx_hash": "0x43a1ff415e4dcfd759c6dfc6f72082c7841630008165efccda4463748c1ff15c",
+        "treasury": "0x80bd216c39869cec85e37ee37c020530d144799a",
+        "recipient": "0x023274335f7e2ae6102f8a1c987378d896177699",
+        "asset": "ETH",
+        "amount_base_units": "1000000000000000",
+        "block_number": "152480562",
+        "confirmed": true
+      }
+    },
+    {
+      "kind": "usdg",
+      "state": "completed",
+      "tx_hash": "0x3b4f61459394fdf1717270a8eca9deb3ea772ba8cddff1b28f523e6b9f055ef6",
+      "proof": {
+        "network": "robinhood-testnet",
+        "chain_id": 46630,
+        "tx_hash": "0x3b4f61459394fdf1717270a8eca9deb3ea772ba8cddff1b28f523e6b9f055ef6",
+        "treasury": "0x80bd216c39869cec85e37ee37c020530d144799a",
+        "recipient": "0x023274335f7e2ae6102f8a1c987378d896177699",
+        "asset": "USDG",
+        "amount_base_units": "20000000",
+        "block_number": "152480563",
+        "confirmed": true
+      }
+    }
+  ],
+  "funding_available": false
+}

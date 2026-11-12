@@ -1,0 +1,244 @@
+{
+  "network": "robinhood-testnet",
+  "chain_id": 46630,
+  "account": "0x80bd216c39869cec85e37ee37c020530d144799a",
+  "symbol": "TSLA",
+  "complete": true,
+  "steps": {
+    "buy": {
+      "prepared": {
+        "kind": "swap",
+        "chainId": 46630,
+        "from": "0x80BD216C39869Cec85E37ee37c020530D144799a",
+        "to": "0x3Ce954107b1A675826B33bF23060Dd655e3758fE",
+        "value": "0",
+        "data": "0x5ae401dc000000000000000000000000000000000000000000000000000000006af626ed00000000000000000000000000000000000000000000000000000000000000400000000000000000000000000000000000000000000000000000000000000001000000000000000000000000000000000000000000000000000000000000002000000000000000000000000000000000000000000000000000000000000000e404e45aaf0000000000000000000000007e955252e15c84f5768b83c41a71f9eba181802f000000000000000000000000c9f9c86933092bbbfff3ccb4b105a4a94bf3bd4e0000000000000000000000000000000000000000000000000000000000000bb800000000000000000000000080bd216c39869cec85e37ee37c020530d144799a00000000000000000000000000000000000000000000000000000000000f424000000000000000000000000000000000000000000000000018f401dc1808cc47000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+        "tokenIn": "0x7E955252E15c84f5768B83c41a71F9eba181802F",
+        "tokenOut": "0xC9f9c86933092BbbfFF3CCb4b105A4A94bf3Bd4E",
+        "amountInBaseUnits": "1000000",
+        "minimumOutBaseUnits": "1798064196035333191",
+        "symbol": "TSLA",
+        "observedAt": "2026-11-12T20:51:27.296Z",
+        "expiresAt": "2026-11-12T20:51:57.296Z",
+        "deadlineSeconds": "1794516717",
+        "executionStatus": "discovery_only",
+        "price_basis": "testnet_pool_quote"
+      },
+      "tx_hash": "0x47c3c20eca6f3d07b1bbaddb393c9b93a464bdd569740096a29c71207047ebe3",
+      "proof": {
+        "state": "confirmed",
+        "txHash": "0x47c3c20eca6f3d07b1bbaddb393c9b93a464bdd569740096a29c71207047ebe3",
+        "blockNumber": "152479873",
+        "confirmations": "4",
+        "amountInBaseUnits": "1000000",
+        "amountOutBaseUnits": "1816226460641750698",
+        "balances": [
+          {
+            "token": "0x7E955252E15c84f5768B83c41a71F9eba181802F",
+            "beforeBaseUnits": "100000000",
+            "afterBaseUnits": "99000000",
+            "deltaBaseUnits": "-1000000"
+          },
+          {
+            "token": "0xC9f9c86933092BbbfFF3CCb4b105A4A94bf3Bd4E",
+            "beforeBaseUnits": "0",
+            "afterBaseUnits": "1816226460641750698",
+            "deltaBaseUnits": "1816226460641750698"
+          }
+        ],
+        "price_basis": "testnet_pool_quote"
+      }
+    },
+    "sell": {
+      "prepared": {
+        "kind": "swap",
+        "chainId": 46630,
+        "from": "0x80BD216C39869Cec85E37ee37c020530D144799a",
+        "to": "0x3Ce954107b1A675826B33bF23060Dd655e3758fE",
+        "value": "0",
+        "data": "0x5ae401dc000000000000000000000000000000000000000000000000000000006af626f800000000000000000000000000000000000000000000000000000000000000400000000000000000000000000000000000000000000000000000000000000001000000000000000000000000000000000000000000000000000000000000002000000000000000000000000000000000000000000000000000000000000000e404e45aaf000000000000000000000000c9f9c86933092bbbfff3ccb4b105a4a94bf3bd4e0000000000000000000000007e955252e15c84f5768b83c41a71f9eba181802f0000000000000000000000000000000000000000000000000000000000000bb800000000000000000000000080bd216c39869cec85e37ee37c020530d144799a00000000000000000000000000000000000000000000000019348857da376eaa00000000000000000000000000000000000000000000000000000000000f0c48000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+        "tokenIn": "0xC9f9c86933092BbbfFF3CCb4b105A4A94bf3Bd4E",
+        "tokenOut": "0x7E955252E15c84f5768B83c41a71F9eba181802F",
+        "amountInBaseUnits": "1816226460641750698",
+        "minimumOutBaseUnits": "986184",
+        "symbol": "TSLA",
+        "observedAt": "2026-11-12T20:51:38.401Z",
+        "expiresAt": "2026-11-12T20:52:08.401Z",
+        "deadlineSeconds": "1794516728",
+        "executionStatus": "discovery_only",
+        "price_basis": "testnet_pool_quote"
+      },
+      "tx_hash": "0x07203ad06250b6c6e0b06ab0f224cb77a6c79747cdd30b1ead9cbb8d39ee90c4",
+      "proof": {
+        "state": "confirmed",
+        "txHash": "0x07203ad06250b6c6e0b06ab0f224cb77a6c79747cdd30b1ead9cbb8d39ee90c4",
+        "blockNumber": "152479937",
+        "confirmations": "7",
+        "amountInBaseUnits": "1816226460641750698",
+        "amountOutBaseUnits": "996146",
+        "balances": [
+          {
+            "token": "0xC9f9c86933092BbbfFF3CCb4b105A4A94bf3Bd4E",
+            "beforeBaseUnits": "1816226460641750698",
+            "afterBaseUnits": "0",
+            "deltaBaseUnits": "-1816226460641750698"
+          },
+          {
+            "token": "0x7E955252E15c84f5768B83c41a71F9eba181802F",
+            "beforeBaseUnits": "99000000",
+            "afterBaseUnits": "99996146",
+            "deltaBaseUnits": "996146"
+          }
+        ],
+        "price_basis": "testnet_pool_quote"
+      }
+    }
+  },
+  "approvals": [
+    {
+      "kind": "approve-USDG",
+      "prepared": {
+        "kind": "approval",
+        "chainId": 46630,
+        "from": "0x80BD216C39869Cec85E37ee37c020530D144799a",
+        "to": "0x7E955252E15c84f5768B83c41a71F9eba181802F",
+        "value": "0",
+        "data": "0x095ea7b30000000000000000000000003ce954107b1a675826b33bf23060dd655e3758fe00000000000000000000000000000000000000000000000000000000000f4240",
+        "tokenIn": "0x7E955252E15c84f5768B83c41a71F9eba181802F",
+        "tokenOut": null,
+        "amountInBaseUnits": "1000000",
+        "minimumOutBaseUnits": null,
+        "symbol": "USDG",
+        "observedAt": "2026-11-12T20:51:23.573Z",
+        "expiresAt": "2026-11-12T20:51:53.573Z",
+        "deadlineSeconds": null,
+        "executionStatus": "discovery_only",
+        "price_basis": null
+      },
+      "state": "confirmed",
+      "hash": "0xba4444caa4381cede62d9d4d731bb38d36a7e8fb27765f745fb9f29c7cfb8782",
+      "nonce": 0,
+      "gas": "71546",
+      "maxFeePerGas": "20000000",
+      "signedAt": "2026-11-12T20:51:24.460Z",
+      "proof": {
+        "state": "confirmed",
+        "txHash": "0xba4444caa4381cede62d9d4d731bb38d36a7e8fb27765f745fb9f29c7cfb8782",
+        "blockNumber": "152479837",
+        "confirmations": "6",
+        "allowanceBaseUnits": "1000000"
+      }
+    },
+    {
+      "kind": "approve-TSLA",
+      "prepared": {
+        "kind": "approval",
+        "chainId": 46630,
+        "from": "0x80BD216C39869Cec85E37ee37c020530D144799a",
+        "to": "0xC9f9c86933092BbbfFF3CCb4b105A4A94bf3Bd4E",
+        "value": "0",
+        "data": "0x095ea7b30000000000000000000000003ce954107b1a675826b33bf23060dd655e3758fe00000000000000000000000000000000000000000000000019348857da376eaa",
+        "tokenIn": "0xC9f9c86933092BbbfFF3CCb4b105A4A94bf3Bd4E",
+        "tokenOut": null,
+        "amountInBaseUnits": "1816226460641750698",
+        "minimumOutBaseUnits": null,
+        "symbol": "TSLA",
+        "observedAt": "2026-11-12T20:51:35.036Z",
+        "expiresAt": "2026-11-12T20:52:05.036Z",
+        "deadlineSeconds": null,
+        "executionStatus": "discovery_only",
+        "price_basis": null
+      },
+      "state": "confirmed",
+      "hash": "0x031d414d4964605973e75c53472800f958ebd9031af693dc01407159aa6afdfe",
+      "nonce": 2,
+      "gas": "74722",
+      "maxFeePerGas": "20000000",
+      "signedAt": "2026-11-12T20:51:35.733Z",
+      "proof": {
+        "state": "confirmed",
+        "txHash": "0x031d414d4964605973e75c53472800f958ebd9031af693dc01407159aa6afdfe",
+        "blockNumber": "152479899",
+        "confirmations": "4",
+        "allowanceBaseUnits": "1816226460641750698"
+      }
+    }
+  ],
+  "funding": {
+    "source": "https://faucet.paxos.com/?token=USDG&network=ROBINHOOD",
+    "txHash": "0xe60d996879ee777621aff307bfdcddad4e033a690b20a2936324728868e32797",
+    "asset": "0x7E955252E15c84f5768B83c41a71F9eba181802F",
+    "decimals": 6,
+    "amountBaseUnits": "100000000",
+    "blockNumber": "152462600",
+    "from": "0xcc9644EC26A647de0B9b86f1560d5180232f70a3",
+    "to": "0x80bd216c39869cec85e37ee37c020530d144799a"
+  },
+  "gas": {
+    "kind": "canonical-testnet-ETH-deposit",
+    "sourceChainId": 11155111,
+    "destinationChainId": 46630,
+    "inbox": "0xF2939afA86F6f933A3CE17fCAB007907B6b0B7a4",
+    "valueWei": "3000000000000000",
+    "destinationBalanceBefore": "0",
+    "state": "credited",
+    "hash": "0x2133fd6df0b7e11d3d1e41d7dd1edda4d43051311590a73a12fcb863e23ceda2",
+    "nonce": 0,
+    "gas": "235163",
+    "maxFeePerGas": "36",
+    "signedAt": "2026-11-12T20:41:14.113Z",
+    "sourceReceipt": {
+      "hash": "0x2133fd6df0b7e11d3d1e41d7dd1edda4d43051311590a73a12fcb863e23ceda2",
+      "blockNumber": "12121282",
+      "blockHash": "0x3b5e88263f7865e502eb7209eed93a00ad493d627d39468760e3b601d8c757c3",
+      "status": "success",
+      "amountWei": "3000000000000000"
+    },
+    "destinationBalanceAfter": "3000000000000000"
+  },
+  "balances": {
+    "before": {
+      "observedAt": "2026-11-12T20:51:20.529Z",
+      "baseUnits": {
+        "ETH": "3000000000000000",
+        "USDG": "100000000",
+        "TSLA": "0",
+        "AMZN": "0",
+        "PLTR": "0",
+        "NFLX": "0",
+        "AMD": "0"
+      },
+      "decimals": {
+        "ETH": 18,
+        "USDG": 6,
+        "TSLA": 18,
+        "AMZN": 18,
+        "PLTR": 18,
+        "NFLX": 18,
+        "AMD": 18
+      }
+    },
+    "after": {
+      "observedAt": "2026-11-12T20:51:45.234Z",
+      "baseUnits": {
+        "ETH": "2994859720000000",
+        "USDG": "99996146",
+        "TSLA": "0",
+        "AMZN": "0",
+        "PLTR": "0",
+        "NFLX": "0",
+        "AMD": "0"
+      },
+      "decimals": {
+        "ETH": 18,
+        "USDG": 6,
+        "TSLA": 18,
+        "AMZN": 18,
+        "PLTR": 18,
+        "NFLX": 18,
+        "AMD": 18
+      }
+    }
+  },
+  "completed_at": "2026-11-12T20:51:45.234Z"
+}
