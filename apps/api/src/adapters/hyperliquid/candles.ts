@@ -14,7 +14,7 @@ const rowsSchema = z.array(z.object({ t: timestamp, T: timestamp, s: z.string(),
   o: price, h: price, l: price, c: price, v: price, n: z.number().int().nonnegative().max(Number.MAX_SAFE_INTEGER) })).max(5000);
 
 export function validateCandleRequest(symbol: string, interval: string, startTime: number, endTime: number, now: number) {
-  if (!/^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$/.test(symbol) || !Object.hasOwn(CANDLE_INTERVAL_MS, interval))
+  if (!/^[^\x00-\x1f\x7f]{1,128}$/.test(symbol) || symbol.includes('://') || !Object.hasOwn(CANDLE_INTERVAL_MS, interval))
     throw new Error('HYPERLIQUID_INVALID_CANDLE_REQUEST');
   const duration = CANDLE_INTERVAL_MS[interval as HyperliquidCandleInterval];
   if (!Number.isSafeInteger(startTime) || !Number.isSafeInteger(endTime) || startTime <= 0 || endTime <= startTime

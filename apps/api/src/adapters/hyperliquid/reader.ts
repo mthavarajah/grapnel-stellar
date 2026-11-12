@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { parseHyperliquidCatalog, priceHyperliquidCatalogDex } from './catalog.js';
 import { parseHyperliquidCandles, validateCandleRequest, type HyperliquidCandleInterval } from './candles.js';
 
 export const HYPERLIQUID_TESTNET_INFO = 'https://api.hyperliquid-testnet.xyz/info';
@@ -7,6 +8,7 @@ const SOURCE_DOC = 'https://hyperliquid.gitbook.io/hyperliquid-docs/for-develope
 const MAX_BYTES = 2 * 1024 * 1024;
 const TIMEOUT_MS = 8_000;
 const MAX_AGE_MS = 60_000;
+const CATALOG_BUDGET_MS = 12_000;
 const decimal = z.string().max(128).regex(/^(0|[1-9][0-9]*)(\.[0-9]+)?$/);
 const signedDecimal = z.string().max(128).regex(/^-?(0|[1-9][0-9]*)(\.[0-9]+)?$/);
 const metadata = z.object({
@@ -93,13 +95,16 @@ export function resolveHyperliquidXyzDex(value: unknown) {
 /** Fixed Testnet public data reader. No signing, exchange, deposit or mainnet
  * method exists. Market discovery never enables customer execution. */
 export class HyperliquidTestnetReader {
+  private catalogCache: { value: Awaited<ReturnType<HyperliquidTestnetReader['fetchCatalog']>>; expiresAt: number } | undefined;
+  private catalogInFlight: Promise<Awaited<ReturnType<HyperliquidTestnetReader['fetchCatalog']>>> | undefined;
+
   constructor(private readonly request: typeof fetch = fetch, private readonly now: () => number = Date.now) {}
 
-  private async read(url: typeof HYPERLIQUID_TESTNET_INFO | typeof HYPEREVM_TESTNET_RPC, body: unknown) {
+  private async read(url: typeof HYPERLIQUID_TESTNET_INFO | typeof HYPEREVM_TESTNET_RPC, body: unknown, budgetSignal?: AbortSignal) {
     const startedAt = this.now();
     const response = await this.request(url, { method: 'POST', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(body), redirect: 'error', credentials: 'omit', cache: 'no-store',
-      signal: AbortSignal.timeout(TIMEOUT_MS) });
+      signal: budgetSignal ? AbortSignal.any([AbortSignal.timeout(TIMEOUT_MS), budgetSignal]) : AbortSignal.timeout(TIMEOUT_MS) });
     if (!response.ok) { await response.body?.cancel(); throw new Error(`HYPERLIQUID_SOURCE_HTTP_${response.status}`); }
     if (Number(response.headers.get('content-length') ?? '0') > MAX_BYTES) {
       await response.body?.cancel(); throw new Error('HYPERLIQUID_RESPONSE_TOO_LARGE');
@@ -134,10 +139,10 @@ export class HyperliquidTestnetReader {
     return { data, receivedAt: new Date(receivedAt).toISOString(), serverDate };
   }
 
-  private async verifyHyperEvmNetwork() {
+  private async verifyHyperEvmNetwork(budgetSignal?: AbortSignal) {
     // Separate chain check verifies this fixed EVM endpoint, not a claim that
     // HyperCore perpetuals execute as EVM transactions on chain998.
-    const network = await this.read(HYPEREVM_TESTNET_RPC, { jsonrpc: '2.0', id: 1, method: 'eth_chainId', params: [] });
+    const network = await this.read(HYPEREVM_TESTNET_RPC, { jsonrpc: '2.0', id: 1, method: 'eth_chainId', params: [] }, budgetSignal);
     const rpcResult = z.object({ jsonrpc: z.literal('2.0'), id: z.literal(1), result: z.literal('0x3e6'), error: z.never().optional() });
     if (!rpcResult.safeParse(network.data).success) throw new Error('HYPERLIQUID_NETWORK_MISMATCH');
   }
@@ -184,6 +189,65 @@ export class HyperliquidTestnetReader {
         documentationUrl: SOURCE_DOC,
         assetIdDocumentationUrl: 'https://hyperliquid.gitbook.io/hyperliquid-docs/for-developers/api/asset-ids' },
     };
+  }
+
+  private async fetchCatalog() {
+    const budgetSignal = AbortSignal.timeout(CATALOG_BUDGET_MS);
+    await this.verifyHyperEvmNetwork(budgetSignal);
+    const [registry, metas, tokens, annotations] = await Promise.all([
+      this.read(HYPERLIQUID_TESTNET_INFO, { type: 'perpDexs' }, budgetSignal),
+      this.read(HYPERLIQUID_TESTNET_INFO, { type: 'allPerpMetas' }, budgetSignal),
+      this.read(HYPERLIQUID_TESTNET_INFO, { type: 'spotMeta' }, budgetSignal),
+      this.read(HYPERLIQUID_TESTNET_INFO, { type: 'perpConciseAnnotations' }, budgetSignal).catch(() => null),
+    ]);
+    const data = parseHyperliquidCatalog(registry.data, metas.data, tokens.data, annotations?.data);
+    const times = [registry, metas, tokens].map((row) => Date.parse(row.receivedAt));
+    if (this.now() - Math.min(...times) > MAX_AGE_MS) throw new Error('HYPERLIQUID_STALE_RESPONSE');
+    return { ...data, provider: 'hyperliquid' as const, network: 'hyperliquid-testnet' as const,
+      executionStatus: 'discovery_only' as const, executable: false as const, partial: false as const,
+      activeCount: data.markets.filter((market) => !market.isDelisted).length,
+      source: { infoUrl: HYPERLIQUID_TESTNET_INFO, receivedAt: new Date(Math.max(...times)).toISOString(),
+        cacheExpiresAt: new Date(Math.min(...times) + MAX_AGE_MS).toISOString(), metadataCacheTtlMs: MAX_AGE_MS,
+        metricAvailability: 'not_requested' as const, providerMarketTimestamp: null,
+        observations: [registry, metas, tokens, annotations].map((row, index) => ({
+          type: ['perpDexs', 'allPerpMetas', 'spotMeta', 'perpConciseAnnotations'][index],
+          receivedAt: row?.receivedAt ?? null, httpDate: row?.serverDate ?? null })),
+        annotationMeaning: 'provider_declared_not_verified_ownership_or_eligibility' as const },
+    };
+  }
+
+  /** Bulk metadata only: at most five source calls including the chain check,
+   * with a 60-second single-flight cache. Never fan out over all DEX contexts. */
+  async readCatalog() {
+    if (this.catalogCache && this.catalogCache.expiresAt > this.now()) return structuredClone(this.catalogCache.value);
+    if (!this.catalogInFlight) {
+      this.catalogInFlight = this.fetchCatalog().then((value) => {
+        this.catalogCache = { value, expiresAt: Date.parse(value.source.cacheExpiresAt) };
+        return value;
+      });
+    }
+    const pending = this.catalogInFlight;
+    try { return structuredClone(await pending); }
+    finally { if (this.catalogInFlight === pending) this.catalogInFlight = undefined; }
+  }
+
+  /** Lazy source-context fetch for one DEX already verified in the current
+   * catalog. Other collateral is displayed exactly and never relabeled USDC. */
+  async readDexMarkets(dex: string) {
+    const startedAt = this.now();
+    const catalog = await this.readCatalog();
+    if (!catalog.dexes.some((venue) => venue.dex === dex)) throw new Error('HYPERLIQUID_UNKNOWN_CATALOG_DEX');
+    const remaining = CATALOG_BUDGET_MS - (this.now() - startedAt);
+    if (remaining <= 0) throw new Error('HYPERLIQUID_STALE_RESPONSE');
+    const result = await this.read(HYPERLIQUID_TESTNET_INFO, dex ? { type: 'metaAndAssetCtxs', dex } : { type: 'metaAndAssetCtxs' }, AbortSignal.timeout(remaining));
+    try {
+      const markets = priceHyperliquidCatalogDex(result.data, dex, catalog);
+      return { provider: 'hyperliquid' as const, network: 'hyperliquid-testnet' as const,
+        executionStatus: 'discovery_only' as const, executable: false as const, dex, markets,
+        source: { infoUrl: HYPERLIQUID_TESTNET_INFO, requestType: 'metaAndAssetCtxs' as const,
+          receivedAt: result.receivedAt, httpDate: result.serverDate, catalogReceivedAt: catalog.source.receivedAt,
+          providerMarketTimestamp: null, freshnessBasis: 'http_response_receipt' as const } };
+    } catch (error) { this.catalogCache = undefined; throw error; }
   }
 
   async readCandles(symbol: string, interval: HyperliquidCandleInterval, startTime: number, endTime: number) {
