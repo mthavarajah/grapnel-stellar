@@ -1,5 +1,5 @@
 {
-  "observed_at": "2026-11-12T03:54:11.995Z",
+  "observed_at": "2026-11-12T18:34:04.616Z",
   "execution_status": "discovery_only",
   "registry_verified": true,
   "bridge_execution_verified": false,
@@ -7,7 +7,7 @@
   "tx_hash": null,
   "stellar": {
     "passphrase": "Test SDF Network ; September 2015",
-    "ledger": 5686400,
+    "ledger": 5696959,
     "contracts": {
       "messenger": {
         "address": "CDNG7HXAPBWICI2E3AUBP3YZWZELJLYSB6F5CC7WLDTLTHVM74SLRTHP",
@@ -158,8 +158,8 @@
   },
   "hyperEvm": {
     "chainId": "0x3e6",
-    "block": "0x422da4b",
-    "blockTimestamp": 1794455648,
+    "block": "0x423ab9f",
+    "blockTimestamp": 1794508439,
     "contracts": {
       "usdc": {
         "address": "0x2B3370eE501B4a559b57D449569354196457D8Ab",

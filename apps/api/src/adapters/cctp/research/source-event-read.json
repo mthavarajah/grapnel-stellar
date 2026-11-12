@@ -1,0 +1,38 @@
+{
+  "observedAt": "2026-11-12T18:38:16.285Z",
+  "network": "stellar-testnet",
+  "contract": "CBJ6MTCKKZG73PMDZCJMSFRD7DQEMI4FKDH7CGDSV4W6FHCRBCQAVVJY",
+  "ledger": 5697010,
+  "wasmHash": "8927f7389410044b35b1d3d0d7d42ea4ed0677dea18cb1bd89be4a980566c614",
+  "events": [
+    {
+      "name": "MessageSent",
+      "dataFormat": "scSpecEventDataFormatMap",
+      "prefixTopics": [
+        "message_sent"
+      ],
+      "params": [
+        {
+          "name": "message",
+          "type": "scSpecTypeBytes",
+          "location": "scSpecEventParamLocationData"
+        }
+      ],
+      "xdr": "AAAABQAAAClFbWl0dGVkIHdoZW4gYSBuZXcgbWVzc2FnZSBpcyBkaXNwYXRjaGVkLgAAAAAAAAAAAAALTWVzc2FnZVNlbnQAAAAAAQAAAAxtZXNzYWdlX3NlbnQAAAABAAAAAAAAAAdtZXNzYWdlAAAAAA4AAAAAAAAAAg=="
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://raw.githubusercontent.com/circlefin/stellar-cctp/45746f2c803198bc6cd586475eb3c925f12bb488/contracts/message-transmitter-v2/src/lib.rs",
+      "sha256": "265d29f0409fa49015d00eb056e3100ccfe7f6dd5009d329f876d129876f1ee2"
+    },
+    {
+      "url": "https://raw.githubusercontent.com/circlefin/stellar-cctp/45746f2c803198bc6cd586475eb3c925f12bb488/packages/cctp-utils/src/message/mod.rs",
+      "sha256": "91a16ac3fecf0fe3a441a92f1187d338ea9790fb86590aa7127f1da846785b21"
+    }
+  ],
+  "sourceToBytecodeBuildVerified": false,
+  "onchainWrites": 0,
+  "sourceBurnHash": null,
+  "execution_status": "discovery_only"
+}
