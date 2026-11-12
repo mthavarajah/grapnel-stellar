@@ -9,6 +9,7 @@ const ABI = parseAbi([
  'function exactInputSingle((address tokenIn,address tokenOut,uint24 fee,address recipient,uint256 amountIn,uint256 amountOutMinimum,uint160 sqrtPriceLimitX96) params) payable returns(uint256 amountOut)',
  'function multicall(uint256 deadline,bytes[] data) payable returns(bytes[] results)',
  'event Transfer(address indexed from,address indexed to,uint256 value)',
+ 'event Approval(address indexed owner,address indexed spender,uint256 value)',
 ]);
 function fail(message:string):never { throw new RobinhoodReadError(message); }
 function address(value:string):Hex { if(!isAddress(value,{strict:false}) || /^0x0{40}$/i.test(value)) fail('Invalid customer address');return getAddress(value); }
@@ -25,7 +26,7 @@ export type PrepareStockSwapInput = RobinhoodQuoteInput & {customerAddress:strin
 export const ROBINHOOD_FUNDING = Object.freeze({chainId:46630,asset:Object.freeze({symbol:'USDG',address:RH_TESTNET.settlement.address,decimals:6}),faucetUrl:'https://faucet.paxos.com/?token=USDG&network=ROBINHOOD',faucetAmount:'100',faucetClaimsPerWalletPerDay:1,faucetWalletLimit:'1 request per wallet per day',gasSymbol:'ETH',gasFaucetUrl:'https://faucet.testnet.chain.robinhood.com/',source:'https://docs.paxos.com/guides/stablecoin/usdg/testnet'});
 
 /** Prepares exact unsigned intents and reads reconciliation. No private key or broadcast API. */
-export function createRobinhoodTransactionAdapter(options:{rpcRequest?:RpcRequest;now?:()=>number}={}){
+export function createRobinhoodTransactionAdapter(options:{rpcRequest?:RpcRequest;now?:()=>number;confirmationMode?:'historical'|'events'}={}){
  const rpc=options.rpcRequest??robinhoodRpcRequest;const now=options.now??Date.now;
  const reader=createRobinhoodReader({rpcRequest:rpc,now});
  function validatePrepared(p:StockPreparedTransaction){
@@ -92,8 +93,9 @@ export function createRobinhoodTransactionAdapter(options:{rpcRequest?:RpcReques
   },
   async reconcileTransaction(input:{txHash:string;expectedPrepared:StockPreparedTransaction}){
    if(!/^0x[0-9a-f]{64}$/i.test(input.txHash))fail('Invalid transaction hash');
-   const expected=input.expectedPrepared; validatePrepared(expected);
+   const expected=input.expectedPrepared; validatePrepared(expected);const eventProof=options.confirmationMode==='events';
    const deployment=await reader.verifyDeployment();
+   if(eventProof){if(expected.symbol!=='USDG'){const multiplier=await reader.readStockMultiplier(expected.symbol);if(multiplier.multiplierBaseUnits!=='1000000000000000000')fail('Stock multiplier changed');}const code=await rpc('eth_getCode',[RH_TESTNET.settlement.address,deployment.blockTag]);if(typeof code!=='string'||keccak256(code as Hex)!==RH_TESTNET.settlement.codeHash||await call(RH_TESTNET.settlement.address,'decimals',[],deployment.blockTag)!==6)fail('Settlement asset identity changed');}
    const tx=await rpc('eth_getTransactionByHash',[input.txHash]) as Record<string,unknown>|null;
    if(!tx)return {state:'pending' as const,txHash:input.txHash};
    if(!same(tx.hash,input.txHash)||!same(tx.from,expected.from)||!same(tx.to,expected.to)||!same(tx.input,expected.data)||integerHex(tx.value)!==0n||integerHex(tx.chainId)!==46630n)fail('Submitted transaction does not match approved intent');
@@ -108,18 +110,22 @@ export function createRobinhoodTransactionAdapter(options:{rpcRequest?:RpcReques
    if(integerHex(receipt.status)===0n)return {state:'reverted' as const,txHash:input.txHash,blockNumber:height.toString()};
    if(integerHex(receipt.status)!==1n)fail('Unknown receipt status');
    if(expected.kind==='approval'){
+    if(eventProof){if(!Array.isArray(receipt.logs)||receipt.logs.length>200)fail('Approval logs missing');let matches=0;for(const raw of receipt.logs){const log=raw as any;if(!same(log.address,expected.tokenIn))continue;if(log.removed||!same(log.transactionHash,input.txHash)||!same(log.blockHash,String(receipt.blockHash))||integerHex(log.blockNumber)!==height)fail('Approval log is not canonical');try{const e=decodeEventLog({abi:ABI,eventName:'Approval',data:log.data,topics:log.topics});if(same(e.args.owner,expected.from)&&same(e.args.spender,RH_TESTNET.swapRouter02)&&e.args.value===BigInt(expected.amountInBaseUnits))matches++;}catch{}}
+     if(matches!==1)fail('Exact approval event missing');return{state:'confirmed' as const,txHash:input.txHash,blockNumber:height.toString(),confirmations:confirmations.toString(),allowanceBaseUnits:expected.amountInBaseUnits,allowance_basis:'canonical_approval_event' as const};}
     const allowance=await call(expected.tokenIn,'allowance',[expected.from,RH_TESTNET.swapRouter02],receipt.blockNumber as string) as bigint;
     if(allowance!==BigInt(expected.amountInBaseUnits))fail('Approval allowance differs from exact requested amount');
     return {state:'confirmed' as const,txHash:input.txHash,blockNumber:height.toString(),confirmations:confirmations.toString(),allowanceBaseUnits:allowance.toString()};
    }
    const deltas=new Map<string,bigint>([[expected.tokenIn.toLowerCase(),0n],[expected.tokenOut!.toLowerCase(),0n]]);
-   if(!Array.isArray(receipt.logs))fail('Receipt logs missing');
+   if(!Array.isArray(receipt.logs)||receipt.logs.length>200)fail('Receipt logs missing');
    for(const raw of receipt.logs){
     const log=raw as {address:string;data:Hex;topics:readonly Hex[]};const token=log.address.toLowerCase();if(!deltas.has(token))continue;
+    if(eventProof){const l=raw as any;if(l.removed||!same(l.transactionHash,input.txHash)||!same(l.blockHash,String(receipt.blockHash))||integerHex(l.blockNumber)!==height)fail('Token log is not canonical');}
     try{const event=decodeEventLog({abi:ABI,data:log.data,topics:log.topics as [Hex,...Hex[]],eventName:'Transfer'});let d=deltas.get(token)!;if(same(event.args.from,expected.from))d-=event.args.value;if(same(event.args.to,expected.from))d+=event.args.value;deltas.set(token,d);}catch{/* unrelated event on allowlisted token */}
    }
    const spent=-deltas.get(expected.tokenIn.toLowerCase())!;const received=deltas.get(expected.tokenOut!.toLowerCase())!;
    if(spent!==BigInt(expected.amountInBaseUnits)||received<BigInt(expected.minimumOutBaseUnits!))fail('Receipt asset deltas do not match approved swap');
+   if(eventProof)return{state:'confirmed' as const,txHash:input.txHash,blockNumber:height.toString(),confirmations:confirmations.toString(),amountInBaseUnits:spent.toString(),amountOutBaseUnits:received.toString(),balance_basis:'canonical_transfer_events' as const,balanceDeltas:[{token:expected.tokenIn,deltaBaseUnits:(-spent).toString()},{token:expected.tokenOut!,deltaBaseUnits:received.toString()}],price_basis:'testnet_pool_quote' as const};
    const snapshots=[];
    for(const token of [expected.tokenIn,expected.tokenOut!]){
     const before=await call(token,'balanceOf',[expected.from],'0x'+(height-1n).toString(16)) as bigint;const after=await call(token,'balanceOf',[expected.from],receipt.blockNumber as string) as bigint;

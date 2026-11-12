@@ -81,3 +81,25 @@ describe('Robinhood exact transaction intents',()=>{
  it('rejects unlimited approval amounts',async()=>{await expect(createRobinhoodTransactionAdapter({rpcRequest:fixture()}).prepareApproval({customerAddress:who,asset:'USDG',amountBaseUnits:(2n**256n-1n).toString()})).rejects.toThrow('reviewed Testnet limit');});
  it('publishes actual distinct USDG faucet configuration',()=>{const f=createRobinhoodTransactionAdapter().funding;expect(f.chainId).toBe(46630);expect(f.asset.symbol).toBe('USDG');expect(f.faucetAmount).toBe('100');});
 });
+
+describe('explicit canonical-event recovery without archived balances',()=>{
+ async function recovery(kind:'swap'|'approval'='swap',tamper=''){
+  const base=fixture(),factory=createRobinhoodTransactionAdapter({rpcRequest:base,now:()=>1000000}),prepared=kind==='swap'?(await factory.prepareSwap({customerAddress:who,symbol:'TSLA',side:'buy',amountInBaseUnits:'1000000',slippageBps:50})).prepared:(await factory.prepareApproval({customerAddress:who,asset:'USDG',amountBaseUnits:'1000000'})).prepared;
+  const hash='0x'+'13'.repeat(32),blockHash='0x'+'ab'.repeat(32),height='0x91510f6',received=1816226460641750698n,pool=STOCKS[0].poolAddress,approvalAbi=parseAbi(['event Approval(address indexed owner,address indexed spender,uint256 value)']);let archivedReads=0;
+  const log=(token:string,from:string,to:string,value:bigint)=>({address:token,transactionHash:hash,blockHash,blockNumber:height,removed:false,topics:encodeEventTopics({abi,eventName:'Transfer',args:{from:from as Hex,to:to as Hex}}),data:encodeAbiParameters([{type:'uint256'}],[value])});
+  const logs:any[]=kind==='swap'?[log(prepared.tokenIn,who,pool,1000000n),log(prepared.tokenOut!,pool,who,tamper==='minimum'?1n:received)]:[{address:prepared.tokenIn,transactionHash:hash,blockHash,blockNumber:height,removed:false,topics:encodeEventTopics({abi:approvalAbi,eventName:'Approval',args:{owner:who,spender:tamper==='spender'?pool:RH_TESTNET.swapRouter02}}),data:encodeAbiParameters([{type:'uint256'}],[1000000n])}];
+  if(tamper==='removed')logs[0].removed=true;if(tamper==='loghash')logs[0].transactionHash='0x'+'ff'.repeat(32);if(tamper==='logblock')logs[0].blockHash='0x'+'ff'.repeat(32);if(tamper==='missing')logs.length=0;
+  const rpc:RpcRequest=async(method,params)=>{
+   if(method==='eth_getTransactionByHash')return{hash,from:tamper==='sender'?pool:who,to:prepared.to,input:tamper==='calldata'?'0x':prepared.data,value:'0x0',chainId:tamper==='chain'?'0xa4b1':'0xb626',blockHash};
+   if(method==='eth_getTransactionReceipt')return{transactionHash:hash,from:who,to:prepared.to,blockNumber:height,blockHash,status:tamper==='reverted'?'0x0':'0x1',logs};
+   if(method==='eth_getBlockByNumber')return{hash:tamper==='reorg'?'0x'+'ff'.repeat(32):blockHash,timestamp:'0x3ed'};
+   if(method==='eth_call'&&(params[1]==='0x91510f5'||params[1]===height)){archivedReads++;throw Error('Historical state unavailable');}return base(method,params);
+  };
+  const result=await createRobinhoodTransactionAdapter({rpcRequest:rpc,confirmationMode:'events',now:()=>1006000}).reconcileTransaction({txHash:hash,expectedPrepared:prepared});return{result,archivedReads};
+ }
+ it('proves exact swap deltas from canonical token logs without inventing before/after snapshots',async()=>{const{result,archivedReads}=await recovery();expect(result).toMatchObject({state:'confirmed',balance_basis:'canonical_transfer_events',amountInBaseUnits:'1000000',amountOutBaseUnits:'1816226460641750698'});expect('balances'in result).toBe(false);expect(archivedReads).toBe(0);});
+ it('proves approval from the exact owner/spender/value event, without claiming a current allowance',async()=>{expect((await recovery('approval')).result).toMatchObject({state:'confirmed',allowanceBaseUnits:'1000000',allowance_basis:'canonical_approval_event'});});
+ it.each(['minimum','removed','loghash','logblock','missing','sender','calldata','chain','reorg'])('rejects %s in a supposed swap proof',async tamper=>{await expect(recovery('swap',tamper)).rejects.toThrow();});
+ it('does not accept an approval for a different spender',async()=>{await expect(recovery('approval','spender')).rejects.toThrow();});
+ it('records actual canonical reverts as reverted instead of successful swaps',async()=>{expect((await recovery('swap','reverted')).result.state).toBe('reverted');});
+});

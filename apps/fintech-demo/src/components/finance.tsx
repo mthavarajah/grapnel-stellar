@@ -1,4 +1,5 @@
 "use client";
+import {StockActivity} from "./stock-activity";
 import {RobinhoodExecution} from "./robinhood-execution";
 import {GroupedAssets} from "./grouped-assets";
 import {RobinhoodFunding} from './robinhood-funding';
@@ -416,7 +417,7 @@ function FinanceShell({ page, auth, initialCategory }: { page: string; auth?: Au
   const [overviewLoading,setOverviewLoading] = useState(false);
   const [balances, setBalances] = useState<any[]>([]);
   const [networkAssets,setNetworkAssets]=useState<any[]>([]);
-  useEffect(()=>{let alive=true;setNetworkAssets([]);if(session){void api("grapnel/network-assets").then(value=>{if(alive&&value.scope?.customer_id===session.customer_id&&value.scope?.wallet_id===session.wallet_id&&Array.isArray(value.balances))setNetworkAssets(value.balances);}).catch(()=>{});}return()=>{alive=false;};},[session?.customer_id,session?.wallet_id,balances]);
+  useEffect(()=>{let alive=true,inFlight=false;setNetworkAssets([]);const read=async()=>{if(!session||inFlight)return;inFlight=true;try{const value=await api("grapnel/network-assets");if(alive&&value.scope?.customer_id===session.customer_id&&value.scope?.wallet_id===session.wallet_id&&Array.isArray(value.balances))setNetworkAssets(value.balances);}catch{}finally{inFlight=false;}};void read();const changed=()=>{void read();};window.addEventListener('grapnel:stocks-updated',changed);return()=>{alive=false;window.removeEventListener('grapnel:stocks-updated',changed);};},[session?.customer_id,session?.wallet_id,balances]);
   const [assets, setAssets] = useState<any[]>([]);
   const [fundingError, setFundingError] = useState("");
   const [markets, setMarkets] = useState<any[]>([]);
@@ -1165,7 +1166,7 @@ function FinanceShell({ page, auth, initialCategory }: { page: string; auth?: Au
                     Wallet balances
                   </span>
                 </div>
-                <BalanceTable valuation={walletValuation} balances={[...balances.map(b=>({...b,network_label:"Stellar",feature_label:"Wallet"})),...networkAssets]} connected={!!session} />
+                <BalanceTable valuation={walletValuation} balances={[...balances.map(b=>({...b,network_label:"Stellar",feature_label:"Wallet"})),...networkAssets.filter(b=>!(["TSLA","AMZN","PLTR","NFLX","AMD"].includes(b.asset?.code)&&typeof b.wallet_amount==="string"&&/^0+(?:\.0+)?$/.test(b.wallet_amount)))]} connected={!!session} />
               </section>
               <section className="market-overview" aria-label="Market overview" data-testid="market-overview">
                 {overviewGroups.filter(group=>capability(group.module)?.enabled).map(group=>{
@@ -1201,7 +1202,7 @@ function FinanceShell({ page, auth, initialCategory }: { page: string; auth?: Au
           {fundingPage === "fund" && <>
             <section className="section" aria-label="Current wallet balances">
               <div className="section-heading"><h2>Your wallet balances</h2></div>
-              <BalanceTable valuation={walletValuation} balances={[...balances.map(b=>({...b,network_label:"Stellar",feature_label:"Wallet"})),...networkAssets]} connected={!!session} />
+              <BalanceTable valuation={walletValuation} balances={[...balances.map(b=>({...b,network_label:"Stellar",feature_label:"Wallet"})),...networkAssets.filter(b=>!(["TSLA","AMZN","PLTR","NFLX","AMD"].includes(b.asset?.code)&&typeof b.wallet_amount==="string"&&/^0+(?:\.0+)?$/.test(b.wallet_amount)))]} connected={!!session} />
             </section>
           </>}
           {(fundingPage === "fund" || fundingPage === "return") && (
@@ -1591,6 +1592,7 @@ function FinanceShell({ page, auth, initialCategory }: { page: string; auth?: Au
                     : "Sign in to view your activity"}
                 </span>
               </div>
+              {session&&capability("trade.stocks")?.enabled&&<StockActivity api={api} customerId={session.customer_id} walletId={session.wallet_id}/>}
               {operations.length ? (
                 <div className="activity-list">
                   {operations.map((op) => (
@@ -1630,13 +1632,13 @@ function FinanceShell({ page, auth, initialCategory }: { page: string; auth?: Au
                     </button>
                   ))}
                 </div>
-              ) : (
+              ) : !capability("trade.stocks")?.enabled ? (
                 <Empty
                   icon="activity"
                   title="No activity yet."
-                  text="Your transfers and Earn actions will appear here."
+                  text="Your confirmed transfers and trades appear here."
                 />
-              )}
+              ) : null}
             </section>
           )}
 

@@ -85,3 +85,8 @@ Authenticated read of the current customer Stellar wallet returned a 66-characte
 - New Privy apps must enable identity tokens: https://docs.privy.io/user-management/users/identity-tokens . Verified new-app login after enabling that setting; saved fintech sessions now bind to the app ID.
 - CCTP prerequisites and actual contract/event observations refreshed in `adapters/cctp/research/testnet-registry-read.json` and `source-event-read.json`; read-only observations are not execution proof. Existing-mainnet-state and Testnet receive-limit ambiguity remain in https://developers.circle.com/cctp/concepts/cctp-on-hypercore . No verified remaining-capacity counter was found.
 - Official Robinhood USDG source: https://docs.paxos.com/guides/stablecoin/usdg/testnet and https://faucet.paxos.com/?token=USDG&network=ROBINHOOD . Sanitized funding/router evidence under `adapters/robinhood/research/`. All five markets use verified Testnet USDG pools; reference prices come from Robinhood official REST and never substitute for execution quotes.
+
+### November12 — Stocks completion
+
+- USDG token artwork: official Global Dollar brand guidelines https://globaldollar.com/brand, hosted token logo https://424565.fs1.hubspotusercontent-na1.net/hubfs/424565/GDN_USDG_Token_32x32.png. Downloaded unchanged for local asset display; artwork does not establish token identity.
+- Robinhood delayed recovery re-read: all ten existing own-QA buy/sell hashes independently confirmed through canonical transaction/receipt/ERC20-event reads. Exact proof and timestamps in `evidence/robinhood-recovery-verification.json`. No new chain transactions or fabricated historical balances were used.

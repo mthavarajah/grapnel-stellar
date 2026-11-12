@@ -1,0 +1,248 @@
+{
+  "network": "robinhood-testnet",
+  "chain_id": 46630,
+  "observed_at": "2026-11-12T21:41:17.311Z",
+  "proof_method": "canonical_transfer_events",
+  "results": [
+    {
+      "symbol": "TSLA",
+      "side": "buy",
+      "proof": {
+        "state": "confirmed",
+        "txHash": "0x47c3c20eca6f3d07b1bbaddb393c9b93a464bdd569740096a29c71207047ebe3",
+        "blockNumber": "152479873",
+        "confirmations": "15371",
+        "amountInBaseUnits": "1000000",
+        "amountOutBaseUnits": "1816226460641750698",
+        "balance_basis": "canonical_transfer_events",
+        "balanceDeltas": [
+          {
+            "token": "0x7E955252E15c84f5768B83c41a71F9eba181802F",
+            "deltaBaseUnits": "-1000000"
+          },
+          {
+            "token": "0xC9f9c86933092BbbfFF3CCb4b105A4A94bf3Bd4E",
+            "deltaBaseUnits": "1816226460641750698"
+          }
+        ],
+        "price_basis": "testnet_pool_quote"
+      }
+    },
+    {
+      "symbol": "TSLA",
+      "side": "sell",
+      "proof": {
+        "state": "confirmed",
+        "txHash": "0x07203ad06250b6c6e0b06ab0f224cb77a6c79747cdd30b1ead9cbb8d39ee90c4",
+        "blockNumber": "152479937",
+        "confirmations": "15321",
+        "amountInBaseUnits": "1816226460641750698",
+        "amountOutBaseUnits": "996146",
+        "balance_basis": "canonical_transfer_events",
+        "balanceDeltas": [
+          {
+            "token": "0xC9f9c86933092BbbfFF3CCb4b105A4A94bf3Bd4E",
+            "deltaBaseUnits": "-1816226460641750698"
+          },
+          {
+            "token": "0x7E955252E15c84f5768B83c41a71F9eba181802F",
+            "deltaBaseUnits": "996146"
+          }
+        ],
+        "price_basis": "testnet_pool_quote"
+      }
+    },
+    {
+      "symbol": "AMZN",
+      "side": "buy",
+      "proof": {
+        "state": "confirmed",
+        "txHash": "0x99cc4748d13f16155e414114d1092c2328169859127214117311d8136c492120",
+        "blockNumber": "152481053",
+        "confirmations": "14216",
+        "amountInBaseUnits": "1000000",
+        "amountOutBaseUnits": "6024160986409849632",
+        "balance_basis": "canonical_transfer_events",
+        "balanceDeltas": [
+          {
+            "token": "0x7E955252E15c84f5768B83c41a71F9eba181802F",
+            "deltaBaseUnits": "-1000000"
+          },
+          {
+            "token": "0x5884aD2f920c162CFBbACc88C9C51AA75eC09E02",
+            "deltaBaseUnits": "6024160986409849632"
+          }
+        ],
+        "price_basis": "testnet_pool_quote"
+      }
+    },
+    {
+      "symbol": "AMZN",
+      "side": "sell",
+      "proof": {
+        "state": "confirmed",
+        "txHash": "0x09dc058fa32b72b9a9b6c9a3765b5540678949cabb7cf96bf0c6d2a3285135f8",
+        "blockNumber": "152481101",
+        "confirmations": "14182",
+        "amountInBaseUnits": "6024160986409849632",
+        "amountOutBaseUnits": "995366",
+        "balance_basis": "canonical_transfer_events",
+        "balanceDeltas": [
+          {
+            "token": "0x5884aD2f920c162CFBbACc88C9C51AA75eC09E02",
+            "deltaBaseUnits": "-6024160986409849632"
+          },
+          {
+            "token": "0x7E955252E15c84f5768B83c41a71F9eba181802F",
+            "deltaBaseUnits": "995366"
+          }
+        ],
+        "price_basis": "testnet_pool_quote"
+      }
+    },
+    {
+      "symbol": "PLTR",
+      "side": "buy",
+      "proof": {
+        "state": "confirmed",
+        "txHash": "0x9445f094b6d49affda015637a1a47a990c2b8a0754e23f9f295f660a2399a485",
+        "blockNumber": "152481250",
+        "confirmations": "14049",
+        "amountInBaseUnits": "1000000",
+        "amountOutBaseUnits": "6491469702402764327",
+        "balance_basis": "canonical_transfer_events",
+        "balanceDeltas": [
+          {
+            "token": "0x7E955252E15c84f5768B83c41a71F9eba181802F",
+            "deltaBaseUnits": "-1000000"
+          },
+          {
+            "token": "0x1FBE1a0e43594b3455993B5dE5Fd0A7A266298d0",
+            "deltaBaseUnits": "6491469702402764327"
+          }
+        ],
+        "price_basis": "testnet_pool_quote"
+      }
+    },
+    {
+      "symbol": "PLTR",
+      "side": "sell",
+      "proof": {
+        "state": "confirmed",
+        "txHash": "0x3ae6754d2439b64303a6acd53e7d992430f55d59cfe5e9eaa4a0f064d27c441a",
+        "blockNumber": "152481304",
+        "confirmations": "14008",
+        "amountInBaseUnits": "6491469702402764327",
+        "amountOutBaseUnits": "995189",
+        "balance_basis": "canonical_transfer_events",
+        "balanceDeltas": [
+          {
+            "token": "0x1FBE1a0e43594b3455993B5dE5Fd0A7A266298d0",
+            "deltaBaseUnits": "-6491469702402764327"
+          },
+          {
+            "token": "0x7E955252E15c84f5768B83c41a71F9eba181802F",
+            "deltaBaseUnits": "995189"
+          }
+        ],
+        "price_basis": "testnet_pool_quote"
+      }
+    },
+    {
+      "symbol": "NFLX",
+      "side": "buy",
+      "proof": {
+        "state": "confirmed",
+        "txHash": "0xa82a9e231a06ba660caf788527e6a48cc501eb86657499a9c4a8b2126c68a6ab",
+        "blockNumber": "152481537",
+        "confirmations": "13784",
+        "amountInBaseUnits": "1000000",
+        "amountOutBaseUnits": "1339087383611164482",
+        "balance_basis": "canonical_transfer_events",
+        "balanceDeltas": [
+          {
+            "token": "0x7E955252E15c84f5768B83c41a71F9eba181802F",
+            "deltaBaseUnits": "-1000000"
+          },
+          {
+            "token": "0x3b8262A63d25f0477c4DDE23F83cfe22Cb768C93",
+            "deltaBaseUnits": "1339087383611164482"
+          }
+        ],
+        "price_basis": "testnet_pool_quote"
+      }
+    },
+    {
+      "symbol": "NFLX",
+      "side": "sell",
+      "proof": {
+        "state": "confirmed",
+        "txHash": "0x560261e727e517050cdb971d758ac46955ba2a9fbe6a55185966f3437b278e14",
+        "blockNumber": "152481584",
+        "confirmations": "13745",
+        "amountInBaseUnits": "1339087383611164482",
+        "amountOutBaseUnits": "995405",
+        "balance_basis": "canonical_transfer_events",
+        "balanceDeltas": [
+          {
+            "token": "0x3b8262A63d25f0477c4DDE23F83cfe22Cb768C93",
+            "deltaBaseUnits": "-1339087383611164482"
+          },
+          {
+            "token": "0x7E955252E15c84f5768B83c41a71F9eba181802F",
+            "deltaBaseUnits": "995405"
+          }
+        ],
+        "price_basis": "testnet_pool_quote"
+      }
+    },
+    {
+      "symbol": "AMD",
+      "side": "buy",
+      "proof": {
+        "state": "confirmed",
+        "txHash": "0x207ebefa103bfe43941c9a4615e1dde7b0a69cbed2e97bb4c5ccf1d19ca54566",
+        "blockNumber": "152481935",
+        "confirmations": "13405",
+        "amountInBaseUnits": "1000000",
+        "amountOutBaseUnits": "4706781713605521515",
+        "balance_basis": "canonical_transfer_events",
+        "balanceDeltas": [
+          {
+            "token": "0x7E955252E15c84f5768B83c41a71F9eba181802F",
+            "deltaBaseUnits": "-1000000"
+          },
+          {
+            "token": "0x71178BAc73cBeb415514eB542a8995b82669778d",
+            "deltaBaseUnits": "4706781713605521515"
+          }
+        ],
+        "price_basis": "testnet_pool_quote"
+      }
+    },
+    {
+      "symbol": "AMD",
+      "side": "sell",
+      "proof": {
+        "state": "confirmed",
+        "txHash": "0x006d7bfae934653a0acdb6086d2e59713f7a8c189eeac31fa7acc7cdec5ff49d",
+        "blockNumber": "152481998",
+        "confirmations": "13352",
+        "amountInBaseUnits": "4706781713605521515",
+        "amountOutBaseUnits": "995212",
+        "balance_basis": "canonical_transfer_events",
+        "balanceDeltas": [
+          {
+            "token": "0x71178BAc73cBeb415514eB542a8995b82669778d",
+            "deltaBaseUnits": "-4706781713605521515"
+          },
+          {
+            "token": "0x7E955252E15c84f5768B83c41a71F9eba181802F",
+            "deltaBaseUnits": "995212"
+          }
+        ],
+        "price_basis": "testnet_pool_quote"
+      }
+    }
+  ]
+}

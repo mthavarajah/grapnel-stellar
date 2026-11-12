@@ -1,5 +1,5 @@
 {
-  "observed_at": "2026-11-12T21:26:49.641436+00:00",
+  "observed_at": "2026-11-12T21:50:15.955545+00:00",
   "network": "robinhood-testnet",
   "chain_id": 46630,
   "public_deployment": false,
@@ -43,15 +43,23 @@
   ],
   "funding_evidence": "evidence/robinhood-customer-funding.json",
   "checks": {
-    "offline_tests_passed": 2157,
-    "offline_tests_skipped": 184,
-    "stock_order_real_pg_tests_passed": 12,
+    "offline_tests_passed": 2180,
+    "offline_tests_skipped": 185,
+    "stock_order_real_pg_tests_passed": 13,
     "stock_treasury_real_pg_tests_passed": 12,
     "frontend_build": "passed",
     "workspace_types": "passed",
     "api_health_http": 200,
     "stocks_page_http": 200,
-    "all_five_markets_testnet_verified": true
+    "all_five_markets_testnet_verified": true,
+    "first_trade_zero_allowance_regression": "passed",
+    "canonical_event_recovery_tests": "passed",
+    "signed_order_background_reconciliation": "implemented and tested",
+    "stock_balances_in_assets": "implemented; all five exact token balances read",
+    "stock_activity": "implemented; actual customer funding record read",
+    "usd_g_logo": "official local asset"
   },
-  "coordination": "All subagents stopped; Stocks-only sequential work; customer Privy execution testing is next."
+  "coordination": "All subagents stopped; Stocks-only sequential work; customer Privy execution testing is next.",
+  "recovery_evidence": "evidence/robinhood-recovery-verification.json",
+  "customer_acceptance_pending": "Accessible Chrome session is signed out; actual customer Privy login/approval required."
 }

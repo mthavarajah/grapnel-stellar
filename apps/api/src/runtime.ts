@@ -1,3 +1,4 @@
+import {registerStockActivityRoute} from './modules/stocks/activity.js';
 import {RobinhoodTreasury} from './modules/stocks/treasury.js';
 import {registerRobinhoodTreasuryRoutes} from './modules/stocks/treasury-routes.js';
 import fs from 'node:fs';
@@ -324,6 +325,8 @@ export async function createRuntime(pool?:Pool,marginRoutes:RuntimeMarginBinding
    await registerPerpetualCustomerRoutes(app,perpetualService,()=>hasGate1Proof(chain));
    await registerPerpetualFundingRoutes(app,{operations,setup:circleSetup,verifyGate1:()=>hasGate1Proof(chain)});
    await registerCctpCustomerRoutes(app,cctpRuntime.coordinator,cctpRuntime.execution);
+   let stockSettling=false;const settleStocks=async()=>{if(stockSettling)return;stockSettling=true;try{await stockExecution.reconcilePending();}finally{stockSettling=false;}};const stockTimer=setInterval(()=>{void settleStocks().catch(()=>{});},3000);stockTimer.unref();app.addHook('onClose',async()=>{clearInterval(stockTimer);});
+   await registerStockActivityRoute(app,{pool:db,readWallets:readEthereumWallets});
    await registerRobinhoodFundingRoutes(app,{readEthereumWallets});
    await registerRobinhoodTreasuryRoutes(app,{treasury:stockTreasury,readWallets:readEthereumWallets,verifyGate1:()=>hasGate1Proof(chain)});
    await registerRobinhoodExecutionRoutes(app,{service:stockExecution.service,verifyGate1:()=>hasGate1Proof(chain)});

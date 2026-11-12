@@ -25,6 +25,9 @@ export type RobinhoodExecutionCardProps = RobinhoodExecutionProps & {
 const terminal = new Set(['completed', 'cancelled', 'reverted']);
 const display = (v: string | null | undefined) => v == null ? '—' : formatTokenAmount(v);
 const safeError = (cause: unknown) => { const message = cause instanceof Error ? cause.message : 'This request could not be completed.'; return /private|secret|Privy|provider|[A-Z]+(?:_[A-Z0-9]+)+/.test(message) ? 'This action is unavailable. Check its status before trying again.' : message; };
+export function stockBalanceAtomic(value:string,decimals:number):bigint{return /^0+(?:\.0+)?$/.test(value)?0n:toAtomic(value,decimals);}
+export function stockAmountFeedback(value:string,side:'buy'|'sell',symbol:string,balance:string|null|undefined,feeBalance:string|null|undefined):string|null{try{const decimals=side==='buy'?6:18,n=stockBalanceAtomic(value,decimals),cap=side==='buy'?20000000n:10n*10n**18n,asset=side==='buy'?'USDG':symbol;if(n<=0n)return 'Enter an amount greater than zero.';if(n>cap)return `Maximum per order: ${side==='buy'?'20 USDG':'10 '+symbol}.`;if(balance==null)return 'Your balance is updating.';if(n>stockBalanceAtomic(balance,decimals))return `Available: ${display(balance)} ${asset}.`;if(feeBalance==null)return 'Checking your fee balance.';if(stockBalanceAtomic(feeBalance,18)<=0n)return 'Get stock funds above to cover transaction fees.';return null;}catch{return 'Enter a valid amount.';}}
+export function stockTradeInput(value:string,side:'buy'|'sell',symbol:string,balance:string|null|undefined,allowance:string|null|undefined,feeBalance:string|null|undefined){let feedback=stockAmountFeedback(value,side,symbol,balance,feeBalance);if(!feedback&&allowance==null)feedback='Your spending approval is updating.';try{const decimals=side==='buy'?6:18,n=stockBalanceAtomic(value,decimals),approved=allowance==null?null:stockBalanceAtomic(allowance,decimals);return{valid:feedback===null,needsApproval:feedback===null&&approved!==null&&n>approved,feedback};}catch{return{valid:false,needsApproval:false,feedback:'Enter a valid amount.'};}}
 /** Uses only the currently authenticated embedded wallet; rendering never creates or signs. */
 export function RobinhoodExecution(props: RobinhoodExecutionProps) { const { wallets, ready } = useWallets(), { createWallet } = useCreateWallet(), { signTransaction } = useSignTransaction(), selected = wallets.find(w => w.walletClientType === 'privy'); const wallet: RobinhoodCustomerWallet | null = selected ? { address: selected.address, provider: async () => { const p = await selected.getEthereumProvider(); return { request: input => p.request(input as Parameters<typeof p.request>[0]) }; }, sign: async (input) => (await signTransaction(input, { address: selected.address })).signature, switchNetwork: async () => { await selected.switchChain(46630); } } : null; return <RobinhoodExecutionCard {...props} wallet={wallet} walletsReady={ready} onCreate={() => createWallet()}/>; }
 export function RobinhoodExecutionCard({ api, customerId, walletId, symbol, wallet, walletsReady, onCreate }: RobinhoodExecutionCardProps) {
@@ -49,7 +52,7 @@ export function RobinhoodExecutionCard({ api, customerId, walletId, symbol, wall
     }
     catch { /* The server retains the authoritative one-use send claim. */ } };
     const refresh = async (captured = owner) => { const status = inspectRobinhoodStatus(await api(`grapnel/stocks-status?market_id=robinhood-testnet:stocks:${symbol}` + (account ? '&account_address=' + encodeURIComponent(account) : '')), scope(), account || null, symbol); guard(captured); tenant.current = { identity, businessId: status.scope.business_id }; setSnapshot(status); return status; };
-    const accept = (value: unknown, captured: string, id?: string) => { const checked = inspectRobinhoodRecord(value, reviewedScope(), account, undefined, id); guard(captured); setRecord(checked); setUncertain(false); return checked; };
+    const accept = (value: unknown, captured: string, id?: string) => { const checked = inspectRobinhoodRecord(value, reviewedScope(), account, undefined, id); guard(captured); setRecord(checked); setUncertain(false);if(terminal.has(checked.state))window.dispatchEvent(new Event('grapnel:stocks-updated')); return checked; };
     const recover = async (captured = owner, id?: string) => { await refresh(captured); if (!account)
         return; const value = await api('grapnel/stocks-request' + (id ? '?request_id=' + encodeURIComponent(id) : '')); guard(captured); if (value) {
         accept(value, captured, id);
@@ -90,15 +93,7 @@ export function RobinhoodExecutionCard({ api, customerId, walletId, symbol, wall
         return; const timer = setInterval(() => setClock(Date.now()), 500); return () => clearInterval(timer); }, [record?.id]);
     const foreign = !!record && record.market_id !== `robinhood-testnet:stocks:${symbol}`, pending = !!record && !terminal.has(record.state), ready = !!wallet && !!snapshot?.execution_available && !loading, expired = !!record && Date.parse(record.expires_at) <= clock;
     const balance = side === 'buy' ? snapshot?.settlement_balance : snapshot?.stock_balance, allowance = side === 'buy' ? snapshot?.settlement_allowance : snapshot?.stock_allowance, source = side === 'buy' ? 'USDG' : symbol, output = side === 'buy' ? symbol : 'USDG';
-    let valid = false, needsApproval = false;
-    try {
-        const n = toAtomic(amount, side === 'buy' ? 6 : 18);
-        valid = n > 0n && n <= (side === 'buy' ? 20000000n : 10n * 10n ** 18n) && balance != null && n <= toAtomic(balance, side === 'buy' ? 6 : 18);
-        needsApproval = allowance != null && n > toAtomic(allowance, side === 'buy' ? 6 : 18);
-        if (allowance == null)
-            valid = false;
-    }
-    catch { /* Invalid input never reaches preparation or signing. */ }
+    const {valid,needsApproval,feedback:amountFeedback}=stockTradeInput(amount,side,symbol,balance,allowance,snapshot?.native_balance);
     const prepare = () => run(async (captured) => { if (!ready || !valid || pending || uncertain || foreign)
         throw Error('Check the current balance and request before reviewing.'); const input: RobinhoodDraft = { symbol, side, amount, kind: needsApproval ? 'approval' : 'swap', slippageBps: 50 }; preparationKey.current ??= crypto.randomUUID(); setDraft(input); setReviewing(false); setUncertain(true); const value = await api('grapnel/stocks-prepare', { account_address: account, kind: input.kind, market_id: `robinhood-testnet:stocks:${symbol}`, side: input.side, amount: input.amount, slippage_bps: input.slippageBps }, 'POST', preparationKey.current); guard(captured); const checked = inspectRobinhoodApproval(value, reviewedScope(), account, input); setRecord(checked); setReviewing(true); setUncertain(false); preparationKey.current = null; }, 'Preparing');
     const resume = () => run(async (captured) => { if (!record || foreign || attempts.current.has(record.id))
@@ -112,10 +107,12 @@ export function RobinhoodExecutionCard({ api, customerId, walletId, symbol, wall
   {!walletsReady ? <ProgressIndicator label="Loading account" spinning/> : !wallet ? <button type="button" className="button outline wide" disabled={!!busy} onClick={() => run(async (captured) => { await onCreate(); guard(captured); }, 'Creating account')}>Enable stocks</button> : null}
   {loading && <ProgressIndicator label="Loading balances" spinning/>}
   <div className="public-order-direction" role="group" aria-label="Trade direction"><button type="button" aria-pressed={side === 'buy'} disabled={!!busy || pending || uncertain} onClick={() => setSide('buy')}>Buy</button><button type="button" aria-pressed={side === 'sell'} disabled={!!busy || pending || uncertain} onClick={() => setSide('sell')}>Sell</button></div>
-  <label>Amount ({source})<input aria-label="Stock trade amount" inputMode="decimal" value={amount} disabled={!!busy || pending || uncertain} onChange={event => setAmount(event.target.value)}/></label>
+  <div className="detail-row"><span>Amount ({source})</span><button type="button" className="text-button" disabled={!!busy||pending||uncertain||!balance} onClick={()=>{if(!balance)return;try{const decimals=side==='buy'?6:18,n=stockBalanceAtomic(balance,decimals),cap=side==='buy'?20000000n:10n*10n**18n;setAmount(fromAtomic(n<cap?n:cap,decimals));}catch{setError('Your available balance is updating.');}}}>Max</button></div>
+  <label className="sr-only">Amount ({source})</label><label><input aria-label="Stock trade amount" inputMode="decimal" value={amount} disabled={!!busy || pending || uncertain} onChange={event => setAmount(event.target.value)}/></label>
   <div className="detail-row"><span>Available {source}</span><strong>{display(balance)} {source}</strong></div>
   <div className="detail-row"><span>{side === 'buy' ? symbol : 'USDG'} balance</span><strong>{display(side === 'buy' ? snapshot?.stock_balance : snapshot?.settlement_balance)} {output}</strong></div>
   <p className="small muted">ETH for fees: {display(snapshot?.native_balance)}</p><button type="button" className="button wide" disabled={!!busy || !ready || !valid || pending || uncertain || foreign} onClick={prepare}>Review</button>
+  {!loading&&amountFeedback&&<p className="swap-action-error" role="status">{amountFeedback}</p>}
   {needsApproval && valid && !pending && <p className="small muted">Approve {display(amount)} {source} before trading.</p>}
   {wallet && snapshot && !snapshot.execution_available && !loading && <p className="small muted" role="status">Trading for this stock is being verified.</p>}
   {foreign && record && <p className="small muted" role="status">Select {robinhoodMarketSymbol(record.market_id)} to finish the pending request.</p>}

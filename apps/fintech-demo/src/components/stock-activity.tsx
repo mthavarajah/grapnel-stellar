@@ -1,0 +1,18 @@
+"use client";
+import {useEffect,useState} from 'react';
+import {formatTokenAmount} from '@grapnel/contracts';
+import {AssetLogo} from './asset-logo';
+import {ProgressIndicator} from './operation-progress';
+export type StockActivityItem={id:string;kind:'buy'|'sell'|'approval'|'funding';state:string;symbol:string;approval_asset?:string;amount:string|null;paid_amount:string|null;received_amount:string|null;tx_hash:string|null;created_at:string};
+const qty=(v:unknown):v is string=>typeof v==='string'&&/^(0|[1-9]\d*)(\.\d+)?$/.test(v);
+export function stockActivityLabel(row:StockActivityItem){const done=row.state==='completed',amount=qty(row.amount)?formatTokenAmount(row.amount):null;
+ if(row.kind==='funding')return done&&amount?`Received ${amount} USDG + 0.001 ETH`:'Receive stock funds';
+ if(row.kind==='approval')return `${done?'Approved':'Approve'}${amount?' '+amount+' '+(row.approval_asset??''):''} for ${row.symbol} trading`;
+ if(done&&amount)return `${row.kind==='buy'?'Bought':'Sold'} ${amount} ${row.symbol}`;
+ return `${row.kind==='buy'?'Buy':'Sell'} ${row.symbol}`;
+}
+export function StockActivityRows({items}:{items:StockActivityItem[]}){return <div className="activity-list" aria-label="Stock activity">{items.map(row=>{const completed=row.state==='completed',label=({completed:'Completed',reverted:'Failed',cancelled:'Expired',unknown:'Checking transaction',prepared:'Processing',sending:'Submitted',confirming:'Confirming'}as Record<string,string>)[row.state]??'Checking transaction',hash=row.tx_hash&&/^0x[a-f0-9]{64}$/i.test(row.tx_hash),content=<><span className="activity-icon"><AssetLogo symbol={row.symbol} size={26}/></span><div><strong>{stockActivityLabel(row)}</strong>{completed&&row.kind==='buy'&&qty(row.paid_amount)&&<small>Paid {formatTokenAmount(row.paid_amount)} USDG</small>}{completed&&row.kind==='sell'&&qty(row.received_amount)&&<small>Received {formatTokenAmount(row.received_amount)} USDG</small>}</div><span className={'status-pill '+(completed?'success':'')}><ProgressIndicator label={label} completed={completed} spinning={['sending','confirming','unknown'].includes(row.state)}/></span></>;return hash?<a className="activity-item" key={row.id} href={'https://explorer.testnet.chain.robinhood.com/tx/'+row.tx_hash} target="_blank" rel="noreferrer">{content}</a>:<div className="activity-item" key={row.id}>{content}</div>;})}</div>;}
+export function StockActivity({api,customerId,walletId}:{api:(path:string)=>Promise<unknown>;customerId:string;walletId:string}){const[items,setItems]=useState<StockActivityItem[]>([]),[loading,setLoading]=useState(true),[unavailable,setUnavailable]=useState(false);
+ useEffect(()=>{let active=true;setItems([]);setLoading(true);setUnavailable(false);let pending=false;const read=async()=>{if(pending)return;pending=true;try{const value=await api('grapnel/stocks-activity')as{items:StockActivityItem[]};if(!Array.isArray(value.items)||value.items.some(r=>!r||!['buy','sell','approval','funding'].includes(r.kind)||typeof r.symbol!=='string'))throw Error('Invalid activity');if(active){setItems(value.items);setUnavailable(false);}}catch{if(active)setUnavailable(true);}finally{pending=false;if(active)setLoading(false);}};void read();const timer=setInterval(()=>void read(),10000);return()=>{active=false;clearInterval(timer);};},[api,customerId,walletId]);
+ return <section aria-label="Stock transactions">{loading?<p><ProgressIndicator label="Loading stock activity" spinning/></p>:items.length?<StockActivityRows items={items}/>:!unavailable?<p className="small muted">No stock transactions yet.</p>:null}{unavailable&&<p className="small muted" role="status">Stock activity is updating.</p>}</section>;
+}

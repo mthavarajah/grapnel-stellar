@@ -1,0 +1,10 @@
+import {describe,it,expect,vi} from 'vitest';
+import {stockOrderActivity,readStockActivity} from './activity.js';
+const row={id:'one',market_id:'robinhood-testnet:stocks:TSLA',kind:'swap',side:'buy',state:'completed',tx_hash:'0x'+'11'.repeat(32),created_at:'2026-11-12T20:00:00Z',prepared:{intent:{amountInBaseUnits:'1000000',minimumOutBaseUnits:'990000000000000000'}},proof:{state:'confirmed',txHash:'0x'+'11'.repeat(32),blockNumber:'100',confirmations:'2',amountInBaseUnits:'1000000',amountOutBaseUnits:'1000000000000000000'}};
+const c={businessId:'b',customerId:'c',walletId:'w',walletAddress:'G',privyUserId:'did:privy:fixture'};
+describe('stock activity source records',()=>{
+ it('uses confirmed exact amounts and does not call an approval a stock purchase',()=>{expect(stockOrderActivity(row)).toMatchObject({kind:'buy',amount:'1.000000000000000000',paid_amount:'1.000000',state:'completed'});expect(stockOrderActivity({...row,kind:'approval',proof:{...row.proof,allowanceBaseUnits:'1000000'}})).toMatchObject({kind:'approval',amount:'1.000000'});});
+ it('never treats a local completed flag or HTTP acknowledgement as a fill',()=>{expect(stockOrderActivity({...row,proof:null})).toMatchObject({state:'unknown',paid_amount:null,received_amount:null});expect(stockOrderActivity({...row,proof:{...row.proof,confirmations:'1'}})).toMatchObject({state:'unknown'});});
+ it('scopes orders and grants by all tenant/customer/wallet/current-account fields',async()=>{const query=vi.fn(async()=>({rows:[]}));await readStockActivity({query}as never,c,async()=>[{address:'0x'+'22'.repeat(20)}]);expect(query).toHaveBeenCalledTimes(2);for(const[sql,args]of query.mock.calls as unknown as [string,unknown[]][]){expect(sql).toContain('business_id=$1');expect(sql).toContain('customer_id=$2');expect(sql).toContain('wallet_id=$3');expect(args).toEqual(['b','c','w',['0x'+'22'.repeat(20)]]);}});
+ it('returns no records without a currently owned EVM wallet',async()=>{const query=vi.fn();expect(await readStockActivity({query}as never,c,async()=>[])).toEqual({items:[]});expect(query).not.toHaveBeenCalled();});
+});

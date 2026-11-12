@@ -68,6 +68,7 @@ export async function GET(
       await requireModule('capital.wallets',s);
       return json(await grapnel(`/capital/wallets/${s.walletId}/network-assets?customer_id=${s.customerId}`,s));
     }
+    if(key==='stocks-activity'){await requireModule('trade.stocks',s);await requireModule('capital.wallets',s);return json(await grapnel(`/trade/stocks/activity?customer_id=${s.customerId}&wallet_id=${s.walletId}`,s));}
     if(key==='stocks-grants'){
       await requireModule('trade.stocks',s);await requireModule('capital.wallets',s);
       const address=z.string().regex(/^0x[0-9a-fA-F]{40}$/).parse(request.nextUrl.searchParams.get('account_address'));

@@ -4,13 +4,15 @@ import {fromAtomic,type CustomerContext,type ModuleId} from '@grapnel/contracts'
 import type {FastifyInstance,FastifyRequest} from 'fastify';
 import {z} from 'zod';
 import {CCTP_TESTNET} from '../../adapters/cctp/registry.js';
-import {RH_TESTNET} from '../../adapters/robinhood/registry.js';
+import {createRobinhoodReader} from '../../adapters/robinhood/index.js';
+import {RH_TESTNET,STOCKS} from '../../adapters/robinhood/registry.js';
 import {GMX_TESTNET} from '../../adapters/gmx/registry.js';
 const ABI=parseAbi(['function balanceOf(address owner) view returns(uint256)','function decimals() view returns(uint8)']);
 const SOURCES=[
- {id:'hyperevm-testnet',label:'HyperEVM',chain:998,rpc:CCTP_TESTNET.hyperEvm.rpc,token:CCTP_TESTNET.hyperEvm.usdc,code:'USDC',hash:'b6ee454dc91cd5643f7b221c8606b9d060aaa574db7e3fcc6d8f8a7b25572790',algorithm:'sha256'},
- {id:'robinhood-testnet',label:'Robinhood',chain:46630,rpc:RH_TESTNET.rpc,token:RH_TESTNET.settlement.address,code:'USDG',hash:RH_TESTNET.settlement.codeHash,algorithm:'keccak256'},
- {id:'arbitrum-sepolia',label:'Arbitrum Sepolia',chain:421614,rpc:GMX_TESTNET.rpc,token:GMX_TESTNET.pins.collateral.address,code:'USDC.SG',hash:GMX_TESTNET.pins.collateral.codeHash,algorithm:'keccak256'},
+ {id:'hyperevm-testnet',label:'HyperEVM',chain:998,rpc:CCTP_TESTNET.hyperEvm.rpc,token:CCTP_TESTNET.hyperEvm.usdc,code:'USDC',hash:'b6ee454dc91cd5643f7b221c8606b9d060aaa574db7e3fcc6d8f8a7b25572790',algorithm:'sha256',decimals:6},
+ {id:'robinhood-testnet',label:'Robinhood',chain:46630,rpc:RH_TESTNET.rpc,token:RH_TESTNET.settlement.address,code:'USDG',hash:RH_TESTNET.settlement.codeHash,algorithm:'keccak256',decimals:6},
+ {id:'arbitrum-sepolia',label:'Arbitrum Sepolia',chain:421614,rpc:GMX_TESTNET.rpc,token:GMX_TESTNET.pins.collateral.address,code:'USDC.SG',hash:GMX_TESTNET.pins.collateral.codeHash,algorithm:'keccak256',decimals:6},
+ ...STOCKS.map(stock=>({id:'robinhood-testnet' as const,label:'Robinhood',chain:46630,rpc:RH_TESTNET.rpc,token:stock.address,code:stock.symbol,hash:stock.codeHash,algorithm:'keccak256' as const,decimals:18})),
 ] as const;
 export interface NetworkAssetsDependencies {
  requireBusiness:(r:FastifyRequest,m:ModuleId)=>Promise<unknown>;
@@ -32,11 +34,12 @@ export async function readNetworkAssets(c:CustomerContext,readWallets:NetworkAss
    if(!code||Date.now()-Number(block.timestamp)*1000>120000||Number(block.timestamp)*1000>Date.now()+10000)throw Error('Asset observation unavailable');
    const hash=source.algorithm==='sha256'?createHash('sha256').update(Buffer.from(code.slice(2),'hex')).digest('hex'):keccak256(code);
    if(hash!==source.hash)throw Error('Asset identity mismatch');
-   const decimals=await client.readContract({address:source.token as Hex,abi:ABI,functionName:'decimals',blockNumber:block.number});if(decimals!==6)throw Error('Asset decimals mismatch');
+   const decimals=await client.readContract({address:source.token as Hex,abi:ABI,functionName:'decimals',blockNumber:block.number});if(decimals!==source.decimals)throw Error('Asset decimals mismatch');
    const values=await Promise.all(addresses.map(address=>client.readContract({address:source.token as Hex,abi:ABI,functionName:'balanceOf',args:[address as Hex],blockNumber:block.number})));
-   amount=fromAtomic(values.reduce((sum,v)=>sum+v,0n),6);observed_at=new Date(Number(block.timestamp)*1000).toISOString();verified=true;
+   if(source.chain===46630&&source.code!=='USDG'){const multiplier=await createRobinhoodReader().readStockMultiplier(source.code as typeof STOCKS[number]['symbol']);if(multiplier.multiplierBaseUnits!=='1000000000000000000')throw Error('Stock multiplier changed');}
+   amount=fromAtomic(values.reduce((sum,v)=>sum+v,0n),source.decimals);observed_at=new Date(Number(block.timestamp)*1000).toISOString();verified=true;
   }catch{/* Missing observations remain unknown. */}}
-  return {asset_id,asset:{id:asset_id,code:source.code,name:source.code,kind:'erc20',network:source.id,decimals:6,verified:true},balance_verified:verified,wallet_amount:amount,reserved:null,spendable:null,network_label:source.label,feature_label:'Wallet',observed_at};
+  return {asset_id,asset:{id:asset_id,code:source.code,name:source.code,kind:'erc20',network:source.id,decimals:source.decimals,verified:true},balance_verified:verified,wallet_amount:amount,reserved:null,spendable:null,network_label:source.label,feature_label:'Wallet',observed_at};
  }));
  return {scope:{business_id:c.businessId,customer_id:c.customerId,wallet_id:c.walletId},balances};
 }
