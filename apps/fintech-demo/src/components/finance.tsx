@@ -1,5 +1,7 @@
 "use client";
 import Link from "next/link";
+import {OperationProgress,ProgressIndicator} from "./operation-progress";
+import {trackApproval,type ApprovalPhase} from "@/lib/operation-progress";
 import { AssetLogo } from "./asset-logo";
 import { MarginWorkflowCard } from "./margin-workflow";
 import {assertMarginPositionBinding,marginPositionAction,type MarginReviewBinding} from "@/lib/margin-workflow";
@@ -271,7 +273,7 @@ function quoteUnitRate(quote: any, input?: SwapAsset, output?: SwapAsset): strin
   } catch { return null; }
 }
 const approvalFee = (value?: string): string => value && /^\d+$/.test(value) ? `${fromAtomic(BigInt(value), 7)} XLM` : "Unavailable";
-const statusLabel = (status: string): string => ({completed:"Completed",awaiting_customer_authorization:"Needs approval",preparing:"Preparing",submitted:"Submitted",confirming:"Confirming",failed:"Failed",rejected:"Declined",expired:"Expired",recovery_required:"Check transaction"}[status] ?? "In progress");
+
 function activityLabel(op: Operation): string {
   if (op.type === "wallet.usdc_trustline") return op.status === "completed" ? "Enabled USDC" : "Enable USDC";
   const labels: Record<string, [string, string]> = {
@@ -487,6 +489,10 @@ function FinanceShell({ page, auth, initialCategory }: { page: string; auth?: Au
   const [swapError, setSwapError] = useState("");
   useEffect(() => { setSwapError(""); }, [session?.customer_id]);
   const [busy, setBusy] = useState(false);
+  const [busyLocation,setBusyLocation]=useState<string|null>(null);
+  const [approvalPhase,setApprovalPhase]=useState<{operationId:string;phase:ApprovalPhase}|null>(null);
+  const visibleOperation=useRef(active?.operation_id);visibleOperation.current=active?.operation_id;
+  useEffect(()=>{setApprovalPhase(current=>current&&active?.operation_id===current.operationId&&active.status==='awaiting_customer_authorization'?current:null);},[active?.operation_id,active?.status,session?.customer_id]);
   const [amount, setAmount] = useState("1");
   const [fundsDirection, setFundsDirection] = useState<"fund" | "return">("fund");
   const fundingPage = page === "funds" ? fundsDirection : page;
@@ -794,6 +800,7 @@ function FinanceShell({ page, auth, initialCategory }: { page: string; auth?: Au
   }, [active, refresh]);
   async function action(task: () => Promise<void>, location: string = "page") {
     setBusy(true);
+    setBusyLocation(location);
     setError("");
     setSwapError("");
     if(location!=="page"&&location!=="swap")setActionErrors(current=>({...current,[location]:""}));
@@ -809,6 +816,7 @@ function FinanceShell({ page, auth, initialCategory }: { page: string; auth?: Au
       else setError(e instanceof Error ? e.message : "Request failed");
     } finally {
       setBusy(false);
+      setBusyLocation(null);
     }
   }
   function openOperation(op: Operation) {
@@ -885,22 +893,25 @@ function FinanceShell({ page, auth, initialCategory }: { page: string; auth?: Au
     )
       throw Error("A current customer authorization is required");
     if(Date.parse(active.prepared_action.summary.expiresAt)<=Date.now())throw Error("This approval has expired. Refresh the operation before continuing.");
-    const signed = await auth.sign(
-      active.prepared_action,
-      session.stellar_address,
-    );
-    try {
-      openOperation(await api(`grapnel/operations/${active.operation_id}/authorize`, {
-        customer_action_token: active.customer_action_token,
-        signed_xdr: signed,
-      }));
-    } catch (cause) {
-      // Recover status only: authorization may have committed before a timeout.
-      // Never automatically sign again or resend a financial request here.
-      try { openOperation(await api(`grapnel/operations/${active.operation_id}`)); } catch { /* retain the known operation for manual recovery */ }
-      throw cause;
-    }
+    const operation=active;
+    await trackApproval(()=>auth.sign(operation.prepared_action!,session.stellar_address),async signed=>{
+      try {
+        openOperation(await api(`grapnel/operations/${operation.operation_id}/authorize`, {
+          customer_action_token: operation.customer_action_token,
+          signed_xdr: signed,
+        }));
+      } catch (cause) {
+        // Recover status only: authorization may have committed before a timeout.
+        // Never automatically sign again or resend a financial request here.
+        try { openOperation(await api(`grapnel/operations/${operation.operation_id}`)); } catch { /* retain the known operation for manual recovery */ }
+        throw cause;
+      }
+    },phase=>{
+      if(phase){if(visibleOperation.current===operation.operation_id)setApprovalPhase({operationId:operation.operation_id,phase});}
+      else setApprovalPhase(current=>current?.operationId===operation.operation_id?null:current);
+    });
   }
+
   const connect = () =>
     action(async () => {
       if (!auth) throw Error("Customer sign-in is unavailable");
@@ -1028,7 +1039,7 @@ function FinanceShell({ page, auth, initialCategory }: { page: string; auth?: Au
             <div className="notice neutral" role="status">
               <Icon name="wallet" />
               <div><strong>{pendingWalletAction.status === "awaiting_customer_authorization" ? "Wallet approval waiting" : "Wallet action in progress"}</strong>
-                <p>{activityLabel(pendingWalletAction)} · {statusLabel(pendingWalletAction.status)}. Open the existing action before preparing another.</p>
+                <p>{activityLabel(pendingWalletAction)} · <OperationProgress status={pendingWalletAction.status}/>. Open the existing action before preparing another.</p>
               </div>
               <button className="button outline" disabled={busy} onClick={() => action(() => resumeOperation(pendingWalletAction.operation_id))}>
                 {pendingWalletAction.status === "awaiting_customer_authorization" ? "Resume approval" : "Check status"}
@@ -1242,6 +1253,7 @@ function FinanceShell({ page, auth, initialCategory }: { page: string; auth?: Au
                 {actionErrors.funds&&<p className="swap-action-error" role="alert">{customerMessage(actionErrors.funds)}</p>}
                 <button
                   className="button wide"
+                  aria-label={fundingPage==="fund"?"Get funds":"Review return transaction"}
                   disabled={
                     busy || !session || !(executable("capital.testnet_funding") || (fundingPage === "fund" || fundingPage === "return") && fundingCanStart)
                   }
@@ -1250,10 +1262,10 @@ function FinanceShell({ page, auth, initialCategory }: { page: string; auth?: Au
                   }
                 >
                   {busy
-                    ? "Preparing…"
+                    ? <ProgressIndicator label="Processing" spinning/>
                     : fundingPage === "fund"
                       ? "Get funds"
-                      : "Review return transaction"}
+                      : "Review"}
                   <Icon name="arrow" size={17} />
                 </button>
 
@@ -1409,11 +1421,11 @@ function FinanceShell({ page, auth, initialCategory }: { page: string; auth?: Au
                   {swapError && <p className="swap-action-error" role="alert" id="swap-action-error">{customerMessage(swapError)}</p>}
                   {quote && quoteExpired && !swapError && <p className="inline-note" role="alert">This quote expired. Request a new quote before reviewing a swap.</p>}
                   {!canPrepareSpot && <p className="small muted">This pair is currently unavailable.</p>}
-                  {quoteMatchesMarket && !quoteExpired ? <button className="button swap-submit" aria-describedby={swapError ? "swap-action-error" : undefined} disabled={busy || !canPrepareSpot || !walletReadyForPair}
+                  {quoteMatchesMarket && !quoteExpired ? <button className="button swap-submit" aria-label="Review swap" aria-describedby={swapError ? "swap-action-error" : undefined} disabled={busy || !canPrepareSpot || !walletReadyForPair}
                     onClick={() => action(async () => {
                       if (!quoteMatchesMarket || Date.parse(quote.expires_at) <= Date.now()) {setQuoteClock(Date.now());throw Error("This quote expired. Request a new quote.");}
                       await start("order",{quote_id:quote.quote_id});setQuote(null);
-                    }, "swap")}>{busy ? "Preparing…" : "Review swap"}</button>
+                    }, "swap")}>{busy&&busyLocation==="swap" ? <ProgressIndicator label="Processing" spinning/> : "Review"}</button>
                     : <button className="button swap-submit" aria-describedby={swapError ? "swap-action-error" : undefined} disabled={busy || !canPrepareSpot || !walletReadyForPair || !swapAmount}
                       onClick={() => action(async () => {
                         setQuote(null);
@@ -1422,7 +1434,7 @@ function FinanceShell({ page, auth, initialCategory }: { page: string; auth?: Au
                         if(spotCustomer.current!==customerId)return;
                         if(next.market_id!==expectedMarket||next.asset_in_id!==expectedInput||next.asset_out_id!==expectedOutput||!next.quote_id||!Number.isFinite(Date.parse(next.expires_at)))throw Error("The returned quote does not match your selected assets.");
                         setQuoteClock(Date.now());setQuote(next);
-                      }, "swap")}>{busy ? "Getting quote…" : "Get quote"}</button>}
+                      }, "swap")}>{busy&&busyLocation==="swap" ? <ProgressIndicator label="Getting quote" spinning/> : "Get quote"}</button>}
                 </section>
                 </div>
                 </>
@@ -1496,7 +1508,7 @@ function FinanceShell({ page, auth, initialCategory }: { page: string; auth?: Au
                               <button className="button" disabled={busy || !session || !canPrepare || !earnAmounts[amountKey]}
                                 onClick={() => action(() => start("lending/" + earnAction, {
                                   market_id: m.market_id ?? m.id, asset_id: m.asset_id, amount: earnAmounts[amountKey],
-                                }), `earn:${m.asset_id}`)}>{earnAction === "supply" ? "Supply" : "Withdraw"}</button>
+                                }), `earn:${m.asset_id}`)}>{busy&&busyLocation===`earn:${m.asset_id}`?<ProgressIndicator label="Processing" spinning/>:earnAction === "supply" ? "Supply" : "Withdraw"}</button>
                             </div>
                           </div>
                         )}
@@ -1518,9 +1530,9 @@ function FinanceShell({ page, auth, initialCategory }: { page: string; auth?: Au
             </>
           )}
           {page === "borrow" && <section className="card borrowing-section" aria-label="Borrowing" data-testid="borrowing">
-            <div className="section-heading"><button type="button" className="button outline small-button" disabled={borrowingLoading||busy||!capability("capital.lending")?.enabled} onClick={()=>void refreshBorrowing()}>Refresh loans</button></div>
+            <div className="section-heading"><button type="button" className="button outline small-button" disabled={borrowingLoading||busy||!capability("capital.lending")?.enabled} onClick={()=>void refreshBorrowing()}>{borrowingLoading?<ProgressIndicator label="Refreshing" spinning/>:"Refresh loans"}</button></div>
             {borrowingError&&<p className="inline-note" role="alert">{customerMessage(borrowingError)}</p>}
-            {borrowingLoading&&!borrowing?<p className="small muted" role="status">Loading loan information…</p>:borrowing?.assets.length?<div className="borrowing-grid">{borrowing.assets.map(row=>{
+            {borrowingLoading&&!borrowing?<p className="small muted"><ProgressIndicator label="Loading loan information" spinning/></p>:borrowing?.assets.length?<div className="borrowing-grid">{borrowing.assets.map(row=>{
               const collateralNeeded=row.reason==="COLLATERAL_REQUIRED"||/^0(?:\.0+)?$/.test(row.collateral_value??"");
               const direction=loanActions[row.market_id]??(collateralNeeded&&row.can_prepare_collateral_supply===true?"collateral-supply":"borrow"),amountKey=`${row.market_id}:${direction}`;
               const canPrepare=direction==="borrow"?row.can_prepare_borrow:direction==="repay"?row.can_prepare_repay:direction==="collateral-supply"?row.can_prepare_collateral_supply===true:row.can_prepare_collateral_withdraw===true;
@@ -1552,7 +1564,7 @@ function FinanceShell({ page, auth, initialCategory }: { page: string; auth?: Au
                   try{valid=latest?.can_prepare_repay_all===true&&typeof latest.repay_all_amount==="string"&&toAtomic(latest.repay_all_amount,latest.asset.decimals)>0n;}catch{}
                   if(!valid||!latest?.repay_all_amount){setRepayAllErrors(current=>({...current,[row.market_id]:"A full repayment maximum is unavailable. Check your current loan."}));return;}
                   setLoanAmounts(current=>({...current,[`${row.market_id}:repay`]:latest.repay_all_amount!}));setRepayAllAmounts(current=>({...current,[row.market_id]:latest.repay_all_amount!}));
-                },`loan:${row.market_id}`)}>Repay all · MAX</button>}</div><input id={`loan-amount-${row.asset.code}`} aria-label={direction==="borrow"?"Borrow amount":direction==="repay"?"Repay amount":"Collateral amount"} inputMode="decimal" placeholder="0.00" disabled={busy} value={loanAmounts[amountKey]??""} onChange={event=>{setLoanAmounts(current=>({...current,[amountKey]:event.target.value}));setActionErrors(current=>({...current,[`loan:${row.market_id}`]:""}));if(direction==="repay"){setRepayAllAmounts(current=>{const next={...current};delete next[row.market_id];return next;});setRepayAllErrors(current=>({...current,[row.market_id]:""}));}}}/></div><button className="button" disabled={busy||borrowingLoading||!session||!canPrepare||!loanAmounts[amountKey]||capability("capital.wallets")?.execution_status!=="testnet_verified"} onClick={()=>action(()=>start(direction.startsWith("collateral-")?`borrow-${direction}`:`lending/${direction}`,{market_id:row.market_id,amount:loanAmounts[amountKey]}),`loan:${row.market_id}`)}>{busy?"Preparing…":reviewLabel}</button></div>
+                },`loan:${row.market_id}`)}>Repay all · MAX</button>}</div><input id={`loan-amount-${row.asset.code}`} aria-label={direction==="borrow"?"Borrow amount":direction==="repay"?"Repay amount":"Collateral amount"} inputMode="decimal" placeholder="0.00" disabled={busy} value={loanAmounts[amountKey]??""} onChange={event=>{setLoanAmounts(current=>({...current,[amountKey]:event.target.value}));setActionErrors(current=>({...current,[`loan:${row.market_id}`]:""}));if(direction==="repay"){setRepayAllAmounts(current=>{const next={...current};delete next[row.market_id];return next;});setRepayAllErrors(current=>({...current,[row.market_id]:""}));}}}/></div><button className="button" aria-label={reviewLabel} disabled={busy||borrowingLoading||!session||!canPrepare||!loanAmounts[amountKey]||capability("capital.wallets")?.execution_status!=="testnet_verified"} onClick={()=>action(()=>start(direction.startsWith("collateral-")?`borrow-${direction}`:`lending/${direction}`,{market_id:row.market_id,amount:loanAmounts[amountKey]}),`loan:${row.market_id}`)}>{busy&&busyLocation===`loan:${row.market_id}`?<ProgressIndicator label="Processing" spinning/>:"Review"}</button></div>
                 {!loanAmounts[amountKey]&&<p className="small muted">Enter an amount to review {direction==="collateral-supply"?"your collateral deposit":direction==="collateral-withdraw"?"your collateral removal":direction==="repay"?"your repayment":"your loan"}.</p>}
                 {maximumSelected&&<p className="small muted">Maximum repayment amount selected. Review the full token debit before approving.</p>}
                 {repayAllErrors[row.market_id]&&<p className="swap-action-error" role="alert">{repayAllErrors[row.market_id]}</p>}
@@ -1602,7 +1614,7 @@ function FinanceShell({ page, auth, initialCategory }: { page: string; auth?: Au
                           (op.status === "completed" ? "success" : "")
                         }
                       >
-                        {statusLabel(op.status)}
+                        <OperationProgress status={op.status}/>
                       </span>
                       <Icon name="arrow" size={16} />
                     </button>
@@ -1655,7 +1667,7 @@ function FinanceShell({ page, auth, initialCategory }: { page: string; auth?: Au
                         "recovery_required",
                       ].includes(active.status)
                     ? "Operation needs attention."
-                    : "Your operation is in progress."}
+                    : activityLabel(active)}
             </h2>
             <span
               className={
@@ -1663,7 +1675,7 @@ function FinanceShell({ page, auth, initialCategory }: { page: string; auth?: Au
                 (active.status === "completed" ? "success" : "")
               }
             >
-              {statusLabel(active.status)}
+              <OperationProgress status={active.status} approvalPhase={approvalPhase?.operationId===active.operation_id?approvalPhase.phase:null}/>
             </span>
             {active.prepared_action && active.type === "wallet.usdc_trustline" ? (
               <div className="approval-summary">
@@ -1756,7 +1768,7 @@ function FinanceShell({ page, auth, initialCategory }: { page: string; auth?: Au
                   disabled={busy || !auth || approvalExpired}
                   onClick={() => action(approve)}
                 >
-                  {busy ? "Waiting for approval…" : "Approve transaction"}
+                  {busy ? <OperationProgress status="awaiting_customer_authorization" approvalPhase={approvalPhase?.operationId===active.operation_id?approvalPhase.phase:null}/> : "Approve transaction"}
                   <Icon name="arrow" size={16} />
                 </button>
               </>

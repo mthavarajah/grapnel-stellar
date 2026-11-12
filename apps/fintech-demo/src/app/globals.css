@@ -1752,3 +1752,37 @@ footer strong {
 .loan-amount-heading label { margin: 0; }
 .loan-repay-max { border: 0; background: transparent; color: var(--ink); font: inherit; font-size: 10px; font-weight: 650; cursor: pointer; padding: 2px 0; }
 .loan-repay-max:disabled { color: var(--muted); cursor: default; opacity: .55; }
+
+.operation-progress {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5em;
+  vertical-align: middle;
+}
+.operation-spinner,
+.operation-dot,
+.operation-complete {
+  display: inline-block;
+  box-sizing: border-box;
+  width: 1em;
+  height: 1em;
+  flex: 0 0 1em;
+  border: 1.5px solid currentColor;
+  border-radius: 50%;
+}
+.operation-spinner {
+  border-right-color: transparent;
+  animation: operation-rotate 0.8s linear infinite;
+}
+.operation-dot { opacity: 0.5; }
+.operation-complete {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1em;
+  line-height: 1;
+}
+@keyframes operation-rotate { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) {
+  .operation-spinner { animation: none; }
+}
