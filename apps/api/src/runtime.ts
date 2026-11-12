@@ -324,7 +324,7 @@ export async function createRuntime(pool?:Pool,marginRoutes:RuntimeMarginBinding
  app.addHook('onClose',async()=>{if(!pool)await db.end();});
  const workerChain=createRuntimeWorkerChain({pool:db,chain,blend,soroban,borrowing,borrowPreparer,gate1Passed,verifyGate1:()=>hasGate1Proof(chain),spot:spotInspector,readSpotBalances,margin:marginBindings.execution,marginFunding:marginBindings.fundingExecution});
  const tickPerpetuals=async()=>{
-  const rows=(await db.query("SELECT o.* FROM perpetual_orders o JOIN wallets w ON w.business_id=o.business_id AND w.customer_id=o.customer_id AND w.id=o.wallet_id AND w.stellar_address=o.stellar_address WHERE o.state IN ('approved','sending','unknown') AND o.signed_action IS NOT NULL AND o.updated_at<now()-interval '5 seconds' ORDER BY o.updated_at LIMIT 3")).rows;
+  const rows=(await db.query("WITH picked AS (SELECT o.id FROM perpetual_orders o JOIN wallets w ON w.business_id=o.business_id AND w.customer_id=o.customer_id AND w.id=o.wallet_id AND w.stellar_address=o.stellar_address WHERE o.state IN ('approved','sending','unknown') AND o.signed_action IS NOT NULL AND o.updated_at<now()-interval '5 seconds' ORDER BY o.updated_at FOR UPDATE OF o SKIP LOCKED LIMIT 3) UPDATE perpetual_orders o SET updated_at=now() FROM picked WHERE o.id=picked.id RETURNING o.*")).rows;
   for(const row of rows){
    try{const scope={businessId:row.business_id,customerId:row.customer_id,walletId:row.wallet_id,stellarAddress:row.stellar_address};
     if(row.state==='approved'){
@@ -335,7 +335,7 @@ export async function createRuntime(pool?:Pool,marginRoutes:RuntimeMarginBinding
     }else await perpetualService.reconcile(scope,row.id);
    }catch{/* Pending/unknown remains durable; a fresh intent is never generated here. */}
   }
-  return rows.length>0;
+  return false; // Poll on the normal worker interval, including provider errors.
  };
  return {app,config,pool:db,chain,wallets,operations,funding,gate1Passed,perpetualService,tickPerpetuals,worker:new OperationWorker(db,workerChain)};
 }
