@@ -419,6 +419,145 @@ export const READER_ABI = [
         "type": "address"
       },
       {
+        "internalType": "address",
+        "name": "marketKey",
+        "type": "address"
+      },
+      {
+        "components": [
+          {
+            "components": [
+              {
+                "internalType": "uint256",
+                "name": "min",
+                "type": "uint256"
+              },
+              {
+                "internalType": "uint256",
+                "name": "max",
+                "type": "uint256"
+              }
+            ],
+            "internalType": "struct Price.Props",
+            "name": "indexTokenPrice",
+            "type": "tuple"
+          },
+          {
+            "components": [
+              {
+                "internalType": "uint256",
+                "name": "min",
+                "type": "uint256"
+              },
+              {
+                "internalType": "uint256",
+                "name": "max",
+                "type": "uint256"
+              }
+            ],
+            "internalType": "struct Price.Props",
+            "name": "longTokenPrice",
+            "type": "tuple"
+          },
+          {
+            "components": [
+              {
+                "internalType": "uint256",
+                "name": "min",
+                "type": "uint256"
+              },
+              {
+                "internalType": "uint256",
+                "name": "max",
+                "type": "uint256"
+              }
+            ],
+            "internalType": "struct Price.Props",
+            "name": "shortTokenPrice",
+            "type": "tuple"
+          }
+        ],
+        "internalType": "struct MarketUtils.MarketPrices",
+        "name": "prices",
+        "type": "tuple"
+      },
+      {
+        "internalType": "uint256",
+        "name": "positionSizeInUsd",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "positionSizeInTokens",
+        "type": "uint256"
+      },
+      {
+        "internalType": "int256",
+        "name": "sizeDeltaUsd",
+        "type": "int256"
+      },
+      {
+        "internalType": "int256",
+        "name": "pendingImpactAmount",
+        "type": "int256"
+      },
+      {
+        "internalType": "bool",
+        "name": "isLong",
+        "type": "bool"
+      }
+    ],
+    "name": "getExecutionPrice",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "int256",
+            "name": "priceImpactUsd",
+            "type": "int256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "executionPrice",
+            "type": "uint256"
+          },
+          {
+            "internalType": "bool",
+            "name": "balanceWasImproved",
+            "type": "bool"
+          },
+          {
+            "internalType": "int256",
+            "name": "proportionalPendingImpactUsd",
+            "type": "int256"
+          },
+          {
+            "internalType": "int256",
+            "name": "totalImpactUsd",
+            "type": "int256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "priceImpactDiffUsd",
+            "type": "uint256"
+          }
+        ],
+        "internalType": "struct ReaderPricingUtils.ExecutionPriceResult",
+        "name": "",
+        "type": "tuple"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "contract DataStore",
+        "name": "dataStore",
+        "type": "address"
+      },
+      {
         "internalType": "uint256",
         "name": "start",
         "type": "uint256"

@@ -10,7 +10,7 @@ export interface GmxPosition {
     isLong: boolean;
     sizeUsd30: string;
     sizeTokens: string;
-    collateralAtomic6: string;
+    collateralAtomic6: string; pendingImpactAmount?:string;
     key: Hex;
 }
 export interface GmxStatus {
@@ -69,7 +69,7 @@ export interface GmxPrepared {
         quoteMinPrice30?: string;
         quoteMaxPrice30?: string;
         quoteObservedAt?: string;
-        indexDecimals?: number;
+        indexDecimals?: number;executionPrice?:string;priceImpactUsd?:string;priceImpactDiffUsd?:string;totalImpactUsd?:string;proportionalPendingImpactUsd?:string;executionQuoteBlock?:string;executionQuoteSource?:'gmx_reader_getExecutionPrice';
     };
     baseline: {
         status: GmxStatus;
