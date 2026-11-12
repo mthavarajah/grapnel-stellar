@@ -1,0 +1,91 @@
+{
+  "observed_at": "2026-11-12T14:36:09.395Z",
+  "mode": "public_contract_reads_only",
+  "hyperEvm": {
+    "chainId": "0x3e6",
+    "block": "0x42372e3",
+    "blockTimestamp": 1794494153,
+    "contracts": {
+      "usdc": {
+        "address": "0x2B3370eE501B4a559b57D449569354196457D8Ab",
+        "sha256": "b6ee454dc91cd5643f7b221c8606b9d060aaa574db7e3fcc6d8f8a7b25572790",
+        "implementation": null,
+        "implementationSha256": null
+      },
+      "messenger": {
+        "address": "0x8FE6B999Dc680CcFDD5Bf7EB0974218be2542DAA",
+        "sha256": "501b4a60e24ea82032b7442d75995dee3bdbfc17b25caffc3c955eadc8c2a418",
+        "implementation": "0xf07c0ad13178a9ef5c3ffa0be69e0becd452bf6d",
+        "implementationSha256": "a4cee8ec932bf532c98711a80b2ff0d5fe8e8701c179ec45e86dea2ca619be0b"
+      },
+      "transmitter": {
+        "address": "0xE737e5cEBEEBa77EFE34D4aa090756590b1CE275",
+        "sha256": "501b4a60e24ea82032b7442d75995dee3bdbfc17b25caffc3c955eadc8c2a418",
+        "implementation": "0x1110d9af71fab7e4d05d80c26f98ff0ca125470c",
+        "implementationSha256": "e9423da6e41a7a11455980721a885b8150babbe1628871d8e5d7316fd3299ddf"
+      },
+      "forwarder": {
+        "address": "0x02e39ECb8368b41bF68FF99ff351aC9864e5E2a2",
+        "sha256": "de90f6f079e69f34453c490764eb27d059a8021782555d62cf10a1bd10518bc8",
+        "implementation": "0xd1ff0f53bd651448bced218fd875323486274c26",
+        "implementationSha256": "eba80efd392dbf4213e0c3de29ad1f6634b5dec6148f29d805cb95d81149588a"
+      },
+      "coreDepositWallet": {
+        "address": "0x0B80659a4076E9E93C7DbE0f10675A16a3e5C206",
+        "sha256": "de90f6f079e69f34453c490764eb27d059a8021782555d62cf10a1bd10518bc8",
+        "implementation": "0x49808bcf68fc2e26fa2986aa9b08615181ae19d3",
+        "implementationSha256": "eda4165563cabe7cea32134f9af0e710b92e5b57ee591580adaae9cba7cea7ae"
+      }
+    },
+    "decimals": "0x0000000000000000000000000000000000000000000000000000000000000006",
+    "domain": "0x0000000000000000000000000000000000000000000000000000000000000013",
+    "messengerTransmitter": "0x000000000000000000000000e737e5cebeeba77efe34d4aa090756590b1ce275"
+  },
+  "stellarForwarder": {
+    "contract": "CA66Q2WFBND6V4UEB7RD4SAXSVIWMD6RA4X3U32ELVFGXV5PJK4T4VSZ",
+    "ledger": 5694102,
+    "wasm_hash": "caa4d100b5d102c07db3ff08d4c53f1f89562e8bbbf45e8bab593b1d99c1dec5",
+    "function": {
+      "name": "mint_and_forward",
+      "xdr": "AAAEAE1pbnRzIHRva2VucyB2aWEgQ0NUUCBhbmQgZm9yd2FyZHMgdGhlbSB0byB0aGUgZm9yd2FyZCByZWNpcGllbnQuCgpUaGlzIGZ1bmN0aW9uIGNhbGxzIGByZWNlaXZlX21lc3NhZ2VgIG9uIHRoZSBNZXNzYWdlVHJhbnNtaXR0ZXIgdG8gbWludCB0b2tlbnMKdG8gdGhpcyBjb250cmFjdCwgdGhlbiBmb3J3YXJkcyB0aGVtIHRvIHRoZSByZWNpcGllbnQgc3BlY2lmaWVkIGluIHRoZSBob29rIGRhdGEuCgojIEFyZ3VtZW50cwoKKiBgZWAgLSBBY2Nlc3MgdG8gdGhlIFNvcm9iYW4gZW52aXJvbm1lbnQuCiogYG1lc3NhZ2VgIC0gVGhlIENDVFAgbWVzc2FnZSBieXRlcy4KKiBgYXR0ZXN0YXRpb25gIC0gVGhlIGF0dGVzdGF0aW9uIGJ5dGVzIGZvciB0aGUgbWVzc2FnZS4KCiMgRXJyb3JzCgoqIGBIb3N0RXJyb3I6IEVycm9yKENvbnRyYWN0LCAjMTAwMClgIOKAkyBDb250cmFjdCBpcyBwYXVzZWQgKGBFbmZvcmNlZFBhdXNlZGApLgoqIFtgQ2N0cEZvcndhcmRlckVycm9yOjpJbnZhbGlkTWVzc2FnZUZvcm1hdGBdIOKAkyBUaGUgbWVzc2FnZSBmb3JtYXQgaXMgaW52YWxpZC4KKiBbYENjdHBGb3J3YXJkZXJFcnJvcjo6VW5zdXBwb3J0ZWRNZXNzYWdlVmVyc2lvbmBdIOKAkyBUaGUgbWVzc2FnZSB2ZXJzaW9uIGlzIG5vdCBzdXBwb3J0ZWQuCiogW2BDY3RwRm9yd2FyZGVyRXJyb3I6OkludmFsaWRCdXJuTWVzc2FnZUZvcm1hdGBdIOKAkyBUaGUgYnVybiBtZXNzYWdlIGZvcm1hdCBpcyBpbnZhbGlkLgoqIFtgQ2N0cEZvcndhcmRlckVycm9yOjpVbnN1cHBvcnRlZEJ1cm5NZXNzYWdlVmVyc2lvbmBdIOKAkyBUaGUgYnVybiBtZXNzYWdlIHZlcnNpb24gaXMgbm90IHN1cHBvcnRlZC4KKiBbYENjdHBGb3J3YXJkZXJFcnJvcjo6SW52YWxpZE1pbnRSZWNpcGllbnRgXSDigJMgVGhlIG1pbnRSZWNpcGllbnQgaXMgbm90IHRoaXMgY29udHJhY3QuCiogW2BDY3RwRm9yd2FyZGVyRXJyb3I6OkludmFsaWRSZWNpcGllbnRgXSDigJMgVGhlIHJlY2lwaWVudCBpcyBub3QgdGhlIFRva2VuTWVzc2VuZ2VyTWludGUAAAAQbWludF9hbmRfZm9yd2FyZAAAAAIAAAAAAAAAB21lc3NhZ2UAAAAADgAAAAAAAAALYXR0ZXN0YXRpb24AAAAADgAAAAA=",
+      "inputs": [
+        {
+          "name": "message",
+          "type": "scSpecTypeBytes"
+        },
+        {
+          "name": "attestation",
+          "type": "scSpecTypeBytes"
+        }
+      ],
+      "outputs": []
+    }
+  },
+  "sources": [
+    {
+      "url": "https://raw.githubusercontent.com/circlefin/evm-cctp-contracts/63ab1f0ac06ce0793c0bbfbb8d09816bc211386d/src/v2/TokenMessengerV2.sol",
+      "sha256": "965da38a1c7967d3b74c9c9e386c79b3656558c8ff1370f81b58bfd926689467"
+    },
+    {
+      "url": "https://raw.githubusercontent.com/circlefin/evm-cctp-contracts/63ab1f0ac06ce0793c0bbfbb8d09816bc211386d/src/v2/MessageTransmitterV2.sol",
+      "sha256": "b78a554bf191acbc4991ac47ddbd70fc92f11a127b063e051148514f09bd0714"
+    },
+    {
+      "url": "https://raw.githubusercontent.com/circlefin/stellar-cctp/45746f2c803198bc6cd586475eb3c925f12bb488/contracts/cctp-forwarder/src/message.rs",
+      "sha256": "7160574f1c029c38bb1105d713082167b47bb35070e7dbe7d77a12293a9d33a4"
+    }
+  ],
+  "source_bytecode_reproducible_build_verified": false,
+  "financial_writes": 0,
+  "source_burn_hash": null,
+  "destination_mint_hash": null,
+  "hypercore_credit_hash": null,
+  "return_hash": null,
+  "execution_status": "blocked",
+  "blockers": [
+    "ELIGIBLE_FUNDED_HYPERCORE_ACCOUNT_NOT_PROVIDED",
+    "ACTUAL_SOURCE_BURN_AND_IRIS_ATTESTATION_REQUIRED",
+    "MATCHING_HYPERCORE_LEDGER_CREDIT_REQUIRED",
+    "RETURN_ACTUAL_ATTESTATION_AND_SOROBAN_FOOTPRINT_REQUIRED"
+  ]
+}
