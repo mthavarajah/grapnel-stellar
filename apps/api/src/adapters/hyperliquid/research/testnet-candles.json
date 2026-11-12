@@ -1,0 +1,272 @@
+{
+  "provider": "hyperliquid",
+  "network": "hyperliquid-testnet",
+  "executionStatus": "discovery_only",
+  "executable": false,
+  "symbol": "SOL",
+  "interval": "1h",
+  "candles": [
+    {
+      "openTime": 1794366000000,
+      "closeTime": 1794369599999,
+      "open": "83.25",
+      "high": "83.864",
+      "low": "83.149",
+      "close": "83.434",
+      "volume": "1283.41",
+      "tradeCount": 2221
+    },
+    {
+      "openTime": 1794369600000,
+      "closeTime": 1794373199999,
+      "open": "83.363",
+      "high": "83.538",
+      "low": "82.772",
+      "close": "82.865",
+      "volume": "1069.04",
+      "tradeCount": 2123
+    },
+    {
+      "openTime": 1794373200000,
+      "closeTime": 1794376799999,
+      "open": "82.906",
+      "high": "83.535",
+      "low": "82.676",
+      "close": "83.535",
+      "volume": "632.93",
+      "tradeCount": 1461
+    },
+    {
+      "openTime": 1794376800000,
+      "closeTime": 1794380399999,
+      "open": "83.414",
+      "high": "83.484",
+      "low": "82.631",
+      "close": "82.734",
+      "volume": "140.13",
+      "tradeCount": 221
+    },
+    {
+      "openTime": 1794380400000,
+      "closeTime": 1794383999999,
+      "open": "82.664",
+      "high": "83.498",
+      "low": "82.415",
+      "close": "83.388",
+      "volume": "102.76",
+      "tradeCount": 200
+    },
+    {
+      "openTime": 1794384000000,
+      "closeTime": 1794387599999,
+      "open": "83.36",
+      "high": "83.458",
+      "low": "83.038",
+      "close": "83.038",
+      "volume": "64.65",
+      "tradeCount": 210
+    },
+    {
+      "openTime": 1794387600000,
+      "closeTime": 1794391199999,
+      "open": "83.058",
+      "high": "91.959",
+      "low": "82.615",
+      "close": "91.959",
+      "volume": "1048.76",
+      "tradeCount": 757
+    },
+    {
+      "openTime": 1794391200000,
+      "closeTime": 1794394799999,
+      "open": "91.867",
+      "high": "92.501",
+      "low": "84.162",
+      "close": "92.239",
+      "volume": "211.9",
+      "tradeCount": 429
+    },
+    {
+      "openTime": 1794394800000,
+      "closeTime": 1794398399999,
+      "open": "92.146",
+      "high": "92.43",
+      "low": "91.869",
+      "close": "92.332",
+      "volume": "12.98",
+      "tradeCount": 47
+    },
+    {
+      "openTime": 1794398400000,
+      "closeTime": 1794401999999,
+      "open": "92.239",
+      "high": "92.517",
+      "low": "91.869",
+      "close": "92.331",
+      "volume": "21.37",
+      "tradeCount": 72
+    },
+    {
+      "openTime": 1794402000000,
+      "closeTime": 1794405599999,
+      "open": "92.239",
+      "high": "93.081",
+      "low": "91.427",
+      "close": "93.075",
+      "volume": "67.23",
+      "tradeCount": 165
+    },
+    {
+      "openTime": 1794405600000,
+      "closeTime": 1794409199999,
+      "open": "93.17",
+      "high": "93.17",
+      "low": "91.433",
+      "close": "92.517",
+      "volume": "42.34",
+      "tradeCount": 98
+    },
+    {
+      "openTime": 1794409200000,
+      "closeTime": 1794412799999,
+      "open": "92.331",
+      "high": "93.179",
+      "low": "91.224",
+      "close": "93.179",
+      "volume": "35.55",
+      "tradeCount": 107
+    },
+    {
+      "openTime": 1794412800000,
+      "closeTime": 1794416399999,
+      "open": "93.179",
+      "high": "93.179",
+      "low": "85.03",
+      "close": "85.519",
+      "volume": "143.55",
+      "tradeCount": 380
+    },
+    {
+      "openTime": 1794416400000,
+      "closeTime": 1794419999999,
+      "open": "85.519",
+      "high": "94.206",
+      "low": "85.37",
+      "close": "93.969",
+      "volume": "139.31",
+      "tradeCount": 385
+    },
+    {
+      "openTime": 1794420000000,
+      "closeTime": 1794423599999,
+      "open": "93.828",
+      "high": "93.828",
+      "low": "93.075",
+      "close": "93.451",
+      "volume": "26.08",
+      "tradeCount": 100
+    },
+    {
+      "openTime": 1794423600000,
+      "closeTime": 1794427199999,
+      "open": "93.357",
+      "high": "93.357",
+      "low": "85.051",
+      "close": "87.015",
+      "volume": "67.43",
+      "tradeCount": 214
+    },
+    {
+      "openTime": 1794427200000,
+      "closeTime": 1794430799999,
+      "open": "87.015",
+      "high": "87.368",
+      "low": "85.628",
+      "close": "86.754",
+      "volume": "25.29",
+      "tradeCount": 94
+    },
+    {
+      "openTime": 1794430800000,
+      "closeTime": 1794434399999,
+      "open": "86.928",
+      "high": "93.17",
+      "low": "85.523",
+      "close": "92.983",
+      "volume": "87.87",
+      "tradeCount": 282
+    },
+    {
+      "openTime": 1794434400000,
+      "closeTime": 1794437999999,
+      "open": "92.983",
+      "high": "93.041",
+      "low": "81.877",
+      "close": "82.417",
+      "volume": "1271.07",
+      "tradeCount": 983
+    },
+    {
+      "openTime": 1794438000000,
+      "closeTime": 1794441599999,
+      "open": "82.539",
+      "high": "84.802",
+      "low": "81.347",
+      "close": "82.807",
+      "volume": "785.61",
+      "tradeCount": 811
+    },
+    {
+      "openTime": 1794441600000,
+      "closeTime": 1794445199999,
+      "open": "82.807",
+      "high": "83.793",
+      "low": "82.581",
+      "close": "83.375",
+      "volume": "226.27",
+      "tradeCount": 281
+    },
+    {
+      "openTime": 1794445200000,
+      "closeTime": 1794448799999,
+      "open": "83.422",
+      "high": "83.554",
+      "low": "82.797",
+      "close": "83.0",
+      "volume": "101.0",
+      "tradeCount": 202
+    },
+    {
+      "openTime": 1794448800000,
+      "closeTime": 1794452399999,
+      "open": "82.94",
+      "high": "83.517",
+      "low": "82.81",
+      "close": "83.249",
+      "volume": "88.19",
+      "tradeCount": 199
+    },
+    {
+      "openTime": 1794452400000,
+      "closeTime": 1794455999999,
+      "open": "83.228",
+      "high": "83.325",
+      "low": "82.896",
+      "close": "83.092",
+      "volume": "70.75",
+      "tradeCount": 161
+    }
+  ],
+  "source": {
+    "infoUrl": "https://api.hyperliquid-testnet.xyz/info",
+    "requestType": "candleSnapshot",
+    "receivedAt": "2026-11-12T03:53:28.125Z",
+    "httpDate": "Thu, 12 Nov 2026 03:53:28 GMT",
+    "maxResponseAgeMs": 60000,
+    "requestedStartTime": 1794369207557,
+    "requestedEndTime": 1794455607557,
+    "maxRows": 5000,
+    "historicalLimit": "most_recent_5000_source_candles",
+    "documentationUrl": "https://hyperliquid.gitbook.io/hyperliquid-docs/for-developers/api/info-endpoint"
+  }
+}

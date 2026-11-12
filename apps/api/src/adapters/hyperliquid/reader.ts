@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { parseHyperliquidCandles, validateCandleRequest, type HyperliquidCandleInterval } from './candles.js';
 
 export const HYPERLIQUID_TESTNET_INFO = 'https://api.hyperliquid-testnet.xyz/info';
 export const HYPEREVM_TESTNET_RPC = 'https://rpc.hyperliquid-testnet.xyz/evm';
@@ -107,12 +108,16 @@ export class HyperliquidTestnetReader {
     return { data, receivedAt: new Date(receivedAt).toISOString(), serverDate };
   }
 
-  async readMarkets() {
+  private async verifyHyperEvmNetwork() {
     // Separate chain check verifies this fixed EVM endpoint, not a claim that
     // HyperCore perpetuals execute as EVM transactions on chain998.
     const network = await this.read(HYPEREVM_TESTNET_RPC, { jsonrpc: '2.0', id: 1, method: 'eth_chainId', params: [] });
     const rpcResult = z.object({ jsonrpc: z.literal('2.0'), id: z.literal(1), result: z.literal('0x3e6'), error: z.never().optional() });
     if (!rpcResult.safeParse(network.data).success) throw new Error('HYPERLIQUID_NETWORK_MISMATCH');
+  }
+
+  async readMarkets() {
+    await this.verifyHyperEvmNetwork();
     const result = await this.read(HYPERLIQUID_TESTNET_INFO, { type: 'metaAndAssetCtxs' });
     return { provider: 'hyperliquid' as const, network: 'hyperliquid-testnet' as const,
       executionStatus: 'discovery_only' as const, executable: false as const,
@@ -125,4 +130,21 @@ export class HyperliquidTestnetReader {
         providerMarketTimestamp: null, freshnessBasis: 'http_response_receipt' as const },
     };
   }
+
+  async readCandles(symbol: string, interval: HyperliquidCandleInterval, startTime: number, endTime: number) {
+    const request = validateCandleRequest(symbol, interval, startTime, endTime, this.now());
+    await this.verifyHyperEvmNetwork();
+    const result = await this.read(HYPERLIQUID_TESTNET_INFO, { type: 'candleSnapshot',
+      req: { coin: symbol, interval, startTime, endTime } });
+    return { provider: 'hyperliquid' as const, network: 'hyperliquid-testnet' as const,
+      executionStatus: 'discovery_only' as const, executable: false as const, symbol, interval,
+      candles: parseHyperliquidCandles(result.data, request),
+      source: { infoUrl: HYPERLIQUID_TESTNET_INFO, requestType: 'candleSnapshot' as const,
+        receivedAt: result.receivedAt, httpDate: result.serverDate, maxResponseAgeMs: MAX_AGE_MS,
+        requestedStartTime: startTime, requestedEndTime: endTime, maxRows: 5000,
+        historicalLimit: 'most_recent_5000_source_candles' as const,
+        documentationUrl: 'https://hyperliquid.gitbook.io/hyperliquid-docs/for-developers/api/info-endpoint' },
+    };
+  }
+
 }
