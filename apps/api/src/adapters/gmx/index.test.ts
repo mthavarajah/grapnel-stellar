@@ -1,7 +1,8 @@
+import {readFileSync} from 'node:fs';
 import { describe, it, expect, vi } from 'vitest';
 import { randomUUID } from 'node:crypto';
 import { privateKeyToAccount, generatePrivateKey } from 'viem/accounts';
-import { encodeAbiParameters, encodeEventTopics, zeroAddress, getAddress, decodeFunctionData, encodeFunctionData, encodeFunctionResult, parseAbi, serializeTransaction, keccak256, type Hex } from 'viem';
+import { decodeFunctionResult, encodeAbiParameters, encodeEventTopics, zeroAddress, getAddress, decodeFunctionData, encodeFunctionData, encodeFunctionResult, parseAbi, serializeTransaction, keccak256, type Hex } from 'viem';
 import { GmxTestnetAdapter, createGmxReadTransport, GMX_TESTNET as P } from './index.js';
 import { READER_ABI, EXCHANGE_ABI } from './abi.js';
 import type { GmxReadTransport, GmxPrepared } from './contracts.js';
@@ -60,4 +61,6 @@ describe('GMX exact Testnet preparation (offline transport fixtures)', () => {
         return { hash: txHash, blockHash, from: p.account, to: t.to, input: t.data, value: '0x0', nonce: '0x0', chainId: '0x66eee', gas: '0x' + t.gas.toString(16), maxFeePerGas: '0x' + t.maxFeePerGas.toString(16), maxPriorityFeePerGas: '0x0' };
     } if (method === 'eth_call' && params[1] !== 'latest')
         return encodeFunctionResult({ abi: ERC, functionName: 'balanceOf', result: params[1] === '0x64' ? 0n : bad ? 999999n : 1000000n }); return original(method, params); }); expect(await f.a.confirmTransaction(p, txHash)).toMatchObject({ kind: 'mint', confirmed: true, beforeAtomic6: '0', afterAtomic6: '1000000' }); bad = true; await expect(f.a.confirmTransaction(p, txHash)).rejects.toThrow(); });
+    it('decodes the actual nonempty QA position returned by pinned live reader1543 v2.2.1',()=>{const fixture=JSON.parse(readFileSync(new URL('./fixtures/reader-v221-qa.json',import.meta.url),'utf8'));const rows=decodeFunctionResult({abi:READER_ABI,functionName:'getAccountPositions',data:fixture.data});expect(rows).toHaveLength(1);expect(rows[0]?.addresses.account.toLowerCase()).toBe(fixture.account.toLowerCase());expect(rows[0]?.numbers.sizeInUsd).toBe(20n*10n**30n);expect(rows[0]?.numbers.collateralAmount).toBe(9991998n);expect(rows[0]?.flags.isLong).toBe(true);expect(rows[0]?.numbers.realizedPnlUsd).toBe(0n);});
+
 });
