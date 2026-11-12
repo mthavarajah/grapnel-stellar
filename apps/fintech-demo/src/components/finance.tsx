@@ -585,7 +585,7 @@ function FinanceShell({ page, auth, initialCategory }: { page: string; auth?: Au
         if(!Array.isArray(rows))throw Error("Market data is unavailable.");
         if(isCurrent())setMarkets(rows.filter(isCurrentPerpetualMarket));
       } catch {
-        if(isCurrent())setMarkets(current=>current.map(entry=>({...entry,price_status:"unavailable",reference_price:null,reference_price_atomic:null,stats:null,risk:null})));
+        if(isCurrent())setMarkets(current=>current.map(entry=>({...entry,price_status:"unavailable",reference_price:null,reference_price_atomic:null,stats:null,perpetuals_stats:null,risk:null})));
       } finally {
         inFlight=false;firstLoad=false;if(isCurrent())setMarketsLoading(false);
       }

@@ -1,3 +1,5 @@
+import {HyperliquidTestnetReader} from './adapters/hyperliquid/index.js';
+import {perpetualMarketRows,perpetualHistory} from './modules/perpetuals/market-data.js';
 import { readFile } from 'node:fs/promises';
 import type { Pool } from 'pg';
 import { z } from 'zod';
@@ -36,7 +38,7 @@ import {SpotProofReadiness} from './modules/spot/proof.js';
 import { SpotService } from './modules/spot/service.js';
 import { registerSpotRoutes } from './modules/spot/routes.js';
 import {StocksTestnetDiscovery} from './adapters/stocks/index.js';
-import {PeridotMarginAdapter,PERIDOT_COLLATERAL,PERIDOT_TESTNET_PINS} from './adapters/peridot/index.js';
+import {PERIDOT_COLLATERAL,PERIDOT_TESTNET_PINS} from './adapters/peridot/index.js';
 import { WalletService } from './modules/wallets/service.js';
 import { hasFundingRoundTripProof, verifyNativeTransfer } from './modules/funding/readiness.js';
 import { FundingService } from './modules/funding/service.js';
@@ -103,9 +105,9 @@ export async function createRuntime(pool?:Pool,marginRoutes:RuntimeMarginBinding
  const marginFunding=new PeridotCollateralFundingAdapter(customerMargin.chain,()=>customerMargin.executionReady());
  const marginBindings:RuntimeMarginBindings={
   service:new MarginWorkflowService(operations,customerMargin,PERIDOT_CUSTOMER_POLICY),
-  termsFor:customerMargin.termsFor.bind(customerMargin),creationReadyFor:customerMargin.creationReadyFor.bind(customerMargin),readinessFor:customerMargin.readinessFor.bind(customerMargin),quoteFor:customerMargin.quoteFor.bind(customerMargin),
+  termsFor:customerMargin.termsFor.bind(customerMargin),creationReadyFor:async()=>false,readinessFor:customerMargin.readinessFor.bind(customerMargin),quoteFor:customerMargin.quoteFor.bind(customerMargin),
   execution:createMarginExecutionBridge(operations,customerMargin,PERIDOT_CUSTOMER_POLICY),
-  collateralFunding:{adapter:marginFunding,ready:()=>customerMargin.executionReady()},fundingExecution:createMarginFundingExecutionBridge(operations,marginFunding),...marginRoutes,
+  collateralFunding:{adapter:marginFunding,ready:async()=>false},fundingExecution:createMarginFundingExecutionBridge(operations,marginFunding),...marginRoutes,
  };
  const stocks=new StocksTestnetDiscovery({network:config.network,networkPassphrase:NETWORK_PASSPHRASE});
  let stocksReason='STOCKS_ROUTE_USES_MAINNET_ASSETS',stocksProbeAt=0,stocksProbeRunning=false;
@@ -115,15 +117,14 @@ export async function createRuntime(pool?:Pool,marginRoutes:RuntimeMarginBinding
  };
  const gate1Passed=await hasGate1Proof(chain);
  const funding=new TestnetFundingAdapter({network:config.network,networkPassphrase:NETWORK_PASSPHRASE,treasurySecret:process.env.DEMO_TREASURY_SECRET,enabled:process.env.TESTNET_FUNDING_ENABLED==='true',gate1Passed,maxPerCustomerAtomic:BigInt(process.env.TESTNET_FUNDING_MAX_PER_CUSTOMER_ATOMIC??'250000000'),maxPerTenantAtomic:BigInt(process.env.TESTNET_FUNDING_MAX_PER_TENANT_ATOMIC??'1000000000'),maxGlobalAtomic:BigInt(process.env.TESTNET_FUNDING_MAX_GLOBAL_ATOMIC??'2000000000')});
- const peridot=funding.treasuryAddress?new PeridotMarginAdapter({readSourceAddress:funding.treasuryAddress}):null;
- let marginRows:Awaited<ReturnType<PeridotMarginAdapter['markets']>>|undefined,marginAt=0,marginLoading:Promise<Awaited<ReturnType<PeridotMarginAdapter['markets']>>>|undefined;
- const readMarginMarkets=async()=>{
-  if(!peridot)throw new GrapnelError(409,'EXECUTION_UNAVAILABLE','An existing Testnet read source is required',false,{reason:'PERIDOT_READ_SOURCE_REQUIRED'});
-  if(marginRows&&Date.now()-marginAt<15000)return marginRows;
-  marginLoading??=peridot.markets().then(rows=>{marginRows=rows;marginAt=Date.now();return rows;}).catch(error=>{marginRows=undefined;throw error;}).finally(()=>{marginLoading=undefined;});
-  return marginLoading;
+ const hyperliquid=new HyperliquidTestnetReader();
+ let perpsRows:ReturnType<typeof perpetualMarketRows>|undefined,perpsAt=0,perpsLoading:Promise<ReturnType<typeof perpetualMarketRows>>|undefined;
+ const readPerpetualMarkets=async()=>{
+  if(perpsRows&&Date.now()-perpsAt<15000)return perpsRows;
+  perpsLoading??=hyperliquid.readMarkets().then(snapshot=>{perpsRows=perpetualMarketRows(snapshot.markets,snapshot.source.receivedAt);perpsAt=Date.now();return perpsRows;}).catch(error=>{perpsRows=undefined;throw error;}).finally(()=>{perpsLoading=undefined;});
+  return perpsLoading;
  };
- void readMarginMarkets().catch(()=>{/* Missing provider data never prevents unrelated wallet flows. */});
+ void readPerpetualMarkets().catch(()=>{/* Unavailable discovery cannot block wallet flows. */});
  const spotInspector=new SoroswapConfiguredInspector({quoteReadSource:funding.treasuryAddress??undefined});
  let spotMarkets:Awaited<ReturnType<SoroswapConfiguredInspector['markets']>>=[];
  if(process.env.SOROSWAP_API_KEY){try{spotMarkets=await spotInspector.markets();}catch{/* Discovery failure leaves an empty market registry; never promote a guessed route. */}}
@@ -145,7 +146,7 @@ export async function createRuntime(pool?:Pool,marginRoutes:RuntimeMarginBinding
  const borrowing=new BlendBorrowAdapter({network:config.network,passphrase:NETWORK_PASSPHRASE,rpcUrl:process.env.STELLAR_RPC_URL,gate1Passed},{prepareAndSimulate:input=>borrowPreparer.prepare(input),readSpendableBalance:readBorrowSpendable});
  const earningsReader=new LendingEarningsReader({pool:db,positions:customer=>blend.positions(customer)});
  const referencePrices=createYahooReferencePriceReader();
- const marketOverview=new MarketOverviewService({referencePrice:referencePrices,perps:readMarginMarkets,lending:()=>blend.markets()});
+ const marketOverview=new MarketOverviewService({referencePrice:referencePrices,perps:readPerpetualMarkets,lending:()=>blend.markets()});
  const marketProfile=async(id:string)=>{
   const market=spot.market(id),base=market.asset_in.kind==='native'?market.asset_out:market.asset_in;
   const canonical=spot.markets().find(entry=>entry.asset_in_id===XLM.id&&entry.asset_out_id===base.id);
@@ -205,8 +206,8 @@ export async function createRuntime(pool?:Pool,marginRoutes:RuntimeMarginBinding
    'trade.spot':()=>spotReadiness.capability(),
    'trade.stocks':stocksReadiness,
    'trade.perps':async()=>{
-    if(Date.now()-marginAt>15000&&!marginLoading)void readMarginMarkets().catch(()=>{});
-    const current=marginRows?.[0];return {execution_status:current?'discovery_only' as const:'blocked' as const,reason:current?.reason??'PERIDOT_DISCOVERY_PENDING',actions:current?['read_markets']:[]};
+    if(Date.now()-perpsAt>15000&&!perpsLoading)void readPerpetualMarkets().catch(()=>{});
+    return {execution_status:perpsRows?'discovery_only' as const:'blocked' as const,reason:'HYPERLIQUID_FUNDING_AND_EXECUTION_PROOF_REQUIRED',actions:perpsRows?['read_markets']:[]};
    },
    'capital.wallets':async()=>{const current=await hasGate1Proof(chain);return {execution_status:current?'testnet_verified':'blocked',reason:current?null:privy?'Privy-signed Testnet payment proof is pending':'PRIVY_APP_ID and PRIVY_APP_SECRET are required',actions:current?['provision','balances','test_payment']:[]};},
    'capital.testnet_funding':readFundingReadiness
@@ -221,7 +222,7 @@ export async function createRuntime(pool?:Pool,marginRoutes:RuntimeMarginBinding
     return success(request,await marketOverview.read(modules));
    });
    await registerMarketHistoryRoutes(app,{requireBusiness,success,
-    perps:(id,range)=>{if(!peridot)throw new GrapnelError(409,'EXECUTION_UNAVAILABLE','Margin history is unavailable');return peridot.history(id,range);},
+    perps:(id,range)=>perpetualHistory(hyperliquid,readPerpetualMarkets,id,range),
     stocks:(id,range)=>stocks.history(id,range),
     spot:async(id,range)=>{const profile=await marketProfile(id);return {...await marketData.history(profile.history_market_id??id,range),market_id:id,base_asset_id:profile.base_asset_id,base_symbol:profile.base_symbol};}
    });
@@ -267,7 +268,7 @@ export async function createRuntime(pool?:Pool,marginRoutes:RuntimeMarginBinding
    await registerMarginFundingRoutes(app,{operations,...marginBindings.collateralFunding});
    await registerLendingRoutes(app,{adapter:blend,borrowing,operations,balanceReader:address=>chain.getClassicBalances(address)});
    await registerSpotRoutes(app,{service:new SpotService(spot,db,operations,createSpotReservation(operations,readSpotBalances)),refreshReadiness:()=>spotReadiness.refresh(),requireBusiness,requireCustomer,success,
-    readDiscoveryMarkets:async category=>category==='perps'?readMarginMarkets():(await stocks.catalog()).map(market=>({...market,underlying:{symbol:market.symbol,name:market.name}})),
+    readDiscoveryMarkets:async category=>category==='perps'?readPerpetualMarkets():(await stocks.catalog()).map(market=>({...market,underlying:{symbol:market.symbol,name:market.name}})),
     readPositions:async customer=>({wallet_holdings:await wallets.balances(customer.businessId,customer.walletId),venue_positions:[]})});
    await registerFundingRoutes(app,{service:new FundingService(funding,operations),requireBusiness,requireCustomer,success});
   }

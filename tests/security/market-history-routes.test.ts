@@ -7,7 +7,7 @@ import {GrapnelError,type ModuleId} from '../../packages/contracts/src/index.js'
 const require=createRequire(new URL('../../apps/api/package.json',import.meta.url));
 const Fastify=require('fastify') as ()=>FastifyInstance;
 const bearer={authorization:'Bearer isolated-history-fixture'};
-const ids={spot:'stellar-testnet:soroswap:XLM:USDC',perps:'stellar-testnet:peridot:XLM-USDT-MARGIN',stocks:'sodax:catalog:mainnet:CAZSFDNSSR2RKJ2LIIB2Y4G4WOSYYKC4646EUJ63PQLDDHOVQYZ4HDTK'};
+const ids={spot:'stellar-testnet:soroswap:XLM:USDC',perps:'hyperliquid-testnet:perps:0',stocks:'sodax:catalog:mainnet:CAZSFDNSSR2RKJ2LIIB2Y4G4WOSYYKC4646EUJ63PQLDDHOVQYZ4HDTK'};
 const apps:FastifyInstance[]=[];
 async function fixture(){
  const app=Fastify();apps.push(app);

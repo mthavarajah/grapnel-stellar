@@ -2,8 +2,8 @@
   "openapi": "3.1.0",
   "info": {
     "title": "Grapnel Testnet API",
-    "version": "0.2.5",
-    "description": "Stellar Testnet only. See docs/03_API.md and packages/contracts for frozen payload schemas."
+    "version": "0.3.0",
+    "description": "Testnet prototype. Stellar customer-wallet execution; Hyperliquid Testnet perpetuals discovery. Financial bridge/trading execution remains gated by verified proof. See docs/16_PERPETUALS_INTEGRATION.md."
   },
   "servers": [
     {

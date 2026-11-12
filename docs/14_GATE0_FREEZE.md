@@ -1,4 +1,8 @@
-# Gate 0 freeze — current contract v0.2.5
+# Gate 0 freeze — current contract v0.3.0
+
+## Lead-approved Perpetuals provider revision 0.3.0
+
+The owner replaced Peridot Margin with Hyperliquid Testnet Perpetuals and authorized the CCTP USDC funding/return plan. Discovery rows identify the actual Hyperliquid Testnet network, source universe index, string prices and metrics; history uses real source candles for the selected timeframe. No financial bridge or order execution is enabled by discovery. Exact asset identity, customer authorization, network, reconciliation and provider eligibility gates remain mandatory. The six module IDs are unchanged. See `docs/16_PERPETUALS_INTEGRATION.md`. Historical Peridot records remain auditable; customer creation/funding is retired.
 
 ## Lead-approved retirement revision 0.2.5 — 2026-11-12
 Removes the Commodities product from module IDs, capabilities, market categories, frontend navigation, reference-price overview and API provider composition. The current six selectable modules are `capital.wallets`, `capital.testnet_funding`, `capital.lending`, `trade.spot`, `trade.stocks` and `trade.perps`. Removed category requests fail validation instead of exposing a dormant market.

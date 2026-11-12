@@ -51,3 +51,7 @@ An AI coding assistant with no multi-agent runner must execute these waves in de
 
 ## Final mandatory proof
 `GET /health`, tested business entitlements, issued/revoked key, one activated `G...` Testnet account, a real `tx_hash` with explorer link, a sample fintech flow through Grapnel, an accessible URL, a public code repo, and a one-minute functional screen recording. Soroswap spot execution and Blend supply/withdraw are intended Gate 2 acceptance tests; record a failure or capability reduction explicitly if they cannot be completed. Do not invent them.
+
+## Owner-authorized scope revision — Nov. 11, 2026
+
+The owner replaced customer Peridot Margin with Hyperliquid Testnet Perpetuals and authorized an actual Stellar Testnet Circle-USDC CCTP funding/return flow under existing `trade.perps`. This is an explicit exception to the earlier no-crosschain/Stellar-only provider boundary, not permission for mainnet writes or a separate bridge module. HyperEVM Testnet is chain998; perpetuals execute on HyperCore. Exact canonical assets, customer authorization, provider access eligibility and durable reconciled proof remain required. See `docs/16_PERPETUALS_INTEGRATION.md`. Peridot is retained only for historical evidence and recovery of its already funded own-QA position.
