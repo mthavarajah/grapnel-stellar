@@ -1,0 +1,1006 @@
+{
+  "captured_at": "2026-11-12T15:38:24.391Z",
+  "execution_status": "discovery_only",
+  "transactions_submitted": 0,
+  "rpc": "https://rpc.testnet.chain.robinhood.com",
+  "chain": {
+    "request": {
+      "jsonrpc": "2.0",
+      "id": 1,
+      "method": "eth_chainId",
+      "params": []
+    },
+    "response": {
+      "jsonrpc": "2.0",
+      "id": 1,
+      "result": "0xb626"
+    }
+  },
+  "block": "0x91512d7",
+  "addresses": {
+    "factory": "0x911b4000D3422F482F4062a913885f7b035382Df",
+    "quoter": "0x231606c321A99DE81e28fE48B07a93F1ba49e713",
+    "swapRouter02": "0x3Ce954107b1A675826B33bF23060Dd655e3758fE",
+    "universalRouter": "0x6F308B834595312f734e65e273F2210f43Fc48F8"
+  },
+  "contracts": {
+    "factory": {
+      "code_hash": "0xfc5ecedb7f06fb9c9a0d19e0d5f36456bdce2dfd2e12b8e85d40075d5fd25aa4",
+      "code_bytes": 24564
+    },
+    "quoter": {
+      "code_hash": "0xc57215bfd86c3014107faa5500719428c8b9d9b71063d4d4e3a3db9943003392",
+      "code_bytes": 8273,
+      "links": {
+        "factory": {
+          "request": {
+            "jsonrpc": "2.0",
+            "id": 5,
+            "method": "eth_call",
+            "params": [
+              {
+                "to": "0x231606c321A99DE81e28fE48B07a93F1ba49e713",
+                "data": "0xc45a0155"
+              },
+              "0x91512d7"
+            ]
+          },
+          "response": {
+            "jsonrpc": "2.0",
+            "id": 5,
+            "result": "0x000000000000000000000000911b4000d3422f482f4062a913885f7b035382df"
+          },
+          "decoded": "0x911b4000D3422F482F4062a913885f7b035382Df"
+        },
+        "WETH9": {
+          "request": {
+            "jsonrpc": "2.0",
+            "id": 6,
+            "method": "eth_call",
+            "params": [
+              {
+                "to": "0x231606c321A99DE81e28fE48B07a93F1ba49e713",
+                "data": "0x4aa4a4fc"
+              },
+              "0x91512d7"
+            ]
+          },
+          "response": {
+            "jsonrpc": "2.0",
+            "id": 6,
+            "result": "0x00000000000000000000000033e4191705c386532ba27cbf171db86919200b94"
+          },
+          "decoded": "0x33e4191705c386532ba27cBF171Db86919200B94"
+        }
+      }
+    },
+    "swapRouter02": {
+      "code_hash": "0xbab2cf24dd73f84128e43b7a241c35093278cfe539251f192166d66b4e6e1c77",
+      "code_bytes": 24497,
+      "links": {
+        "factory": {
+          "request": {
+            "jsonrpc": "2.0",
+            "id": 8,
+            "method": "eth_call",
+            "params": [
+              {
+                "to": "0x3Ce954107b1A675826B33bF23060Dd655e3758fE",
+                "data": "0xc45a0155"
+              },
+              "0x91512d7"
+            ]
+          },
+          "response": {
+            "jsonrpc": "2.0",
+            "id": 8,
+            "result": "0x000000000000000000000000911b4000d3422f482f4062a913885f7b035382df"
+          },
+          "decoded": "0x911b4000D3422F482F4062a913885f7b035382Df"
+        },
+        "WETH9": {
+          "request": {
+            "jsonrpc": "2.0",
+            "id": 9,
+            "method": "eth_call",
+            "params": [
+              {
+                "to": "0x3Ce954107b1A675826B33bF23060Dd655e3758fE",
+                "data": "0x4aa4a4fc"
+              },
+              "0x91512d7"
+            ]
+          },
+          "response": {
+            "jsonrpc": "2.0",
+            "id": 9,
+            "result": "0x00000000000000000000000033e4191705c386532ba27cbf171db86919200b94"
+          },
+          "decoded": "0x33e4191705c386532ba27cBF171Db86919200B94"
+        }
+      }
+    },
+    "universalRouter": {
+      "code_hash": "0xf24bd4ae8f5bf32517d6c4c43254d84d070825fe743470021aed824a8d6ea9b6",
+      "code_bytes": 17963
+    }
+  },
+  "quotes": [
+    {
+      "symbol": "TSLA",
+      "direction": "buy",
+      "tokenIn": "0x7E955252E15c84f5768B83c41a71F9eba181802F",
+      "tokenOut": "0xC9f9c86933092BbbfFF3CCb4b105A4A94bf3Bd4E",
+      "amount_in_base_units": "1000000",
+      "fee": 3000,
+      "quote": {
+        "request": {
+          "jsonrpc": "2.0",
+          "id": 16,
+          "method": "eth_call",
+          "params": [
+            {
+              "to": "0x231606c321A99DE81e28fE48B07a93F1ba49e713",
+              "data": "0xc6a5026a0000000000000000000000007e955252e15c84f5768b83c41a71f9eba181802f000000000000000000000000c9f9c86933092bbbfff3ccb4b105a4a94bf3bd4e00000000000000000000000000000000000000000000000000000000000f42400000000000000000000000000000000000000000000000000000000000000bb80000000000000000000000000000000000000000000000000000000000000000"
+            },
+            "0x91512d7"
+          ]
+        },
+        "response": {
+          "jsonrpc": "2.0",
+          "id": 16,
+          "result": "0x00000000000000000000000000000000000000000000000019348857da376eaa00000000000000000000000000000000000af64c23e498011a288a1582d96a4500000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000025e62"
+        },
+        "decoded": [
+          "1816226460641750698",
+          "56918473796525921955514482479950405",
+          0,
+          "155234"
+        ]
+      }
+    },
+    {
+      "symbol": "TSLA",
+      "direction": "sell",
+      "tokenIn": "0xC9f9c86933092BbbfFF3CCb4b105A4A94bf3Bd4E",
+      "tokenOut": "0x7E955252E15c84f5768B83c41a71F9eba181802F",
+      "amount_in_base_units": "10000000000000000",
+      "fee": 3000,
+      "quote": {
+        "request": {
+          "jsonrpc": "2.0",
+          "id": 17,
+          "method": "eth_call",
+          "params": [
+            {
+              "to": "0x231606c321A99DE81e28fE48B07a93F1ba49e713",
+              "data": "0xc6a5026a000000000000000000000000c9f9c86933092bbbfff3ccb4b105a4a94bf3bd4e0000000000000000000000007e955252e15c84f5768b83c41a71f9eba181802f000000000000000000000000000000000000000000000000002386f26fc100000000000000000000000000000000000000000000000000000000000000000bb80000000000000000000000000000000000000000000000000000000000000000"
+            },
+            "0x91512d7"
+          ]
+        },
+        "response": {
+          "jsonrpc": "2.0",
+          "id": 17,
+          "result": "0x0000000000000000000000000000000000000000000000000000000000000608000000000000000000000000000000000026d827fd7e408880319177ca397266000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000225e6"
+        },
+        "decoded": [
+          "1544",
+          "201691449449387154526065214570984038",
+          0,
+          "140774"
+        ]
+      }
+    },
+    {
+      "symbol": "AMZN",
+      "direction": "buy",
+      "tokenIn": "0x7E955252E15c84f5768B83c41a71F9eba181802F",
+      "tokenOut": "0x5884aD2f920c162CFBbACc88C9C51AA75eC09E02",
+      "amount_in_base_units": "1000000",
+      "fee": 3000,
+      "quote": {
+        "request": {
+          "jsonrpc": "2.0",
+          "id": 23,
+          "method": "eth_call",
+          "params": [
+            {
+              "to": "0x231606c321A99DE81e28fE48B07a93F1ba49e713",
+              "data": "0xc6a5026a0000000000000000000000007e955252e15c84f5768b83c41a71f9eba181802f0000000000000000000000005884ad2f920c162cfbbacc88c9c51aa75ec09e0200000000000000000000000000000000000000000000000000000000000f42400000000000000000000000000000000000000000000000000000000000000bb80000000000000000000000000000000000000000000000000000000000000000"
+            },
+            "0x91512d7"
+          ]
+        },
+        "response": {
+          "jsonrpc": "2.0",
+          "id": 23,
+          "result": "0x000000000000000000000000000000000000000000000000539a1e7ff0b9d32000000000000000000000000000000000000000000000093feaea8da6894ab7a3000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000240b0"
+        },
+        "decoded": [
+          "6024160986409849632",
+          "43680370720366341568419",
+          0,
+          "147632"
+        ]
+      }
+    },
+    {
+      "symbol": "AMZN",
+      "direction": "sell",
+      "tokenIn": "0x5884aD2f920c162CFBbACc88C9C51AA75eC09E02",
+      "tokenOut": "0x7E955252E15c84f5768B83c41a71F9eba181802F",
+      "amount_in_base_units": "10000000000000000",
+      "fee": 3000,
+      "quote": {
+        "request": {
+          "jsonrpc": "2.0",
+          "id": 24,
+          "method": "eth_call",
+          "params": [
+            {
+              "to": "0x231606c321A99DE81e28fE48B07a93F1ba49e713",
+              "data": "0xc6a5026a0000000000000000000000005884ad2f920c162cfbbacc88c9c51aa75ec09e020000000000000000000000007e955252e15c84f5768b83c41a71f9eba181802f000000000000000000000000000000000000000000000000002386f26fc100000000000000000000000000000000000000000000000000000000000000000bb80000000000000000000000000000000000000000000000000000000000000000"
+            },
+            "0x91512d7"
+          ]
+        },
+        "response": {
+          "jsonrpc": "2.0",
+          "id": 24,
+          "result": "0x000000000000000000000000000000000000000000000000000000000000038100000000000000000000000000000000000000000000050851eee73bc6fd1b9600000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000022703"
+        },
+        "decoded": [
+          "897",
+          "23765310277343359343510",
+          0,
+          "141059"
+        ]
+      }
+    },
+    {
+      "symbol": "PLTR",
+      "direction": "buy",
+      "tokenIn": "0x7E955252E15c84f5768B83c41a71F9eba181802F",
+      "tokenOut": "0x1FBE1a0e43594b3455993B5dE5Fd0A7A266298d0",
+      "amount_in_base_units": "1000000",
+      "fee": 3000,
+      "quote": {
+        "request": {
+          "jsonrpc": "2.0",
+          "id": 30,
+          "method": "eth_call",
+          "params": [
+            {
+              "to": "0x231606c321A99DE81e28fE48B07a93F1ba49e713",
+              "data": "0xc6a5026a0000000000000000000000007e955252e15c84f5768b83c41a71f9eba181802f0000000000000000000000001fbe1a0e43594b3455993b5de5fd0a7a266298d000000000000000000000000000000000000000000000000000000000000f42400000000000000000000000000000000000000000000000000000000000000bb80000000000000000000000000000000000000000000000000000000000000000"
+            },
+            "0x91512d7"
+          ]
+        },
+        "response": {
+          "jsonrpc": "2.0",
+          "id": 30,
+          "result": "0x0000000000000000000000000000000000000000000000005a16554d11ed6e27000000000000000000000000000000000000000000000875fb4885082fdcd55a00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000023cc2"
+        },
+        "decoded": [
+          "6491469702402764327",
+          "39955307788153231562074",
+          0,
+          "146626"
+        ]
+      }
+    },
+    {
+      "symbol": "PLTR",
+      "direction": "sell",
+      "tokenIn": "0x1FBE1a0e43594b3455993B5dE5Fd0A7A266298d0",
+      "tokenOut": "0x7E955252E15c84f5768B83c41a71F9eba181802F",
+      "amount_in_base_units": "10000000000000000",
+      "fee": 3000,
+      "quote": {
+        "request": {
+          "jsonrpc": "2.0",
+          "id": 31,
+          "method": "eth_call",
+          "params": [
+            {
+              "to": "0x231606c321A99DE81e28fE48B07a93F1ba49e713",
+              "data": "0xc6a5026a0000000000000000000000001fbe1a0e43594b3455993b5de5fd0a7a266298d00000000000000000000000007e955252e15c84f5768b83c41a71f9eba181802f000000000000000000000000000000000000000000000000002386f26fc100000000000000000000000000000000000000000000000000000000000000000bb80000000000000000000000000000000000000000000000000000000000000000"
+            },
+            "0x91512d7"
+          ]
+        },
+        "response": {
+          "jsonrpc": "2.0",
+          "id": 31,
+          "result": "0x000000000000000000000000000000000000000000000000000000000000039c00000000000000000000000000000000000000000000051b3b1e754b4b08afca0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000002231b"
+        },
+        "decoded": [
+          "924",
+          "24114154475602164887498",
+          0,
+          "140059"
+        ]
+      }
+    },
+    {
+      "symbol": "NFLX",
+      "direction": "buy",
+      "tokenIn": "0x7E955252E15c84f5768B83c41a71F9eba181802F",
+      "tokenOut": "0x3b8262A63d25f0477c4DDE23F83cfe22Cb768C93",
+      "amount_in_base_units": "1000000",
+      "fee": 3000,
+      "quote": {
+        "request": {
+          "jsonrpc": "2.0",
+          "id": 37,
+          "method": "eth_call",
+          "params": [
+            {
+              "to": "0x231606c321A99DE81e28fE48B07a93F1ba49e713",
+              "data": "0xc6a5026a0000000000000000000000007e955252e15c84f5768b83c41a71f9eba181802f0000000000000000000000003b8262a63d25f0477c4dde23f83cfe22cb768c9300000000000000000000000000000000000000000000000000000000000f42400000000000000000000000000000000000000000000000000000000000000bb80000000000000000000000000000000000000000000000000000000000000000"
+            },
+            "0x91512d7"
+          ]
+        },
+        "response": {
+          "jsonrpc": "2.0",
+          "id": 37,
+          "result": "0x000000000000000000000000000000000000000000000000129564e16f59c7420000000000000000000000000000000000000000000013d9c0e7917bea5af9c1000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000240c6"
+        },
+        "decoded": [
+          "1339087383611164482",
+          "93741806877254532921793",
+          0,
+          "147654"
+        ]
+      }
+    },
+    {
+      "symbol": "NFLX",
+      "direction": "sell",
+      "tokenIn": "0x3b8262A63d25f0477c4DDE23F83cfe22Cb768C93",
+      "tokenOut": "0x7E955252E15c84f5768B83c41a71F9eba181802F",
+      "amount_in_base_units": "10000000000000000",
+      "fee": 3000,
+      "quote": {
+        "request": {
+          "jsonrpc": "2.0",
+          "id": 38,
+          "method": "eth_call",
+          "params": [
+            {
+              "to": "0x231606c321A99DE81e28fE48B07a93F1ba49e713",
+              "data": "0xc6a5026a0000000000000000000000003b8262a63d25f0477c4dde23f83cfe22cb768c930000000000000000000000007e955252e15c84f5768b83c41a71f9eba181802f000000000000000000000000000000000000000000000000002386f26fc100000000000000000000000000000000000000000000000000000000000000000bb80000000000000000000000000000000000000000000000000000000000000000"
+            },
+            "0x91512d7"
+          ]
+        },
+        "response": {
+          "jsonrpc": "2.0",
+          "id": 38,
+          "result": "0x0000000000000000000000000000000000000000000000000000000000000f5e000000000000000000000000000000000000000000000a8546510c8100de8c070000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000002272f"
+        },
+        "decoded": [
+          "3934",
+          "49682148635303795919879",
+          0,
+          "141103"
+        ]
+      }
+    },
+    {
+      "symbol": "AMD",
+      "direction": "buy",
+      "tokenIn": "0x7E955252E15c84f5768B83c41a71F9eba181802F",
+      "tokenOut": "0x71178BAc73cBeb415514eB542a8995b82669778d",
+      "amount_in_base_units": "1000000",
+      "fee": 3000,
+      "quote": {
+        "request": {
+          "jsonrpc": "2.0",
+          "id": 44,
+          "method": "eth_call",
+          "params": [
+            {
+              "to": "0x231606c321A99DE81e28fE48B07a93F1ba49e713",
+              "data": "0xc6a5026a0000000000000000000000007e955252e15c84f5768b83c41a71f9eba181802f00000000000000000000000071178bac73cbeb415514eb542a8995b82669778d00000000000000000000000000000000000000000000000000000000000f42400000000000000000000000000000000000000000000000000000000000000bb80000000000000000000000000000000000000000000000000000000000000000"
+            },
+            "0x91512d7"
+          ]
+        },
+        "response": {
+          "jsonrpc": "2.0",
+          "id": 44,
+          "result": "0x0000000000000000000000000000000000000000000000004151d907eac2f06b000000000000000000000000000000000000000000000a0037a5f3b2ca4497d100000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000023cc2"
+        },
+        "decoded": [
+          "4706781713605521515",
+          "47227674707688918652881",
+          0,
+          "146626"
+        ]
+      }
+    },
+    {
+      "symbol": "AMD",
+      "direction": "sell",
+      "tokenIn": "0x71178BAc73cBeb415514eB542a8995b82669778d",
+      "tokenOut": "0x7E955252E15c84f5768B83c41a71F9eba181802F",
+      "amount_in_base_units": "10000000000000000",
+      "fee": 3000,
+      "quote": {
+        "request": {
+          "jsonrpc": "2.0",
+          "id": 45,
+          "method": "eth_call",
+          "params": [
+            {
+              "to": "0x231606c321A99DE81e28fE48B07a93F1ba49e713",
+              "data": "0xc6a5026a00000000000000000000000071178bac73cbeb415514eb542a8995b82669778d0000000000000000000000007e955252e15c84f5768b83c41a71f9eba181802f000000000000000000000000000000000000000000000000002386f26fc100000000000000000000000000000000000000000000000000000000000000000bb80000000000000000000000000000000000000000000000000000000000000000"
+            },
+            "0x91512d7"
+          ]
+        },
+        "response": {
+          "jsonrpc": "2.0",
+          "id": 45,
+          "result": "0x00000000000000000000000000000000000000000000000000000000000004e90000000000000000000000000000000000000000000005f4e6d6d3286d471a7d0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000002231b"
+        },
+        "decoded": [
+          "1257",
+          "28129471682777681697405",
+          0,
+          "140059"
+        ]
+      }
+    }
+  ],
+  "stock_proxies": [
+    {
+      "symbol": "TSLA",
+      "address": "0xC9f9c86933092BbbfFF3CCb4b105A4A94bf3Bd4E",
+      "beacon_slot": {
+        "request": {
+          "jsonrpc": "2.0",
+          "id": 11,
+          "method": "eth_getStorageAt",
+          "params": [
+            "0xC9f9c86933092BbbfFF3CCb4b105A4A94bf3Bd4E",
+            "0xa3f0ad74e5423aebfd80d3ef4346578335a9a72aeaee59ff6cb3582b35133d50",
+            "0x91512d7"
+          ]
+        },
+        "response": {
+          "jsonrpc": "2.0",
+          "id": 11,
+          "result": "0x0000000000000000000000001df3ca0fd30ed5eeb09eb01938f4e9c5196e6ca5"
+        }
+      },
+      "beacon": "0x1df3ca0fd30ed5eeb09eb01938f4e9c5196e6ca5",
+      "implementation": {
+        "request": {
+          "jsonrpc": "2.0",
+          "id": 12,
+          "method": "eth_call",
+          "params": [
+            {
+              "to": "0x1df3ca0fd30ed5eeb09eb01938f4e9c5196e6ca5",
+              "data": "0x5c60da1b"
+            },
+            "0x91512d7"
+          ]
+        },
+        "response": {
+          "jsonrpc": "2.0",
+          "id": 12,
+          "result": "0x000000000000000000000000bd14156e05c6af28ad39aa53a2ab8eb9cdf657da"
+        },
+        "decoded": "0xBd14156E05c6AF28ad39aA53a2AB8eB9CDf657DA"
+      },
+      "creator_is_default_admin": {
+        "request": {
+          "jsonrpc": "2.0",
+          "id": 13,
+          "method": "eth_call",
+          "params": [
+            {
+              "to": "0x1df3ca0fd30ed5eeb09eb01938f4e9c5196e6ca5",
+              "data": "0x91d148540000000000000000000000000000000000000000000000000000000000000000000000000000000000000000720538e8c1426f077ba6e2592a59d5176f602d88"
+            },
+            "0x91512d7"
+          ]
+        },
+        "response": {
+          "jsonrpc": "2.0",
+          "id": 13,
+          "result": "0x0000000000000000000000000000000000000000000000000000000000000000"
+        },
+        "decoded": false
+      },
+      "paused": {
+        "request": {
+          "jsonrpc": "2.0",
+          "id": 14,
+          "method": "eth_call",
+          "params": [
+            {
+              "to": "0x1df3ca0fd30ed5eeb09eb01938f4e9c5196e6ca5",
+              "data": "0x5c975abb"
+            },
+            "0x91512d7"
+          ]
+        },
+        "response": {
+          "jsonrpc": "2.0",
+          "id": 14,
+          "result": "0x0000000000000000000000000000000000000000000000000000000000000000"
+        },
+        "decoded": false
+      },
+      "ui_multiplier": {
+        "request": {
+          "jsonrpc": "2.0",
+          "id": 15,
+          "method": "eth_call",
+          "params": [
+            {
+              "to": "0xC9f9c86933092BbbfFF3CCb4b105A4A94bf3Bd4E",
+              "data": "0xa60bf13d"
+            },
+            "0x91512d7"
+          ]
+        },
+        "response": {
+          "jsonrpc": "2.0",
+          "id": 15,
+          "result": "0x0000000000000000000000000000000000000000000000000de0b6b3a7640000"
+        },
+        "decoded": "1000000000000000000"
+      }
+    },
+    {
+      "symbol": "AMZN",
+      "address": "0x5884aD2f920c162CFBbACc88C9C51AA75eC09E02",
+      "beacon_slot": {
+        "request": {
+          "jsonrpc": "2.0",
+          "id": 18,
+          "method": "eth_getStorageAt",
+          "params": [
+            "0x5884aD2f920c162CFBbACc88C9C51AA75eC09E02",
+            "0xa3f0ad74e5423aebfd80d3ef4346578335a9a72aeaee59ff6cb3582b35133d50",
+            "0x91512d7"
+          ]
+        },
+        "response": {
+          "jsonrpc": "2.0",
+          "id": 18,
+          "result": "0x0000000000000000000000001df3ca0fd30ed5eeb09eb01938f4e9c5196e6ca5"
+        }
+      },
+      "beacon": "0x1df3ca0fd30ed5eeb09eb01938f4e9c5196e6ca5",
+      "implementation": {
+        "request": {
+          "jsonrpc": "2.0",
+          "id": 19,
+          "method": "eth_call",
+          "params": [
+            {
+              "to": "0x1df3ca0fd30ed5eeb09eb01938f4e9c5196e6ca5",
+              "data": "0x5c60da1b"
+            },
+            "0x91512d7"
+          ]
+        },
+        "response": {
+          "jsonrpc": "2.0",
+          "id": 19,
+          "result": "0x000000000000000000000000bd14156e05c6af28ad39aa53a2ab8eb9cdf657da"
+        },
+        "decoded": "0xBd14156E05c6AF28ad39aA53a2AB8eB9CDf657DA"
+      },
+      "creator_is_default_admin": {
+        "request": {
+          "jsonrpc": "2.0",
+          "id": 20,
+          "method": "eth_call",
+          "params": [
+            {
+              "to": "0x1df3ca0fd30ed5eeb09eb01938f4e9c5196e6ca5",
+              "data": "0x91d148540000000000000000000000000000000000000000000000000000000000000000000000000000000000000000720538e8c1426f077ba6e2592a59d5176f602d88"
+            },
+            "0x91512d7"
+          ]
+        },
+        "response": {
+          "jsonrpc": "2.0",
+          "id": 20,
+          "result": "0x0000000000000000000000000000000000000000000000000000000000000000"
+        },
+        "decoded": false
+      },
+      "paused": {
+        "request": {
+          "jsonrpc": "2.0",
+          "id": 21,
+          "method": "eth_call",
+          "params": [
+            {
+              "to": "0x1df3ca0fd30ed5eeb09eb01938f4e9c5196e6ca5",
+              "data": "0x5c975abb"
+            },
+            "0x91512d7"
+          ]
+        },
+        "response": {
+          "jsonrpc": "2.0",
+          "id": 21,
+          "result": "0x0000000000000000000000000000000000000000000000000000000000000000"
+        },
+        "decoded": false
+      },
+      "ui_multiplier": {
+        "request": {
+          "jsonrpc": "2.0",
+          "id": 22,
+          "method": "eth_call",
+          "params": [
+            {
+              "to": "0x5884aD2f920c162CFBbACc88C9C51AA75eC09E02",
+              "data": "0xa60bf13d"
+            },
+            "0x91512d7"
+          ]
+        },
+        "response": {
+          "jsonrpc": "2.0",
+          "id": 22,
+          "result": "0x0000000000000000000000000000000000000000000000000de0b6b3a7640000"
+        },
+        "decoded": "1000000000000000000"
+      }
+    },
+    {
+      "symbol": "PLTR",
+      "address": "0x1FBE1a0e43594b3455993B5dE5Fd0A7A266298d0",
+      "beacon_slot": {
+        "request": {
+          "jsonrpc": "2.0",
+          "id": 25,
+          "method": "eth_getStorageAt",
+          "params": [
+            "0x1FBE1a0e43594b3455993B5dE5Fd0A7A266298d0",
+            "0xa3f0ad74e5423aebfd80d3ef4346578335a9a72aeaee59ff6cb3582b35133d50",
+            "0x91512d7"
+          ]
+        },
+        "response": {
+          "jsonrpc": "2.0",
+          "id": 25,
+          "result": "0x0000000000000000000000001df3ca0fd30ed5eeb09eb01938f4e9c5196e6ca5"
+        }
+      },
+      "beacon": "0x1df3ca0fd30ed5eeb09eb01938f4e9c5196e6ca5",
+      "implementation": {
+        "request": {
+          "jsonrpc": "2.0",
+          "id": 26,
+          "method": "eth_call",
+          "params": [
+            {
+              "to": "0x1df3ca0fd30ed5eeb09eb01938f4e9c5196e6ca5",
+              "data": "0x5c60da1b"
+            },
+            "0x91512d7"
+          ]
+        },
+        "response": {
+          "jsonrpc": "2.0",
+          "id": 26,
+          "result": "0x000000000000000000000000bd14156e05c6af28ad39aa53a2ab8eb9cdf657da"
+        },
+        "decoded": "0xBd14156E05c6AF28ad39aA53a2AB8eB9CDf657DA"
+      },
+      "creator_is_default_admin": {
+        "request": {
+          "jsonrpc": "2.0",
+          "id": 27,
+          "method": "eth_call",
+          "params": [
+            {
+              "to": "0x1df3ca0fd30ed5eeb09eb01938f4e9c5196e6ca5",
+              "data": "0x91d148540000000000000000000000000000000000000000000000000000000000000000000000000000000000000000720538e8c1426f077ba6e2592a59d5176f602d88"
+            },
+            "0x91512d7"
+          ]
+        },
+        "response": {
+          "jsonrpc": "2.0",
+          "id": 27,
+          "result": "0x0000000000000000000000000000000000000000000000000000000000000000"
+        },
+        "decoded": false
+      },
+      "paused": {
+        "request": {
+          "jsonrpc": "2.0",
+          "id": 28,
+          "method": "eth_call",
+          "params": [
+            {
+              "to": "0x1df3ca0fd30ed5eeb09eb01938f4e9c5196e6ca5",
+              "data": "0x5c975abb"
+            },
+            "0x91512d7"
+          ]
+        },
+        "response": {
+          "jsonrpc": "2.0",
+          "id": 28,
+          "result": "0x0000000000000000000000000000000000000000000000000000000000000000"
+        },
+        "decoded": false
+      },
+      "ui_multiplier": {
+        "request": {
+          "jsonrpc": "2.0",
+          "id": 29,
+          "method": "eth_call",
+          "params": [
+            {
+              "to": "0x1FBE1a0e43594b3455993B5dE5Fd0A7A266298d0",
+              "data": "0xa60bf13d"
+            },
+            "0x91512d7"
+          ]
+        },
+        "response": {
+          "jsonrpc": "2.0",
+          "id": 29,
+          "result": "0x0000000000000000000000000000000000000000000000000de0b6b3a7640000"
+        },
+        "decoded": "1000000000000000000"
+      }
+    },
+    {
+      "symbol": "NFLX",
+      "address": "0x3b8262A63d25f0477c4DDE23F83cfe22Cb768C93",
+      "beacon_slot": {
+        "request": {
+          "jsonrpc": "2.0",
+          "id": 32,
+          "method": "eth_getStorageAt",
+          "params": [
+            "0x3b8262A63d25f0477c4DDE23F83cfe22Cb768C93",
+            "0xa3f0ad74e5423aebfd80d3ef4346578335a9a72aeaee59ff6cb3582b35133d50",
+            "0x91512d7"
+          ]
+        },
+        "response": {
+          "jsonrpc": "2.0",
+          "id": 32,
+          "result": "0x0000000000000000000000001df3ca0fd30ed5eeb09eb01938f4e9c5196e6ca5"
+        }
+      },
+      "beacon": "0x1df3ca0fd30ed5eeb09eb01938f4e9c5196e6ca5",
+      "implementation": {
+        "request": {
+          "jsonrpc": "2.0",
+          "id": 33,
+          "method": "eth_call",
+          "params": [
+            {
+              "to": "0x1df3ca0fd30ed5eeb09eb01938f4e9c5196e6ca5",
+              "data": "0x5c60da1b"
+            },
+            "0x91512d7"
+          ]
+        },
+        "response": {
+          "jsonrpc": "2.0",
+          "id": 33,
+          "result": "0x000000000000000000000000bd14156e05c6af28ad39aa53a2ab8eb9cdf657da"
+        },
+        "decoded": "0xBd14156E05c6AF28ad39aA53a2AB8eB9CDf657DA"
+      },
+      "creator_is_default_admin": {
+        "request": {
+          "jsonrpc": "2.0",
+          "id": 34,
+          "method": "eth_call",
+          "params": [
+            {
+              "to": "0x1df3ca0fd30ed5eeb09eb01938f4e9c5196e6ca5",
+              "data": "0x91d148540000000000000000000000000000000000000000000000000000000000000000000000000000000000000000720538e8c1426f077ba6e2592a59d5176f602d88"
+            },
+            "0x91512d7"
+          ]
+        },
+        "response": {
+          "jsonrpc": "2.0",
+          "id": 34,
+          "result": "0x0000000000000000000000000000000000000000000000000000000000000000"
+        },
+        "decoded": false
+      },
+      "paused": {
+        "request": {
+          "jsonrpc": "2.0",
+          "id": 35,
+          "method": "eth_call",
+          "params": [
+            {
+              "to": "0x1df3ca0fd30ed5eeb09eb01938f4e9c5196e6ca5",
+              "data": "0x5c975abb"
+            },
+            "0x91512d7"
+          ]
+        },
+        "response": {
+          "jsonrpc": "2.0",
+          "id": 35,
+          "result": "0x0000000000000000000000000000000000000000000000000000000000000000"
+        },
+        "decoded": false
+      },
+      "ui_multiplier": {
+        "request": {
+          "jsonrpc": "2.0",
+          "id": 36,
+          "method": "eth_call",
+          "params": [
+            {
+              "to": "0x3b8262A63d25f0477c4DDE23F83cfe22Cb768C93",
+              "data": "0xa60bf13d"
+            },
+            "0x91512d7"
+          ]
+        },
+        "response": {
+          "jsonrpc": "2.0",
+          "id": 36,
+          "result": "0x0000000000000000000000000000000000000000000000000de0b6b3a7640000"
+        },
+        "decoded": "1000000000000000000"
+      }
+    },
+    {
+      "symbol": "AMD",
+      "address": "0x71178BAc73cBeb415514eB542a8995b82669778d",
+      "beacon_slot": {
+        "request": {
+          "jsonrpc": "2.0",
+          "id": 39,
+          "method": "eth_getStorageAt",
+          "params": [
+            "0x71178BAc73cBeb415514eB542a8995b82669778d",
+            "0xa3f0ad74e5423aebfd80d3ef4346578335a9a72aeaee59ff6cb3582b35133d50",
+            "0x91512d7"
+          ]
+        },
+        "response": {
+          "jsonrpc": "2.0",
+          "id": 39,
+          "result": "0x0000000000000000000000001df3ca0fd30ed5eeb09eb01938f4e9c5196e6ca5"
+        }
+      },
+      "beacon": "0x1df3ca0fd30ed5eeb09eb01938f4e9c5196e6ca5",
+      "implementation": {
+        "request": {
+          "jsonrpc": "2.0",
+          "id": 40,
+          "method": "eth_call",
+          "params": [
+            {
+              "to": "0x1df3ca0fd30ed5eeb09eb01938f4e9c5196e6ca5",
+              "data": "0x5c60da1b"
+            },
+            "0x91512d7"
+          ]
+        },
+        "response": {
+          "jsonrpc": "2.0",
+          "id": 40,
+          "result": "0x000000000000000000000000bd14156e05c6af28ad39aa53a2ab8eb9cdf657da"
+        },
+        "decoded": "0xBd14156E05c6AF28ad39aA53a2AB8eB9CDf657DA"
+      },
+      "creator_is_default_admin": {
+        "request": {
+          "jsonrpc": "2.0",
+          "id": 41,
+          "method": "eth_call",
+          "params": [
+            {
+              "to": "0x1df3ca0fd30ed5eeb09eb01938f4e9c5196e6ca5",
+              "data": "0x91d148540000000000000000000000000000000000000000000000000000000000000000000000000000000000000000720538e8c1426f077ba6e2592a59d5176f602d88"
+            },
+            "0x91512d7"
+          ]
+        },
+        "response": {
+          "jsonrpc": "2.0",
+          "id": 41,
+          "result": "0x0000000000000000000000000000000000000000000000000000000000000000"
+        },
+        "decoded": false
+      },
+      "paused": {
+        "request": {
+          "jsonrpc": "2.0",
+          "id": 42,
+          "method": "eth_call",
+          "params": [
+            {
+              "to": "0x1df3ca0fd30ed5eeb09eb01938f4e9c5196e6ca5",
+              "data": "0x5c975abb"
+            },
+            "0x91512d7"
+          ]
+        },
+        "response": {
+          "jsonrpc": "2.0",
+          "id": 42,
+          "result": "0x0000000000000000000000000000000000000000000000000000000000000000"
+        },
+        "decoded": false
+      },
+      "ui_multiplier": {
+        "request": {
+          "jsonrpc": "2.0",
+          "id": 43,
+          "method": "eth_call",
+          "params": [
+            {
+              "to": "0x71178BAc73cBeb415514eB542a8995b82669778d",
+              "data": "0xa60bf13d"
+            },
+            "0x91512d7"
+          ]
+        },
+        "response": {
+          "jsonrpc": "2.0",
+          "id": 43,
+          "result": "0x0000000000000000000000000000000000000000000000000de0b6b3a7640000"
+        },
+        "decoded": "1000000000000000000"
+      }
+    }
+  ],
+  "sources": {
+    "https://raw.githubusercontent.com/hummusonrails/robinhood-chain-dapp-example/main/contracts/script/Deploy.s.sol": {
+      "status": 200,
+      "sha256": "0x3d55d6c40a0ae97f8363037bbcd1e63825b70e4159e2171fde9ebfcf2ae4f213",
+      "relevant_lines": [
+        "// robinhood chain testnet (46630)",
+        "//   real faucet stock tokens, chainlink feeds do not exist on testnet so mock feeds are deployed",
+        "    // testnet faucet stock tokens, dispensed by https://faucet.testnet.chain.robinhood.com",
+        "    address internal constant TESTNET_TSLA = 0xC9f9c86933092BbbfFF3CCb4b105A4A94bf3Bd4E;",
+        "    address internal constant TESTNET_AMZN = 0x5884aD2f920c162CFBbACc88C9C51AA75eC09E02;",
+        "    address internal constant TESTNET_NFLX = 0x3b8262A63d25f0477c4DDE23F83cfe22Cb768C93;",
+        "        } else if (block.chainid == 46630) {",
+        "        c[0] = BasketToken.Component(TESTNET_TSLA, address(tslaFeed), 0.4e18);",
+        "        c[1] = BasketToken.Component(TESTNET_AMZN, address(amznFeed), 0.3e18);",
+        "        c[2] = BasketToken.Component(TESTNET_NFLX, address(nflxFeed), 0.3e18);"
+      ]
+    },
+    "https://blog.arbitrum.foundation/build-your-first-dapp-on-robinhood-chain/": {
+      "status": 200,
+      "sha256": "0xcd6c7267c93b12bf8e0841ded05049f7f9d24cced83b579d60f59e7ca66074a3",
+      "relevant_lines": [
+        "<p>You can run it locally, deploy it to Robinhood Chain testnet, fork-test the mainnet configuration, and inspect the live walkthrough at <a href=\"https://robinhood-chain-dapp.vercel.app/?ref=blog.arbitrum.foundation\">robinhood-chain-dapp.vercel.app</a> with the source at <a href=\"https://github.com/hummusonrails/robinhood-chain-dapp-example?ref=blog.arbitrum.foundation\">github.com/hummusonrails/robinhood-chain-dapp-example</a>.</p>",
+        "<pre><code class=\"language-bash\">git clone --recurse-submodules https://github.com/hummusonrails/robinhood-chain-dapp-example.git",
+        "<p>Explore the fully functional index basket app deployed on Robinhood Chain with its interactive developer walkthrough and open source code on GitHub: <a href=\"https://robinhood-chain-dapp.vercel.app/?ref=blog.arbitrum.foundation\">robinhood-chain-dapp.vercel.app</a> and <a href=\"https://github.com/hummusonrails/robinhood-chain-dapp-example?ref=blog.arbitrum.foundation\">github.com/hummusonrails/robinhood-chain-dapp-example</a>.</p>"
+      ]
+    },
+    "https://blog.arbitrum.io/robinhood-chain-testnet/": {
+      "status": 200,
+      "sha256": "0xe3302fede970fa7ecca83ed3eda40886a33817371d59265504bc811883a1cd51",
+      "relevant_lines": [
+        ""
+      ]
+    }
+  }
+}

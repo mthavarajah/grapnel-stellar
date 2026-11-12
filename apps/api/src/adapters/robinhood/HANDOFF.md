@@ -39,3 +39,24 @@ node apps/api/src/adapters/robinhood/research/http-probe.mjs
 - [Quaestor USDG self-deployment record](https://github.com/N-45div/Quaestor/blob/main/deployments/stocks-robinhoodTestnet-usdg.json): separate project pools; not canonical registry.
 
 Lead owns any docs/17 solver API/schema extension. Do not connect these candidates to executable capabilities until canonical identity, destination settlement asset, venue and authorized end-to-end trade/return are verified.
+
+## Nov. 12 follow-up: USDG approved and venue reads verified
+
+The lead reports the owner explicitly chose separate Stellar USDC, HyperEVM USDC and Robinhood USDG balances. The earlier USDC-on-Robinhood blocker is therefore superseded; **no USDC/USDG substitution is made**.
+
+The official-doc-linked published `@synthra-swap/sdk@0.1.6` contains an explicit `ChainId.ROBINHOOD = 46630` deployment registry. Its legacy Testnet QuoterV2 and SwapRouter02 have nonempty runtime code and both return the expected factory and WETH9. Package integrity, exact registry/ABI excerpts and code hashes are saved in `research/sdk-registry-evidence.json` and `research/venue-evidence.json`.
+
+`quoteExactInputSingle` succeeded for USDG→stock and stock→USDG for all five assets using read-only `eth_call`. The production reader additionally verified pinned runtime code, token decimals, stock implementation/multiplier, factory pool, pair identity and fee before each of ten quotes. Reproduce with:
+
+```sh
+pnpm exec tsx apps/api/src/adapters/robinhood/research/live-reader-check.mts
+pnpm exec vitest run apps/api/src/adapters/robinhood/index.test.ts
+```
+
+**These Testnet AMM prices do not reflect real-world stock prices.** For example, the captured 1 USDG buy returned about 1.816 TSLA token units. This is a real Testnet pool quote with significant size/price impact, not an accurate underlying-share price. Reader output explicitly declares `price_basis: testnet_pool_quote`, `executionStatus: discovery_only`, and expires within 30 seconds. Display oracle prices must remain separate from executable pool quotes.
+
+Provenance improved: official Arbitrum Testnet launch article explicitly lists Tesla, Amazon, Palantir, Netflix and AMD faucet stocks. Its Foundation-linked application deployment script pins TSLA/AMZN/NFLX addresses. PLTR/AMD share the same live proxy beacon, implementation and UI multiplier; their exact-address confidence remains `shared_beacon_corroboration`, not a fictitious direct official address registry. The beacon's verified AccessControlsRegistry source uses role-based access, not owner(). Captured creator/default-admin checks and official source links are in venue/provenance evidence.
+
+`registry.ts` and `index.ts` implement the lead-approved immutable registry and reader only. `readStockMultiplier(symbol)` returns actual Testnet token identity, block and positive 18-decimal multiplier for a separate oracle-display reader. No execution capability is advertised. Actual customer binding, treasury inventory/allocation, explicit trade authorization, transaction simulation/submission, receipt and asset balance deltas remain the trading acceptance gates.
+
+The public RPC prunes historical state quickly. Saved evidence remains an observation at its captured block; fresh verification must read a recent block. Do not treat a pruned-block error as proof that the previously captured read never occurred.

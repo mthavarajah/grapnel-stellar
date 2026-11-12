@@ -1,0 +1,19 @@
+/** Chain-specific, immutable read-only allowlist. No execution capability is asserted. */
+export const RH_TESTNET = Object.freeze({
+  chainId: 46630 as const,
+  rpc: 'https://rpc.testnet.chain.robinhood.com' as const,
+  settlement: Object.freeze({ symbol: 'USDG', address: '0x7E955252E15c84f5768B83c41a71F9eba181802F', decimals: 6, codeHash: '0x864cc9ad53b338b82da1f7cab85ab0b3d5c8861acb422b6fec63cf36234f36a6' }),
+  factory: '0x911b4000D3422F482F4062a913885f7b035382Df', quoter: '0x231606c321A99DE81e28fE48B07a93F1ba49e713', swapRouter02: '0x3Ce954107b1A675826B33bF23060Dd655e3758fE',
+  wrappedNative: '0x33e4191705c386532ba27cBF171Db86919200B94',
+  beacon: '0x1df3ca0fd30ed5eeb09eb01938f4e9c5196e6ca5',
+  implementation: '0xBd14156E05c6AF28ad39aA53a2AB8eB9CDf657DA',
+  codeHashes: Object.freeze({"factory": "0xfc5ecedb7f06fb9c9a0d19e0d5f36456bdce2dfd2e12b8e85d40075d5fd25aa4", "quoter": "0xc57215bfd86c3014107faa5500719428c8b9d9b71063d4d4e3a3db9943003392", "swapRouter02": "0xbab2cf24dd73f84128e43b7a241c35093278cfe539251f192166d66b4e6e1c77"}),
+});
+export const STOCKS = Object.freeze([
+  Object.freeze({"symbol": "TSLA", "address": "0xC9f9c86933092BbbfFF3CCb4b105A4A94bf3Bd4E", "decimals": 18, "poolAddress": "0x33130082660AD87a99Ad6120269F91329C82f7c2", "fee": 3000, "codeHash": "0x2f367e6a678e7b30ab613d5963e541e6f4d3ca586de76e2f441fbfeb1a27c440", "officialTickerSource": "https://blog.arbitrum.io/robinhood-chain-testnet/", "addressConfidence": "foundation_linked_example", "addressSource": "https://github.com/hummusonrails/robinhood-chain-dapp-example/blob/main/contracts/script/Deploy.s.sol", "executionStatus": "discovery_only"} as const),
+  Object.freeze({"symbol": "AMZN", "address": "0x5884aD2f920c162CFBbACc88C9C51AA75eC09E02", "decimals": 18, "poolAddress": "0x6C0a5Ef3C4e0D29a56D3AB463f9c28F18482c047", "fee": 3000, "codeHash": "0x2f367e6a678e7b30ab613d5963e541e6f4d3ca586de76e2f441fbfeb1a27c440", "officialTickerSource": "https://blog.arbitrum.io/robinhood-chain-testnet/", "addressConfidence": "foundation_linked_example", "addressSource": "https://github.com/hummusonrails/robinhood-chain-dapp-example/blob/main/contracts/script/Deploy.s.sol", "executionStatus": "discovery_only"} as const),
+  Object.freeze({"symbol": "PLTR", "address": "0x1FBE1a0e43594b3455993B5dE5Fd0A7A266298d0", "decimals": 18, "poolAddress": "0x5c82380e87dB94f55dda0B1443EB046437158969", "fee": 3000, "codeHash": "0x2f367e6a678e7b30ab613d5963e541e6f4d3ca586de76e2f441fbfeb1a27c440", "officialTickerSource": "https://blog.arbitrum.io/robinhood-chain-testnet/", "addressConfidence": "shared_beacon_corroboration", "addressSource": "research/venue-evidence.json", "executionStatus": "discovery_only"} as const),
+  Object.freeze({"symbol": "NFLX", "address": "0x3b8262A63d25f0477c4DDE23F83cfe22Cb768C93", "decimals": 18, "poolAddress": "0x81EDa513eb0f5FdAf3903220432ebDb0a5FC6B02", "fee": 3000, "codeHash": "0x2f367e6a678e7b30ab613d5963e541e6f4d3ca586de76e2f441fbfeb1a27c440", "officialTickerSource": "https://blog.arbitrum.io/robinhood-chain-testnet/", "addressConfidence": "foundation_linked_example", "addressSource": "https://github.com/hummusonrails/robinhood-chain-dapp-example/blob/main/contracts/script/Deploy.s.sol", "executionStatus": "discovery_only"} as const),
+  Object.freeze({"symbol": "AMD", "address": "0x71178BAc73cBeb415514eB542a8995b82669778d", "decimals": 18, "poolAddress": "0xe3abEa804606228C89CC3196ECD2fedf27d2A586", "fee": 3000, "codeHash": "0x2f367e6a678e7b30ab613d5963e541e6f4d3ca586de76e2f441fbfeb1a27c440", "officialTickerSource": "https://blog.arbitrum.io/robinhood-chain-testnet/", "addressConfidence": "shared_beacon_corroboration", "addressSource": "research/venue-evidence.json", "executionStatus": "discovery_only"} as const),
+]);
+export type StockSymbol = (typeof STOCKS)[number]['symbol'];

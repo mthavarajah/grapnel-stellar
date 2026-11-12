@@ -1,0 +1,10 @@
+{
+  "package": "@synthra-swap/sdk",
+  "version": "0.1.6",
+  "official_docs_reference": "https://docs.synthra.org/docs/contract-addresses",
+  "tarball": "https://registry.npmjs.org/@synthra-swap/sdk/-/sdk-0.1.6.tgz",
+  "npm_integrity": "sha512-V3DY88+L4ImjVKE7I5PtZt6C5I0kUqQPZMmSERtoc6PwMiemYw2vPeizfmz6XO7vxc8uy+6bE3z8VzmMgAheZw==",
+  "tarball_sha256": "8073002ee39a9dd8c0e1270dd8318720ecb38bf37539cc44ac664d329917b2ba",
+  "registry_excerpt": "[chains_1.ChainId.ROBINHOOD]: {\n        v3: {\n            factory: '0x911b4000D3422F482F4062a913885f7b035382Df',\n            multicall: '0xc5Fc239bC83bbcA7B7E8975AD6Ec8800AeB05D8e',\n            quoter: '0x231606c321A99DE81e28fE48B07a93F1ba49e713',\n            nonfungiblePositionManager: '0x54A0EF7da351cb8fD1998E7945cc51E5825fB233',\n            tickLens: '0x1017b0cc825fBcf5B22E42396879D171E9Ba7407',\n            swapRouter02: '0x3Ce954107b1A675826B33bF23060Dd655e3758fE',\n        },\n        universalRouter: {\n            router: '0x6F308B834595312f734e65e273F2210f43Fc48F8',\n            wrappedNative: '0x33e4191705c386532ba27cBF171Db86919200B94',\n            creationBlock: 162228,\n        },\n    },",
+  "quoter_v2_abi_excerpt": "const QUOTER_V2_ABI = [\n    'function quoteExactInput(bytes path, uint256 amountIn) returns (uint256 amountOut, uint160[] sqrtPriceX96AfterList, uint32[] initializedTicksCrossedList, uint256 gasEstimate)',\n    'function quoteExactInputSingle((address tokenIn, address tokenOut, uint256 amountIn, uint24 fee, uint160 sqrtPriceLimitX96) params) returns (uint256 amountOut, uint160 sqrtPriceX96After, uint32 initializedTicksCrossed, uint256 gasEstimate)',\n    'function quoteExactOutput(bytes path, uint256 amountOut) returns (uint256 amountIn, uint160[] sqrtPriceX96AfterList, uint32[] initializedTicksCrossedList, uint256 gasEstimate)',\n    'function quoteExactOutputSingle((address tokenIn, address tokenOut, uint256 amount, uint24 fee, uint160 sqrtPriceLimitX96) params) returns (uint256 amountIn, uint160 sqrtPriceX96After, uint32 initializedTicksCrossed, uint256 gasEstimate)'\n];"
+}
