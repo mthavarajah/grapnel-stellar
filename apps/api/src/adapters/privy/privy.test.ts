@@ -39,7 +39,7 @@ describe('Actual SDK cryptographic verification with bounded current-wallet proo
  });
  it('rejects expiration crossed while awaiting current provider proof',async()=>{
   vi.useFakeTimers();const {instance,current}=verifier(),jwt=token({exp:Math.floor(Date.now()/1000)+2});
-  current.mockImplementationOnce(async()=>{vi.advanceTimersByTime(3000);return {id:'did:privy:fixture',linked_accounts:[]} as never;});
+  current.mockImplementationOnce(()=>{vi.advanceTimersByTime(3000);return Promise.resolve({id:'did:privy:fixture',linked_accounts:[]}) as unknown as ReturnType<ReturnType<PrivyClient['users']>['_get']>;});
   await expect(instance.verify(jwt)).rejects.toMatchObject({code:'INVALID_CUSTOMER_IDENTITY'});
  });
  it.each([{id:'different-wallet'},{archived_at:1}])('rejects wrong or archived current wallet %j',async patch=>{
