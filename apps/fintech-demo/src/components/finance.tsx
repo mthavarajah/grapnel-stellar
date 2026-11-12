@@ -1031,7 +1031,7 @@ function FinanceShell({ page, auth, initialCategory }: { page: string; auth?: Au
         <main>
           <div className="page-heading">
             <div>
-              <p className="eyebrow">YOUR LOCAL FINANCE WORKSPACE</p>
+              <p className="eyebrow">YOUR VELOCITY WORKSPACE</p>
               <h1>{(page==="markets"||page==="trade")&&category!=="crypto_spot"?"Markets":title[page]}</h1>
 
             </div>
@@ -1343,7 +1343,7 @@ function FinanceShell({ page, auth, initialCategory }: { page: string; auth?: Au
                         {(selectedSpotMarket.stats.pool?.stale===true||selectedSpotMarket.stats.custody?.stale===true)&&<p className="small muted">Market activity delayed</p>}
                       </>}
                     </section>
-                    {(category==="perps"||selectedSpotMarket.instrument_type==="perpetual_futures") ? <PerpetualOrderPreview symbol={selectedSpotMarket.underlying?.symbol??selectedSpotMarket.label} price={selectedSpotMarket.reference_price} quoteSymbol={selectedSpotMarket.quote_symbol} settlementAsset={selectedSpotMarket.settlement_asset} stock={category==="stocks"||selectedSpotMarket.asset_category==="equity"} error={detailError} loading={detailLoading}/> : <section className="market-order-card" aria-label="Trade market" data-testid="market-order-card">
+                    {(category==="perps"||selectedSpotMarket.instrument_type==="perpetual_futures") ? <PerpetualOrderPreview symbol={selectedSpotMarket.underlying?.symbol??selectedSpotMarket.label} price={selectedSpotMarket.reference_price} quoteSymbol={selectedSpotMarket.quote_symbol} settlementAsset={selectedSpotMarket.settlement_asset} stock={category==="stocks"||selectedSpotMarket.asset_category==="equity"} index={selectedSpotMarket.asset_category==="index"} error={detailError} loading={detailLoading}/> : <section className="market-order-card" aria-label="Trade market" data-testid="market-order-card">
                       <h2>Trade {selectedSpotMarket.underlying?.symbol}</h2>
                       <div className="public-order-direction" role="group" aria-label="Order direction"><button type="button" disabled>Buy</button><button type="button" disabled>Sell</button></div>
                       <p className="small muted">Available: {formatTokenAmount(swapBalance(selectedSpotMarket.base?.id??selectedSpotMarket.asset_in_id))} {selectedSpotMarket.base?.code??selectedSpotMarket.underlying?.symbol}</p>

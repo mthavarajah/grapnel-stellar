@@ -4,7 +4,7 @@ export function derivativeClass(id:unknown):DerivativeClass|null{return typeof i
 /** A source-qualified equity perpetual is not a Stellar stock token. */
 export function isCurrentDerivativeMarket(value:unknown,assetClass:DerivativeClass):boolean{
  if(!value||typeof value!=='object')return false;const market=value as Record<string,unknown>;
- return market.asset_class===assetClass&&derivativeClass(market.market_id)===assetClass&&market.provider==='hyperliquid'&&market.network==='hyperliquid-testnet'&&(assetClass!=='stocks'||market.instrument_type==='perpetual_futures');
+ return market.asset_class===assetClass&&(market.module===undefined||market.module==='trade.'+assetClass)&&derivativeClass(market.market_id)===assetClass&&market.provider==='hyperliquid'&&market.network==='hyperliquid-testnet'&&(assetClass!=='stocks'||market.instrument_type==='perpetual_futures');
 }
 export function isCurrentPerpetualMarket(value:unknown):boolean{return isCurrentDerivativeMarket(value,'perps');}
 export function bindMarketDetail(value:unknown,id:string,assetClass:DerivativeClass):Record<string,unknown>{

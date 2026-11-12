@@ -314,3 +314,6 @@ describe('selected Hyperliquid detail boundary',()=>{
   const id=detail('stocks').market_id;vi.spyOn(server,'grapnel').mockResolvedValue({market_id:id,points:[]});const response=await GET(request('market-history?market_id='+id),context(['market-history']));expect(response.status).toBe(200);expect(server.requireModule).toHaveBeenCalledWith('trade.stocks',session);
  });
 });
+it('rejects a source detail declaring a different module despite a matching market ID',async()=>{
+ const id='hyperliquid-testnet:stocks:750009';vi.spyOn(server,'grapnel').mockResolvedValue({market_id:id,asset_class:'stocks',module:'trade.perps',provider:'hyperliquid',network:'hyperliquid-testnet',instrument_type:'perpetual_futures'});const response=await GET(request('market-detail?market_id='+id),context(['market-detail']));expect(response.status).toBe(502);expect((await response.json()).error.code).toBe('INVALID_RESPONSE');
+});
