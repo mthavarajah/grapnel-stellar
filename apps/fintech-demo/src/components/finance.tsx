@@ -1513,11 +1513,11 @@ function FinanceShell({ page, auth, initialCategory }: { page: string; auth?: Au
             <p className="small muted">Borrowing accrues variable interest. Low collateral health can lead to liquidation.</p>
             {borrowingError&&<p className="inline-note" role="alert">{customerMessage(borrowingError)}</p>}
             {borrowingLoading&&!borrowing?<p className="small muted" role="status">Loading loan information…</p>:borrowing?.assets.length?<div className="borrowing-grid">{borrowing.assets.map(row=>{
-              const direction=loanActions[row.market_id]??"borrow",amountKey=`${row.market_id}:${direction}`;
+              const collateralNeeded=row.reason==="COLLATERAL_REQUIRED"||/^0(?:\.0+)?$/.test(row.collateral_value??"");
+              const direction=loanActions[row.market_id]??(collateralNeeded&&row.can_prepare_collateral_supply===true?"collateral-supply":"borrow"),amountKey=`${row.market_id}:${direction}`;
               const canPrepare=direction==="borrow"?row.can_prepare_borrow:direction==="repay"?row.can_prepare_repay:direction==="collateral-supply"?row.can_prepare_collateral_supply===true:row.can_prepare_collateral_withdraw===true;
               const maximumSelected=direction==="repay"&&repayAllAmounts[row.market_id]!=null&&repayAllAmounts[row.market_id]===loanAmounts[amountKey];
               const reviewLabel=direction==="borrow"?"Review borrow":direction==="repay"?(maximumSelected?"Review repay all":"Review repayment"):direction==="collateral-supply"?"Review collateral deposit":"Review collateral removal";
-              const collateralNeeded=row.reason==="COLLATERAL_REQUIRED"||/^0(?:\.0+)?$/.test(row.collateral_value??"");
               return <section className="borrowing-asset" key={row.market_id} aria-label={`${row.asset.code} loan`} data-testid={`loan-${row.asset.code.toLowerCase()}`}>
                 <div className="loan-asset-heading"><AssetLogo symbol={row.asset.code} name={row.asset.name} assetId={row.asset.id} size={40}/><h3>{row.asset.code}</h3></div>
                 <div className="loan-rate"><span>Variable borrow APR</span><strong>{borrowingRate(row.borrow_apr)}</strong>{row.borrow_apy!=null&&<small>APY {borrowingRate(row.borrow_apy)}</small>}</div>
@@ -1541,6 +1541,7 @@ function FinanceShell({ page, auth, initialCategory }: { page: string; auth?: Au
                   if(!valid||!latest?.repay_all_amount){setRepayAllErrors(current=>({...current,[row.market_id]:"A full repayment maximum is unavailable. Check your current loan."}));return;}
                   setLoanAmounts(current=>({...current,[`${row.market_id}:repay`]:latest.repay_all_amount!}));setRepayAllAmounts(current=>({...current,[row.market_id]:latest.repay_all_amount!}));
                 })}>Repay all · MAX</button>}</div><input id={`loan-amount-${row.asset.code}`} aria-label={direction==="borrow"?"Borrow amount":direction==="repay"?"Repay amount":"Collateral amount"} inputMode="decimal" placeholder="0.00" disabled={busy} value={loanAmounts[amountKey]??""} onChange={event=>{setLoanAmounts(current=>({...current,[amountKey]:event.target.value}));if(direction==="repay"){setRepayAllAmounts(current=>{const next={...current};delete next[row.market_id];return next;});setRepayAllErrors(current=>({...current,[row.market_id]:""}));}}}/></div><button className="button" disabled={busy||borrowingLoading||!session||!canPrepare||!loanAmounts[amountKey]||capability("capital.wallets")?.execution_status!=="testnet_verified"} onClick={()=>action(()=>start(direction.startsWith("collateral-")?`borrow-${direction}`:`lending/${direction}`,{market_id:row.market_id,amount:loanAmounts[amountKey]}))}>{busy?"Preparing…":reviewLabel}</button></div>
+                {!loanAmounts[amountKey]&&<p className="small muted">Enter an amount to review {direction==="collateral-supply"?"your collateral deposit":direction==="collateral-withdraw"?"your collateral removal":direction==="repay"?"your repayment":"your loan"}.</p>}
                 {maximumSelected&&<p className="small muted">Maximum repayment amount selected. Review the full token debit before approving.</p>}
                 {repayAllErrors[row.market_id]&&<p className="swap-action-error" role="alert">{repayAllErrors[row.market_id]}</p>}
               </section>;
@@ -1723,8 +1724,16 @@ function FinanceShell({ page, auth, initialCategory }: { page: string; auth?: Au
             )}
             {active.status === "awaiting_customer_authorization" && (
               <>
-                {approvalExpired && <p className="inline-note" role="status">This approval timed out. Check its status before preparing a new action.</p>}
-                <button className="button outline" disabled={busy} onClick={() => action(() => resumeOperation(active.operation_id))}>Check action status</button>
+                {approvalExpired && <p className="inline-note" role="status">This approval expired. Start a new review to continue.</p>}
+                <button className="button outline" disabled={busy} onClick={() => action(async () => {
+                  if(!approvalExpired){await resumeOperation(active.operation_id);return;}
+                  const op=await api("grapnel/operations/"+active.operation_id);
+                  if(!session||op.customer_id!==session.customer_id||op.wallet_id!==session.wallet_id)throw Error("Wallet action could not be found.");
+                  // Only dismiss an authoritatively expired, unsigned action. An
+                  // uncertain or submitted action must stay in status recovery.
+                  if(op.status==="expired"&&!op.tx_hash){setActive(null);return;}
+                  await resumeOperation(active.operation_id);
+                })}>{approvalExpired?"Start a new review":"Check action status"}</button>
                 <p className="small muted">
                   {active.type === "wallet.usdc_trustline"
                     ? "Review the holding limit, XLM held, fee and expiry before approving."
