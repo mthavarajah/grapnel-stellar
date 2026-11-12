@@ -24,12 +24,18 @@ export interface HyperliquidExecutionDependencies{
  durability:ExecutionDurability;
  /** Trusted exact-approval verifier, never a browser/body boolean or business API-key authorization. */
  verifyCustomerApproval?(intent:ApprovedPerpetualIntent,account:BoundPerpetualAccount):Promise<boolean>;
- /** Root verifies eligible Testnet account, attributable actual funding and provider execution proof. */
+ /** Root verifies access policy, the bound Testnet account and attributable actual funding; no prior successful order is required. */
  verifyAccountExecutionProof?(account:BoundPerpetualAccount):Promise<boolean>;
  /** Lead-owned verified source category, not a browser label or symbol heuristic. Required only for stocks aliases. */
  verifyStockMarketCategory?(market:MarketIdentity):Promise<{network:'hyperliquid-testnet';assetIndex:number;providerSymbol:string;dex:string;category:'equity'|'index';observedAt:number}|null>;
- resolveSigner(keyRef:string):Promise<AbstractViemLocalAccount>;
+ resolveSigner?(keyRef:string):Promise<AbstractViemLocalAccount>;
  now?:()=>number;
 }
 export interface MarketIdentity {symbol:string;assetIndex:number;localAssetIndex:number;dex:string;dexIndex:number;szDecimals:number;maxLeverage:number;}
 export interface PositionBaseline {size:string;leverageType:'cross'|'isolated';observedAt:number;}
+
+/** Server-owned immutable request. Root loads it from storage; browser supplies only its signature. */
+export interface UnsignedPerpetualAction extends Omit<SignedPerpetualAction,'payload'>{
+ typedData:ReturnType<typeof import('./guards.js').typedData>;
+ payload:{version:1;intent:ApprovedPerpetualIntent;account:BoundPerpetualAccount;market:MarketIdentity;before:PositionBaseline;wire:{action:Record<string,unknown>;nonce:number;expiresAfter:number}};
+}

@@ -1,8 +1,9 @@
 import{GrapnelError}from'@grapnel/contracts';
+import{parseSignature}from'viem';
 import{signL1Action}from'@nktkas/hyperliquid/signing';
 import type{ApprovedPerpetualIntent,BoundPerpetualAccount,SignedPerpetualAction,PerpetualExecutionAdapter,PerpetualExecutionStatus}from'../../../modules/perpetuals/execution-contract.js';
-import{HL_EXCHANGE,type HyperliquidExecutionDependencies}from'./types.js';
-import{assertScope,assertFreshIntent,assertPrecision,assertPositionIntent,orderAction,hash,stable,inspectArtifact,fail}from'./guards.js';
+import{HL_EXCHANGE,type HyperliquidExecutionDependencies,type UnsignedPerpetualAction}from'./types.js';
+import{assertScope,assertFreshIntent,assertPrecision,assertPositionIntent,orderAction,hash,stable,inspectArtifact,inspectUnsignedArtifact,typedData,fail}from'./guards.js';
 import{network,market,position}from'./reads.js';
 import{inspectSettlement,unknown}from'./reconcile.js';
 /** Injected only. No account creation, funding, leverage update, GTC, default HTTP transport or automatic resend. */
@@ -16,10 +17,29 @@ export class HyperliquidTestnetExecutionAdapter implements PerpetualExecutionAda
   if(!await this.d.verifyCustomerApproval?.(structuredClone(i),structuredClone(a))||!await this.d.verifyAccountExecutionProof?.(structuredClone(a)))return fail('EXACT_CUSTOMER_APPROVAL_AND_ACCOUNT_PROOF_REQUIRED');
   await network(this.d);const [m,before]=await Promise.all([market(this.d,i),position(this.d,i)]);assertPrecision(i,m);assertPositionIntent(i,m,before);
   const intentHash=hash({intent:i,account:a});if(!await this.d.durability.reserveIntent(structuredClone(i),structuredClone(a),intentHash))return fail('DURABLE_NONCE_CLOID_OR_OPERATION_REPLAY');
+  if(!this.d.resolveSigner)return fail('SERVER_SIGNER_NOT_CONFIGURED');
   const wallet=await this.d.resolveSigner(a.signingKeyRef).catch(()=>fail('CONFIGURED_SIGNER_UNAVAILABLE'));if(wallet.address.toLowerCase()!==a.accountAddress.toLowerCase())return fail('CONFIGURED_SOURCE_SIGNER_MISMATCH');
   const action=orderAction(i),expiresAfter=Date.parse(i.expiresAt),signature=await signL1Action({wallet,action,nonce:i.nonce,expiresAfter,isTestnet:true}).catch(()=>fail('TYPED_DATA_SIGNATURE_UNAVAILABLE'));assertFreshIntent(i,this.d.now?.()??Date.now());
   const result:SignedPerpetualAction={network:'hyperliquid-testnet',accountAddress:i.accountAddress,operationId:i.operationId,nonce:i.nonce,clientOrderId:i.clientOrderId,intentHash,payload:{version:1,intent:i,account:a,market:m,before,wire:{action,nonce:i.nonce,expiresAfter,signature}}};await inspectArtifact(result,this.d.scope);return structuredClone(result);
  }
+ async prepareCustomer(intent:ApprovedPerpetualIntent,account:BoundPerpetualAccount):Promise<UnsignedPerpetualAction>{return this.guarded(async()=>{
+  const i=structuredClone(intent),a=structuredClone(account);assertScope(i,a,this.d.scope);assertFreshIntent(i,this.d.now?.()??Date.now());
+  // This stage is a request for customer approval, never spend authorization.
+  if(!await this.d.verifyAccountExecutionProof?.(structuredClone(a)))return fail('ACCOUNT_EXECUTION_PROOF_REQUIRED');
+  await network(this.d);const [m,before]=await Promise.all([market(this.d,i),position(this.d,i)]);assertPrecision(i,m);assertPositionIntent(i,m,before);
+  const intentHash=hash({intent:i,account:a});if(!await this.d.durability.reserveIntent(structuredClone(i),structuredClone(a),intentHash))return fail('DURABLE_NONCE_CLOID_OR_OPERATION_REPLAY');
+  const action=orderAction(i),expiresAfter=Date.parse(i.expiresAt),result:UnsignedPerpetualAction={network:'hyperliquid-testnet',accountAddress:i.accountAddress,operationId:i.operationId,nonce:i.nonce,clientOrderId:i.clientOrderId,intentHash,payload:{version:1,intent:i,account:a,market:m,before,wire:{action,nonce:i.nonce,expiresAfter}},typedData:typedData(action,i.nonce,expiresAfter)};
+  inspectUnsignedArtifact(result,this.d.scope);return structuredClone(result);
+ });}
+ async authorizeCustomer(unsigned:UnsignedPerpetualAction,signatureHex:`0x${string}`):Promise<SignedPerpetualAction>{return this.guarded(async()=>{
+  // Caller supplies the exact root-loaded server request. Browser supplies ONLY signatureHex.
+  const original=structuredClone(unsigned),p=inspectUnsignedArtifact(original,this.d.scope),i=p.intent as ApprovedPerpetualIntent,a=p.account as BoundPerpetualAccount;assertFreshIntent(i,this.d.now?.()??Date.now());
+  if(!await this.d.verifyCustomerApproval?.(structuredClone(i),structuredClone(a))||!await this.d.verifyAccountExecutionProof?.(structuredClone(a)))return fail('EXACT_CUSTOMER_APPROVAL_AND_ACCOUNT_PROOF_REQUIRED');
+  if(!/^0x[a-fA-F0-9]{130}$/.test(signatureHex))return fail('CUSTOMER_EVM_SIGNATURE_REQUIRED');const parsed=parseSignature(signatureHex),v=parsed.v??BigInt(parsed.yParity!)+27n;if(v!==27n&&v!==28n)return fail('CUSTOMER_EVM_SIGNATURE_REQUIRED');
+  const {typedData:_,...outer}=original,result:SignedPerpetualAction={...outer,payload:{...p,wire:{...p.wire,signature:{r:parsed.r.toLowerCase(),s:parsed.s.toLowerCase(),v:Number(v)}}}};await inspectArtifact(result,this.d.scope);
+  await network(this.d);const [m,current]=await Promise.all([market(this.d,i),position(this.d,i)]);if(stable(m)!==stable(p.market)||current.size!==p.before.size||current.leverageType!==p.before.leverageType)return fail('POSITION_OR_MARKET_CHANGED_BEFORE_AUTHORIZATION');assertFreshIntent(i,this.d.now?.()??Date.now());
+  return structuredClone(result);
+ });}
  private async persisted(action:SignedPerpetualAction){const copy=structuredClone(action),p=await inspectArtifact(copy,this.d.scope),stored=await this.d.durability.loadPrepared(copy.operationId,copy.intentHash);if(!stored||stable(stored)!==stable(copy))return fail('EXACT_SIGNED_PAYLOAD_MUST_BE_DURABLY_PERSISTED');return{copy,p};}
  async send(action:SignedPerpetualAction):Promise<PerpetualExecutionStatus>{return this.guarded(()=>this.sendExact(action));}
  private async sendExact(action:SignedPerpetualAction):Promise<PerpetualExecutionStatus>{
@@ -34,5 +54,8 @@ export class HyperliquidTestnetExecutionAdapter implements PerpetualExecutionAda
  async reconcile(action:SignedPerpetualAction):Promise<PerpetualExecutionStatus>{return this.guarded(()=>this.reconcileExact(action));}
  private async reconcileExact(action:SignedPerpetualAction):Promise<PerpetualExecutionStatus>{const {copy,p}=await this.persisted(action);try{await network(this.d);return await inspectSettlement(this.d,p);}catch{return unknown(copy.clientOrderId);}}
 }
-export type{HyperliquidExecutionDependencies,ExecutionTransport,ExecutionDurability,ReadReceipt}from'./types.js';
+export type{HyperliquidExecutionDependencies,ExecutionTransport,ExecutionDurability,ReadReceipt,UnsignedPerpetualAction}from'./types.js';
 export{HL_INFO,HL_EXCHANGE,HL_RPC}from'./types.js';
+
+export {inspectUnsignedArtifact} from './guards.js';
+export {HyperliquidTestnetHttpTransport} from './http-transport.js';
