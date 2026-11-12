@@ -98,6 +98,17 @@
       "send_status": "PENDING",
       "ledger": 5682978,
       "return_value": null
+    },
+    {
+      "label": "qa_two_x_long_atomic_close",
+      "hash": "e138fc04699431deb405526670427853a532d37a3795616d842f42ec26da4a3b",
+      "sequence": "24403398585483273",
+      "max_fee_stroops": "152886",
+      "status": "SUCCESS",
+      "explorer": "https://stellar.expert/explorer/testnet/tx/e138fc04699431deb405526670427853a532d37a3795616d842f42ec26da4a3b",
+      "send_status": "PENDING",
+      "ledger": 5685559,
+      "return_value": null
     }
   ],
   "snapshots": [
@@ -852,6 +863,131 @@
         "ledger": 5682978
       },
       "legacy_debt_shares_raw": "0"
+    },
+    {
+      "phase": "qa_close_atomic",
+      "intent": {
+        "step": "close_atomic",
+        "walletAddress": "GAJZ5PEECGFB46QXKFW2QTWRXHYL4SOBS5VE2JDGJ4TDUIAUWEAHKV34",
+        "positionId": "13844",
+        "minimumOutputAtomic": "19780780"
+      },
+      "beforePosition": {
+        "walletAddress": "GAJZ5PEECGFB46QXKFW2QTWRXHYL4SOBS5VE2JDGJ4TDUIAUWEAHKV34",
+        "positionId": "13844",
+        "direction": "long",
+        "position": {
+          "collateral_asset": "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC",
+          "collateral_ptokens": "129932005",
+          "debt_asset": "CDPXNHHVSLX3HFAHV7XOISM23MZH36WSXTO45RNDOBIDFZBGTSOVD4OY",
+          "debt_shares": "0",
+          "entry_price_scaled": "153791",
+          "opened_at": "1794437928",
+          "owner": "GAJZ5PEECGFB46QXKFW2QTWRXHYL4SOBS5VE2JDGJ4TDUIAUWEAHKV34",
+          "side": [
+            "Long"
+          ],
+          "status": [
+            "Open"
+          ]
+        },
+        "perps": {
+          "base_asset": "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC",
+          "liquidation_incentive_scaled": "10000",
+          "maintenance_margin_scaled": "50000",
+          "margin_amount": "9999999",
+          "margin_asset": "CDPXNHHVSLX3HFAHV7XOISM23MZH36WSXTO45RNDOBIDFZBGTSOVD4OY",
+          "notional_value": "19982434",
+          "pool": "CCMNSENXDBNJSY72BDIPH5CCXLLHBKZ4LXTRKDLKZN4UI2NJFQLWTLD6",
+          "pool_id": {
+            "type": "Buffer",
+            "data": [
+              154,
+              199,
+              169,
+              205,
+              226,
+              58,
+              194,
+              173,
+              161,
+              17,
+              5,
+              238,
+              170,
+              66,
+              228,
+              60,
+              46,
+              168,
+              51,
+              44,
+              160,
+              170,
+              143,
+              65,
+              245,
+              141,
+              113,
+              96,
+              39,
+              77,
+              113,
+              142
+            ]
+          },
+          "pool_tokens": [
+            "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC",
+            "CDPXNHHVSLX3HFAHV7XOISM23MZH36WSXTO45RNDOBIDFZBGTSOVD4OY"
+          ],
+          "side": [
+            "Long"
+          ]
+        },
+        "pendingOpen": null,
+        "openExecution": null,
+        "pendingClose": null,
+        "observedLedger": 5685552,
+        "observedAt": "2026-11-12T02:43:24.317Z",
+        "status": "Open"
+      },
+      "before": {
+        "native": "9984.4491462",
+        "mock_usdt_atomic": "5300316",
+        "vault_receipt_atomic": "0",
+        "margin_receipt_atomic": "0"
+      },
+      "after": {
+        "native": "9984.4357840",
+        "mock_usdt_atomic": "5300316",
+        "vault_receipt_atomic": "0",
+        "margin_receipt_atomic": "9879964"
+      },
+      "position": null,
+      "perps": null,
+      "pendingOpen": null,
+      "pendingClose": null,
+      "execution": null,
+      "positions": [],
+      "debtBefore": {
+        "principalAtomic": "9999998",
+        "balanceAtomic": "9999998",
+        "borrowIndex": "1000050736357816808",
+        "snapshotInterestIndex": "1000050736357816808",
+        "ledger": 5685552
+      },
+      "debt": {
+        "principalAtomic": "0",
+        "balanceAtomic": "0",
+        "borrowIndex": "1000050736357816808",
+        "snapshotInterestIndex": "1000050736357816808",
+        "ledger": 5685559
+      },
+      "nativeRate": "1000000",
+      "mockRate": "1000022",
+      "quoted_output_atomic": "19880180",
+      "expected_receipt_atomic": "9879964",
+      "actual_receipt_atomic": "9879964"
     }
   ],
   "last_error": "The QA open swap exceeds its exact reviewed Testnet scope",
@@ -863,6 +999,6 @@
   },
   "limit_extension": "Lead approved one cancel plus one replacement begin recovery; other scopes unchanged",
   "cancelled_position_id": "13843",
-  "position_id": "13844",
-  "active_begin_label": "qa_replacement_two_x_long_begin"
+  "active_begin_label": "qa_replacement_two_x_long_begin",
+  "closed_position_id": "13844"
 }
