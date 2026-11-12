@@ -1,0 +1,13 @@
+import {describe,it,expect,vi} from 'vitest';
+import {createElement} from 'react';
+import {renderToStaticMarkup} from 'react-dom/server';
+import {GroupedAssets,GroupedAssetRows} from './grouped-assets';
+import {buildGroupedAssets,type AssetBalanceRow} from '../lib/grouped-assets';
+const row=(id:string,amount:string|null,network:string,feature:string):AssetBalanceRow=>({asset_id:id,asset:{id,code:'USDC',verified:true,decimals:7,network},wallet_amount:amount,reserved:'0',spendable:amount,network_label:network,feature_label:feature});
+const balances=[row('stellar-testnet:classic:USDC:ISSUER','10','Stellar','Wallet'),row('hyperevm-testnet:erc20:circle','2','HyperEVM','Trading')];
+describe('accessible five-column grouped asset table',()=>{
+ it('starts with one collapsed USDC parent, exact total and accessible expansion control',()=>{const html=renderToStaticMarkup(createElement(GroupedAssets,{balances,connected:true}));expect(html).toContain('aria-expanded="false"');expect(html).toContain('aria-controls=');expect(html).toContain('Expand USDC balances');expect(html).toContain('hidden=""');expect(html).toContain('>12<');for(const title of ['Asset','Balance','Value (USD)','Reserved','Available'])expect(html).toContain('>'+title+'<');expect(html).not.toContain('$12.00');});
+ it('renders the expanded actual network and feature breakdown',()=>{const group=buildGroupedAssets(balances)[0]!,onToggle=vi.fn();const html=renderToStaticMarkup(createElement('table',null,createElement(GroupedAssetRows,{group,expanded:true,onToggle,detailsId:'usdc-sources'})));expect(html).toContain('aria-expanded="true"');expect(html).toContain('Collapse USDC balances');expect(html).not.toContain('hidden=""');expect(html).toContain('Stellar · Wallet');expect(html).toContain('HyperEVM · Trading');expect(html).toContain('>10<');expect(html).toContain('>2<');expect(onToggle).not.toHaveBeenCalled();});
+ it('labels the known subtotal when one network balance is unknown',()=>{const html=renderToStaticMarkup(createElement(GroupedAssets,{balances:[balances[0]!,{...balances[1]!,wallet_amount:null,spendable:null}],connected:true}));expect(html).toContain('Known subtotal: 10 USDC');expect(html).toContain('—');expect(html).not.toContain('>12<');});
+ it('does not show stale balances after disconnect or invent empty balances',()=>{const disconnected=renderToStaticMarkup(createElement(GroupedAssets,{balances,connected:false})),waiting=renderToStaticMarkup(createElement(GroupedAssets,{balances:[],connected:true}));expect(disconnected).toContain('Connect to see your assets.');expect(disconnected).not.toContain('<table');expect(waiting).toContain('Waiting for a live balance read.');expect(waiting).not.toContain('0.00');});
+});
