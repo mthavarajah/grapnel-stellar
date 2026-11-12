@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useRef, useState,type ReactNode } from 'react';
 import {executeStockTrade} from '../lib/stock-action-flow';
+import {ClientError} from '../lib/client';
 import {ActionDialog} from './action-dialog';
 import {RobinhoodFunding} from './robinhood-funding';
 import { useCreateWallet, useSignTransaction, useWallets } from '@privy-io/react-auth';
@@ -35,7 +36,7 @@ export function stockTradeInput(value:string,side:'buy'|'sell',symbol:string,bal
 /** Uses only the currently authenticated embedded wallet; rendering never creates or signs. */
 export function RobinhoodExecution(props: RobinhoodExecutionProps) { const { wallets, ready } = useWallets(), { createWallet } = useCreateWallet(), { signTransaction } = useSignTransaction(), selected = wallets.find(w => w.walletClientType === 'privy'); const wallet: RobinhoodCustomerWallet | null = selected ? { address: selected.address, provider: async () => { const p = await selected.getEthereumProvider(); return { request: input => p.request(input as Parameters<typeof p.request>[0]) }; }, sign: async (input) => (await signTransaction(input, { address: selected.address })).signature, switchNetwork: async () => { await selected.switchChain(46630); } } : null; return <RobinhoodExecutionCard {...props} wallet={wallet} walletsReady={ready} onCreate={() => createWallet()} funding={wallet?<RobinhoodFunding api={props.api} customerId={props.customerId} walletId={props.walletId} compact/>:null}/>; }
 export function RobinhoodExecutionCard({ api, customerId, walletId, symbol, wallet, walletsReady, onCreate,funding }: RobinhoodExecutionCardProps) {
-    const [snapshot, setSnapshot] = useState<RobinhoodStatus | null>(null), [record, setRecord] = useState<RobinhoodRequest | null>(null), [draft, setDraft] = useState<RobinhoodDraft | null>(null), [side, setSide] = useState<'buy' | 'sell'>('buy'), [amount, setAmount] = useState('1'), [loading, setLoading] = useState(true), [busy, setBusy] = useState<string | null>(null), [error, setError] = useState(''), [uncertain, setUncertain] = useState(false), [dialogOpen,setDialogOpen]=useState(false), [clock, setClock] = useState(Date.now()), [attempted, setAttempted] = useState<Set<string>>(new Set());
+    const [snapshot, setSnapshot] = useState<RobinhoodStatus | null>(null), [record, setRecord] = useState<RobinhoodRequest | null>(null), [draft, setDraft] = useState<RobinhoodDraft | null>(null), [side, setSide] = useState<'buy' | 'sell'>('buy'), [amount, setAmount] = useState('1'), [loading, setLoading] = useState(true), [busy, setBusy] = useState<string | null>(null), [error, setError] = useState(''), [connectionNote,setConnectionNote]=useState(''), [uncertain, setUncertain] = useState(false), [dialogOpen,setDialogOpen]=useState(false), [clock, setClock] = useState(Date.now()), [attempted, setAttempted] = useState<Set<string>>(new Set());
     const account = wallet?.address ?? '', identity = `${customerId}:${walletId}:${account.toLowerCase()}`, ownerKey = `${identity}:${symbol}`, ownership = useRef({ key: ownerKey, epoch: 0 });
     if (ownership.current.key !== ownerKey)
         ownership.current = { key: ownerKey, epoch: ownership.current.epoch + 1 };
@@ -44,7 +45,7 @@ export function RobinhoodExecutionCard({ api, customerId, walletId, symbol, wall
     const tenant = useRef<{
         identity: string;
         businessId: string;
-    } | null>(null), active = useRef(false), preparationKey = useRef<string | null>(null), attempts = useRef(new Set<string>()), recordRef = useRef<RobinhoodRequest | null>(record);
+    } | null>(null), active = useRef(false), pollingRead=useRef(false), preparationKey = useRef<string | null>(null), attempts = useRef(new Set<string>()), recordRef = useRef<RobinhoodRequest | null>(record);
     recordRef.current = record;
     const scope = (): RobinhoodScope => ({ customerId, walletId, businessId: tenant.current?.identity === identity ? tenant.current.businessId : undefined });
     const reviewedScope = () => { const s = scope(); if (!s.businessId)
@@ -55,8 +56,8 @@ export function RobinhoodExecutionCard({ api, customerId, walletId, symbol, wall
         sessionStorage.setItem('grapnel:stock-signed:' + identity, JSON.stringify([...attempts.current].slice(-20)));
     }
     catch { /* The server retains the authoritative one-use send claim. */ } };
-    const refresh = async (captured = owner) => { const status = inspectRobinhoodStatus(await api(`grapnel/stocks-status?market_id=robinhood-testnet:stocks:${symbol}` + (account ? '&account_address=' + encodeURIComponent(account) : '')), scope(), account || null, symbol); guard(captured); tenant.current = { identity, businessId: status.scope.business_id }; setSnapshot(status); return status; };
-    const accept = (value: unknown, captured: string, id?: string) => { const checked = inspectRobinhoodRecord(value, reviewedScope(), account, undefined, id); guard(captured); setRecord(checked); setUncertain(false);if(terminal.has(checked.state))window.dispatchEvent(new Event('grapnel:stocks-updated')); return checked; };
+    const refresh = async (captured = owner) => { const status = inspectRobinhoodStatus(await api(`grapnel/stocks-status?market_id=robinhood-testnet:stocks:${symbol}` + (account ? '&account_address=' + encodeURIComponent(account) : '')), scope(), account || null, symbol); guard(captured); tenant.current = { identity, businessId: status.scope.business_id }; setSnapshot(status);setConnectionNote(''); return status; };
+    const accept = (value: unknown, captured: string, id?: string) => { const checked = inspectRobinhoodRecord(value, reviewedScope(), account, undefined, id); guard(captured); setRecord(checked.state==='cancelled'&&!checked.tx_hash?null:checked); setUncertain(false);if(terminal.has(checked.state))window.dispatchEvent(new Event('grapnel:stocks-updated')); return checked; };
     const recover = async (captured = owner, id?: string) => { await refresh(captured); if (!account)
         return; const value = await api('grapnel/stocks-request' + (id ? '?request_id=' + encodeURIComponent(id) : '')); guard(captured); if (value) {
         accept(value, captured, id);
@@ -70,8 +71,10 @@ export function RobinhoodExecutionCard({ api, customerId, walletId, symbol, wall
         await task(captured);
     }
     catch (cause) {
-        if (ownerRef.current === captured)
-            setError(safeError(cause));
+        if (ownerRef.current === captured){
+            const retained=recordRef.current,ambiguous=retained&&attempts.current.has(retained.id)&&!terminal.has(retained.state)&&(!(cause instanceof ClientError)||cause.status>=500||cause.status===408);
+            if(ambiguous)setUncertain(true);else setError(safeError(cause));
+        }
     }
     finally {
         active.current = false;
@@ -85,15 +88,15 @@ export function RobinhoodExecutionCard({ api, customerId, walletId, symbol, wall
     catch {
         attempts.current = new Set();
     } setAttempted(new Set(attempts.current)); void recover(captured).catch(cause => { if (alive && ownerRef.current === captured) {
-        setError(safeError(cause));
+        if(cause instanceof ClientError&&cause.status<500&&cause.status!==429)setError(safeError(cause));else setConnectionNote('Reconnecting to your account…');
         setUncertain(!!account);
     } }).finally(() => { if (alive && ownerRef.current === captured)
         setLoading(false); }); return () => { alive = false; if (ownerRef.current === captured)
         ownerRef.current = 'disposed:' + captured; }; }, [owner]);
     useEffect(()=>{const captured=owner,updated=()=>{if(active.current)return;void refresh(captured).catch(()=>{});};window.addEventListener('grapnel:stocks-updated',updated);return()=>window.removeEventListener('grapnel:stocks-updated',updated);},[owner]);
     useEffect(() => { if (!account || !uncertain && (!record || terminal.has(record.state)))
-        return; const captured = owner; const timer = setInterval(() => { if (active.current)
-        return; void run(async (current) => { guard(captured); await recover(current, recordRef.current?.id); }, 'Checking status'); }, 2500); return () => clearInterval(timer); }, [owner, account, uncertain, record?.id, record?.state]);
+        return; const captured = owner; const timer = setInterval(() => { if (active.current||pollingRead.current)
+        return; pollingRead.current=true;void (async()=>{try{guard(captured);if(!scope().businessId)await refresh(captured);const id=recordRef.current?.id;const value=await api('grapnel/stocks-request'+(id?'?request_id='+encodeURIComponent(id):''));guard(captured);if(active.current)return;if(value)accept(value,captured,id);else{setRecord(null);setUncertain(false);}void refresh(captured).catch(()=>{});}catch{/* Keep checking the retained request; transient reads are not execution errors. */}finally{pollingRead.current=false;}})(); }, 2500); return () => clearInterval(timer); }, [owner, account, uncertain, record?.id, record?.state]);
     useEffect(() => { if (!record)
         return; const timer = setInterval(() => setClock(Date.now()), 500); return () => clearInterval(timer); }, [record?.id]);
     const foreign = !!record && record.market_id !== `robinhood-testnet:stocks:${symbol}`, pending = !!record && !terminal.has(record.state), ready = !!wallet && !!snapshot?.execution_available && !loading, expired = !!record && Date.parse(record.expires_at) <= clock;
@@ -106,36 +109,38 @@ export function RobinhoodExecutionCard({ api, customerId, walletId, symbol, wall
     };
     const prepare=()=>run(async captured=>{
       if(!ready||!valid||pending||uncertain||foreign)throw Error('Check the current balance and transaction status first.');
-      setDialogOpen(true);setRecord(null);const input:RobinhoodDraft={symbol,side,amount,kind:needsApproval?'approval':'swap',slippageBps:50};
+      setDialogOpen(true);setRecord(null);setBusy('Connecting wallet');if(!wallet)throw Error('Connect your wallet first.');await wallet.switchNetwork();guard(captured);const input:RobinhoodDraft={symbol,side,amount,kind:needsApproval?'approval':'swap',slippageBps:50};
       await executeStockTrade(input,{prepare:value=>prepareExact(value,captured),authorize:(value,d)=>authorizePrepared(value,d,captured),read:async id=>accept(await api('grapnel/stocks-request?request_id='+encodeURIComponent(id)),captured,id),approvalConfirmed:value=>value.kind==='approval'&&robinhoodRequestLabel(value)==='Approved',current:()=>guard(captured),waiting:()=>setBusy('Confirming approval'),wait:()=>new Promise(resolve=>setTimeout(resolve,1500))});
     },'Preparing trade');
     const resume = () => run(async (captured) => { if (!record || foreign || attempts.current.has(record.id))
         throw Error('Check this transaction’s status before another approval.'); setDialogOpen(true); const value = await api('grapnel/stocks-request?request_id=' + record.id); guard(captured); const checked = inspectRobinhoodRecord(value, reviewedScope(), account, symbol, record.id), input = robinhoodRequestDraft(checked); inspectRobinhoodApproval(checked, reviewedScope(), account, input); guard(captured); setRecord(checked); setDraft(input); setUncertain(false); await authorizePrepared(checked,input,captured); });
-    const authorizePrepared = async (prepared:RobinhoodRequest,input:RobinhoodDraft,captured:string) => { if(!wallet||attempts.current.has(prepared.id))throw Error('Check this transaction’s status before approving again.'); const checked = inspectRobinhoodApproval(prepared, reviewedScope(), account, input); setBusy('Approving'); await wallet.switchNetwork(); guard(captured); const provider = await wallet.provider(); guard(captured); const signed = await signRobinhoodApproval(checked, reviewedScope(), account, input, provider, wallet.sign, () => ownerRef.current === captured); guard(captured); markAttempt(checked.id); setBusy('Submitting'); setUncertain(true); const value = await api('grapnel/stocks-authorize', { request_id: checked.id, signed_transaction: signed }, 'POST', crypto.randomUUID()); guard(captured); const result=accept(value, captured, checked.id); await refresh(captured); return result; };
+    const authorizePrepared = async (prepared:RobinhoodRequest,input:RobinhoodDraft,captured:string) => { if(!wallet||attempts.current.has(prepared.id))throw Error('Check this transaction’s status before approving again.'); const checked = inspectRobinhoodApproval(prepared, reviewedScope(), account, input); setBusy('Waiting for wallet'); guard(captured); const provider = await wallet.provider(); guard(captured); const signed = await signRobinhoodApproval(checked, reviewedScope(), account, input, provider, wallet.sign, () => ownerRef.current === captured); guard(captured); markAttempt(checked.id); setBusy('Submitting'); setUncertain(true); const value = await api('grapnel/stocks-authorize', { request_id: checked.id, signed_transaction: signed }, 'POST', crypto.randomUUID()); guard(captured); const result=accept(value, captured, checked.id); await refresh(captured).catch(()=>{guard(captured);}); return result; };
     const check = () => run(async (captured) => { await recover(captured, record?.id); });
     const label = record ? robinhoodRequestLabel(record) : '', completed = label === 'Approved' || /^(Bought|Sold) /.test(label);
+    const progressLabel=busy??(record?.state==='prepared'?(attempted.has(record.id)?'Checking submission':'Waiting for wallet'):label==='Approved'?'Spending approval confirmed':label);
     return <section className="market-order-card" aria-label="Stock trading" data-testid="robinhood-execution" aria-busy={!!busy || loading}>
   <h2>Trade {symbol}</h2>
   {!walletsReady ? <ProgressIndicator label="Loading account" spinning/> : !wallet ? <button type="button" className="button outline wide" disabled={!!busy} onClick={() => run(async (captured) => { await onCreate(); guard(captured); }, 'Creating account')}>Enable stocks</button> : null}
-  <div className="stock-balance-status">{loading&&walletsReady&&wallet&&<ProgressIndicator label="Loading balances" spinning/>}</div>
+  <div className="stock-balance-status">{(loading&&walletsReady&&wallet||connectionNote)&&<ProgressIndicator label={connectionNote||"Loading balances"} spinning/>}</div>
   <div className="public-order-direction stock-order-sides" role="group" aria-label="Trade direction"><button type="button" className="stock-side-buy" aria-pressed={side === 'buy'} disabled={loading || !!busy || pending || uncertain} onClick={() => setSide('buy')}>Buy</button><button type="button" className="stock-side-sell" aria-pressed={side === 'sell'} disabled={loading || !!busy || pending || uncertain} onClick={() => setSide('sell')}>Sell</button></div>
   <div className="detail-row"><span>Amount ({source})</span><button type="button" className="text-button" disabled={!!busy||pending||uncertain||!balance} onClick={()=>{if(!balance)return;try{const decimals=side==='buy'?6:18,n=stockBalanceAtomic(balance,decimals),cap=side==='buy'?20000000n:10n*10n**18n;setAmount(fromAtomic(n<cap?n:cap,decimals));}catch{setError('Your available balance is updating.');}}}>Max</button></div>
   <label className="sr-only">Amount ({source})</label><label><input aria-label="Stock trade amount" inputMode="decimal" value={amount} disabled={loading || !!busy || pending || uncertain} onChange={event => setAmount(event.target.value)}/></label>
   <div className="detail-row"><span>Available {source}</span><strong>{display(balance)} {source}</strong></div>
   <div className="detail-row"><span>{side === 'buy' ? symbol : 'USDG'} balance</span><strong>{display(side === 'buy' ? snapshot?.stock_balance : snapshot?.settlement_balance)} {output}</strong></div>
   <p className="small muted">ETH for fees: {display(snapshot?.native_balance)}</p><button type="button" className="button wide" disabled={!!busy || !ready || !valid || pending || uncertain || foreign} onClick={prepare}>{side==='buy'?'Buy '+symbol:'Sell '+symbol}</button>
-  {!loading&&!dialogOpen&&amountFeedback&&<p className="swap-action-error" role="status">{amountFeedback}</p>}
+  {!loading&&!busy&&!pending&&!uncertain&&!dialogOpen&&amountFeedback&&<p className={/updating|Checking/.test(amountFeedback)?"small muted":"swap-action-error"} role="status">{amountFeedback}</p>}
   {funding}
   {needsApproval && valid && !pending && <p className="small muted">A spending approval is included with this trade.</p>}
   {wallet && snapshot && !snapshot.execution_available && !loading && <p className="small muted" role="status">Trading for this stock is being verified.</p>}
   {foreign && record && <p className="small muted" role="status">Select {robinhoodMarketSymbol(record.market_id)} to finish the pending request.</p>}
-  {dialogOpen&&<ActionDialog title={record?.state==='reverted'?'Transaction failed':completed&&record?.kind==='swap'?label:(draft?.side??side)==='buy'?'Buy '+symbol:'Sell '+symbol} onClose={()=>setDialogOpen(false)}>
+  {dialogOpen&&<ActionDialog title={record?.state==='reverted'?'Transaction failed':completed&&record?.kind==='swap'?label:(draft?.side??side)==='buy'?'Buy '+symbol:'Sell '+symbol} onClose={()=>setDialogOpen(false)} suspendFocus={busy==='Waiting for wallet'}>
    {!record&&<div className="stock-modal-progress"><ProgressIndicator label={busy??(error?'Needs attention':'Preparing transaction')} spinning={!!busy}/></div>}
-  {record && <div className="stock-request-result" aria-label="Stock request status"><ProgressIndicator label={busy??(record.kind==='approval'&&label==='Approved'?'Spending approval confirmed':label)} completed={!busy&&completed&&record.kind==='swap'} spinning={!!busy||['sending', 'confirming', 'unknown'].includes(record.state)}/>{record.tx_hash && <a className="text-button" href={'https://explorer.testnet.chain.robinhood.com/tx/' + record.tx_hash} target="_blank" rel="noreferrer">View transaction ↗</a>}{record.state === 'prepared' && !foreign && !attempted.has(record.id) && <button type="button" className="button outline" disabled={!!busy || !ready || expired} onClick={resume}>Continue</button>}{terminal.has(record.state) && <button type="button" className="text-button" disabled={!!busy} onClick={() => { setDialogOpen(false); setRecord(null); setDraft(null); setUncertain(false); preparationKey.current = null; }}>New request</button>}</div>}
-   {error&&<p className="swap-action-error" role="alert">{error}</p>}
+  {record && <div className="stock-request-result" aria-label="Stock request status"><ProgressIndicator label={progressLabel} completed={!busy&&completed&&record.kind==='swap'} spinning={!!busy||attempted.has(record.id)&&!terminal.has(record.state)||['sending', 'confirming', 'unknown'].includes(record.state)}/>{record.tx_hash && <a className="text-button" href={'https://explorer.testnet.chain.robinhood.com/tx/' + record.tx_hash} target="_blank" rel="noreferrer">View transaction ↗</a>}{record.state === 'prepared' && !foreign && !attempted.has(record.id) && <button type="button" className="button outline" disabled={!!busy || !ready || expired} onClick={resume}>Continue</button>}{terminal.has(record.state) && <button type="button" className="text-button" disabled={!!busy} onClick={() => { setDialogOpen(false); setRecord(null); setDraft(null); setUncertain(false); preparationKey.current = null; }}>New request</button>}</div>}
+   {busy==='Waiting for wallet'&&<p className="small muted" role="status">Confirm the request in your wallet to continue.</p>}
+   {error&&!busy&&<p className="swap-action-error" role="alert">{error}</p>}
    {!busy&&(!record||uncertain)&&<button type="button" className="button outline wide" onClick={check}>Check status</button>}
   </ActionDialog>}
-  {!dialogOpen&&<div className="stock-ticket-status" aria-live="polite">{busy?<ProgressIndicator label={busy} spinning/>:record?<><ProgressIndicator label={record.kind==='approval'&&label==='Approved'?'Spending approval confirmed':label} completed={completed&&record.kind==='swap'} spinning={['sending','confirming','unknown'].includes(record.state)}/><button type="button" className="text-button" onClick={()=>setDialogOpen(true)}>View transaction</button>{record.state==='prepared'&&!foreign&&!attempted.has(record.id)&&<button type="button" className="text-button" disabled={!ready||expired} onClick={resume}>Continue</button>}{terminal.has(record.state)&&<button type="button" className="text-button" onClick={()=>{setRecord(null);setDraft(null);setUncertain(false);preparationKey.current=null;}}>New request</button>}</>:null}</div>}
+  {!dialogOpen&&<div className="stock-ticket-status" aria-live="polite">{busy?<ProgressIndicator label={busy} spinning/>:record?<><ProgressIndicator label={progressLabel} completed={completed&&record.kind==='swap'} spinning={attempted.has(record.id)&&!terminal.has(record.state)||['sending','confirming','unknown'].includes(record.state)}/><button type="button" className="text-button" onClick={()=>setDialogOpen(true)}>View transaction</button>{record.state==='prepared'&&!foreign&&!attempted.has(record.id)&&<button type="button" className="text-button" disabled={!ready||expired} onClick={resume}>Continue</button>}{terminal.has(record.state)&&<button type="button" className="text-button" onClick={()=>{setRecord(null);setDraft(null);setUncertain(false);preparationKey.current=null;}}>New request</button>}</>:null}</div>}
   {uncertain && <p className="small muted" role="status">Checking the existing request before another approval.</p>}
   <button type="button" className="text-button" disabled={!!busy} onClick={check}>Check status</button>
   {!dialogOpen&&error && <p className="swap-action-error" role="alert">{error}</p>}

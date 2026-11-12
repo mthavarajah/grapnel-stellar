@@ -1,0 +1,22 @@
+{
+  "checked_at": "2026-11-12T23:25:04.676Z",
+  "network": "robinhood-testnet",
+  "chain_id": 46630,
+  "account": "0x80bd216c39869cec85e37ee37c020530d144799a",
+  "deliberate_wallet_wait_ms": 35000,
+  "authorize_ms": 3791,
+  "tx_hash": "0x03e31af2d82b29aee230c32454e3b5ee7c04258ce6d8fb10c416979c92a8c49f",
+  "kind": "approval",
+  "amount": "0.1 USDG",
+  "proof": {
+    "state": "confirmed",
+    "txHash": "0x03e31af2d82b29aee230c32454e3b5ee7c04258ce6d8fb10c416979c92a8c49f",
+    "blockNumber": "152525360",
+    "confirmations": "19",
+    "allowance_basis": "canonical_approval_event",
+    "allowanceBaseUnits": "100000"
+  },
+  "auth_fixture": true,
+  "customer_privy_execution_verified": false,
+  "note": "Real Testnet approval through the customer execution service and atomic PostgreSQL send claim, using the controlled QA key and an isolated ownership fixture in a disposable test database."
+}

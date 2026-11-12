@@ -30,7 +30,7 @@ export function createRobinhoodTransactionAdapter(options:{rpcRequest?:RpcReques
  const rpc=options.rpcRequest??robinhoodRpcRequest;const now=options.now??Date.now;
  const reader=createRobinhoodReader({rpcRequest:rpc,now});
  function validatePrepared(p:StockPreparedTransaction){
-  if(p.chainId!==46630||p.value!=='0'||!Number.isFinite(Date.parse(p.observedAt))||!Number.isFinite(Date.parse(p.expiresAt))||Date.parse(p.expiresAt)-Date.parse(p.observedAt)>30000||Date.parse(p.expiresAt)<=Date.parse(p.observedAt))fail('Unexpected transaction intent');
+  if(p.chainId!==46630||p.value!=='0'||!Number.isFinite(Date.parse(p.observedAt))||!Number.isFinite(Date.parse(p.expiresAt))||Date.parse(p.expiresAt)-Date.parse(p.observedAt)>90000||Date.parse(p.expiresAt)<=Date.parse(p.observedAt))fail('Unexpected transaction intent');
   const from=address(p.from);const amount=units(p.amountInBaseUnits);let data:Hex;
   if(p.kind==='approval'){
    const asset=p.symbol==='USDG'?RH_TESTNET.settlement:STOCKS.find(x=>x.symbol===p.symbol);if(!asset||!same(asset.address,p.to)||!same(p.tokenIn,asset.address)||p.tokenOut!==null)fail('Approval asset mismatch');
@@ -52,7 +52,7 @@ export function createRobinhoodTransactionAdapter(options:{rpcRequest?:RpcReques
   const raw=await rpc('eth_call',[{to:token,data},block]);if(typeof raw!=='string')fail('Malformed token read');
   return decodeFunctionResult({abi:ABI,functionName:name,data:raw as Hex});
  }
- function fresh(prepared:StockPreparedTransaction){if(!Number.isFinite(Date.parse(prepared.expiresAt))||Date.parse(prepared.expiresAt)-Date.parse(prepared.observedAt)>30000||now()>=Date.parse(prepared.expiresAt))fail('Prepared transaction expired');}
+ function fresh(prepared:StockPreparedTransaction){if(!Number.isFinite(Date.parse(prepared.expiresAt))||Date.parse(prepared.expiresAt)-Date.parse(prepared.observedAt)>90000||now()>=Date.parse(prepared.expiresAt))fail('Prepared transaction expired');}
  async function simulate(prepared:StockPreparedTransaction){
   validatePrepared(prepared);fresh(prepared);const result=await rpc('eth_call',[{from:prepared.from,to:prepared.to,value:'0x0',data:prepared.data},'latest']);
   if(typeof result!=='string'||!/^0x[0-9a-f]*$/i.test(result))fail('Transaction simulation unavailable');
@@ -71,7 +71,7 @@ export function createRobinhoodTransactionAdapter(options:{rpcRequest?:RpcReques
    const code=await rpc('eth_getCode',[asset.address,deployment.blockTag]);if(typeof code!=='string'||keccak256(code as Hex)!==asset.codeHash)fail('Approval asset runtime mismatch');
    if(await call(asset.address,'decimals',[],deployment.blockTag)!==asset.decimals)fail('Approval asset decimals mismatch');
    const observedAt=new Date(now()).toISOString();
-   const prepared:StockPreparedTransaction={kind:'approval',chainId:46630,from,to:asset.address,value:'0',data:encodeFunctionData({abi:ABI,functionName:'approve',args:[RH_TESTNET.swapRouter02,amount]}),tokenIn:asset.address,tokenOut:null,amountInBaseUnits:amount.toString(),minimumOutBaseUnits:null,symbol:input.asset,observedAt,expiresAt:new Date(Date.parse(observedAt)+30000).toISOString(),deadlineSeconds:null,executionStatus:'discovery_only',price_basis:null};
+   const prepared:StockPreparedTransaction={kind:'approval',chainId:46630,from,to:asset.address,value:'0',data:encodeFunctionData({abi:ABI,functionName:'approve',args:[RH_TESTNET.swapRouter02,amount]}),tokenIn:asset.address,tokenOut:null,amountInBaseUnits:amount.toString(),minimumOutBaseUnits:null,symbol:input.asset,observedAt,expiresAt:new Date(Date.parse(observedAt)+90000).toISOString(),deadlineSeconds:null,executionStatus:'discovery_only',price_basis:null};
    return {prepared,...await simulate(prepared)};
   },
   async prepareSwap(input:PrepareStockSwapInput){

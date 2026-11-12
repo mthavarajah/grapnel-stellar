@@ -48,7 +48,7 @@ describe('Robinhood Testnet reader',()=>{
   const q=await createRobinhoodReader({rpcRequest:fixture(),now:()=>1000000}).quoteExactInput({symbol:'TSLA',side:'buy',amountInBaseUnits:'1000000',slippageBps:37});
   expect(q.minimumOutBaseUnits).toBe((1816226460641750698n*9963n/10000n).toString());
   expect(q.price_basis).toBe('testnet_pool_quote');expect(q.executionStatus).toBe('discovery_only');
-  expect(Date.parse(q.expiresAt)-Date.parse(q.observedAt)).toBe(30000);
+  expect(Date.parse(q.expiresAt)-Date.parse(q.observedAt)).toBe(90000);
  });
  it('rejects wrong chain before reading contracts',async()=>{
   await expect(createRobinhoodReader({rpcRequest:fixture({chain:'0x1237'})}).verifyDeployment()).rejects.toThrow('chain mismatch');

@@ -106,7 +106,7 @@ export function createRobinhoodReader(options: { rpcRequest?: RpcRequest; now?: 
       const observedAt = new Date(started).toISOString();
       return { chainId: RH_TESTNET.chainId, blockNumber: deployment.blockNumber, symbol: market.symbol, side: input.side, pool: market.poolAddress, tokenIn, tokenOut,
         amountInBaseUnits: amountIn.toString(), amountOutBaseUnits: quoted[0].toString(), minimumOutBaseUnits: (quoted[0] * (10000n - BigInt(input.slippageBps)) / 10000n).toString(),
-        gasEstimate: quoted[3].toString(), observedAt, expiresAt: new Date(started + 30000).toISOString(), price_basis: 'testnet_pool_quote' as const, executionStatus: 'discovery_only' as const };
+        gasEstimate: quoted[3].toString(), observedAt, expiresAt: new Date(started + 90000).toISOString(), price_basis: 'testnet_pool_quote' as const, executionStatus: 'discovery_only' as const };
     },
   };
 }

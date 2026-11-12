@@ -12,6 +12,8 @@ export interface StockExecutionStore {
  get(scope:StockExecutionScope,id:string):Promise<StockExecutionRequest|null>;
  pending(scope:StockExecutionScope):Promise<StockExecutionRequest|null>;
  sign(scope:StockExecutionScope,id:string,raw:Hex):Promise<StockExecutionRequest>;
+ /** Atomically persist and claim an exact signed request after one fresh validation. */
+ signAndClaim?(scope:StockExecutionScope,id:string,raw:Hex):Promise<boolean>;
  claimSend(scope:StockExecutionScope,id:string):Promise<boolean>;
  proof(scope:StockExecutionScope,id:string,proof:StockExecutionProof):Promise<void>;
  markUncertain(scope:StockExecutionScope,id:string):Promise<void>;

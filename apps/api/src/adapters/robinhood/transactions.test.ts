@@ -32,7 +32,7 @@ describe('Robinhood exact transaction intents',()=>{
  it('wraps a single exact swap with finite deadline and customer recipient',async()=>{
   const p=await createRobinhoodTransactionAdapter({rpcRequest:fixture(),now:()=>1000000}).prepareSwap({customerAddress:who,symbol:'TSLA',side:'buy',amountInBaseUnits:'1000000',slippageBps:50});
   const outer=decodeFunctionData({abi,data:p.prepared.data});expect(outer.functionName).toBe('multicall');
-  if(outer.functionName!=='multicall')throw Error('Wrong call');expect(outer.args[0]).toBe(1030n);expect(outer.args[1]).toHaveLength(1);
+  if(outer.functionName!=='multicall')throw Error('Wrong call');expect(outer.args[0]).toBe(1090n);expect(outer.args[1]).toHaveLength(1);
   const inner=decodeFunctionData({abi,data:outer.args[1][0]!});expect(inner.functionName).toBe('exactInputSingle');
   if(inner.functionName!=='exactInputSingle')throw Error('Wrong call');expect(inner.args[0].recipient).toBe(who);expect(inner.args[0].amountIn).toBe(1000000n);expect(p.approvalRequired).toBe(false);
  });
