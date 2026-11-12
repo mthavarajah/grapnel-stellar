@@ -1,0 +1,12 @@
+{
+  "mode": "VERIFIED_READ_ONLY_TESTNET_COMPUTE_LIMIT",
+  "observed_at": "2026-11-12T00:50:46.820Z",
+  "network": "Test SDF Network ; September 2015",
+  "ledger": 5684200,
+  "last_modified": 5194532,
+  "tx_max_instructions": "400000000",
+  "ledger_max_instructions": "580000000",
+  "entry_xdr": "AAAACAAAAAEAAAAAIpIZAAAAAAAX14QAAAAAAAAAAAMCgAAA",
+  "broadcast": false,
+  "tx_hash": null
+}
