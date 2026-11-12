@@ -1803,3 +1803,21 @@ footer strong {
 .stock-inline-funding-actions {display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;}
 .stock-inline-funding-actions .text-button {font-size:12px;padding:4px 0;}
 .stock-funding-received {font-size:12px;color:var(--muted,#737b8c);}
+
+/* Keep account controls anchored in the sidebar on every screen size. */
+.sidebar-account {margin-top:auto;padding:20px 10px 0;}
+.sidebar-account .profile-container {width:fit-content;}
+.sidebar-account .profile-panel {top:auto;bottom:0;left:calc(100% + 16px);right:auto;}
+.sidebar nav {margin-top:28px;}
+.stock-balance-status {min-height:24px;display:flex;align-items:center;}
+.stock-ticket-status {min-height:24px;display:flex;align-items:center;flex-wrap:wrap;gap:12px;margin-top:12px;}
+.stock-action-modal {outline:none;min-height:240px;}
+.stock-action-modal .stock-review-summary {margin:18px 0;background:#f7f8fa;}
+.stock-action-modal .stock-review-summary .detail-row {display:flex;flex-direction:row;align-items:center;justify-content:space-between;gap:18px;padding:14px 0;}
+.stock-action-modal .stock-review-summary .detail-row span {font-size:13px;color:var(--muted);text-transform:none;}
+.stock-action-modal .stock-review-summary .detail-row strong {font-size:14px;text-align:right;overflow-wrap:anywhere;}
+.stock-modal-progress {min-height:120px;display:flex;align-items:center;justify-content:center;}
+.stock-request-result {display:flex;flex-direction:column;align-items:flex-start;gap:16px;padding-top:12px;}
+.stock-request-result .operation-progress {font-size:15px;}
+@media(max-width:1100px){.sidebar-account {padding:16px 0 0;}.sidebar-account .avatar {width:36px;height:36px;}}
+@media(max-width:550px){.sidebar-account .profile-panel {left:calc(100% + 10px);max-width:calc(100vw - 76px);}.stock-action-modal .stock-review-summary .detail-row {gap:12px;}}

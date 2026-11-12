@@ -70,3 +70,9 @@ Caller derives session customer and passes an `Idempotency-Key` on financial act
 - Test on mobile view for demo; don't optimize full accessibility/theme before P0 backend works.
 
 The customer funding page shows confirmed wallet balances and the gated Testnet treasury request. The QR/address deposit portal was removed at the user’s request. Wallet addresses remain internal for account binding, execution checks, transaction approval and explorer links.
+
+## Owner UI revision — November 12
+
+Velocity removes the Personal workspace selector, top breadcrumb/header strip, and Perpetuals asset-class dropdown. Market search remains. The profile trigger is anchored at the sidebar bottom, with its existing balance/logout popup opening beside it.
+
+Explicit customer action buttons now prepare and initiate exact wallet authorization in the same interaction rather than requiring a second in-app Review click. This applies to the core Stellar operation actions, Robinhood approvals/swaps and GMX actions. Wallet authorization, transaction inspection, scope/network/fee/expiry checks and one-use durable send claims remain required. Page render, GET recovery and background polling never initiate a signature. An uncertain submitted request is reconciled, not automatically signed or sent again. Existing pending unsigned requests require an explicit Continue action. Stock actions use a portal progress dialog with focus containment, Escape/close and focus restoration; dismissal retains the server request. Network transaction confirmations continue to determine completion.

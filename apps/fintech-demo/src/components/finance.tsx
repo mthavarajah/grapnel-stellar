@@ -434,7 +434,6 @@ function FinanceShell({ page, auth, initialCategory }: { page: string; auth?: Au
   const [marketSearch, setMarketSearch] = useState("");
   const [selectedDetail,setSelectedDetail]=useState<{scope:string;data:Record<string,unknown>}|null>(null);
   const [detailState,setDetailState]=useState<{scope:string;loading:boolean;error:string}>({scope:"",loading:false,error:""});
-  const [perpetualFilter,setPerpetualFilter]=useState<"all"|"crypto"|"equity"|"index"|"commodity"|"fx"|"other">("all");
   const [marketResultsOpen, setMarketResultsOpen] = useState(false);
 
   const [lending, setLending] = useState<any[]>([]);
@@ -509,7 +508,10 @@ function FinanceShell({ page, auth, initialCategory }: { page: string; auth?: Au
   useEffect(() => { setSwapError(""); }, [session?.customer_id]);
   const [busy, setBusy] = useState(false);
   const [busyLocation,setBusyLocation]=useState<string|null>(null);
+  const [operationError,setOperationError]=useState('');
+  useEffect(()=>{setOperationError('');},[active?.operation_id]);
   const [approvalPhase,setApprovalPhase]=useState<{operationId:string;phase:ApprovalPhase}|null>(null);
+  const authorizationAttempts=useRef(new Set<string>()),signingOperations=useRef(new Set<string>());
   const visibleOperation=useRef(active?.operation_id);visibleOperation.current=active?.operation_id;
   useEffect(()=>{setApprovalPhase(current=>current&&active?.operation_id===current.operationId&&active.status==='awaiting_customer_authorization'?current:null);},[active?.operation_id,active?.status,session?.customer_id]);
   const [amount, setAmount] = useState("1");
@@ -642,7 +644,7 @@ function FinanceShell({ page, auth, initialCategory }: { page: string; auth?: Au
     setMarket(markets[0].market_id ?? markets[0].id);
   }, [markets, category, market]);
   const activePublicHistory = marketHistory?.market_id===(selectedSpotMarket?.market_id??selectedSpotMarket?.id)&&historyScope===`${selectedSpotMarket?.market_id??selectedSpotMarket?.id}:${historyRange}`?marketHistory:null;
-  const visiblePublicMarkets = markets.filter(entry => (category!=="perps"||perpetualFilter==="all"||entry.asset_category===perpetualFilter)&&`${entry.underlying?.symbol ?? ""} ${entry.underlying?.name ?? ""} ${entry.provider_symbol??""} ${entry.label ?? ""}`.toLowerCase().includes(marketSearch.trim().toLowerCase()));
+  const visiblePublicMarkets = markets.filter(entry => `${entry.underlying?.symbol ?? ""} ${entry.underlying?.name ?? ""} ${entry.provider_symbol??""} ${entry.label ?? ""}`.toLowerCase().includes(marketSearch.trim().toLowerCase()));
   useEffect(()=>{
     setMarketHistory(null);
     if((selectedSpotMarket?.network==="stellar-mainnet"||String(selectedSpotMarket?.market_id??"").startsWith("sodax:catalog:"))&&selectedSpotMarket?.history_available!==true){setHistoryLoading(false);return;}
@@ -830,7 +832,7 @@ function FinanceShell({ page, auth, initialCategory }: { page: string; auth?: Au
       clearTimeout(timer);
     };
   }, [active, refresh]);
-  async function action(task: () => Promise<void>, location: string = "page") {
+  async function action(task: () => Promise<unknown>, location: string = "page") {
     setBusy(true);
     setBusyLocation(location);
     setError("");
@@ -857,6 +859,7 @@ function FinanceShell({ page, auth, initialCategory }: { page: string; auth?: Au
       if(marginSession.current?.customer_id!==approved.owner.customer_id||marginSession.current?.wallet_id!==approved.owner.wallet_id||op.customer_id!==approved.owner.customer_id||op.wallet_id!==approved.owner.wallet_id)throw Error("Wallet action could not be found.");
       assertMarginPositionBinding(op,approved.binding.position_id);
     }
+    visibleOperation.current=op.operation_id;
     setActive(op);
     setOperations(current => [op, ...current.filter(item => item.operation_id !== op.operation_id)]);
   }
@@ -871,6 +874,7 @@ function FinanceShell({ page, auth, initialCategory }: { page: string; auth?: Au
       await reviewMarginOperation(id,session,{workflow_id:parent.workflow_id,position_id:parent.position_id});return;
     }
     openOperation(op);
+    return op as Operation;
   }
   async function reviewMarginOperation(id:string,owner:{customer_id:string;wallet_id:string},binding?:MarginReviewBinding) {
     const current=marginSession.current;
@@ -913,20 +917,37 @@ function FinanceShell({ page, auth, initialCategory }: { page: string; auth?: Au
     }
     if(!op?.operation_id)throw Error('Operation status is uncertain; retry this same action to recover it');
     clearOperationRequest(session.customer_id,path,body);
-    if(op.status==='awaiting_customer_authorization')await resumeOperation(op.operation_id);
-    else openOperation(op);
+    openOperation(op);
+    const owner={customer_id:session.customer_id,wallet_id:session.wallet_id};
+    for(let attempt=0;['accepted','validating','preparing'].includes(op.status)&&attempt<20;attempt++){
+      await new Promise(resolve=>setTimeout(resolve,1000));
+      if(marginSession.current?.customer_id!==owner.customer_id||marginSession.current?.wallet_id!==owner.wallet_id)throw Error('Your wallet session changed.');
+      op=await api('grapnel/operations/'+op.operation_id);
+      if(op.customer_id!==owner.customer_id||op.wallet_id!==owner.wallet_id)throw Error('This action belongs to another wallet session.');
+      openOperation(op);
+    }
+    if(op.status==='awaiting_customer_authorization'){const prepared=await resumeOperation(op.operation_id);if(prepared)await approve(prepared);}
   }
-  async function approve() {
+  async function approve(operation:Operation|null=active) {
     if (
-      !active?.prepared_action ||
-      !active.customer_action_token ||
+      !operation?.prepared_action ||
+      !operation.customer_action_token ||
       !auth ||
       !session
     )
       throw Error("A current customer authorization is required");
-    if(Date.parse(active.prepared_action.summary.expiresAt)<=Date.now())throw Error("This approval has expired. Refresh the operation before continuing.");
-    const operation=active;
-    await trackApproval(()=>auth.sign(operation.prepared_action!,session.stellar_address),async signed=>{
+    if(Date.parse(operation.prepared_action.summary.expiresAt)<=Date.now())throw Error("This approval has expired. Refresh the operation before continuing.");
+    if(operation.customer_id!==session.customer_id||operation.wallet_id!==session.wallet_id)throw Error("This action belongs to another wallet session.");
+    if(authorizationAttempts.current.has(operation.operation_id))throw Error('Check this transaction’s status before trying again.');
+    setOperationError('');
+    try{await trackApproval(async()=>{
+      if(signingOperations.current.has(operation.operation_id))throw Error('Wallet authorization is already open.');
+      signingOperations.current.add(operation.operation_id);
+      try{return await auth.sign(operation.prepared_action!,session.stellar_address);}finally{signingOperations.current.delete(operation.operation_id);}
+    },async signed=>{
+      if(marginSession.current?.customer_id!==session.customer_id||marginSession.current?.wallet_id!==session.wallet_id)throw Error('Your wallet session changed.');
+      if(authorizationAttempts.current.has(operation.operation_id))throw Error('This signed transaction is already being checked.');
+      authorizationAttempts.current.add(operation.operation_id);
       try {
         openOperation(await api(`grapnel/operations/${operation.operation_id}/authorize`, {
           customer_action_token: operation.customer_action_token,
@@ -941,7 +962,7 @@ function FinanceShell({ page, auth, initialCategory }: { page: string; auth?: Au
     },phase=>{
       if(phase){if(visibleOperation.current===operation.operation_id)setApprovalPhase({operationId:operation.operation_id,phase});}
       else setApprovalPhase(current=>current?.operationId===operation.operation_id?null:current);
-    });
+    });}catch(cause){setOperationError(cause instanceof Error?cause.message:'Transaction authorization could not be completed.');throw cause;}
   }
 
   const connect = () =>
@@ -984,13 +1005,6 @@ function FinanceShell({ page, auth, initialCategory }: { page: string; auth?: Au
           <VelocityBrand/>
           <VelocityBrand compact/>
         </Link>
-        <div className="workspace">
-          <span className="workspace-avatar">V</span>
-          <div>
-            Personal workspace
-          </div>
-          <span className="chevron">⌄</span>
-        </div>
         <nav aria-label="Main navigation">
           {nav.filter(([id])=>id!=="borrow"||capability("capital.lending")?.enabled).map(([id, label]) => (
             <Link
@@ -1008,18 +1022,7 @@ function FinanceShell({ page, auth, initialCategory }: { page: string; auth?: Au
             </Link>
           ))}
         </nav>
-
-      </aside>
-      <div className="main">
-        <header className="topbar">
-          <span className="crumb">
-            Personal /{" "}
-            <strong>
-              {nav.find((n) => n[0] === page)?.[1] ?? "Connect wallet"}
-            </strong>
-          </span>
-          <div className="top-actions">
-
+        <div className="sidebar-account">
             {session ? (
               <div className="profile-container" ref={profileContainer} onBlur={event=>{if(event.relatedTarget instanceof Node&&!event.currentTarget.contains(event.relatedTarget))setProfileOpen(false);}}>
                 <button className="avatar" ref={profileTrigger} type="button" aria-label="Open account menu" aria-expanded={profileOpen} aria-controls="account-profile-menu" aria-haspopup="dialog" data-testid="profile-button" onClick={()=>setProfileOpen(current=>!current)}>V</button>
@@ -1049,8 +1052,9 @@ function FinanceShell({ page, auth, initialCategory }: { page: string; auth?: Au
                 Connect wallet <Icon name="arrow" size={16} />
               </button>
             )}
-          </div>
-        </header>
+        </div>
+      </aside>
+      <div className="main">
         <main>
           <div className="page-heading">
             <div>
@@ -1285,7 +1289,7 @@ function FinanceShell({ page, auth, initialCategory }: { page: string; auth?: Au
                 {actionErrors.funds&&<p className="swap-action-error" role="alert">{customerMessage(actionErrors.funds)}</p>}
                 <button
                   className="button wide"
-                  aria-label={fundingPage==="fund"?"Get funds":"Review return transaction"}
+                  aria-label={fundingPage==="fund"?"Get funds":"Return funds"}
                   disabled={
                     busy || !session || !(executable("capital.testnet_funding") || (fundingPage === "fund" || fundingPage === "return") && fundingCanStart)
                   }
@@ -1297,7 +1301,7 @@ function FinanceShell({ page, auth, initialCategory }: { page: string; auth?: Au
                     ? <ProgressIndicator label="Processing" spinning/>
                     : fundingPage === "fund"
                       ? "Get funds"
-                      : "Review"}
+                      : "Return funds"}
                   <Icon name="arrow" size={17} />
                 </button>
 
@@ -1330,7 +1334,6 @@ function FinanceShell({ page, auth, initialCategory }: { page: string; auth?: Au
               {category !== "crypto_spot" && category !== "unavailable" && (
                 <section className="card public-market-browser" aria-label="Available markets" data-testid="market-list">
                   <div className="section-heading"><h2>Find a market</h2><span className="small muted">{markets.length} markets</span></div>
-                  {category==="perps"&&<label className="small muted">Asset type <select aria-label="Perpetual asset type" value={perpetualFilter} onChange={event=>{setPerpetualFilter(event.target.value as "all"|"crypto"|"equity"|"index"|"commodity"|"fx"|"other");setMarketResultsOpen(true);}}><option value="all">All assets</option><option value="crypto">Crypto</option><option value="equity">Stock perpetuals</option><option value="index">Indices</option><option value="commodity">Commodity perpetuals</option><option value="fx">Currency perpetuals</option><option value="other">Other perpetuals</option></select></label>}
                   <div className="public-market-search-row"><label className="market-search-label">Search markets<input type="search" aria-label="Search markets" data-testid="market-search" value={marketSearch} onFocus={()=>setMarketResultsOpen(true)} onChange={event=>{setMarketSearch(event.target.value);setMarketResultsOpen(true);}} placeholder="Search by name or symbol" /></label><button type="button" className="button outline" data-testid="market-browse-toggle" aria-expanded={marketResultsOpen} aria-controls="public-market-options" onClick={()=>setMarketResultsOpen(current=>!current)}>Browse markets</button></div>
                   {marketsLoading ? <p className="small muted" role="status">Loading markets…</p> : marketResultsOpen && visiblePublicMarkets.length ? <div className="public-market-options" id="public-market-options">
                     {visiblePublicMarkets.map(entry=><button type="button" key={entry.market_id??entry.id} data-testid={`market-option-${entry.underlying?.symbol??entry.market_id}`} aria-label={`${entry.underlying?.symbol??entry.label} ${(category==="perps"||entry.instrument_type==="perpetual_futures")?(entry.asset_category==="equity"?"stock perpetual":entry.asset_category==="index"?"index perpetual":"perpetual"):"stock"}`} aria-pressed={(entry.market_id??entry.id)===market}
@@ -1440,11 +1443,11 @@ function FinanceShell({ page, auth, initialCategory }: { page: string; auth?: Au
                   {swapError && <p className="swap-action-error" role="alert" id="swap-action-error">{customerMessage(swapError)}</p>}
                   {quote && quoteExpired && !swapError && <p className="inline-note" role="alert">This quote expired. Request a new quote before reviewing a swap.</p>}
                   {!canPrepareSpot && <p className="small muted">This pair is currently unavailable.</p>}
-                  {quoteMatchesMarket && !quoteExpired ? <button className="button swap-submit" aria-label="Review swap" aria-describedby={swapError ? "swap-action-error" : undefined} disabled={busy || !canPrepareSpot || !walletReadyForPair}
+                  {quoteMatchesMarket && !quoteExpired ? <button className="button swap-submit" aria-label="Swap" aria-describedby={swapError ? "swap-action-error" : undefined} disabled={busy || !canPrepareSpot || !walletReadyForPair}
                     onClick={() => action(async () => {
                       if (!quoteMatchesMarket || Date.parse(quote.expires_at) <= Date.now()) {setQuoteClock(Date.now());throw Error("This quote expired. Request a new quote.");}
                       await start("order",{quote_id:quote.quote_id});setQuote(null);
-                    }, "swap")}>{busy&&busyLocation==="swap" ? <ProgressIndicator label="Processing" spinning/> : "Review"}</button>
+                    }, "swap")}>{busy&&busyLocation==="swap" ? <ProgressIndicator label="Processing" spinning/> : "Swap"}</button>
                     : <button className="button swap-submit" aria-describedby={swapError ? "swap-action-error" : undefined} disabled={busy || !canPrepareSpot || !walletReadyForPair || !swapAmount}
                       onClick={() => action(async () => {
                         setQuote(null);
@@ -1557,7 +1560,7 @@ function FinanceShell({ page, auth, initialCategory }: { page: string; auth?: Au
               const canPrepare=direction==="borrow"?row.can_prepare_borrow:direction==="repay"?row.can_prepare_repay:direction==="collateral-supply"?row.can_prepare_collateral_supply===true:row.can_prepare_collateral_withdraw===true;
               const loanFeedback=direction==="borrow"?(borrowingAmountMessage(loanAmounts[amountKey]??"",row.available_to_borrow,row.asset.code,row.asset.decimals)||(!row.can_prepare_borrow?borrowingReasonMessage(row.reason):null)):direction==="repay"&&!canPrepare?"There is no debt available to repay, or your wallet balance is too low.":direction==="collateral-withdraw"&&!canPrepare?(/^0(?:\.0+)?$/.test(row.collateral??"")?"You have no collateral to remove.":borrowing.assets.some(entry=>!/^0(?:\.0+)?$/.test(entry.borrowed))?"Repay your outstanding loans before removing collateral.":"Collateral removal is unavailable. Refresh to check available funds."):null;
               const maximumSelected=direction==="repay"&&repayAllAmounts[row.market_id]!=null&&repayAllAmounts[row.market_id]===loanAmounts[amountKey];
-              const reviewLabel=direction==="borrow"?"Review borrow":direction==="repay"?(maximumSelected?"Review repay all":"Review repayment"):direction==="collateral-supply"?"Review collateral deposit":"Review collateral removal";
+              const reviewLabel=direction==="borrow"?"Borrow":direction==="repay"?(maximumSelected?"Repay all":"Repay"):direction==="collateral-supply"?"Add collateral":"Remove collateral";
               return <section className="borrowing-asset" key={row.market_id} aria-label={`${row.asset.code} loan`} data-testid={`loan-${row.asset.code.toLowerCase()}`}>
                 <div className="loan-asset-heading"><AssetLogo symbol={row.asset.code} name={row.asset.name} assetId={row.asset.id} size={40}/><h3>{row.asset.code}</h3></div>
                 <div className="loan-rate"><span>Variable borrow APR</span><strong>{borrowingRate(row.borrow_apr)}</strong>{row.borrow_apy!=null&&<small>APY {borrowingRate(row.borrow_apy)}</small>}</div>
@@ -1583,7 +1586,7 @@ function FinanceShell({ page, auth, initialCategory }: { page: string; auth?: Au
                   try{valid=latest?.can_prepare_repay_all===true&&typeof latest.repay_all_amount==="string"&&toAtomic(latest.repay_all_amount,latest.asset.decimals)>0n;}catch{}
                   if(!valid||!latest?.repay_all_amount){setRepayAllErrors(current=>({...current,[row.market_id]:"A full repayment maximum is unavailable. Check your current loan."}));return;}
                   setLoanAmounts(current=>({...current,[`${row.market_id}:repay`]:latest.repay_all_amount!}));setRepayAllAmounts(current=>({...current,[row.market_id]:latest.repay_all_amount!}));
-                },`loan:${row.market_id}`)}>Repay all · MAX</button>}</div><input id={`loan-amount-${row.asset.code}`} aria-label={direction==="borrow"?"Borrow amount":direction==="repay"?"Repay amount":"Collateral amount"} inputMode="decimal" placeholder="0.00" disabled={busy} value={loanAmounts[amountKey]??""} onChange={event=>{setLoanAmounts(current=>({...current,[amountKey]:event.target.value}));setActionErrors(current=>({...current,[`loan:${row.market_id}`]:""}));if(direction==="repay"){setRepayAllAmounts(current=>{const next={...current};delete next[row.market_id];return next;});setRepayAllErrors(current=>({...current,[row.market_id]:""}));}}}/></div><button className="button" aria-label={reviewLabel} disabled={busy||borrowingLoading||!session||!canPrepare||!loanAmounts[amountKey]||capability("capital.wallets")?.execution_status!=="testnet_verified"} onClick={()=>action(()=>start(direction.startsWith("collateral-")?`borrow-${direction}`:`lending/${direction}`,{market_id:row.market_id,amount:loanAmounts[amountKey]}),`loan:${row.market_id}`)}>{busy&&busyLocation===`loan:${row.market_id}`?<ProgressIndicator label="Processing" spinning/>:"Review"}</button></div>
+                },`loan:${row.market_id}`)}>Repay all · MAX</button>}</div><input id={`loan-amount-${row.asset.code}`} aria-label={direction==="borrow"?"Borrow amount":direction==="repay"?"Repay amount":"Collateral amount"} inputMode="decimal" placeholder="0.00" disabled={busy} value={loanAmounts[amountKey]??""} onChange={event=>{setLoanAmounts(current=>({...current,[amountKey]:event.target.value}));setActionErrors(current=>({...current,[`loan:${row.market_id}`]:""}));if(direction==="repay"){setRepayAllAmounts(current=>{const next={...current};delete next[row.market_id];return next;});setRepayAllErrors(current=>({...current,[row.market_id]:""}));}}}/></div><button className="button" aria-label={reviewLabel} disabled={busy||borrowingLoading||!session||!canPrepare||!loanAmounts[amountKey]||capability("capital.wallets")?.execution_status!=="testnet_verified"} onClick={()=>action(()=>start(direction.startsWith("collateral-")?`borrow-${direction}`:`lending/${direction}`,{market_id:row.market_id,amount:loanAmounts[amountKey]}),`loan:${row.market_id}`)}>{busy&&busyLocation===`loan:${row.market_id}`?<ProgressIndicator label="Processing" spinning/>:reviewLabel}</button></div>
                 {!loanAmounts[amountKey]&&<p className="small muted">Enter an amount to review {direction==="collateral-supply"?"your collateral deposit":direction==="collateral-withdraw"?"your collateral removal":direction==="repay"?"your repayment":"your loan"}.</p>}
                 {maximumSelected&&<p className="small muted">Maximum repayment amount selected. Review the full token debit before approving.</p>}
                 {repayAllErrors[row.market_id]&&<p className="swap-action-error" role="alert">{repayAllErrors[row.market_id]}</p>}
@@ -1673,11 +1676,11 @@ function FinanceShell({ page, auth, initialCategory }: { page: string; auth?: Au
             <p className="eyebrow">WALLET ACTION</p>
             <h2 id="operation-title">
               {active.type === "spot.swap" && active.status === "awaiting_customer_authorization"
-                ? `Review your ${swapIdentity(active.prepared_action?.summary.fromAssetId)} → ${swapIdentity(active.prepared_action?.summary.toAssetId)} swap`
+                ? `Swap ${swapIdentity(active.prepared_action?.summary.fromAssetId)} → ${swapIdentity(active.prepared_action?.summary.toAssetId)}`
                 : active.type === "wallet.usdc_trustline"
                 ? active.status === "completed" ? "USDC enabled." : "Enable USDC"
                 : active.status === "awaiting_customer_authorization"
-                ? "Review before you approve."
+                ? "Authorizing transaction"
                 : active.status === "completed"
                   ? activityLabel(active)
                   : [
@@ -1770,6 +1773,7 @@ function FinanceShell({ page, auth, initialCategory }: { page: string; auth?: Au
                   : <button className="button outline" disabled={busy} onClick={() => setActive(null)}>Choose action again</button>}
               </div>
             )}
+            {operationError&&<p className="swap-action-error" role="alert">{operationError}</p>}
             {active.status === "awaiting_customer_authorization" && (
               <>
                 {approvalExpired && <p className="inline-note" role="status">This approval expired. Start a new review to continue.</p>}
@@ -1784,15 +1788,15 @@ function FinanceShell({ page, auth, initialCategory }: { page: string; auth?: Au
                 })}>{approvalExpired?"Start a new review":"Check action status"}</button>
                 <p className="small muted">
                   {active.type === "wallet.usdc_trustline"
-                    ? "Review the holding limit, XLM held, fee and expiry before approving."
-                    : "Review the assets, amount, destination, fee and expiry before approving."}
+                    ? "Your wallet will authorize the holding limit and network fee."
+                    : "Your wallet authorizes this exact transaction."}
                 </p>
                 <button
                   className="button wide"
                   disabled={busy || !auth || approvalExpired}
-                  onClick={() => action(approve)}
+                  onClick={() => action(()=>approve())}
                 >
-                  {busy ? <OperationProgress status="awaiting_customer_authorization" approvalPhase={approvalPhase?.operationId===active.operation_id?approvalPhase.phase:null}/> : "Approve transaction"}
+                  {busy ? <OperationProgress status="awaiting_customer_authorization" approvalPhase={approvalPhase?.operationId===active.operation_id?approvalPhase.phase:null}/> : "Continue"}
                   <Icon name="arrow" size={16} />
                 </button>
               </>

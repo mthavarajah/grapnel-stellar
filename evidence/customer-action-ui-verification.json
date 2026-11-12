@@ -1,0 +1,16 @@
+{
+  "checked_at": "2026-11-12T22:57:23.305016+00:00",
+  "scope": "Explicit action authorization, Stock progress popup and sidebar navigation",
+  "frontend_tests": {
+    "passed": 463,
+    "failed": 0
+  },
+  "production_build": "passed",
+  "types": "passed through Next production build",
+  "secret_scan": "passed",
+  "local_markets_http": 200,
+  "visual_browser_verification": "incomplete: browser inspection timed out after app session loading screen",
+  "live_customer_transaction_verification": false,
+  "signatures_from_passive_render_or_status_reads": false,
+  "public_deployment": false
+}
