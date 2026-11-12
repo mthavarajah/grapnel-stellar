@@ -81,3 +81,9 @@ PUMP uses the exact Pump.fun token image from public CoinGecko metadata, rather 
 | ZEC | cryptocurrency-icons | [Artwork](https://raw.githubusercontent.com/spothq/cryptocurrency-icons/master/svg/color/zec.svg) |
 
 USDT reference mark: https://raw.githubusercontent.com/spothq/cryptocurrency-icons/master/svg/color/usdt.svg (existing cryptocurrency-icons license). Peridot collateral is explicitly Mock USDT; logos establish no issuer or redemption claim. SHA256 cddba428a029844888b59bae59c6400ee684b0d51dfc490a4374eef6bb63ea16
+
+## Hyperliquid Testnet market artwork
+
+`hyperliquid-logo-sources.json` records 187 downloaded market marks: 158 active native crypto identities (excluding the removed commodity-linked PAXG market), 27 `xyz:` stock perpetuals, and the XYZ100/VIX index perpetuals. These are market-reference logos, not stock ownership or token backing claims. The exact qualified provider symbol and Testnet market ID bind each lookup; unknown namespaces never inherit a same-ticker company logo.
+
+185 SVGs come from Hyperliquid's own app `/coins/{name}.svg` artwork, as referenced by the published coin-icon component in its recorded JavaScript bundle. Its native `k` multiplier mapping is applied only to the observed names (for example, kPEPE uses its PEPE mark). PEOPLE uses CoinGecko's ConstitutionDAO image, whose metadata links to constitutiondao.com. The VIX index uses Cboe's own website icon because Hyperliquid publishes no VIX icon at its referenced path. Brand rights remain with their owners; no open license or endorsement is asserted. Every file has its exact source URL and SHA256 checksum. Downloaded SVGs reject scripts, event handlers, foreign objects, and external resources; embedded raster data is restricted to PNG/JPEG/WebP. Existing verified company marks remain preferred for recognized stock perpetuals.

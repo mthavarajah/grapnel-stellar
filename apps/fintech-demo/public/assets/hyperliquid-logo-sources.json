@@ -1,0 +1,1698 @@
+{
+  "provider": "hyperliquid",
+  "checked_at": "2026-11-12T04:06:42.160Z",
+  "network": "hyperliquid-testnet",
+  "source_bundle": "https://app.hyperliquid.xyz/assets/config-D0Al6aLn.js",
+  "source_rule": "First-party coin icon component uses /coins/{name}.svg; native k multiplier is stripped by its R8 function. Qualified builder names stay qualified.",
+  "native_count": 158,
+  "equity_count": 27,
+  "index_count": 2,
+  "downloaded_count": 187,
+  "missing": [],
+  "logos": [
+    {
+      "provider_symbol": "0G",
+      "category": "crypto",
+      "file": "/assets/logos/hyperliquid/0g.svg",
+      "source": "https://app.hyperliquid.xyz/coins/0G.svg",
+      "collection": "Hyperliquid first-party app artwork",
+      "license": "Brand mark; no open license asserted",
+      "sha256": "fcdb493433ded3c1dd9087e24913c710233317edd9bfd9d6bade9affbb9ec11a"
+    },
+    {
+      "provider_symbol": "2Z",
+      "category": "crypto",
+      "file": "/assets/logos/hyperliquid/2z.svg",
+      "source": "https://app.hyperliquid.xyz/coins/2Z.svg",
+      "collection": "Hyperliquid first-party app artwork",
+      "license": "Brand mark; no open license asserted",
+      "sha256": "41e67d90ffbc848e546755c84fa4e888edd15035f9f5d0986513fb6195e4695d"
+    },
+    {
+      "provider_symbol": "AAVE",
+      "category": "crypto",
+      "file": "/assets/logos/hyperliquid/aave.svg",
+      "source": "https://app.hyperliquid.xyz/coins/AAVE.svg",
+      "collection": "Hyperliquid first-party app artwork",
+      "license": "Brand mark; no open license asserted",
+      "sha256": "7169cdc23c88cc998056340baddb6187b3b12f033f282d5e9c796927d1987229"
+    },
+    {
+      "provider_symbol": "ACE",
+      "category": "crypto",
+      "file": "/assets/logos/hyperliquid/ace.svg",
+      "source": "https://app.hyperliquid.xyz/coins/ACE.svg",
+      "collection": "Hyperliquid first-party app artwork",
+      "license": "Brand mark; no open license asserted",
+      "sha256": "4114ff162070e7f0ab11b41ecb166f5ec799a933cce470ace0f89943c0f5cf2b"
+    },
+    {
+      "provider_symbol": "ADA",
+      "category": "crypto",
+      "file": "/assets/logos/hyperliquid/ada.svg",
+      "source": "https://app.hyperliquid.xyz/coins/ADA.svg",
+      "collection": "Hyperliquid first-party app artwork",
+      "license": "Brand mark; no open license asserted",
+      "sha256": "5c85eff43a2f0dc856bdb8b6cc4ff2f8e53bfc8f7baea4906ba2b7922d5fc965"
+    },
+    {
+      "provider_symbol": "AERO",
+      "category": "crypto",
+      "file": "/assets/logos/hyperliquid/aero.svg",
+      "source": "https://app.hyperliquid.xyz/coins/AERO.svg",
+      "collection": "Hyperliquid first-party app artwork",
+      "license": "Brand mark; no open license asserted",
+      "sha256": "5b3ae6c80934cf9aa837734db836405130435a558168889c66903cd3e682b780"
+    },
+    {
+      "provider_symbol": "AIXBT",
+      "category": "crypto",
+      "file": "/assets/logos/hyperliquid/aixbt.svg",
+      "source": "https://app.hyperliquid.xyz/coins/AIXBT.svg",
+      "collection": "Hyperliquid first-party app artwork",
+      "license": "Brand mark; no open license asserted",
+      "sha256": "895d5a006ab42ad22d93f3d5c803f4beebece6449bddd65ad35182573fea55e2"
+    },
+    {
+      "provider_symbol": "ALGO",
+      "category": "crypto",
+      "file": "/assets/logos/hyperliquid/algo.svg",
+      "source": "https://app.hyperliquid.xyz/coins/ALGO.svg",
+      "collection": "Hyperliquid first-party app artwork",
+      "license": "Brand mark; no open license asserted",
+      "sha256": "01c4d0b0a84b6cef652dc092dbe7a53c83e8c540da822855bb3aebe04eac2286"
+    },
+    {
+      "provider_symbol": "ALT",
+      "category": "crypto",
+      "file": "/assets/logos/hyperliquid/alt.svg",
+      "source": "https://app.hyperliquid.xyz/coins/ALT.svg",
+      "collection": "Hyperliquid first-party app artwork",
+      "license": "Brand mark; no open license asserted",
+      "sha256": "658d5424c5dc8e037e9dbd3db6328753642daeeb722007a581d8f3621f2a4fbb"
+    },
+    {
+      "provider_symbol": "ANIME",
+      "category": "crypto",
+      "file": "/assets/logos/hyperliquid/anime.svg",
+      "source": "https://app.hyperliquid.xyz/coins/ANIME.svg",
+      "collection": "Hyperliquid first-party app artwork",
+      "license": "Brand mark; no open license asserted",
+      "sha256": "bf0afb9e775e6efa16474d19f47cc0e25b9831d70c40f872fb95586b8cb49a60"
+    },
+    {
+      "provider_symbol": "APE",
+      "category": "crypto",
+      "file": "/assets/logos/hyperliquid/ape.svg",
+      "source": "https://app.hyperliquid.xyz/coins/APE.svg",
+      "collection": "Hyperliquid first-party app artwork",
+      "license": "Brand mark; no open license asserted",
+      "sha256": "13e7797993b798455c8dd4a410f0b34a9741225f1e2b264f76b810716af6d4f9"
+    },
+    {
+      "provider_symbol": "APEX",
+      "category": "crypto",
+      "file": "/assets/logos/hyperliquid/apex.svg",
+      "source": "https://app.hyperliquid.xyz/coins/APEX.svg",
+      "collection": "Hyperliquid first-party app artwork",
+      "license": "Brand mark; no open license asserted",
+      "sha256": "9f52e8862e100903966fa35180990ce486eaa0ea4a4c374dcf5b0039cb56e834"
+    },
+    {
+      "provider_symbol": "APT",
+      "category": "crypto",
+      "file": "/assets/logos/hyperliquid/apt.svg",
+      "source": "https://app.hyperliquid.xyz/coins/APT.svg",
+      "collection": "Hyperliquid first-party app artwork",
+      "license": "Brand mark; no open license asserted",
+      "sha256": "cd9f4a072f14cda1d10ce66a283b0d495ec39392d53a3255c22467b2f941af87"
+    },
+    {
+      "provider_symbol": "AR",
+      "category": "crypto",
+      "file": "/assets/logos/hyperliquid/ar.svg",
+      "source": "https://app.hyperliquid.xyz/coins/AR.svg",
+      "collection": "Hyperliquid first-party app artwork",
+      "license": "Brand mark; no open license asserted",
+      "sha256": "4940286b73b2adfe7da39777eea92f386650f66802eadee80cc30fb87f819d64"
+    },
+    {
+      "provider_symbol": "ARB",
+      "category": "crypto",
+      "file": "/assets/logos/hyperliquid/arb.svg",
+      "source": "https://app.hyperliquid.xyz/coins/ARB.svg",
+      "collection": "Hyperliquid first-party app artwork",
+      "license": "Brand mark; no open license asserted",
+      "sha256": "7c89a7b5192b003edbf2a4fed20ebe1455183a31fe76c51579b0faa0f4e8fb6a"
+    },
+    {
+      "provider_symbol": "ASTER",
+      "category": "crypto",
+      "file": "/assets/logos/hyperliquid/aster.svg",
+      "source": "https://app.hyperliquid.xyz/coins/ASTER.svg",
+      "collection": "Hyperliquid first-party app artwork",
+      "license": "Brand mark; no open license asserted",
+      "sha256": "3a9f41152bcfd52339aefbd0731ca8cf8e344277a5e3f0e9e8917decb646c1c8"
+    },
+    {
+      "provider_symbol": "ATOM",
+      "category": "crypto",
+      "file": "/assets/logos/hyperliquid/atom.svg",
+      "source": "https://app.hyperliquid.xyz/coins/ATOM.svg",
+      "collection": "Hyperliquid first-party app artwork",
+      "license": "Brand mark; no open license asserted",
+      "sha256": "062882f3fbe04b67f0dba75504e4d204ec419bf3833de6f3e9d288dd09c7542c"
+    },
+    {
+      "provider_symbol": "AVAX",
+      "category": "crypto",
+      "file": "/assets/logos/hyperliquid/avax.svg",
+      "source": "https://app.hyperliquid.xyz/coins/AVAX.svg",
+      "collection": "Hyperliquid first-party app artwork",
+      "license": "Brand mark; no open license asserted",
+      "sha256": "efef237c3553475a1506d9accb7905635b9935cbe481c091142c48203f360314"
+    },
+    {
+      "provider_symbol": "AVNT",
+      "category": "crypto",
+      "file": "/assets/logos/hyperliquid/avnt.svg",
+      "source": "https://app.hyperliquid.xyz/coins/AVNT.svg",
+      "collection": "Hyperliquid first-party app artwork",
+      "license": "Brand mark; no open license asserted",
+      "sha256": "40fb1ef495e47815df3cfa6e3db69ce8ba4861e2dbd78b4b816bd59aa57bb632"
+    },
+    {
+      "provider_symbol": "AXS",
+      "category": "crypto",
+      "file": "/assets/logos/hyperliquid/axs.svg",
+      "source": "https://app.hyperliquid.xyz/coins/AXS.svg",
+      "collection": "Hyperliquid first-party app artwork",
+      "license": "Brand mark; no open license asserted",
+      "sha256": "162de493eb388a7c975b589b8348bbbb3dd0319bff43a67adf478fb5b2fa9510"
+    },
+    {
+      "provider_symbol": "AZTEC",
+      "category": "crypto",
+      "file": "/assets/logos/hyperliquid/aztec.svg",
+      "source": "https://app.hyperliquid.xyz/coins/AZTEC.svg",
+      "collection": "Hyperliquid first-party app artwork",
+      "license": "Brand mark; no open license asserted",
+      "sha256": "b48335977328608a0cf91e69b3e2a596f97e27a2be19898ade8580803c74839c"
+    },
+    {
+      "provider_symbol": "BABY",
+      "category": "crypto",
+      "file": "/assets/logos/hyperliquid/baby.svg",
+      "source": "https://app.hyperliquid.xyz/coins/BABY.svg",
+      "collection": "Hyperliquid first-party app artwork",
+      "license": "Brand mark; no open license asserted",
+      "sha256": "7ef717950fde0d0869ab9985e7b8ee2b9704e959afac1365786c054a076beadd"
+    },
+    {
+      "provider_symbol": "BANANA",
+      "category": "crypto",
+      "file": "/assets/logos/hyperliquid/banana.svg",
+      "source": "https://app.hyperliquid.xyz/coins/BANANA.svg",
+      "collection": "Hyperliquid first-party app artwork",
+      "license": "Brand mark; no open license asserted",
+      "sha256": "e9f20d802cb782af7c8051d17e0dca2249782c51979b1dcf7a3f54b197be95e2"
+    },
+    {
+      "provider_symbol": "BERA",
+      "category": "crypto",
+      "file": "/assets/logos/hyperliquid/bera.svg",
+      "source": "https://app.hyperliquid.xyz/coins/BERA.svg",
+      "collection": "Hyperliquid first-party app artwork",
+      "license": "Brand mark; no open license asserted",
+      "sha256": "b3a4925369b564119dcdaf9226195d61a75acd340610a68f8ec1fad949da8577"
+    },
+    {
+      "provider_symbol": "BIGTIME",
+      "category": "crypto",
+      "file": "/assets/logos/hyperliquid/bigtime.svg",
+      "source": "https://app.hyperliquid.xyz/coins/BIGTIME.svg",
+      "collection": "Hyperliquid first-party app artwork",
+      "license": "Brand mark; no open license asserted",
+      "sha256": "da698c1f88dfdfe0f1372445a52ef5a43eb5fe99a3e0e5d5d63c9ef229be0d21"
+    },
+    {
+      "provider_symbol": "BIO",
+      "category": "crypto",
+      "file": "/assets/logos/hyperliquid/bio.svg",
+      "source": "https://app.hyperliquid.xyz/coins/BIO.svg",
+      "collection": "Hyperliquid first-party app artwork",
+      "license": "Brand mark; no open license asserted",
+      "sha256": "22af21b52b46b56201312b7d9f305f7f386f5b7a05c5c7ab483bcfb41c760365"
+    },
+    {
+      "provider_symbol": "BLUR",
+      "category": "crypto",
+      "file": "/assets/logos/hyperliquid/blur.svg",
+      "source": "https://app.hyperliquid.xyz/coins/BLUR.svg",
+      "collection": "Hyperliquid first-party app artwork",
+      "license": "Brand mark; no open license asserted",
+      "sha256": "c8a85a61b29f2b31239d25246b1db901b1d0c2413e99692d73f4de159591e72a"
+    },
+    {
+      "provider_symbol": "BNB",
+      "category": "crypto",
+      "file": "/assets/logos/hyperliquid/bnb.svg",
+      "source": "https://app.hyperliquid.xyz/coins/BNB.svg",
+      "collection": "Hyperliquid first-party app artwork",
+      "license": "Brand mark; no open license asserted",
+      "sha256": "d510543ae4d6997ae359d0e3efa9c21db9152b43daf46cdef214eb27d21b2616"
+    },
+    {
+      "provider_symbol": "BRETT",
+      "category": "crypto",
+      "file": "/assets/logos/hyperliquid/brett.svg",
+      "source": "https://app.hyperliquid.xyz/coins/BRETT.svg",
+      "collection": "Hyperliquid first-party app artwork",
+      "license": "Brand mark; no open license asserted",
+      "sha256": "d6c3aeb0b7a61561cd3f73786ff63b8b3aeb06deba5afb08a74f98c87dd9c5a5"
+    },
+    {
+      "provider_symbol": "BSV",
+      "category": "crypto",
+      "file": "/assets/logos/hyperliquid/bsv.svg",
+      "source": "https://app.hyperliquid.xyz/coins/BSV.svg",
+      "collection": "Hyperliquid first-party app artwork",
+      "license": "Brand mark; no open license asserted",
+      "sha256": "907602c1fd8c3a1c9e65f6951df3b5e352f791c6a7dfec28143fa7ac4e67d4d1"
+    },
+    {
+      "provider_symbol": "BTC",
+      "category": "crypto",
+      "file": "/assets/logos/hyperliquid/btc.svg",
+      "source": "https://app.hyperliquid.xyz/coins/BTC.svg",
+      "collection": "Hyperliquid first-party app artwork",
+      "license": "Brand mark; no open license asserted",
+      "sha256": "45ea9984b7923557d5006c6567510e02734079ded21767bcbbd2bcdf7bd6940b"
+    },
+    {
+      "provider_symbol": "CAKE",
+      "category": "crypto",
+      "file": "/assets/logos/hyperliquid/cake.svg",
+      "source": "https://app.hyperliquid.xyz/coins/CAKE.svg",
+      "collection": "Hyperliquid first-party app artwork",
+      "license": "Brand mark; no open license asserted",
+      "sha256": "af3e043e47ac5b39133ad664f19e3f6291d79a70caa08eacb3ddac16918aaec4"
+    },
+    {
+      "provider_symbol": "CASHCAT",
+      "category": "crypto",
+      "file": "/assets/logos/hyperliquid/cashcat.svg",
+      "source": "https://app.hyperliquid.xyz/coins/CASHCAT.svg",
+      "collection": "Hyperliquid first-party app artwork",
+      "license": "Brand mark; no open license asserted",
+      "sha256": "3f96adaa0e3747fe792d448c80d44d3d5afef040b50613891809d23800d20d62"
+    },
+    {
+      "provider_symbol": "CC",
+      "category": "crypto",
+      "file": "/assets/logos/hyperliquid/cc.svg",
+      "source": "https://app.hyperliquid.xyz/coins/CC.svg",
+      "collection": "Hyperliquid first-party app artwork",
+      "license": "Brand mark; no open license asserted",
+      "sha256": "470d11873452450fb01c29031779f581016786d73a0f3fb779d7c772b2644919"
+    },
+    {
+      "provider_symbol": "CELO",
+      "category": "crypto",
+      "file": "/assets/logos/hyperliquid/celo.svg",
+      "source": "https://app.hyperliquid.xyz/coins/CELO.svg",
+      "collection": "Hyperliquid first-party app artwork",
+      "license": "Brand mark; no open license asserted",
+      "sha256": "1640e817ef988525f751939e8c2e66f6d48868a7366b9baab07b4101e398bad3"
+    },
+    {
+      "provider_symbol": "CHIP",
+      "category": "crypto",
+      "file": "/assets/logos/hyperliquid/chip.svg",
+      "source": "https://app.hyperliquid.xyz/coins/CHIP.svg",
+      "collection": "Hyperliquid first-party app artwork",
+      "license": "Brand mark; no open license asserted",
+      "sha256": "3a237f84895c47932343403e5df6922e637c44c0c3961ace1ecd0c92682177de"
+    },
+    {
+      "provider_symbol": "COMP",
+      "category": "crypto",
+      "file": "/assets/logos/hyperliquid/comp.svg",
+      "source": "https://app.hyperliquid.xyz/coins/COMP.svg",
+      "collection": "Hyperliquid first-party app artwork",
+      "license": "Brand mark; no open license asserted",
+      "sha256": "11b0350198f3166269d9e1d49e7a2ed8ca84ea92f8c28c5cf0058196efbb7dad"
+    },
+    {
+      "provider_symbol": "DASH",
+      "category": "crypto",
+      "file": "/assets/logos/hyperliquid/dash.svg",
+      "source": "https://app.hyperliquid.xyz/coins/DASH.svg",
+      "collection": "Hyperliquid first-party app artwork",
+      "license": "Brand mark; no open license asserted",
+      "sha256": "5bbc5fb7faa0a2d066a89265f7276d464f840e88543dd701c281ac4636e77ab3"
+    },
+    {
+      "provider_symbol": "DOGE",
+      "category": "crypto",
+      "file": "/assets/logos/hyperliquid/doge.svg",
+      "source": "https://app.hyperliquid.xyz/coins/DOGE.svg",
+      "collection": "Hyperliquid first-party app artwork",
+      "license": "Brand mark; no open license asserted",
+      "sha256": "639011850654f8f07083cff9728e1c1e48a41237bd80468fe99caee8fc1b4fd0"
+    },
+    {
+      "provider_symbol": "DYDX",
+      "category": "crypto",
+      "file": "/assets/logos/hyperliquid/dydx.svg",
+      "source": "https://app.hyperliquid.xyz/coins/DYDX.svg",
+      "collection": "Hyperliquid first-party app artwork",
+      "license": "Brand mark; no open license asserted",
+      "sha256": "6077aac9fc506ea8a225efc6439858dcddd03acadaa0c454e2fb3259e440dbdd"
+    },
+    {
+      "provider_symbol": "DYM",
+      "category": "crypto",
+      "file": "/assets/logos/hyperliquid/dym.svg",
+      "source": "https://app.hyperliquid.xyz/coins/DYM.svg",
+      "collection": "Hyperliquid first-party app artwork",
+      "license": "Brand mark; no open license asserted",
+      "sha256": "1103c7a03e67c3ef8d690e4c7de06dbf83d8aadf4c7c86f53656295e96f8d73a"
+    },
+    {
+      "provider_symbol": "EIGEN",
+      "category": "crypto",
+      "file": "/assets/logos/hyperliquid/eigen.svg",
+      "source": "https://app.hyperliquid.xyz/coins/EIGEN.svg",
+      "collection": "Hyperliquid first-party app artwork",
+      "license": "Brand mark; no open license asserted",
+      "sha256": "c06b67e09cb1ddad96adf86ab48d39adedfbbdaa2df2cc7e60a8c91df99d02ee"
+    },
+    {
+      "provider_symbol": "ENS",
+      "category": "crypto",
+      "file": "/assets/logos/hyperliquid/ens.svg",
+      "source": "https://app.hyperliquid.xyz/coins/ENS.svg",
+      "collection": "Hyperliquid first-party app artwork",
+      "license": "Brand mark; no open license asserted",
+      "sha256": "b463e95c5125a6059d1ad915daccfbdbf552c38622863a8480403bed094c827f"
+    },
+    {
+      "provider_symbol": "ETC",
+      "category": "crypto",
+      "file": "/assets/logos/hyperliquid/etc.svg",
+      "source": "https://app.hyperliquid.xyz/coins/ETC.svg",
+      "collection": "Hyperliquid first-party app artwork",
+      "license": "Brand mark; no open license asserted",
+      "sha256": "986fd7165caee03ee803950309a3093f52f6b10957329c4bfd16c2574831b9e1"
+    },
+    {
+      "provider_symbol": "ETH",
+      "category": "crypto",
+      "file": "/assets/logos/hyperliquid/eth.svg",
+      "source": "https://app.hyperliquid.xyz/coins/ETH.svg",
+      "collection": "Hyperliquid first-party app artwork",
+      "license": "Brand mark; no open license asserted",
+      "sha256": "1186309d94304915c012eda14b70c2f008b8f846c7167dfc5de631ede211b36f"
+    },
+    {
+      "provider_symbol": "FARTCOIN",
+      "category": "crypto",
+      "file": "/assets/logos/hyperliquid/fartcoin.svg",
+      "source": "https://app.hyperliquid.xyz/coins/FARTCOIN.svg",
+      "collection": "Hyperliquid first-party app artwork",
+      "license": "Brand mark; no open license asserted",
+      "sha256": "1db8c284aaa50a2f657095c7720a165d21af937488206b308bbd91e199b9439a"
+    },
+    {
+      "provider_symbol": "FET",
+      "category": "crypto",
+      "file": "/assets/logos/hyperliquid/fet.svg",
+      "source": "https://app.hyperliquid.xyz/coins/FET.svg",
+      "collection": "Hyperliquid first-party app artwork",
+      "license": "Brand mark; no open license asserted",
+      "sha256": "ea4c3b8070d6559284e9cdc6fb655199844bec722d5df47a08640d60d51619d3"
+    },
+    {
+      "provider_symbol": "FIL",
+      "category": "crypto",
+      "file": "/assets/logos/hyperliquid/fil.svg",
+      "source": "https://app.hyperliquid.xyz/coins/FIL.svg",
+      "collection": "Hyperliquid first-party app artwork",
+      "license": "Brand mark; no open license asserted",
+      "sha256": "869a81e323995ec4b49dda33b28c42a9556b91689bdab60e3f7e75e3cea393c9"
+    },
+    {
+      "provider_symbol": "FOGO",
+      "category": "crypto",
+      "file": "/assets/logos/hyperliquid/fogo.svg",
+      "source": "https://app.hyperliquid.xyz/coins/FOGO.svg",
+      "collection": "Hyperliquid first-party app artwork",
+      "license": "Brand mark; no open license asserted",
+      "sha256": "3f4deef0a498bf7cfcfc49f643cb04dd563186205e2b9611c3ea7230f0ad5093"
+    },
+    {
+      "provider_symbol": "GALA",
+      "category": "crypto",
+      "file": "/assets/logos/hyperliquid/gala.svg",
+      "source": "https://app.hyperliquid.xyz/coins/GALA.svg",
+      "collection": "Hyperliquid first-party app artwork",
+      "license": "Brand mark; no open license asserted",
+      "sha256": "b00c4723b2cb24c38f557b84d382046893a0e744a974343ad9dd85beebea734d"
+    },
+    {
+      "provider_symbol": "GAS",
+      "category": "crypto",
+      "file": "/assets/logos/hyperliquid/gas.svg",
+      "source": "https://app.hyperliquid.xyz/coins/GAS.svg",
+      "collection": "Hyperliquid first-party app artwork",
+      "license": "Brand mark; no open license asserted",
+      "sha256": "ed69f7d2c8e017ac336655dd58adaa8e10e51d16cb448661140909ab5736f536"
+    },
+    {
+      "provider_symbol": "GMT",
+      "category": "crypto",
+      "file": "/assets/logos/hyperliquid/gmt.svg",
+      "source": "https://app.hyperliquid.xyz/coins/GMT.svg",
+      "collection": "Hyperliquid first-party app artwork",
+      "license": "Brand mark; no open license asserted",
+      "sha256": "e26654ad7625ba58b2fc96789e4a32fd54604f8868214cb512d5c46e5a12c9e5"
+    },
+    {
+      "provider_symbol": "GOAT",
+      "category": "crypto",
+      "file": "/assets/logos/hyperliquid/goat.svg",
+      "source": "https://app.hyperliquid.xyz/coins/GOAT.svg",
+      "collection": "Hyperliquid first-party app artwork",
+      "license": "Brand mark; no open license asserted",
+      "sha256": "90b626c65c4747996995dc77cc806bcafd0f40991bb198967e4a084723acd0cd"
+    },
+    {
+      "provider_symbol": "GRAM",
+      "category": "crypto",
+      "file": "/assets/logos/hyperliquid/gram.svg",
+      "source": "https://app.hyperliquid.xyz/coins/GRAM.svg",
+      "collection": "Hyperliquid first-party app artwork",
+      "license": "Brand mark; no open license asserted",
+      "sha256": "f49a6525978d8d39a12106f1eefb84b4d18fff99efb846830765ea11b3fda6e6"
+    },
+    {
+      "provider_symbol": "GRASS",
+      "category": "crypto",
+      "file": "/assets/logos/hyperliquid/grass.svg",
+      "source": "https://app.hyperliquid.xyz/coins/GRASS.svg",
+      "collection": "Hyperliquid first-party app artwork",
+      "license": "Brand mark; no open license asserted",
+      "sha256": "9d3ab8dd58feb2a37ef0929634e530cd42c7f610cc07c9d067e4fa93fa46ca97"
+    },
+    {
+      "provider_symbol": "GRIFFAIN",
+      "category": "crypto",
+      "file": "/assets/logos/hyperliquid/griffain.svg",
+      "source": "https://app.hyperliquid.xyz/coins/GRIFFAIN.svg",
+      "collection": "Hyperliquid first-party app artwork",
+      "license": "Brand mark; no open license asserted",
+      "sha256": "1fa7445763454c0611348e993438e1766df35d583832272e9bd05190de329657"
+    },
+    {
+      "provider_symbol": "HBAR",
+      "category": "crypto",
+      "file": "/assets/logos/hyperliquid/hbar.svg",
+      "source": "https://app.hyperliquid.xyz/coins/HBAR.svg",
+      "collection": "Hyperliquid first-party app artwork",
+      "license": "Brand mark; no open license asserted",
+      "sha256": "9a7aed41ecbcd31fd4f31f1752847ac72d86dd77e2194382a17cf7256d913f0d"
+    },
+    {
+      "provider_symbol": "HEMI",
+      "category": "crypto",
+      "file": "/assets/logos/hyperliquid/hemi.svg",
+      "source": "https://app.hyperliquid.xyz/coins/HEMI.svg",
+      "collection": "Hyperliquid first-party app artwork",
+      "license": "Brand mark; no open license asserted",
+      "sha256": "6c5bec219120d80202aee1fa7621d7154c18a4d2a391f79213d9bd02e62957dc"
+    },
+    {
+      "provider_symbol": "HMSTR",
+      "category": "crypto",
+      "file": "/assets/logos/hyperliquid/hmstr.svg",
+      "source": "https://app.hyperliquid.xyz/coins/HMSTR.svg",
+      "collection": "Hyperliquid first-party app artwork",
+      "license": "Brand mark; no open license asserted",
+      "sha256": "84aa76ddec9212366d8c5c2e75fae2e4f5b54f3ce23f851bd7aded0064e4403b"
+    },
+    {
+      "provider_symbol": "HYPE",
+      "category": "crypto",
+      "file": "/assets/logos/hyperliquid/hype.svg",
+      "source": "https://app.hyperliquid.xyz/coins/HYPE.svg",
+      "collection": "Hyperliquid first-party app artwork",
+      "license": "Brand mark; no open license asserted",
+      "sha256": "4ef1f539cdd3472fd5ae3cfce4f9f2d85ef747587ae72a191e95e5e171a13f54"
+    },
+    {
+      "provider_symbol": "HYPER",
+      "category": "crypto",
+      "file": "/assets/logos/hyperliquid/hyper.svg",
+      "source": "https://app.hyperliquid.xyz/coins/HYPER.svg",
+      "collection": "Hyperliquid first-party app artwork",
+      "license": "Brand mark; no open license asserted",
+      "sha256": "8bf18e53b62782fba16ae68566d28acb61df511e1095f2a3d70cd99a11830bc5"
+    },
+    {
+      "provider_symbol": "ICP",
+      "category": "crypto",
+      "file": "/assets/logos/hyperliquid/icp.svg",
+      "source": "https://app.hyperliquid.xyz/coins/ICP.svg",
+      "collection": "Hyperliquid first-party app artwork",
+      "license": "Brand mark; no open license asserted",
+      "sha256": "cf8e56ad550a64b34845ccde5113c115d4f93e7744f258f31f330746f43826f1"
+    },
+    {
+      "provider_symbol": "IMX",
+      "category": "crypto",
+      "file": "/assets/logos/hyperliquid/imx.svg",
+      "source": "https://app.hyperliquid.xyz/coins/IMX.svg",
+      "collection": "Hyperliquid first-party app artwork",
+      "license": "Brand mark; no open license asserted",
+      "sha256": "1daab368e69be8dc7a6e19f36cc54dcd9d5e1c72093a77d066bfbee440bfa808"
+    },
+    {
+      "provider_symbol": "INIT",
+      "category": "crypto",
+      "file": "/assets/logos/hyperliquid/init.svg",
+      "source": "https://app.hyperliquid.xyz/coins/INIT.svg",
+      "collection": "Hyperliquid first-party app artwork",
+      "license": "Brand mark; no open license asserted",
+      "sha256": "5af9a7993890fbbf353e6b9bc9f5ec892619a630cc88d6d63524a289707e6b87"
+    },
+    {
+      "provider_symbol": "INJ",
+      "category": "crypto",
+      "file": "/assets/logos/hyperliquid/inj.svg",
+      "source": "https://app.hyperliquid.xyz/coins/INJ.svg",
+      "collection": "Hyperliquid first-party app artwork",
+      "license": "Brand mark; no open license asserted",
+      "sha256": "e6c14c55432f73c6751ff8bca83bdcf31c87687b47f9618a7f7aa834e5ff1988"
+    },
+    {
+      "provider_symbol": "IO",
+      "category": "crypto",
+      "file": "/assets/logos/hyperliquid/io.svg",
+      "source": "https://app.hyperliquid.xyz/coins/IO.svg",
+      "collection": "Hyperliquid first-party app artwork",
+      "license": "Brand mark; no open license asserted",
+      "sha256": "b98fec08608697126ae2123ed546f884a5f7a6119cf102da28977053bb3c3e2d"
+    },
+    {
+      "provider_symbol": "IOTA",
+      "category": "crypto",
+      "file": "/assets/logos/hyperliquid/iota.svg",
+      "source": "https://app.hyperliquid.xyz/coins/IOTA.svg",
+      "collection": "Hyperliquid first-party app artwork",
+      "license": "Brand mark; no open license asserted",
+      "sha256": "6d7a53de06dd0164f1a038492ea8becf21b3be1d3eabcf1a917477b2227a74b4"
+    },
+    {
+      "provider_symbol": "JTO",
+      "category": "crypto",
+      "file": "/assets/logos/hyperliquid/jto.svg",
+      "source": "https://app.hyperliquid.xyz/coins/JTO.svg",
+      "collection": "Hyperliquid first-party app artwork",
+      "license": "Brand mark; no open license asserted",
+      "sha256": "5f976d78f6172905618df209ca2c0d1cf2d68a0502e4a0cb3e7f7b66f32e3399"
+    },
+    {
+      "provider_symbol": "JUP",
+      "category": "crypto",
+      "file": "/assets/logos/hyperliquid/jup.svg",
+      "source": "https://app.hyperliquid.xyz/coins/JUP.svg",
+      "collection": "Hyperliquid first-party app artwork",
+      "license": "Brand mark; no open license asserted",
+      "sha256": "cef8ca9171929a694b1169c4e69d417bd73121cb66bd10cc60932df3e76c4b1d"
+    },
+    {
+      "provider_symbol": "KAITO",
+      "category": "crypto",
+      "file": "/assets/logos/hyperliquid/kaito.svg",
+      "source": "https://app.hyperliquid.xyz/coins/KAITO.svg",
+      "collection": "Hyperliquid first-party app artwork",
+      "license": "Brand mark; no open license asserted",
+      "sha256": "4903bdfe5f4770b661d27e1b59789d177edd348632a18c7c112f6091db3e970f"
+    },
+    {
+      "provider_symbol": "KAS",
+      "category": "crypto",
+      "file": "/assets/logos/hyperliquid/kas.svg",
+      "source": "https://app.hyperliquid.xyz/coins/KAS.svg",
+      "collection": "Hyperliquid first-party app artwork",
+      "license": "Brand mark; no open license asserted",
+      "sha256": "ce341c520ee63df05a364524e2f469dbc61b392d2ce6da66083e9886068ed414"
+    },
+    {
+      "provider_symbol": "kBONK",
+      "category": "crypto",
+      "file": "/assets/logos/hyperliquid/kbonk.svg",
+      "source": "https://app.hyperliquid.xyz/coins/BONK.svg",
+      "collection": "Hyperliquid first-party app artwork",
+      "license": "Brand mark; no open license asserted",
+      "sha256": "261599f251196b0bebf17ce7f503c6b417d9cfcdc2a7e85d7d1c1a01158e9906"
+    },
+    {
+      "provider_symbol": "kLUNC",
+      "category": "crypto",
+      "file": "/assets/logos/hyperliquid/klunc.svg",
+      "source": "https://app.hyperliquid.xyz/coins/LUNC.svg",
+      "collection": "Hyperliquid first-party app artwork",
+      "license": "Brand mark; no open license asserted",
+      "sha256": "864c90faed7fe29a1cc9e069bc3797bb5ef1b2d84917734aa208c60a45e17e66"
+    },
+    {
+      "provider_symbol": "kNEIRO",
+      "category": "crypto",
+      "file": "/assets/logos/hyperliquid/kneiro.svg",
+      "source": "https://app.hyperliquid.xyz/coins/NEIRO.svg",
+      "collection": "Hyperliquid first-party app artwork",
+      "license": "Brand mark; no open license asserted",
+      "sha256": "e64b0ce6b43d1b3c10ff51aae2aa413db3e270ebb803637c9a16623952bf7da7"
+    },
+    {
+      "provider_symbol": "kPEPE",
+      "category": "crypto",
+      "file": "/assets/logos/hyperliquid/kpepe.svg",
+      "source": "https://app.hyperliquid.xyz/coins/PEPE.svg",
+      "collection": "Hyperliquid first-party app artwork",
+      "license": "Brand mark; no open license asserted",
+      "sha256": "308d0c7db463372bd28d87eb8eecafd936f5ee6e2d9df17b0626708f08b81216"
+    },
+    {
+      "provider_symbol": "kSHIB",
+      "category": "crypto",
+      "file": "/assets/logos/hyperliquid/kshib.svg",
+      "source": "https://app.hyperliquid.xyz/coins/SHIB.svg",
+      "collection": "Hyperliquid first-party app artwork",
+      "license": "Brand mark; no open license asserted",
+      "sha256": "e1718d832724f003ff97f4b2e5210ef48399cc992b00efca2ca3a17f75ccc908"
+    },
+    {
+      "provider_symbol": "LAYER",
+      "category": "crypto",
+      "file": "/assets/logos/hyperliquid/layer.svg",
+      "source": "https://app.hyperliquid.xyz/coins/LAYER.svg",
+      "collection": "Hyperliquid first-party app artwork",
+      "license": "Brand mark; no open license asserted",
+      "sha256": "65c6da10eb6db3c2410205b4e781e681e7ade182ee8ef30b1b7bb9c46feab2e5"
+    },
+    {
+      "provider_symbol": "LDO",
+      "category": "crypto",
+      "file": "/assets/logos/hyperliquid/ldo.svg",
+      "source": "https://app.hyperliquid.xyz/coins/LDO.svg",
+      "collection": "Hyperliquid first-party app artwork",
+      "license": "Brand mark; no open license asserted",
+      "sha256": "cf22dac513d4ffa0f3337f82d34412e372c60371106d8aa8cda00e8826bd921d"
+    },
+    {
+      "provider_symbol": "LINEA",
+      "category": "crypto",
+      "file": "/assets/logos/hyperliquid/linea.svg",
+      "source": "https://app.hyperliquid.xyz/coins/LINEA.svg",
+      "collection": "Hyperliquid first-party app artwork",
+      "license": "Brand mark; no open license asserted",
+      "sha256": "ef8775279f62e71d48a7da96aaf5ee5c8d4ce492bb7a9008aaf61851a889754c"
+    },
+    {
+      "provider_symbol": "LIT",
+      "category": "crypto",
+      "file": "/assets/logos/hyperliquid/lit.svg",
+      "source": "https://app.hyperliquid.xyz/coins/LIT.svg",
+      "collection": "Hyperliquid first-party app artwork",
+      "license": "Brand mark; no open license asserted",
+      "sha256": "dca420add5c78990bbe36e115e179e9da2ac3df236cf162227cf30fc8847b285"
+    },
+    {
+      "provider_symbol": "MANTA",
+      "category": "crypto",
+      "file": "/assets/logos/hyperliquid/manta.svg",
+      "source": "https://app.hyperliquid.xyz/coins/MANTA.svg",
+      "collection": "Hyperliquid first-party app artwork",
+      "license": "Brand mark; no open license asserted",
+      "sha256": "51eded8a89e0d5b0e626ab47984655d96345defcbacaf114df0362c257127059"
+    },
+    {
+      "provider_symbol": "ME",
+      "category": "crypto",
+      "file": "/assets/logos/hyperliquid/me.svg",
+      "source": "https://app.hyperliquid.xyz/coins/ME.svg",
+      "collection": "Hyperliquid first-party app artwork",
+      "license": "Brand mark; no open license asserted",
+      "sha256": "60c0dce7016b8a3f9f95846e46da0b286704c9a7f86d82147aa9b61e13a8798a"
+    },
+    {
+      "provider_symbol": "MEGA",
+      "category": "crypto",
+      "file": "/assets/logos/hyperliquid/mega.svg",
+      "source": "https://app.hyperliquid.xyz/coins/MEGA.svg",
+      "collection": "Hyperliquid first-party app artwork",
+      "license": "Brand mark; no open license asserted",
+      "sha256": "02419b220e441733d02fdfe09acf43d2b6373cfd109c1ec09e2d32fc81dfe5f7"
+    },
+    {
+      "provider_symbol": "MELANIA",
+      "category": "crypto",
+      "file": "/assets/logos/hyperliquid/melania.svg",
+      "source": "https://app.hyperliquid.xyz/coins/MELANIA.svg",
+      "collection": "Hyperliquid first-party app artwork",
+      "license": "Brand mark; no open license asserted",
+      "sha256": "3d358cf8ef12612fcf6f17064efef667d9e9e351b44ac30123e1fbec59596eba"
+    },
+    {
+      "provider_symbol": "MEME",
+      "category": "crypto",
+      "file": "/assets/logos/hyperliquid/meme.svg",
+      "source": "https://app.hyperliquid.xyz/coins/MEME.svg",
+      "collection": "Hyperliquid first-party app artwork",
+      "license": "Brand mark; no open license asserted",
+      "sha256": "4553de6be1216127e080f8ca5c73890863624dec9fe0d8d77de7a74536487ded"
+    },
+    {
+      "provider_symbol": "MERL",
+      "category": "crypto",
+      "file": "/assets/logos/hyperliquid/merl.svg",
+      "source": "https://app.hyperliquid.xyz/coins/MERL.svg",
+      "collection": "Hyperliquid first-party app artwork",
+      "license": "Brand mark; no open license asserted",
+      "sha256": "ffa74d57da62a3fa6b1da8be6af365059f6f86c2517a8cd1d79a600b43595a0b"
+    },
+    {
+      "provider_symbol": "MET",
+      "category": "crypto",
+      "file": "/assets/logos/hyperliquid/met.svg",
+      "source": "https://app.hyperliquid.xyz/coins/MET.svg",
+      "collection": "Hyperliquid first-party app artwork",
+      "license": "Brand mark; no open license asserted",
+      "sha256": "ddd17da8a79e26be2ef0fd880b1340724ec92dbd51d783e63029e501b635f912"
+    },
+    {
+      "provider_symbol": "MINA",
+      "category": "crypto",
+      "file": "/assets/logos/hyperliquid/mina.svg",
+      "source": "https://app.hyperliquid.xyz/coins/MINA.svg",
+      "collection": "Hyperliquid first-party app artwork",
+      "license": "Brand mark; no open license asserted",
+      "sha256": "12e1514c19f70e8d2db33a1d061796d7fa5739007718be46f1ea9077d996c1dc"
+    },
+    {
+      "provider_symbol": "MON",
+      "category": "crypto",
+      "file": "/assets/logos/hyperliquid/mon.svg",
+      "source": "https://app.hyperliquid.xyz/coins/MON.svg",
+      "collection": "Hyperliquid first-party app artwork",
+      "license": "Brand mark; no open license asserted",
+      "sha256": "9e043f128331e9f933e1e53ecff92c62ba1a191245a3dd99278ba6964917d578"
+    },
+    {
+      "provider_symbol": "MOODENG",
+      "category": "crypto",
+      "file": "/assets/logos/hyperliquid/moodeng.svg",
+      "source": "https://app.hyperliquid.xyz/coins/MOODENG.svg",
+      "collection": "Hyperliquid first-party app artwork",
+      "license": "Brand mark; no open license asserted",
+      "sha256": "2aa8f0905407f7fce355cbf7ca97b5f099702e4654685209577cc0e110319e10"
+    },
+    {
+      "provider_symbol": "MORPHO",
+      "category": "crypto",
+      "file": "/assets/logos/hyperliquid/morpho.svg",
+      "source": "https://app.hyperliquid.xyz/coins/MORPHO.svg",
+      "collection": "Hyperliquid first-party app artwork",
+      "license": "Brand mark; no open license asserted",
+      "sha256": "35c74f92cfb8df09aa280eff4a8eba8e392b27f9b6535cf6c0fed2da6808dfc9"
+    },
+    {
+      "provider_symbol": "MOVE",
+      "category": "crypto",
+      "file": "/assets/logos/hyperliquid/move.svg",
+      "source": "https://app.hyperliquid.xyz/coins/MOVE.svg",
+      "collection": "Hyperliquid first-party app artwork",
+      "license": "Brand mark; no open license asserted",
+      "sha256": "bf2e42ddd0299246172940bbdc2d660a66f2c95044e37a8dd3e123a15e8d2a9f"
+    },
+    {
+      "provider_symbol": "NEAR",
+      "category": "crypto",
+      "file": "/assets/logos/hyperliquid/near.svg",
+      "source": "https://app.hyperliquid.xyz/coins/NEAR.svg",
+      "collection": "Hyperliquid first-party app artwork",
+      "license": "Brand mark; no open license asserted",
+      "sha256": "6b7ba2fef66324ee73dc8da6e62d582fbbe2ac4810ae867e7bc04af778466d5f"
+    },
+    {
+      "provider_symbol": "NEO",
+      "category": "crypto",
+      "file": "/assets/logos/hyperliquid/neo.svg",
+      "source": "https://app.hyperliquid.xyz/coins/NEO.svg",
+      "collection": "Hyperliquid first-party app artwork",
+      "license": "Brand mark; no open license asserted",
+      "sha256": "61ae6e24f2992751ec91e47e152ff742918c1e29975bfaa3e7ccf3fe035a9a9f"
+    },
+    {
+      "provider_symbol": "NIL",
+      "category": "crypto",
+      "file": "/assets/logos/hyperliquid/nil.svg",
+      "source": "https://app.hyperliquid.xyz/coins/NIL.svg",
+      "collection": "Hyperliquid first-party app artwork",
+      "license": "Brand mark; no open license asserted",
+      "sha256": "02d94d808fbfb697d858e3f550661af93503df6df1f301a059470ba118e7363a"
+    },
+    {
+      "provider_symbol": "NOT",
+      "category": "crypto",
+      "file": "/assets/logos/hyperliquid/not.svg",
+      "source": "https://app.hyperliquid.xyz/coins/NOT.svg",
+      "collection": "Hyperliquid first-party app artwork",
+      "license": "Brand mark; no open license asserted",
+      "sha256": "81a440ccc59c55bd00ebcebb1f8559ff8a870b319e217e482f848b0e2963ee1e"
+    },
+    {
+      "provider_symbol": "NXPC",
+      "category": "crypto",
+      "file": "/assets/logos/hyperliquid/nxpc.svg",
+      "source": "https://app.hyperliquid.xyz/coins/NXPC.svg",
+      "collection": "Hyperliquid first-party app artwork",
+      "license": "Brand mark; no open license asserted",
+      "sha256": "a793072987778c8d1af52ac27380fbdeef40b6503ffe038c753268b167eb72e6"
+    },
+    {
+      "provider_symbol": "ONDO",
+      "category": "crypto",
+      "file": "/assets/logos/hyperliquid/ondo.svg",
+      "source": "https://app.hyperliquid.xyz/coins/ONDO.svg",
+      "collection": "Hyperliquid first-party app artwork",
+      "license": "Brand mark; no open license asserted",
+      "sha256": "ee512442a4257951db2b1081117bab22c0801d521eb38b1ac31ce9bd2ac51caf"
+    },
+    {
+      "provider_symbol": "OP",
+      "category": "crypto",
+      "file": "/assets/logos/hyperliquid/op.svg",
+      "source": "https://app.hyperliquid.xyz/coins/OP.svg",
+      "collection": "Hyperliquid first-party app artwork",
+      "license": "Brand mark; no open license asserted",
+      "sha256": "2a6c739c631edf94795706cd7b568ef7bdfb0164a12800ec4faa9a566c3af80b"
+    },
+    {
+      "provider_symbol": "ORDI",
+      "category": "crypto",
+      "file": "/assets/logos/hyperliquid/ordi.svg",
+      "source": "https://app.hyperliquid.xyz/coins/ORDI.svg",
+      "collection": "Hyperliquid first-party app artwork",
+      "license": "Brand mark; no open license asserted",
+      "sha256": "97c2f45ab5616705890c879b0a6a57fce9204d774d1f530fa866585ca445335d"
+    },
+    {
+      "provider_symbol": "PENDLE",
+      "category": "crypto",
+      "file": "/assets/logos/hyperliquid/pendle.svg",
+      "source": "https://app.hyperliquid.xyz/coins/PENDLE.svg",
+      "collection": "Hyperliquid first-party app artwork",
+      "license": "Brand mark; no open license asserted",
+      "sha256": "04d5ab37e6083f0469d88fb7e98e6ef7fe3d3bd4a5df5e0bec31d53fa423a109"
+    },
+    {
+      "provider_symbol": "PENGU",
+      "category": "crypto",
+      "file": "/assets/logos/hyperliquid/pengu.svg",
+      "source": "https://app.hyperliquid.xyz/coins/PENGU.svg",
+      "collection": "Hyperliquid first-party app artwork",
+      "license": "Brand mark; no open license asserted",
+      "sha256": "5a458b535925ef3e36dc1ce785a45fb7418abc612212937e8fbc044f94c9fc2e"
+    },
+    {
+      "provider_symbol": "PEOPLE",
+      "category": "crypto",
+      "file": "/assets/logos/hyperliquid/people.jpg",
+      "source": "https://coin-images.coingecko.com/coins/images/20612/large/GN_UVm3d_400x400.jpg?1696520017",
+      "metadata_source": "https://api.coingecko.com/api/v3/coins/constitutiondao",
+      "collection": "CoinGecko ConstitutionDAO metadata linked to official constitutiondao.com project",
+      "license": "Brand mark; no open license asserted",
+      "sha256": "f229badc10845128be94e7d132b18b4089a74ca203d4f6eca14ff713d81251b7"
+    },
+    {
+      "provider_symbol": "PNUT",
+      "category": "crypto",
+      "file": "/assets/logos/hyperliquid/pnut.svg",
+      "source": "https://app.hyperliquid.xyz/coins/PNUT.svg",
+      "collection": "Hyperliquid first-party app artwork",
+      "license": "Brand mark; no open license asserted",
+      "sha256": "412c9223eecccb5eb9b391e20362f0a95ea4a22c062694eaf4bbe0baef8e1cb1"
+    },
+    {
+      "provider_symbol": "POL",
+      "category": "crypto",
+      "file": "/assets/logos/hyperliquid/pol.svg",
+      "source": "https://app.hyperliquid.xyz/coins/POL.svg",
+      "collection": "Hyperliquid first-party app artwork",
+      "license": "Brand mark; no open license asserted",
+      "sha256": "3835bc459b9043d59587ef1bd2a3e98c1b7aed23a7818f3fed0d83f73a8938cc"
+    },
+    {
+      "provider_symbol": "POLYX",
+      "category": "crypto",
+      "file": "/assets/logos/hyperliquid/polyx.svg",
+      "source": "https://app.hyperliquid.xyz/coins/POLYX.svg",
+      "collection": "Hyperliquid first-party app artwork",
+      "license": "Brand mark; no open license asserted",
+      "sha256": "1a2bb226662322f0455db427efd9bd2d4494c1c6843142bef147574ea318fa94"
+    },
+    {
+      "provider_symbol": "PONS",
+      "category": "crypto",
+      "file": "/assets/logos/hyperliquid/pons.svg",
+      "source": "https://app.hyperliquid.xyz/coins/PONS.svg",
+      "collection": "Hyperliquid first-party app artwork",
+      "license": "Brand mark; no open license asserted",
+      "sha256": "afd2a7560eabc1bbdcf2ad2c8be5b81309bb3711da0ed7981e4a4a3803aae625"
+    },
+    {
+      "provider_symbol": "POPCAT",
+      "category": "crypto",
+      "file": "/assets/logos/hyperliquid/popcat.svg",
+      "source": "https://app.hyperliquid.xyz/coins/POPCAT.svg",
+      "collection": "Hyperliquid first-party app artwork",
+      "license": "Brand mark; no open license asserted",
+      "sha256": "a27b6afc07491881ddd03cbccd001a9ddba89a0ad5e1114ba50b5e9e1d15cd3f"
+    },
+    {
+      "provider_symbol": "PROVE",
+      "category": "crypto",
+      "file": "/assets/logos/hyperliquid/prove.svg",
+      "source": "https://app.hyperliquid.xyz/coins/PROVE.svg",
+      "collection": "Hyperliquid first-party app artwork",
+      "license": "Brand mark; no open license asserted",
+      "sha256": "0ab19b5045649571e4bd044ff6673c2993b03b303d2674b0b0c920363ae8fab3"
+    },
+    {
+      "provider_symbol": "PUMP",
+      "category": "crypto",
+      "file": "/assets/logos/hyperliquid/pump.svg",
+      "source": "https://app.hyperliquid.xyz/coins/PUMP.svg",
+      "collection": "Hyperliquid first-party app artwork",
+      "license": "Brand mark; no open license asserted",
+      "sha256": "72eb837382c0d07847360f5aa7c4ad61471591e3bb527f748106d69fab9cc734"
+    },
+    {
+      "provider_symbol": "PURR",
+      "category": "crypto",
+      "file": "/assets/logos/hyperliquid/purr.svg",
+      "source": "https://app.hyperliquid.xyz/coins/PURR.svg",
+      "collection": "Hyperliquid first-party app artwork",
+      "license": "Brand mark; no open license asserted",
+      "sha256": "b205a45064ebec42a59f062dfcf0683894df72c78f73be361e1423d3107f9f54"
+    },
+    {
+      "provider_symbol": "PYTH",
+      "category": "crypto",
+      "file": "/assets/logos/hyperliquid/pyth.svg",
+      "source": "https://app.hyperliquid.xyz/coins/PYTH.svg",
+      "collection": "Hyperliquid first-party app artwork",
+      "license": "Brand mark; no open license asserted",
+      "sha256": "ffed9bb23156fa73d8172611a4832ee9e20f41ff914ff2788c44e423d8c6d7f2"
+    },
+    {
+      "provider_symbol": "RENDER",
+      "category": "crypto",
+      "file": "/assets/logos/hyperliquid/render.svg",
+      "source": "https://app.hyperliquid.xyz/coins/RENDER.svg",
+      "collection": "Hyperliquid first-party app artwork",
+      "license": "Brand mark; no open license asserted",
+      "sha256": "a8cfba9df6b94f0b15fc11563bbd3a3040668f2825857eec5d2fdfd9fe256f9a"
+    },
+    {
+      "provider_symbol": "RESOLV",
+      "category": "crypto",
+      "file": "/assets/logos/hyperliquid/resolv.svg",
+      "source": "https://app.hyperliquid.xyz/coins/RESOLV.svg",
+      "collection": "Hyperliquid first-party app artwork",
+      "license": "Brand mark; no open license asserted",
+      "sha256": "32554d0199bf9b1da4556a81fd86fac77ad79bfb747615ee4614a6e6f0e7d3c9"
+    },
+    {
+      "provider_symbol": "REZ",
+      "category": "crypto",
+      "file": "/assets/logos/hyperliquid/rez.svg",
+      "source": "https://app.hyperliquid.xyz/coins/REZ.svg",
+      "collection": "Hyperliquid first-party app artwork",
+      "license": "Brand mark; no open license asserted",
+      "sha256": "c3d2cd4b55056c3f143a2396d6998b29267538731d7e405ed0bb114db29a0505"
+    },
+    {
+      "provider_symbol": "RSR",
+      "category": "crypto",
+      "file": "/assets/logos/hyperliquid/rsr.svg",
+      "source": "https://app.hyperliquid.xyz/coins/RSR.svg",
+      "collection": "Hyperliquid first-party app artwork",
+      "license": "Brand mark; no open license asserted",
+      "sha256": "7ca35755653cd3827af228c9b28ba6d06cca13d1a65849e86fa26eba5a792e39"
+    },
+    {
+      "provider_symbol": "RUNE",
+      "category": "crypto",
+      "file": "/assets/logos/hyperliquid/rune.svg",
+      "source": "https://app.hyperliquid.xyz/coins/RUNE.svg",
+      "collection": "Hyperliquid first-party app artwork",
+      "license": "Brand mark; no open license asserted",
+      "sha256": "66f26beb272db2872e1fe32ed68e3140c7629db20c75210d108ff0c7ad87a1ce"
+    },
+    {
+      "provider_symbol": "S",
+      "category": "crypto",
+      "file": "/assets/logos/hyperliquid/s.svg",
+      "source": "https://app.hyperliquid.xyz/coins/S.svg",
+      "collection": "Hyperliquid first-party app artwork",
+      "license": "Brand mark; no open license asserted",
+      "sha256": "24ef02b06b59ffbf5a1576bc4ec58fbc716e0ab64172216811cc33cbfc5889d1"
+    },
+    {
+      "provider_symbol": "SAGA",
+      "category": "crypto",
+      "file": "/assets/logos/hyperliquid/saga.svg",
+      "source": "https://app.hyperliquid.xyz/coins/SAGA.svg",
+      "collection": "Hyperliquid first-party app artwork",
+      "license": "Brand mark; no open license asserted",
+      "sha256": "bdfd701af097640d92ec056b42f248c00dfcf704a7fc947b98e43f5e3ee64434"
+    },
+    {
+      "provider_symbol": "SAND",
+      "category": "crypto",
+      "file": "/assets/logos/hyperliquid/sand.svg",
+      "source": "https://app.hyperliquid.xyz/coins/SAND.svg",
+      "collection": "Hyperliquid first-party app artwork",
+      "license": "Brand mark; no open license asserted",
+      "sha256": "b8ad141f56dc43f81690f885ba077b660bb57f1b81a1fb0b7d232ef425fd4fba"
+    },
+    {
+      "provider_symbol": "SKR",
+      "category": "crypto",
+      "file": "/assets/logos/hyperliquid/skr.svg",
+      "source": "https://app.hyperliquid.xyz/coins/SKR.svg",
+      "collection": "Hyperliquid first-party app artwork",
+      "license": "Brand mark; no open license asserted",
+      "sha256": "986d2949202f5c67a6901bbef0988008abe2963c2207620bb9db6c51dcb6267c"
+    },
+    {
+      "provider_symbol": "SKY",
+      "category": "crypto",
+      "file": "/assets/logos/hyperliquid/sky.svg",
+      "source": "https://app.hyperliquid.xyz/coins/SKY.svg",
+      "collection": "Hyperliquid first-party app artwork",
+      "license": "Brand mark; no open license asserted",
+      "sha256": "947903f6e0c5cadc856c51138f644c1e41d17c0d9ed02b152a3bd214ee7e4595"
+    },
+    {
+      "provider_symbol": "SNX",
+      "category": "crypto",
+      "file": "/assets/logos/hyperliquid/snx.svg",
+      "source": "https://app.hyperliquid.xyz/coins/SNX.svg",
+      "collection": "Hyperliquid first-party app artwork",
+      "license": "Brand mark; no open license asserted",
+      "sha256": "2ba7293b61b3f8135892614e61366abf27dfa3ab187fd20607fcd655678f2ca7"
+    },
+    {
+      "provider_symbol": "SOL",
+      "category": "crypto",
+      "file": "/assets/logos/hyperliquid/sol.svg",
+      "source": "https://app.hyperliquid.xyz/coins/SOL.svg",
+      "collection": "Hyperliquid first-party app artwork",
+      "license": "Brand mark; no open license asserted",
+      "sha256": "1e33a43cac40be4da8e2ec84626bbd25742db1fae88caef4f4e6aa6f6179adbf"
+    },
+    {
+      "provider_symbol": "SOPH",
+      "category": "crypto",
+      "file": "/assets/logos/hyperliquid/soph.svg",
+      "source": "https://app.hyperliquid.xyz/coins/SOPH.svg",
+      "collection": "Hyperliquid first-party app artwork",
+      "license": "Brand mark; no open license asserted",
+      "sha256": "eca991175c53b0cd84f689a852adfe71da3c7273016a9c21a176a2873bb1923c"
+    },
+    {
+      "provider_symbol": "SPX",
+      "category": "crypto",
+      "file": "/assets/logos/hyperliquid/spx.svg",
+      "source": "https://app.hyperliquid.xyz/coins/SPX.svg",
+      "collection": "Hyperliquid first-party app artwork",
+      "license": "Brand mark; no open license asserted",
+      "sha256": "544e93df7ecb641e18e0f9dd698cabe4a499f9e5a28246ff3a09e311b24176a0"
+    },
+    {
+      "provider_symbol": "STABLE",
+      "category": "crypto",
+      "file": "/assets/logos/hyperliquid/stable.svg",
+      "source": "https://app.hyperliquid.xyz/coins/STABLE.svg",
+      "collection": "Hyperliquid first-party app artwork",
+      "license": "Brand mark; no open license asserted",
+      "sha256": "0531f02d8f9fecbf966135011203e261e215b960366b36f8c69b5da543bdc42f"
+    },
+    {
+      "provider_symbol": "STBL",
+      "category": "crypto",
+      "file": "/assets/logos/hyperliquid/stbl.svg",
+      "source": "https://app.hyperliquid.xyz/coins/STBL.svg",
+      "collection": "Hyperliquid first-party app artwork",
+      "license": "Brand mark; no open license asserted",
+      "sha256": "9e4198a66c41ab21728f71cdda65bdcf32e5da9859ae22fb82230aadd0476de1"
+    },
+    {
+      "provider_symbol": "STX",
+      "category": "crypto",
+      "file": "/assets/logos/hyperliquid/stx.svg",
+      "source": "https://app.hyperliquid.xyz/coins/STX.svg",
+      "collection": "Hyperliquid first-party app artwork",
+      "license": "Brand mark; no open license asserted",
+      "sha256": "74e735840f8cbefcf3321c7d5ca128b94d15b1577418b38274296bf53930bebc"
+    },
+    {
+      "provider_symbol": "SUI",
+      "category": "crypto",
+      "file": "/assets/logos/hyperliquid/sui.svg",
+      "source": "https://app.hyperliquid.xyz/coins/SUI.svg",
+      "collection": "Hyperliquid first-party app artwork",
+      "license": "Brand mark; no open license asserted",
+      "sha256": "4c92293254d97405ee22c04daf48ad45205b713607b29ee6e6258409cb75ddc9"
+    },
+    {
+      "provider_symbol": "SUPER",
+      "category": "crypto",
+      "file": "/assets/logos/hyperliquid/super.svg",
+      "source": "https://app.hyperliquid.xyz/coins/SUPER.svg",
+      "collection": "Hyperliquid first-party app artwork",
+      "license": "Brand mark; no open license asserted",
+      "sha256": "62e645b902fc7edc582a6cc3940bd45f4403ce886380bbb54427f8e7ce60f3c0"
+    },
+    {
+      "provider_symbol": "SUSHI",
+      "category": "crypto",
+      "file": "/assets/logos/hyperliquid/sushi.svg",
+      "source": "https://app.hyperliquid.xyz/coins/SUSHI.svg",
+      "collection": "Hyperliquid first-party app artwork",
+      "license": "Brand mark; no open license asserted",
+      "sha256": "f00e806f3c6b39e0288310954b1239e52a1b614f61f2d205f4230d0a712911a5"
+    },
+    {
+      "provider_symbol": "SYRUP",
+      "category": "crypto",
+      "file": "/assets/logos/hyperliquid/syrup.svg",
+      "source": "https://app.hyperliquid.xyz/coins/SYRUP.svg",
+      "collection": "Hyperliquid first-party app artwork",
+      "license": "Brand mark; no open license asserted",
+      "sha256": "6a070e239abf77009f266a0715828a509b197fe95de72b13d4134b8fa70192f1"
+    },
+    {
+      "provider_symbol": "TAO",
+      "category": "crypto",
+      "file": "/assets/logos/hyperliquid/tao.svg",
+      "source": "https://app.hyperliquid.xyz/coins/TAO.svg",
+      "collection": "Hyperliquid first-party app artwork",
+      "license": "Brand mark; no open license asserted",
+      "sha256": "f2b67eef1ef2247ec38f96d4ed45b2c3c210a2889d48c8a04bac7ac72b3376ad"
+    },
+    {
+      "provider_symbol": "TIA",
+      "category": "crypto",
+      "file": "/assets/logos/hyperliquid/tia.svg",
+      "source": "https://app.hyperliquid.xyz/coins/TIA.svg",
+      "collection": "Hyperliquid first-party app artwork",
+      "license": "Brand mark; no open license asserted",
+      "sha256": "795389b642657c33a6c7cd3974f9b6d79007dff443d133cdb9bd43d772d6888a"
+    },
+    {
+      "provider_symbol": "TRB",
+      "category": "crypto",
+      "file": "/assets/logos/hyperliquid/trb.svg",
+      "source": "https://app.hyperliquid.xyz/coins/TRB.svg",
+      "collection": "Hyperliquid first-party app artwork",
+      "license": "Brand mark; no open license asserted",
+      "sha256": "e37f3e6e6421d33d0e87bc0ae09096e08f476817d4787f35079259df5f4575e7"
+    },
+    {
+      "provider_symbol": "TRUMP",
+      "category": "crypto",
+      "file": "/assets/logos/hyperliquid/trump.svg",
+      "source": "https://app.hyperliquid.xyz/coins/TRUMP.svg",
+      "collection": "Hyperliquid first-party app artwork",
+      "license": "Brand mark; no open license asserted",
+      "sha256": "b7cc915fb76bcc56910fcf7ec5f38393053adeee6883c8bfa766201925189d90"
+    },
+    {
+      "provider_symbol": "TURBO",
+      "category": "crypto",
+      "file": "/assets/logos/hyperliquid/turbo.svg",
+      "source": "https://app.hyperliquid.xyz/coins/TURBO.svg",
+      "collection": "Hyperliquid first-party app artwork",
+      "license": "Brand mark; no open license asserted",
+      "sha256": "5e0224832076c3585451a34a5993ee5254b8dcb6a848e001290da0f720df869f"
+    },
+    {
+      "provider_symbol": "UMA",
+      "category": "crypto",
+      "file": "/assets/logos/hyperliquid/uma.svg",
+      "source": "https://app.hyperliquid.xyz/coins/UMA.svg",
+      "collection": "Hyperliquid first-party app artwork",
+      "license": "Brand mark; no open license asserted",
+      "sha256": "d4dc3efcabb2639bc9dca4783646fca7db14534d2def7b6b9db5f69456e97cd9"
+    },
+    {
+      "provider_symbol": "USELESS",
+      "category": "crypto",
+      "file": "/assets/logos/hyperliquid/useless.svg",
+      "source": "https://app.hyperliquid.xyz/coins/USELESS.svg",
+      "collection": "Hyperliquid first-party app artwork",
+      "license": "Brand mark; no open license asserted",
+      "sha256": "1a5aeab1f852b7aad85dbf9bfa1c45f48d58be395cf6c94e8056eda32d49efc1"
+    },
+    {
+      "provider_symbol": "USUAL",
+      "category": "crypto",
+      "file": "/assets/logos/hyperliquid/usual.svg",
+      "source": "https://app.hyperliquid.xyz/coins/USUAL.svg",
+      "collection": "Hyperliquid first-party app artwork",
+      "license": "Brand mark; no open license asserted",
+      "sha256": "17792f76efa564fccdc1060c7c5455d98587e203d7f63eb1312257acacc1df55"
+    },
+    {
+      "provider_symbol": "VIRTUAL",
+      "category": "crypto",
+      "file": "/assets/logos/hyperliquid/virtual.svg",
+      "source": "https://app.hyperliquid.xyz/coins/VIRTUAL.svg",
+      "collection": "Hyperliquid first-party app artwork",
+      "license": "Brand mark; no open license asserted",
+      "sha256": "0e65ebada9fbb2ddcf668994b7a9623d90e597e8a4e7ed4b9db30d2b32ee66ad"
+    },
+    {
+      "provider_symbol": "VVV",
+      "category": "crypto",
+      "file": "/assets/logos/hyperliquid/vvv.svg",
+      "source": "https://app.hyperliquid.xyz/coins/VVV.svg",
+      "collection": "Hyperliquid first-party app artwork",
+      "license": "Brand mark; no open license asserted",
+      "sha256": "47302d1bede1e85fcb5a244d17d464e045eef0cb2b25e116d6d088942a2f7221"
+    },
+    {
+      "provider_symbol": "W",
+      "category": "crypto",
+      "file": "/assets/logos/hyperliquid/w.svg",
+      "source": "https://app.hyperliquid.xyz/coins/W.svg",
+      "collection": "Hyperliquid first-party app artwork",
+      "license": "Brand mark; no open license asserted",
+      "sha256": "76a12fa228ff8dfb5109ed11cff6f08adcb771bb77ecbef805501cd34226c132"
+    },
+    {
+      "provider_symbol": "WCT",
+      "category": "crypto",
+      "file": "/assets/logos/hyperliquid/wct.svg",
+      "source": "https://app.hyperliquid.xyz/coins/WCT.svg",
+      "collection": "Hyperliquid first-party app artwork",
+      "license": "Brand mark; no open license asserted",
+      "sha256": "e68666a2c2ed8f57837ef64cf2e69678d960892389a801460b5af621b9376d7c"
+    },
+    {
+      "provider_symbol": "WIF",
+      "category": "crypto",
+      "file": "/assets/logos/hyperliquid/wif.svg",
+      "source": "https://app.hyperliquid.xyz/coins/WIF.svg",
+      "collection": "Hyperliquid first-party app artwork",
+      "license": "Brand mark; no open license asserted",
+      "sha256": "5b095ecc48c3d7d5e3df39962a391e2e9daad67e42b968ad4d98ffb3a95f44ee"
+    },
+    {
+      "provider_symbol": "WLD",
+      "category": "crypto",
+      "file": "/assets/logos/hyperliquid/wld.svg",
+      "source": "https://app.hyperliquid.xyz/coins/WLD.svg",
+      "collection": "Hyperliquid first-party app artwork",
+      "license": "Brand mark; no open license asserted",
+      "sha256": "55c3afd659571ec11153a4a86c5f9d29475dfa948988f1d4a3b35f2345678e3a"
+    },
+    {
+      "provider_symbol": "WLFI",
+      "category": "crypto",
+      "file": "/assets/logos/hyperliquid/wlfi.svg",
+      "source": "https://app.hyperliquid.xyz/coins/WLFI.svg",
+      "collection": "Hyperliquid first-party app artwork",
+      "license": "Brand mark; no open license asserted",
+      "sha256": "5d415ce4cc785636a4a4172752cd0e57326fb560e9ac80e5752311a60bcfc123"
+    },
+    {
+      "provider_symbol": "XAI",
+      "category": "crypto",
+      "file": "/assets/logos/hyperliquid/xai.svg",
+      "source": "https://app.hyperliquid.xyz/coins/XAI.svg",
+      "collection": "Hyperliquid first-party app artwork",
+      "license": "Brand mark; no open license asserted",
+      "sha256": "246f4dfbb1502d47a0811d0dadc4ccd299861abe71dc1fc2ed941feda87ee76e"
+    },
+    {
+      "provider_symbol": "XLM",
+      "category": "crypto",
+      "file": "/assets/logos/hyperliquid/xlm.svg",
+      "source": "https://app.hyperliquid.xyz/coins/XLM.svg",
+      "collection": "Hyperliquid first-party app artwork",
+      "license": "Brand mark; no open license asserted",
+      "sha256": "8ef1b7dc4a4b80a8db1fa2bd9a769b4881a6e04d56f724b5e128d667ef9d0cbd"
+    },
+    {
+      "provider_symbol": "XMR",
+      "category": "crypto",
+      "file": "/assets/logos/hyperliquid/xmr.svg",
+      "source": "https://app.hyperliquid.xyz/coins/XMR.svg",
+      "collection": "Hyperliquid first-party app artwork",
+      "license": "Brand mark; no open license asserted",
+      "sha256": "e5a56142e334a75bae04b46f7fc76e623250c4521ca8b1d7c44a1783183a0d9b"
+    },
+    {
+      "provider_symbol": "XPL",
+      "category": "crypto",
+      "file": "/assets/logos/hyperliquid/xpl.svg",
+      "source": "https://app.hyperliquid.xyz/coins/XPL.svg",
+      "collection": "Hyperliquid first-party app artwork",
+      "license": "Brand mark; no open license asserted",
+      "sha256": "7b5ec3788b12796ca285570d2b92e1afe2b160c965c2abab57f1db963b9112b9"
+    },
+    {
+      "provider_symbol": "XTEN",
+      "category": "crypto",
+      "file": "/assets/logos/hyperliquid/xten.svg",
+      "source": "https://app.hyperliquid.xyz/coins/XTEN.svg",
+      "collection": "Hyperliquid first-party app artwork",
+      "license": "Brand mark; no open license asserted",
+      "sha256": "ef01e4ce869e9febdae3cf42c359759541b847d4d3d8ab9869ab2aaf4bc7f942"
+    },
+    {
+      "provider_symbol": "xyz:AAPL",
+      "category": "equity",
+      "file": "/assets/logos/hyperliquid/xyz-aapl.svg",
+      "source": "https://app.hyperliquid.xyz/coins/xyz%3AAAPL.svg",
+      "collection": "Hyperliquid first-party app artwork",
+      "license": "Brand mark; no open license asserted",
+      "sha256": "a792691f67ad6b9607c093fd9b8afe724fa26faebc8aa779c663d46cfb8d0290"
+    },
+    {
+      "provider_symbol": "xyz:AMD",
+      "category": "equity",
+      "file": "/assets/logos/hyperliquid/xyz-amd.svg",
+      "source": "https://app.hyperliquid.xyz/coins/xyz%3AAMD.svg",
+      "collection": "Hyperliquid first-party app artwork",
+      "license": "Brand mark; no open license asserted",
+      "sha256": "7143fcad3c44bf2ce5652a397fbc11741363afb1b1434360d332861877687136"
+    },
+    {
+      "provider_symbol": "xyz:AMZN",
+      "category": "equity",
+      "file": "/assets/logos/hyperliquid/xyz-amzn.svg",
+      "source": "https://app.hyperliquid.xyz/coins/xyz%3AAMZN.svg",
+      "collection": "Hyperliquid first-party app artwork",
+      "license": "Brand mark; no open license asserted",
+      "sha256": "d23e467aa78c5ab52ecb65c27f09e63b2fd4318f8cc2ab864761533af79d73ca"
+    },
+    {
+      "provider_symbol": "xyz:BABA",
+      "category": "equity",
+      "file": "/assets/logos/hyperliquid/xyz-baba.svg",
+      "source": "https://app.hyperliquid.xyz/coins/xyz%3ABABA.svg",
+      "collection": "Hyperliquid first-party app artwork",
+      "license": "Brand mark; no open license asserted",
+      "sha256": "c449fdb948edafe858ae6463496ed03bcd365705def1aaed6659a5d1fb225e2c"
+    },
+    {
+      "provider_symbol": "xyz:COIN",
+      "category": "equity",
+      "file": "/assets/logos/hyperliquid/xyz-coin.svg",
+      "source": "https://app.hyperliquid.xyz/coins/xyz%3ACOIN.svg",
+      "collection": "Hyperliquid first-party app artwork",
+      "license": "Brand mark; no open license asserted",
+      "sha256": "1cdb3cfa00cf46457ec20dd7e1912c37dbb1e322622e0ce80552e757dd6c2dae"
+    },
+    {
+      "provider_symbol": "xyz:COST",
+      "category": "equity",
+      "file": "/assets/logos/hyperliquid/xyz-cost.svg",
+      "source": "https://app.hyperliquid.xyz/coins/xyz%3ACOST.svg",
+      "collection": "Hyperliquid first-party app artwork",
+      "license": "Brand mark; no open license asserted",
+      "sha256": "e836b55e6ba50eead72ff236fb07adfa11e333a69b738b69e03b1026c03b93c1"
+    },
+    {
+      "provider_symbol": "xyz:CRCL",
+      "category": "equity",
+      "file": "/assets/logos/hyperliquid/xyz-crcl.svg",
+      "source": "https://app.hyperliquid.xyz/coins/xyz%3ACRCL.svg",
+      "collection": "Hyperliquid first-party app artwork",
+      "license": "Brand mark; no open license asserted",
+      "sha256": "de06b8303af7c9c5ff79c7345490b4987af8bcad4824c8c333cf916d247e386b"
+    },
+    {
+      "provider_symbol": "xyz:CRWV",
+      "category": "equity",
+      "file": "/assets/logos/hyperliquid/xyz-crwv.svg",
+      "source": "https://app.hyperliquid.xyz/coins/xyz%3ACRWV.svg",
+      "collection": "Hyperliquid first-party app artwork",
+      "license": "Brand mark; no open license asserted",
+      "sha256": "6118144c0fc7de3eb00ea86220239eb3915b7d122dde88b475ef763a09b034cd"
+    },
+    {
+      "provider_symbol": "xyz:GOOGL",
+      "category": "equity",
+      "file": "/assets/logos/hyperliquid/xyz-googl.svg",
+      "source": "https://app.hyperliquid.xyz/coins/xyz%3AGOOGL.svg",
+      "collection": "Hyperliquid first-party app artwork",
+      "license": "Brand mark; no open license asserted",
+      "sha256": "fbd339c4c088ea0aca68c19d8d07c57aeb5a9b7bb830b76f2278ed518868bf38"
+    },
+    {
+      "provider_symbol": "xyz:HOOD",
+      "category": "equity",
+      "file": "/assets/logos/hyperliquid/xyz-hood.svg",
+      "source": "https://app.hyperliquid.xyz/coins/xyz%3AHOOD.svg",
+      "collection": "Hyperliquid first-party app artwork",
+      "license": "Brand mark; no open license asserted",
+      "sha256": "3a5a0f2522c5e446f12238fe74cef1f6c5c1b8b2f66cf6aa12085170de0c2556"
+    },
+    {
+      "provider_symbol": "xyz:INTC",
+      "category": "equity",
+      "file": "/assets/logos/hyperliquid/xyz-intc.svg",
+      "source": "https://app.hyperliquid.xyz/coins/xyz%3AINTC.svg",
+      "collection": "Hyperliquid first-party app artwork",
+      "license": "Brand mark; no open license asserted",
+      "sha256": "c3e1cd6736b013f4a280ad7ad83141f83fdf209d05cfae1289e84a2dc8302436"
+    },
+    {
+      "provider_symbol": "xyz:LLY",
+      "category": "equity",
+      "file": "/assets/logos/hyperliquid/xyz-lly.svg",
+      "source": "https://app.hyperliquid.xyz/coins/xyz%3ALLY.svg",
+      "collection": "Hyperliquid first-party app artwork",
+      "license": "Brand mark; no open license asserted",
+      "sha256": "f56de296fbdfa5814649903a056deedc13e75d15a7b8ad4ad4e1217cf97b7786"
+    },
+    {
+      "provider_symbol": "xyz:META",
+      "category": "equity",
+      "file": "/assets/logos/hyperliquid/xyz-meta.svg",
+      "source": "https://app.hyperliquid.xyz/coins/xyz%3AMETA.svg",
+      "collection": "Hyperliquid first-party app artwork",
+      "license": "Brand mark; no open license asserted",
+      "sha256": "61be0d4411e4ec5bb7a82bb963fa807356794578525bf48836aa90b1e89ba264"
+    },
+    {
+      "provider_symbol": "xyz:MSFT",
+      "category": "equity",
+      "file": "/assets/logos/hyperliquid/xyz-msft.svg",
+      "source": "https://app.hyperliquid.xyz/coins/xyz%3AMSFT.svg",
+      "collection": "Hyperliquid first-party app artwork",
+      "license": "Brand mark; no open license asserted",
+      "sha256": "050832e2957a4c20fa81c8a84fa5d1ad285607d556f1d1bbd60325c8d4b8d809"
+    },
+    {
+      "provider_symbol": "xyz:MSTR",
+      "category": "equity",
+      "file": "/assets/logos/hyperliquid/xyz-mstr.svg",
+      "source": "https://app.hyperliquid.xyz/coins/xyz%3AMSTR.svg",
+      "collection": "Hyperliquid first-party app artwork",
+      "license": "Brand mark; no open license asserted",
+      "sha256": "a628ecf488f70951b58507c3e7fa20f9a5690467aca679dba13767503956398d"
+    },
+    {
+      "provider_symbol": "xyz:MU",
+      "category": "equity",
+      "file": "/assets/logos/hyperliquid/xyz-mu.svg",
+      "source": "https://app.hyperliquid.xyz/coins/xyz%3AMU.svg",
+      "collection": "Hyperliquid first-party app artwork",
+      "license": "Brand mark; no open license asserted",
+      "sha256": "97261ebbf039a32f36a59884ab386c6bdd7d88580c671944f1d757a0be322a19"
+    },
+    {
+      "provider_symbol": "xyz:NFLX",
+      "category": "equity",
+      "file": "/assets/logos/hyperliquid/xyz-nflx.svg",
+      "source": "https://app.hyperliquid.xyz/coins/xyz%3ANFLX.svg",
+      "collection": "Hyperliquid first-party app artwork",
+      "license": "Brand mark; no open license asserted",
+      "sha256": "dad79bb36c42914404359e6ca780a5e8ed4f4595628465b6581577d443933753"
+    },
+    {
+      "provider_symbol": "xyz:NVDA",
+      "category": "equity",
+      "file": "/assets/logos/hyperliquid/xyz-nvda.svg",
+      "source": "https://app.hyperliquid.xyz/coins/xyz%3ANVDA.svg",
+      "collection": "Hyperliquid first-party app artwork",
+      "license": "Brand mark; no open license asserted",
+      "sha256": "2f9e12d724c8ceffec44d1dd23358659e0ede99aac44592a42dda0899df453c3"
+    },
+    {
+      "provider_symbol": "xyz:ORCL",
+      "category": "equity",
+      "file": "/assets/logos/hyperliquid/xyz-orcl.svg",
+      "source": "https://app.hyperliquid.xyz/coins/xyz%3AORCL.svg",
+      "collection": "Hyperliquid first-party app artwork",
+      "license": "Brand mark; no open license asserted",
+      "sha256": "ccf58c2f20333ada3c9d796c1e606de9537455567d17a2311cc9c4fe254f1e39"
+    },
+    {
+      "provider_symbol": "xyz:PLTR",
+      "category": "equity",
+      "file": "/assets/logos/hyperliquid/xyz-pltr.svg",
+      "source": "https://app.hyperliquid.xyz/coins/xyz%3APLTR.svg",
+      "collection": "Hyperliquid first-party app artwork",
+      "license": "Brand mark; no open license asserted",
+      "sha256": "46f55997cec181255019c6a3963046929e03f196f35f1a47d1e938a23b6053d7"
+    },
+    {
+      "provider_symbol": "xyz:RIVN",
+      "category": "equity",
+      "file": "/assets/logos/hyperliquid/xyz-rivn.svg",
+      "source": "https://app.hyperliquid.xyz/coins/xyz%3ARIVN.svg",
+      "collection": "Hyperliquid first-party app artwork",
+      "license": "Brand mark; no open license asserted",
+      "sha256": "6d17e0c623a1104ef13169b39bb4ca757e0ff755f84e6a0703afabade344f607"
+    },
+    {
+      "provider_symbol": "xyz:SKHX",
+      "category": "equity",
+      "file": "/assets/logos/hyperliquid/xyz-skhx.svg",
+      "source": "https://app.hyperliquid.xyz/coins/xyz%3ASKHX.svg",
+      "collection": "Hyperliquid first-party app artwork",
+      "license": "Brand mark; no open license asserted",
+      "sha256": "7ef9ad9366bab6c936fd3be4e19142ae0101bcc956a997ae8cb42f4079132405"
+    },
+    {
+      "provider_symbol": "xyz:SMSN",
+      "category": "equity",
+      "file": "/assets/logos/hyperliquid/xyz-smsn.svg",
+      "source": "https://app.hyperliquid.xyz/coins/xyz%3ASMSN.svg",
+      "collection": "Hyperliquid first-party app artwork",
+      "license": "Brand mark; no open license asserted",
+      "sha256": "87898f58052a5036db4f9d08bc4f4f7d78329665eb980708502a34f8624c0033"
+    },
+    {
+      "provider_symbol": "xyz:SNDK",
+      "category": "equity",
+      "file": "/assets/logos/hyperliquid/xyz-sndk.svg",
+      "source": "https://app.hyperliquid.xyz/coins/xyz%3ASNDK.svg",
+      "collection": "Hyperliquid first-party app artwork",
+      "license": "Brand mark; no open license asserted",
+      "sha256": "822b7159f86650f6efe6a127c9f421d328bced0c153134558642f804e42da76f"
+    },
+    {
+      "provider_symbol": "xyz:TSLA",
+      "category": "equity",
+      "file": "/assets/logos/hyperliquid/xyz-tsla.svg",
+      "source": "https://app.hyperliquid.xyz/coins/xyz%3ATSLA.svg",
+      "collection": "Hyperliquid first-party app artwork",
+      "license": "Brand mark; no open license asserted",
+      "sha256": "7baed8299fa829b2efe7e48891bb52d6eb7dc31fe4ed0a889d80891c8d80aaac"
+    },
+    {
+      "provider_symbol": "xyz:TSM",
+      "category": "equity",
+      "file": "/assets/logos/hyperliquid/xyz-tsm.svg",
+      "source": "https://app.hyperliquid.xyz/coins/xyz%3ATSM.svg",
+      "collection": "Hyperliquid first-party app artwork",
+      "license": "Brand mark; no open license asserted",
+      "sha256": "df664445ca0f053f0fdfcf8b2cb6bd2ee4b72a9b8f2aeddc6f0cc500cddd62be"
+    },
+    {
+      "provider_symbol": "xyz:USAR",
+      "category": "equity",
+      "file": "/assets/logos/hyperliquid/xyz-usar.svg",
+      "source": "https://app.hyperliquid.xyz/coins/xyz%3AUSAR.svg",
+      "collection": "Hyperliquid first-party app artwork",
+      "license": "Brand mark; no open license asserted",
+      "sha256": "222cf534d2d79c8f489fad3791fe3415be02d81b1f886fe92a1045ad5356e016"
+    },
+    {
+      "provider_symbol": "xyz:VIX",
+      "category": "index",
+      "file": "/assets/logos/hyperliquid/xyz-vix.ico",
+      "source": "https://www.cboe.com/favicon.ico?favicon.11tonoty.evyt.ico",
+      "collection": "Cboe official website icon",
+      "license": "Brand mark; no open license asserted",
+      "sha256": "041c87fa637f67ccb6d15542783eee8bc4c894308d70be09611093ce11ba3a62"
+    },
+    {
+      "provider_symbol": "xyz:XYZ100",
+      "category": "index",
+      "file": "/assets/logos/hyperliquid/xyz-xyz100.svg",
+      "source": "https://app.hyperliquid.xyz/coins/xyz%3AXYZ100.svg",
+      "collection": "Hyperliquid first-party app artwork",
+      "license": "Brand mark; no open license asserted",
+      "sha256": "c0baf0a5e34a152f0bc8b7945006f98018000a2179f49e051f939f25ca7b1ccb"
+    },
+    {
+      "provider_symbol": "ZEN",
+      "category": "crypto",
+      "file": "/assets/logos/hyperliquid/zen.svg",
+      "source": "https://app.hyperliquid.xyz/coins/ZEN.svg",
+      "collection": "Hyperliquid first-party app artwork",
+      "license": "Brand mark; no open license asserted",
+      "sha256": "09daf321b83ccd287d37d31fb6f038c6e2f76572232288f6b2ec0de0a2bf360d"
+    },
+    {
+      "provider_symbol": "ZETA",
+      "category": "crypto",
+      "file": "/assets/logos/hyperliquid/zeta.svg",
+      "source": "https://app.hyperliquid.xyz/coins/ZETA.svg",
+      "collection": "Hyperliquid first-party app artwork",
+      "license": "Brand mark; no open license asserted",
+      "sha256": "341f260a979d9216e0e62b97a0cd5d75ac30a1b1a5127cbd626e5846e8578763"
+    },
+    {
+      "provider_symbol": "ZK",
+      "category": "crypto",
+      "file": "/assets/logos/hyperliquid/zk.svg",
+      "source": "https://app.hyperliquid.xyz/coins/ZK.svg",
+      "collection": "Hyperliquid first-party app artwork",
+      "license": "Brand mark; no open license asserted",
+      "sha256": "95038fb44d57bb8a98576a7ff159155c2cc36df40a637d19b6e83bad5fac7acd"
+    },
+    {
+      "provider_symbol": "ZORA",
+      "category": "crypto",
+      "file": "/assets/logos/hyperliquid/zora.svg",
+      "source": "https://app.hyperliquid.xyz/coins/ZORA.svg",
+      "collection": "Hyperliquid first-party app artwork",
+      "license": "Brand mark; no open license asserted",
+      "sha256": "49fd62c39cd75e7fc00562ff6c7bd4d96cd123be0749770bf8d750c046101c1f"
+    },
+    {
+      "provider_symbol": "ZRO",
+      "category": "crypto",
+      "file": "/assets/logos/hyperliquid/zro.svg",
+      "source": "https://app.hyperliquid.xyz/coins/ZRO.svg",
+      "collection": "Hyperliquid first-party app artwork",
+      "license": "Brand mark; no open license asserted",
+      "sha256": "98610772c13a2a3d8474ba5b7c5c259cd2b17267a7c8c85e5578713f0c47647c"
+    }
+  ]
+}

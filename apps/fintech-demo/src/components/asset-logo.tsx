@@ -1,4 +1,5 @@
-export type AssetLogoProps={symbol:string;name?:string;assetId?:string;size?:number};
+import {HYPERLIQUID_LOGO_PATHS,HYPERLIQUID_EQUITY_SYMBOLS} from '../lib/hyperliquid-logos';
+export type AssetLogoProps={symbol:string;name?:string;assetId?:string;providerSymbol?:string;size?:number};
 /** Local presentation only. A logo never establishes asset identity or execution availability. */
 export const ASSET_LOGO_PATHS:Readonly<Record<string,string>>={
   "AAPL": "/assets/logos/aapl.svg",
@@ -68,8 +69,19 @@ export const ASSET_LOGO_PATHS:Readonly<Record<string,string>>={
   "XTAR": "/assets/logos/xtar.png",
   "ZEC": "/assets/logos/zec.svg"
 };
-export function assetLogoPath(symbol:string):string{return ASSET_LOGO_PATHS[symbol.trim().toUpperCase().replace(/-PERP$/, '')]??'/assets/logos/asset.svg';}
-export function AssetLogo({symbol,name,assetId,size=24}:AssetLogoProps){
+export function assetLogoPath(symbol:string,assetId?:string,providerSymbol?:string):string{
+ const fallback='/assets/logos/asset.svg',name=(providerSymbol??symbol).trim();
+ const hyperliquid=typeof assetId==='string'&&/^hyperliquid-testnet:perps:(?:0|[1-9]\d{0,8})$/.test(assetId);
+ if(name.includes(':')){
+  // Never strip arbitrary provider prefixes or treat a same-ticker token as equity.
+  if(!hyperliquid||!HYPERLIQUID_LOGO_PATHS[name])return fallback;
+  if(HYPERLIQUID_EQUITY_SYMBOLS.has(name)){const company=name.slice(4);return ASSET_LOGO_PATHS[company]??HYPERLIQUID_LOGO_PATHS[name]!;}
+  return HYPERLIQUID_LOGO_PATHS[name]!;
+ }
+ if(hyperliquid)return HYPERLIQUID_LOGO_PATHS[name.toUpperCase()]??fallback;
+ return ASSET_LOGO_PATHS[symbol.trim().toUpperCase().replace(/-PERP$/, '')]??fallback;
+}
+export function AssetLogo({symbol,name,assetId,providerSymbol,size=24}:AssetLogoProps){
  const pixels=Number.isFinite(size)&&size>0?Math.min(size,256):24;
- return <img src={assetLogoPath(symbol)} alt={`${name?.trim()||symbol} logo`} width={pixels} height={pixels} data-asset-id={assetId} loading="lazy" decoding="async" style={{width:pixels,height:pixels,objectFit:'contain',flexShrink:0,verticalAlign:'middle',...(symbol.toUpperCase()==='LULU'?{background:'#202428',borderRadius:4,padding:2,boxSizing:'border-box' as const}:{})}}/>;
+ return <img src={assetLogoPath(symbol,assetId,providerSymbol)} alt={`${name?.trim()||symbol} logo`} width={pixels} height={pixels} data-asset-id={assetId} loading="lazy" decoding="async" style={{width:pixels,height:pixels,objectFit:'contain',flexShrink:0,verticalAlign:'middle',...(symbol.toUpperCase()==='LULU'?{background:'#202428',borderRadius:4,padding:2,boxSizing:'border-box' as const}:{})}}/>;
 }
