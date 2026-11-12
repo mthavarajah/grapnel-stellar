@@ -3826,6 +3826,735 @@
           }
         ]
       }
+    },
+    "/v1/trade/perpetuals/account": {
+      "get": {
+        "operationId": "get__v1_trade_perpetuals_account",
+        "security": [
+          {
+            "businessKey": []
+          }
+        ],
+        "description": "Requires a verified customer identity header and the exact current Stocks or Perpetuals entitlement. No business key alone authorizes signing.",
+        "responses": {
+          "200": {
+            "description": "JSON data envelope; accepted operations require polling",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Permission denied",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict or execution unavailable",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "X-Customer-Identity",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "customer_id",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "wallet_id",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "asset_class",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "perps",
+                "stocks"
+              ],
+              "default": "perps"
+            }
+          },
+          {
+            "name": "market_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "pattern": "^hyperliquid-testnet:(perps|stocks):(0|[1-9][0-9]{0,8})$"
+            }
+          }
+        ]
+      }
+    },
+    "/v1/trade/perpetuals/accounts/challenge": {
+      "post": {
+        "operationId": "post__v1_trade_perpetuals_accounts_challenge",
+        "security": [
+          {
+            "businessKey": []
+          }
+        ],
+        "description": "Requires a verified customer identity header and the exact current Stocks or Perpetuals entitlement. No business key alone authorizes signing.",
+        "responses": {
+          "200": {
+            "description": "JSON data envelope; accepted operations require polling",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Permission denied",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict or execution unavailable",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "X-Customer-Identity",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 200
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "customer_id": {
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  "wallet_id": {
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  "asset_class": {
+                    "type": "string",
+                    "enum": [
+                      "perps",
+                      "stocks"
+                    ],
+                    "default": "perps"
+                  },
+                  "account_address": {
+                    "type": "string",
+                    "pattern": "^0x[0-9a-fA-F]{40}$"
+                  }
+                },
+                "required": [
+                  "customer_id",
+                  "wallet_id",
+                  "asset_class",
+                  "account_address"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/trade/perpetuals/accounts/bind": {
+      "post": {
+        "operationId": "post__v1_trade_perpetuals_accounts_bind",
+        "security": [
+          {
+            "businessKey": []
+          }
+        ],
+        "description": "Requires a verified customer identity header and the exact current Stocks or Perpetuals entitlement. No business key alone authorizes signing.",
+        "responses": {
+          "200": {
+            "description": "JSON data envelope; accepted operations require polling",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Permission denied",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict or execution unavailable",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "X-Customer-Identity",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 200
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "customer_id": {
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  "wallet_id": {
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  "asset_class": {
+                    "type": "string",
+                    "enum": [
+                      "perps",
+                      "stocks"
+                    ],
+                    "default": "perps"
+                  },
+                  "challenge_id": {
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  "stellar_signature": {
+                    "type": "string"
+                  },
+                  "evm_signature": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "customer_id",
+                  "wallet_id",
+                  "asset_class",
+                  "challenge_id",
+                  "stellar_signature",
+                  "evm_signature"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/trade/perpetuals/orders/prepare": {
+      "post": {
+        "operationId": "post__v1_trade_perpetuals_orders_prepare",
+        "security": [
+          {
+            "businessKey": []
+          }
+        ],
+        "description": "Requires a verified customer identity header and the exact current Stocks or Perpetuals entitlement. No business key alone authorizes signing.",
+        "responses": {
+          "200": {
+            "description": "JSON data envelope; accepted operations require polling",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Permission denied",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict or execution unavailable",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "X-Customer-Identity",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 200
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "customer_id": {
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  "wallet_id": {
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  "market_id": {
+                    "type": "string",
+                    "pattern": "^hyperliquid-testnet:(perps|stocks):(0|[1-9][0-9]{0,8})$"
+                  },
+                  "side": {
+                    "type": "string",
+                    "enum": [
+                      "buy",
+                      "sell"
+                    ]
+                  },
+                  "size": {
+                    "type": "string"
+                  },
+                  "limit_price": {
+                    "type": "string"
+                  },
+                  "leverage": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 1000
+                  },
+                  "reduce_only": {
+                    "type": "boolean"
+                  }
+                },
+                "required": [
+                  "customer_id",
+                  "wallet_id",
+                  "market_id",
+                  "side",
+                  "size",
+                  "limit_price",
+                  "leverage",
+                  "reduce_only"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/trade/perpetuals/orders/{id}/authorize": {
+      "post": {
+        "operationId": "post__v1_trade_perpetuals_orders_id_authorize",
+        "security": [
+          {
+            "businessKey": []
+          }
+        ],
+        "description": "Requires a verified customer identity header and the exact current Stocks or Perpetuals entitlement. No business key alone authorizes signing.",
+        "responses": {
+          "200": {
+            "description": "JSON data envelope; accepted operations require polling",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Permission denied",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict or execution unavailable",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "X-Customer-Identity",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 200
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "customer_id": {
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  "wallet_id": {
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  "stellar_signature": {
+                    "type": "string"
+                  },
+                  "evm_signature": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "customer_id",
+                  "wallet_id",
+                  "stellar_signature",
+                  "evm_signature"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/trade/perpetuals/orders/{id}": {
+      "get": {
+        "operationId": "get__v1_trade_perpetuals_orders_id",
+        "security": [
+          {
+            "businessKey": []
+          }
+        ],
+        "description": "Requires a verified customer identity header and the exact current Stocks or Perpetuals entitlement. No business key alone authorizes signing.",
+        "responses": {
+          "200": {
+            "description": "JSON data envelope; accepted operations require polling",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Permission denied",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict or execution unavailable",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "X-Customer-Identity",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "customer_id",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "wallet_id",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ]
+      }
     }
   },
   "components": {
