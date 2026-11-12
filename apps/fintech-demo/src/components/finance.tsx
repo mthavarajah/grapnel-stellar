@@ -5,7 +5,7 @@ import {OperationProgress,ProgressIndicator} from "./operation-progress";
 import {trackApproval,type ApprovalPhase} from "@/lib/operation-progress";
 import { AssetLogo } from "./asset-logo";
 import {PerpetualOrderPreview,PerpetualMarketMetrics} from "./perpetual-order-preview";
-import {isCurrentPerpetualMarket} from "@/lib/perpetual-market";
+import {isCurrentDerivativeMarket,bindMarketDetail,clearMarketLiveFields} from "@/lib/perpetual-market";
 import {assertMarginPositionBinding,marginPositionAction,type MarginReviewBinding} from "@/lib/margin-workflow";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
@@ -409,7 +409,9 @@ function FinanceShell({ page, auth, initialCategory }: { page: string; auth?: Au
   const [markets, setMarkets] = useState<any[]>([]);
   const [marketsLoading, setMarketsLoading] = useState(false);
   const [marketSearch, setMarketSearch] = useState("");
-  const [perpetualFilter,setPerpetualFilter]=useState<"all"|"crypto"|"equity"|"index"|"commodity"|"fx">("all");
+  const [selectedDetail,setSelectedDetail]=useState<{scope:string;data:Record<string,unknown>}|null>(null);
+  const [detailState,setDetailState]=useState<{scope:string;loading:boolean;error:string}>({scope:"",loading:false,error:""});
+  const [perpetualFilter,setPerpetualFilter]=useState<"all"|"crypto"|"equity"|"index"|"commodity"|"fx"|"other">("all");
   const [marketResultsOpen, setMarketResultsOpen] = useState(false);
 
   const [lending, setLending] = useState<any[]>([]);
@@ -570,34 +572,47 @@ function FinanceShell({ page, auth, initialCategory }: { page: string; auth?: Au
   // Funding must allow the first real round trip after Gate 1. Capability stays
   // discovery_only until the first grant and customer return are chain-verified.
   const fundingCanStart = capability("capital.testnet_funding")?.enabled && assets.some((entry: any) => entry.available === true);
-  const selectedSpotMarket = markets.find(entry => (entry.market_id ?? entry.id) === market);
-  const publicMarketOwner = useRef("");
-  publicMarketOwner.current = `${session?.customer_id??""}:${category}:${page}`;
-  useEffect(() => {
-    if (!session || category !== "perps" || !(page === "markets" || page === "trade") || !capability("trade.perps")?.enabled) return;
-    const owner = `${session.customer_id}:${category}:${page}`;
-    let alive=true,inFlight=false,firstLoad=true;
+  const publicOwner=`${session?.customer_id??""}:${session?.wallet_id??""}:${category}:${page}`;
+  const selectedCatalogMarket=markets.find(entry=>(entry.market_id??entry.id)===market);
+  const selectedDetailScope=`${publicOwner}:${selectedCatalogMarket?.market_id??""}`;
+  const selectedSpotMarket=selectedDetail?.scope===selectedDetailScope?{...selectedCatalogMarket,...selectedDetail.data}:selectedCatalogMarket;
+  const detailLoading=detailState.scope===selectedDetailScope&&detailState.loading;
+  const detailError=detailState.scope===selectedDetailScope?detailState.error:"";
+  const publicMarketOwner=useRef("");publicMarketOwner.current=publicOwner;
+  const detailRequestOwner=useRef("");detailRequestOwner.current=selectedDetailScope;
+  useEffect(()=>{
+    if(!session||!(category==="perps"||category==="stocks")||!(page==="markets"||page==="trade")||!capability("trade."+category)?.enabled)return;
+    const owner=publicOwner,assetClass=category;let alive=true,inFlight=false,firstLoad=true;
     const isCurrent=()=>alive&&publicMarketOwner.current===owner;
     const refreshPublicMarkets=async()=>{
       if(inFlight||document.visibilityState!=="visible"||!isCurrent())return;
       inFlight=true;if(firstLoad)setMarketsLoading(true);
-      try {
-        const result=await api("grapnel/markets?asset_class=perps");
-        const rows=Array.isArray(result)?result:result?.markets;
+      try{const result=await api("grapnel/markets?asset_class="+assetClass),rows=Array.isArray(result)?result:result?.markets;
         if(!Array.isArray(rows))throw Error("Market data is unavailable.");
-        if(isCurrent())setMarkets(rows.filter(isCurrentPerpetualMarket));
-      } catch {
-        if(isCurrent())setMarkets(current=>current.map(entry=>({...entry,price_status:"unavailable",reference_price:null,reference_price_atomic:null,stats:null,perpetuals_stats:null,risk:null})));
-      } finally {
-        inFlight=false;firstLoad=false;if(isCurrent())setMarketsLoading(false);
-      }
+        if(isCurrent())setMarkets(rows.filter((entry:unknown)=>isCurrentDerivativeMarket(entry,assetClass)));
+      }catch{if(isCurrent())setMarkets(current=>current.map(clearMarketLiveFields));}
+      finally{inFlight=false;firstLoad=false;if(isCurrent())setMarketsLoading(false);}
     };
-    void refreshPublicMarkets();
-    const timer=setInterval(()=>{void refreshPublicMarkets();},15000);
-    const visible=()=>{if(document.visibilityState==="visible")void refreshPublicMarkets();};
-    document.addEventListener("visibilitychange",visible);
+    void refreshPublicMarkets();const timer=setInterval(()=>void refreshPublicMarkets(),15000);
+    const visible=()=>{if(document.visibilityState==="visible")void refreshPublicMarkets();};document.addEventListener("visibilitychange",visible);
     return()=>{alive=false;clearInterval(timer);document.removeEventListener("visibilitychange",visible);};
-  },[session?.customer_id,category,page,caps]);
+  },[session?.customer_id,session?.wallet_id,category,page,caps]);
+  useEffect(()=>{
+    if(!session||!(category==="perps"||category==="stocks")||!isCurrentDerivativeMarket(selectedCatalogMarket,category)||!(page==="markets"||page==="trade")||!capability("trade."+category)?.enabled)return;
+    const id=selectedCatalogMarket.market_id,assetClass=category,scope=selectedDetailScope;let alive=true,inFlight=false;
+    const isCurrent=()=>alive&&detailRequestOwner.current===scope;
+    setSelectedDetail({scope,data:clearMarketLiveFields(selectedCatalogMarket)});setDetailState({scope,loading:true,error:""});
+    const load=async()=>{
+      if(inFlight||document.visibilityState!=="visible"||!isCurrent())return;inFlight=true;
+      if(isCurrent())setDetailState({scope,loading:true,error:""});
+      try{const row=bindMarketDetail(await api("grapnel/market-detail?market_id="+encodeURIComponent(id)),id,assetClass);
+        if(isCurrent()){setSelectedDetail({scope,data:row});setDetailState({scope,loading:false,error:""});}
+      }catch{if(isCurrent()){setSelectedDetail({scope,data:clearMarketLiveFields(selectedCatalogMarket)});setDetailState({scope,loading:false,error:"Current market data could not be loaded. Refresh or select another market."});}}
+      finally{inFlight=false;}
+    };
+    void load();const timer=setInterval(()=>void load(),15000);const visible=()=>{if(document.visibilityState==="visible")void load();};document.addEventListener("visibilitychange",visible);
+    return()=>{alive=false;clearInterval(timer);document.removeEventListener("visibilitychange",visible);};
+  },[session?.customer_id,session?.wallet_id,selectedCatalogMarket?.market_id,category,page,caps]);
   useEffect(() => { setMarketSearch(""); setMarketResultsOpen(false); }, [category]);
   useEffect(() => {
     if (category === "crypto_spot" || !markets.length || selectedSpotMarket) return;
@@ -719,8 +734,8 @@ function FinanceShell({ page, auth, initialCategory }: { page: string; auth?: Au
         }
         if (page === "markets" || page === "trade") {
           const selected = caps.find(c => c.module === "trade." + (category === "crypto_spot" ? "spot" : category));
-          if (category === "perps") {
-            // Dedicated guarded polling above owns this read-only category.
+          if (category === "perps" || category === "stocks") {
+            // Dedicated metadata and selected-detail polling above own these categories.
           } else if (selected?.enabled) {
             if (alive) setMarketsLoading(true);
             try {
@@ -1292,11 +1307,11 @@ function FinanceShell({ page, auth, initialCategory }: { page: string; auth?: Au
               {category !== "crypto_spot" && category !== "unavailable" && (
                 <section className="card public-market-browser" aria-label="Available markets" data-testid="market-list">
                   <div className="section-heading"><h2>Find a market</h2><span className="small muted">{markets.length} markets</span></div>
-                  {category==="perps"&&<label className="small muted">Asset type <select aria-label="Perpetual asset type" value={perpetualFilter} onChange={event=>{setPerpetualFilter(event.target.value as "all"|"crypto"|"equity"|"index"|"commodity"|"fx");setMarketResultsOpen(true);}}><option value="all">All assets</option><option value="crypto">Crypto</option><option value="equity">Stock perpetuals</option><option value="index">Indices</option><option value="commodity">Commodity perpetuals</option><option value="fx">Currency perpetuals</option></select></label>}
+                  {category==="perps"&&<label className="small muted">Asset type <select aria-label="Perpetual asset type" value={perpetualFilter} onChange={event=>{setPerpetualFilter(event.target.value as "all"|"crypto"|"equity"|"index"|"commodity"|"fx"|"other");setMarketResultsOpen(true);}}><option value="all">All assets</option><option value="crypto">Crypto</option><option value="equity">Stock perpetuals</option><option value="index">Indices</option><option value="commodity">Commodity perpetuals</option><option value="fx">Currency perpetuals</option><option value="other">Other perpetuals</option></select></label>}
                   <div className="public-market-search-row"><label className="market-search-label">Search markets<input type="search" aria-label="Search markets" data-testid="market-search" value={marketSearch} onFocus={()=>setMarketResultsOpen(true)} onChange={event=>{setMarketSearch(event.target.value);setMarketResultsOpen(true);}} placeholder="Search by name or symbol" /></label><button type="button" className="button outline" data-testid="market-browse-toggle" aria-expanded={marketResultsOpen} aria-controls="public-market-options" onClick={()=>setMarketResultsOpen(current=>!current)}>Browse markets</button></div>
                   {marketsLoading ? <p className="small muted" role="status">Loading markets…</p> : marketResultsOpen && visiblePublicMarkets.length ? <div className="public-market-options" id="public-market-options">
-                    {visiblePublicMarkets.map(entry=><button type="button" key={entry.market_id??entry.id} data-testid={`market-option-${entry.underlying?.symbol??entry.market_id}`} aria-label={`${entry.underlying?.symbol??entry.label} ${category==="perps"?(entry.asset_category==="equity"?"stock perpetual":entry.asset_category==="index"?"index perpetual":"perpetual"):"stock"}`} aria-pressed={(entry.market_id??entry.id)===market}
-                      onClick={()=>{setMarket(entry.market_id??entry.id);setMarketResultsOpen(false);}}><span className="public-market-symbol"><AssetLogo symbol={entry.underlying?.symbol??entry.label} name={entry.underlying?.name} assetId={entry.market_id??entry.id} providerSymbol={entry.provider_symbol} size={24} />{entry.underlying?.symbol??entry.label}</span><span className="public-market-name">{entry.underlying?.name??entry.label}</span><strong>{entry.reference_price==null?"—":formatTokenAmount(entry.reference_price)}{entry.reference_price!=null&&<small> USD</small>}</strong>{entry.price_status==="stale"&&<span className="public-market-delay">Delayed</span>}</button>)}
+                    {visiblePublicMarkets.map(entry=><button type="button" key={entry.market_id??entry.id} data-testid={`market-option-${entry.underlying?.symbol??entry.market_id}`} aria-label={`${entry.underlying?.symbol??entry.label} ${(category==="perps"||entry.instrument_type==="perpetual_futures")?(entry.asset_category==="equity"?"stock perpetual":entry.asset_category==="index"?"index perpetual":"perpetual"):"stock"}`} aria-pressed={(entry.market_id??entry.id)===market}
+                      onClick={()=>{setMarket(entry.market_id??entry.id);setMarketResultsOpen(false);}}><span className="public-market-symbol"><AssetLogo symbol={entry.underlying?.symbol??entry.label} name={entry.underlying?.name} assetId={entry.market_id??entry.id} providerSymbol={entry.provider_symbol} size={24} />{entry.underlying?.symbol??entry.label}</span><span className="public-market-name">{entry.underlying?.name??entry.label}</span><strong>{entry.reference_price==null?"—":formatTokenAmount(entry.reference_price)}{entry.reference_price!=null&&<small> {entry.quote_symbol??"—"}</small>}</strong>{entry.price_status==="stale"&&<span className="public-market-delay">Delayed</span>}</button>)}
                   </div> : (!markets.length||marketResultsOpen) ? <p className="small muted" role="status">{markets.length?"No matching markets.":"No markets available."}</p> : null}
                 </section>
               )}
@@ -1304,17 +1319,17 @@ function FinanceShell({ page, auth, initialCategory }: { page: string; auth?: Au
                 <>
                   <div className="market-detail-layout">
                     <section className="market-price-card" aria-label="Asset price" data-testid={category==="perps"?"perps-market-detail":"stocks-market-detail"}>
-                      <div className="market-asset-heading"><AssetLogo symbol={selectedSpotMarket.underlying?.symbol??selectedSpotMarket.label} name={selectedSpotMarket.underlying?.name} assetId={selectedSpotMarket.market_id??selectedSpotMarket.id} providerSymbol={selectedSpotMarket.provider_symbol} size={48} /><div><h2>{selectedSpotMarket.underlying?.name??selectedSpotMarket.label}</h2><span>{selectedSpotMarket.underlying?.symbol} {category==="perps"?(selectedSpotMarket.asset_category==="equity"?"stock perpetual":selectedSpotMarket.asset_category==="index"?"index perpetual":"perpetual"):"stock"}</span></div></div>
-                      <div className="market-price-heading"><strong>{category==="stocks" ? (activePublicHistory?.latest_price==null?"—":formatTokenAmount(activePublicHistory.latest_price)) : selectedSpotMarket.reference_price==null?"—":formatTokenAmount(selectedSpotMarket.reference_price)}</strong><span>{activePublicHistory?.quote_symbol??(category==="perps"?"USDC":"USD")} per {selectedSpotMarket.underlying?.symbol}</span></div>
-                      <div className={`public-market-freshness ${selectedSpotMarket.price_status==="stale"?"delayed":""}`} data-testid="market-price-freshness">{category==="stocks" ? (activePublicHistory?.latest_price?"Stock reference price":"Price unavailable") : selectedSpotMarket.price_status==="current"?"Current price":selectedSpotMarket.price_status==="stale"?"Price delayed":"Price unavailable"}</div>
-                      <div className="market-price-change" aria-label="Price change"><strong>{activePublicHistory&&activePublicHistory.points.length>1?displayChange(activePublicHistory.change_absolute):"—"}</strong><span>{activePublicHistory&&activePublicHistory.points.length>1?`USD (${displayChange(activePublicHistory.change_percent)}%)`: "(—)"}</span></div>
-                      {category==="stocks"&&selectedSpotMarket.history_available!==true ? <div className="market-chart-empty" role="status">Price data unavailable</div> : <PriceChart history={activePublicHistory} loading={historyLoading} />}
+                      <div className="market-asset-heading"><AssetLogo symbol={selectedSpotMarket.underlying?.symbol??selectedSpotMarket.label} name={selectedSpotMarket.underlying?.name} assetId={selectedSpotMarket.market_id??selectedSpotMarket.id} providerSymbol={selectedSpotMarket.provider_symbol} size={48} /><div><h2>{selectedSpotMarket.underlying?.name??selectedSpotMarket.label}</h2><span>{selectedSpotMarket.underlying?.symbol} {(category==="perps"||selectedSpotMarket.instrument_type==="perpetual_futures")?(selectedSpotMarket.asset_category==="equity"?"stock perpetual":selectedSpotMarket.asset_category==="index"?"index perpetual":"perpetual"):"stock"}</span></div></div>
+                      <div className="market-price-heading"><strong>{selectedSpotMarket.reference_price==null?"—":formatTokenAmount(selectedSpotMarket.reference_price)}</strong><span>{selectedSpotMarket.quote_symbol??activePublicHistory?.quote_symbol??"—"} per {selectedSpotMarket.underlying?.symbol}</span></div>
+                      <div className={`public-market-freshness ${selectedSpotMarket.price_status==="stale"?"delayed":""}`} data-testid="market-price-freshness">{detailLoading&&selectedSpotMarket.reference_price==null?<ProgressIndicator label="Loading current price" spinning/>:selectedSpotMarket.price_status==="current"?"Current price":selectedSpotMarket.price_status==="stale"?"Price delayed":"—"}</div>
+                      <div className="market-price-change" aria-label="Price change"><strong>{activePublicHistory&&activePublicHistory.points.length>1?displayChange(activePublicHistory.change_absolute):"—"}</strong><span>{activePublicHistory&&activePublicHistory.points.length>1?`${selectedSpotMarket.quote_symbol??activePublicHistory.quote_symbol} (${displayChange(activePublicHistory.change_percent)}%)`: "(—)"}</span></div>
+                      <PriceChart history={activePublicHistory} loading={historyLoading} />
                       <div className="market-periods" role="group" aria-label="Price timeframe">{(["live","1d","1w","1m","1y","all"] as const).map(period=><button type="button" key={period} aria-pressed={historyRange===period} onClick={()=>setHistoryRange(period)}>{period.toUpperCase()}</button>)}</div>
-                      {category==="stocks"&&activePublicHistory?.metrics&&<dl className="public-market-stats" data-testid="stock-market-metrics">
+                      {category==="stocks"&&selectedSpotMarket.instrument_type!=="perpetual_futures"&&activePublicHistory?.metrics&&<dl className="public-market-stats" data-testid="stock-market-metrics">
                         {([["day_high","Day high"],["day_low","Day low"],["previous_close","Previous close"],["fifty_two_week_high","52-week high"],["fifty_two_week_low","52-week low"],["day_volume","Day volume"]] as const).map(([field,label])=><div key={field}><dt>{label}</dt><dd>{activePublicHistory.metrics?.[field]==null?"—":`${formatTokenAmount(activePublicHistory.metrics[field])} ${field==="day_volume"?"shares":activePublicHistory.quote_symbol}`}</dd></div>)}
                       </dl>}
-                      {category==="perps"&&<PerpetualMarketMetrics stats={selectedSpotMarket.perpetuals_stats} symbol={selectedSpotMarket.underlying?.symbol??selectedSpotMarket.label} maxLeverage={selectedSpotMarket.max_leverage}/>}
-                      {category==="stocks"&&selectedSpotMarket.stats&&<>
+                      <PerpetualMarketMetrics stats={selectedSpotMarket.perpetuals_stats} symbol={selectedSpotMarket.underlying?.symbol??selectedSpotMarket.label} maxLeverage={selectedSpotMarket.max_leverage} quoteSymbol={selectedSpotMarket.quote_symbol} settlementAsset={selectedSpotMarket.settlement_asset}/>
+                      {category==="stocks"&&selectedSpotMarket.instrument_type!=="perpetual_futures"&&selectedSpotMarket.stats&&<>
                         <dl className="public-market-stats" data-testid="market-stats">
                           <div><dt>24h volume</dt><dd>{displayPublicNotional(selectedSpotMarket.stats.volume_24h_atomic)}</dd></div>
                           <div><dt>Open positions</dt><dd>{selectedSpotMarket.stats.open_positions??"—"}</dd></div>
@@ -1328,7 +1343,7 @@ function FinanceShell({ page, auth, initialCategory }: { page: string; auth?: Au
                         {(selectedSpotMarket.stats.pool?.stale===true||selectedSpotMarket.stats.custody?.stale===true)&&<p className="small muted">Market activity delayed</p>}
                       </>}
                     </section>
-                    {category==="perps" ? <PerpetualOrderPreview symbol={selectedSpotMarket.underlying?.symbol??selectedSpotMarket.label} price={selectedSpotMarket.reference_price}/> : <section className="market-order-card" aria-label="Trade market" data-testid="market-order-card">
+                    {(category==="perps"||selectedSpotMarket.instrument_type==="perpetual_futures") ? <PerpetualOrderPreview symbol={selectedSpotMarket.underlying?.symbol??selectedSpotMarket.label} price={selectedSpotMarket.reference_price} quoteSymbol={selectedSpotMarket.quote_symbol} settlementAsset={selectedSpotMarket.settlement_asset} stock={category==="stocks"||selectedSpotMarket.asset_category==="equity"} error={detailError} loading={detailLoading}/> : <section className="market-order-card" aria-label="Trade market" data-testid="market-order-card">
                       <h2>Trade {selectedSpotMarket.underlying?.symbol}</h2>
                       <div className="public-order-direction" role="group" aria-label="Order direction"><button type="button" disabled>Buy</button><button type="button" disabled>Sell</button></div>
                       <p className="small muted">Available: {formatTokenAmount(swapBalance(selectedSpotMarket.base?.id??selectedSpotMarket.asset_in_id))} {selectedSpotMarket.base?.code??selectedSpotMarket.underlying?.symbol}</p>

@@ -71,7 +71,7 @@ export const ASSET_LOGO_PATHS:Readonly<Record<string,string>>={
 };
 export function assetLogoPath(symbol:string,assetId?:string,providerSymbol?:string):string{
  const fallback='/assets/logos/asset.svg',name=(providerSymbol??symbol).trim();
- const hyperliquid=typeof assetId==='string'&&/^hyperliquid-testnet:perps:(?:0|[1-9]\d{0,8})$/.test(assetId);
+ const hyperliquid=typeof assetId==='string'&&/^hyperliquid-testnet:(?:perps|stocks):(?:0|[1-9]\d{0,8})$/.test(assetId);
  if(name.includes(':')){
   // Never strip arbitrary provider prefixes or treat a same-ticker token as equity.
   if(!hyperliquid||!HYPERLIQUID_LOGO_PATHS[name])return fallback;

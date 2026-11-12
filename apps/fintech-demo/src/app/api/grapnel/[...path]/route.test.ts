@@ -296,3 +296,21 @@ it('binds Hyperliquid Testnet history to the perpetuals entitlement',async()=>{
 it('rejects a mainnet perpetual history identity before reaching the provider',async()=>{
  const upstream=vi.spyOn(server,'grapnel');const response=await GET(request('market-history?market_id=hyperliquid-mainnet:perps:0'),context(['market-history']));expect(response.status).toBe(404);expect(upstream).not.toHaveBeenCalled();
 });
+describe('selected Hyperliquid detail boundary',()=>{
+ const detail=(assetClass:'stocks'|'perps')=>({market_id:`hyperliquid-testnet:${assetClass}:750009`,asset_class:assetClass,module:'trade.'+assetClass,provider:'hyperliquid',network:'hyperliquid-testnet',instrument_type:'perpetual_futures'});
+ it.each(['stocks','perps'] as const)('binds %s detail and its source read to the correct entitlement',async assetClass=>{
+  const row=detail(assetClass),upstream=vi.spyOn(server,'grapnel').mockResolvedValue(row);const response=await GET(request('market-detail?market_id='+row.market_id),context(['market-detail']));expect(response.status).toBe(200);expect(server.requireModule).toHaveBeenCalledWith('trade.'+assetClass,session);expect(upstream).toHaveBeenCalledExactlyOnceWith('/trade/markets/'+encodeURIComponent(row.market_id),session);
+ });
+ it.each(['stocks','perps'] as const)('stops disabled %s detail before any source request',async assetClass=>{
+  vi.mocked(server.requireModule).mockRejectedValueOnce(new server.BffError(403,'MODULE_NOT_ENABLED','This module is disabled'));const upstream=vi.spyOn(server,'grapnel');const response=await GET(request('market-detail?market_id='+detail(assetClass).market_id),context(['market-detail']));expect(response.status).toBe(403);expect(upstream).not.toHaveBeenCalled();
+ });
+ it('rejects a detail response for a different market instead of rendering it',async()=>{
+  vi.spyOn(server,'grapnel').mockResolvedValue({...detail('perps'),market_id:'hyperliquid-testnet:perps:750010'});const response=await GET(request('market-detail?market_id='+detail('perps').market_id),context(['market-detail']));expect(response.status).toBe(502);expect((await response.json()).error.code).toBe('INVALID_RESPONSE');
+ });
+ it.each(['hyperliquid-mainnet:perps:0','hyperliquid-testnet:perps:01','hyperliquid-testnet:stocks:1000000000'])('rejects invalid detail identity %s without a source call',async id=>{
+  const upstream=vi.spyOn(server,'grapnel');const response=await GET(request('market-detail?market_id='+id),context(['market-detail']));expect(response.status).toBe(404);expect(upstream).not.toHaveBeenCalled();
+ });
+ it('uses the Stocks entitlement for the stock-perpetual history alias',async()=>{
+  const id=detail('stocks').market_id;vi.spyOn(server,'grapnel').mockResolvedValue({market_id:id,points:[]});const response=await GET(request('market-history?market_id='+id),context(['market-history']));expect(response.status).toBe(200);expect(server.requireModule).toHaveBeenCalledWith('trade.stocks',session);
+ });
+});
