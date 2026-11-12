@@ -1,0 +1,30 @@
+import {randomUUID} from 'node:crypto';
+import Fastify from 'fastify';
+import {afterEach,beforeEach,describe,expect,it,vi} from 'vitest';
+import {GrapnelError,type CustomerContext} from '@grapnel/contracts';
+import {encodeFunctionResult,parseAbi} from 'viem';
+vi.mock('../../lib/context.js',()=>({requireBusiness:vi.fn(),requireCustomer:vi.fn(),success:(_r:unknown,data:unknown)=>({data})}));
+vi.mock('../../adapters/robinhood/index.js',()=>({robinhoodRpcRequest:vi.fn()}));
+import {requireBusiness,requireCustomer} from '../../lib/context.js';
+import {robinhoodRpcRequest} from '../../adapters/robinhood/index.js';
+import {registerRobinhoodFundingRoutes} from './funding.js';
+import runtime from '../../adapters/robinhood/research/runtime-code.json' with {type:'json'};
+import {RH_TESTNET} from '../../adapters/robinhood/registry.js';
+const customer:CustomerContext={businessId:randomUUID(),customerId:randomUUID(),walletId:randomUUID(),privyUserId:'did:privy:fixture',walletAddress:'fixture-stellar'};
+const address='0x1111111111111111111111111111111111111111';const abi=parseAbi(['function decimals() view returns(uint8)','function balanceOf(address) view returns(uint256)']);
+const apps:ReturnType<typeof Fastify>[]=[];
+beforeEach(()=>{vi.mocked(requireBusiness).mockResolvedValue({businessId:customer.businessId,apiKeyId:'fixture'});vi.mocked(requireCustomer).mockResolvedValue(customer);
+ vi.mocked(robinhoodRpcRequest).mockImplementation(async(method,params)=>{if(method==='eth_chainId')return '0xb626';if(method==='eth_blockNumber')return '0x123';if(method==='eth_getCode')return (runtime as Record<string,string>)[RH_TESTNET.settlement.address.toLowerCase()];if(method==='eth_getBalance')return '0x1';const tx=params[0] as {data:string};return tx.data==='0x313ce567'?encodeFunctionResult({abi,functionName:'decimals',result:6}):encodeFunctionResult({abi,functionName:'balanceOf',result:123456789n});});
+});
+afterEach(async()=>{await Promise.all(apps.splice(0).map(a=>a.close()));vi.resetAllMocks();});
+async function setup(wallets:{address:string}[]=[{address}]){const app=Fastify();apps.push(app);app.setErrorHandler((e,_r,p)=>p.code(e instanceof GrapnelError?e.statusCode:500).send({error:{code:e instanceof GrapnelError?e.code:'ERROR'}}));const callback=vi.fn(async()=>wallets);await registerRobinhoodFundingRoutes(app,{readEthereumWallets:callback});return {app,callback};}
+const path='/v1/trade/stocks/funding?customer_id='+customer.customerId+'&wallet_id='+customer.walletId;
+describe('Robinhood customer funding read',()=>{
+ it('requires both current modules and verified customer before trusted wallet discovery',async()=>{const{app,callback}=await setup();const r=await app.inject(path);expect(r.statusCode).toBe(200);expect(requireBusiness).toHaveBeenNthCalledWith(1,expect.anything(),'trade.stocks');expect(requireBusiness).toHaveBeenNthCalledWith(2,expect.anything(),'capital.wallets');expect(requireCustomer).toHaveBeenCalledWith(expect.anything(),customer.customerId,customer.walletId);expect(callback).toHaveBeenCalledWith(customer);expect(r.headers['cache-control']).toContain('no-store');});
+ it('returns exact USDG6 and ETH18 balances, including tiny actual ETH',async()=>{const{app}=await setup();const body=(await app.inject(path)).json().data;expect(body.balances).toEqual({USDG:'123.456789',ETH:'0.000000000000000001'});expect(body.funding.asset.symbol).toBe('USDG');expect(body.selectedAddress).toBe(address);expect(body.balanceStatus).toBe('ready');});
+ it('rejects a browser address outside current verified customer wallets',async()=>{const{app}=await setup();const r=await app.inject(path+'&account_address=0x2222222222222222222222222222222222222222');expect(r.statusCode).toBe(403);expect(robinhoodRpcRequest).not.toHaveBeenCalled();});
+ it('returns unknown balances rather than fake zeros when chain check fails',async()=>{vi.mocked(robinhoodRpcRequest).mockResolvedValue('0x1');const{app}=await setup();const body=(await app.inject(path)).json().data;expect(body.balances).toEqual({USDG:null,ETH:null});expect(body.balanceStatus).toBe('unavailable');expect(body.observedAt).toBeNull();});
+ it('has no RPC or wallet creation side effects if no verified EVM wallets exist',async()=>{const{app}=await setup([]);const body=(await app.inject(path)).json().data;expect(body.accounts).toEqual([]);expect(body.selectedAddress).toBeNull();expect(body.balanceStatus).toBe('no_account');expect(robinhoodRpcRequest).not.toHaveBeenCalled();});
+ it('fails closed for tenant/customer identity rejection',async()=>{vi.mocked(requireCustomer).mockRejectedValue(new GrapnelError(403,'CUSTOMER_AUTH_INVALID','No'));const{app,callback}=await setup();expect((await app.inject(path)).statusCode).toBe(403);expect(callback).not.toHaveBeenCalled();expect(robinhoodRpcRequest).not.toHaveBeenCalled();});
+ it('does not use balances from an asset with changed decimals',async()=>{const original=vi.mocked(robinhoodRpcRequest).getMockImplementation()!;vi.mocked(robinhoodRpcRequest).mockImplementation((method,params)=>method==='eth_call'?Promise.resolve(encodeFunctionResult({abi,functionName:'decimals',result:18})):original(method,params));const{app}=await setup();const body=(await app.inject(path)).json().data;expect(body.balances.USDG).toBeNull();expect(body.balanceStatus).toBe('unavailable');});
+});

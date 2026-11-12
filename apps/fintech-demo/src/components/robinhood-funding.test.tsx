@@ -1,0 +1,11 @@
+import {createElement} from 'react';
+import {renderToStaticMarkup} from 'react-dom/server';
+import {describe,expect,it,vi} from 'vitest';
+vi.mock('@privy-io/react-auth',()=>({useCreateWallet:vi.fn()}));
+import {RobinhoodFundingCard,formatStockFundingBalance,type RobinhoodFundingSnapshot} from './robinhood-funding';
+const data:RobinhoodFundingSnapshot={funding:{chainId:46630,asset:{symbol:'USDG',address:'0x7E955252E15c84f5768B83c41a71F9eba181802F',decimals:6},faucetUrl:'https://faucet.paxos.com/',gasFaucetUrl:'https://faucet.testnet.chain.robinhood.com/'},accounts:[{address:'0x1111111111111111111111111111111111111111'}],selectedAddress:'0x1111111111111111111111111111111111111111',balances:{USDG:'100',ETH:'0.000000000000000001'},balanceStatus:'ready',observedAt:'2026-11-12T00:00:00Z'};
+describe('Robinhood customer funding card',()=>{
+ it('shows exact official faucet actions and verified address without creating, claiming or signing',()=>{const api=vi.fn(),create=vi.fn();const html=renderToStaticMarkup(createElement(RobinhoodFundingCard,{api,onCreateWallet:create,initialData:data}));expect(html).toContain('Get USDG');expect(html).toContain('Get gas ETH');expect(html).toContain('Copy stock wallet address');expect(html).toContain('faucet.paxos.com/?token=USDG');expect(html).toContain('100');expect(html).not.toContain('Privy');expect(api).not.toHaveBeenCalled();expect(create).not.toHaveBeenCalled();});
+ it('never fabricates zero for an unavailable balance',()=>{expect(formatStockFundingBalance(null,2)).toBe('—');expect(formatStockFundingBalance('0.000000000000000001',6)).toBe('<0.000001');expect(formatStockFundingBalance('12345.6789',2)).toBe('12,345.67');});
+ it('offers explicit creation only after the API verified no stock wallet exists',()=>{const create=vi.fn();const html=renderToStaticMarkup(createElement(RobinhoodFundingCard,{api:vi.fn(),onCreateWallet:create,initialData:{...data,accounts:[],selectedAddress:null,balanceStatus:'no_account'}}));expect(html).toContain('Create stock wallet');expect(html).not.toContain('Get USDG');expect(create).not.toHaveBeenCalled();});
+});
