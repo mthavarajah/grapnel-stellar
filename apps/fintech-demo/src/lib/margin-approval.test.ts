@@ -1,3 +1,4 @@
+import {readFileSync} from 'node:fs';
 import {describe,expect,it} from 'vitest';
 import {Account,Address,Contract,Operation,TransactionBuilder,nativeToScVal,xdr,type Transaction} from '@stellar/stellar-sdk';
 import {NETWORK_PASSPHRASE,type PreparedAction} from '@grapnel/contracts';
@@ -20,8 +21,8 @@ function fixture(step:typeof actions[number]='open_begin'){
   case 'open_swap':case 'open_cancel':m=step==='open_swap'?'swap_open_position_v3':'cancel_pending_open_v3';a=[addr(W),n(13844n,'u64')];Object.assign(s,{fromAssetId:R,amount:'0.999999',positionId:'13844',...(step==='open_swap'?{toAssetId:X,recipient:M}:{})});break;
   case 'open_activate':m='activate_open_position_v3';a=[addr(W),n(13844n,'u64')];s.positionId='13844';break;
   case 'close_atomic':m='close_position_v3';a=[addr(W),n(13844n,'u64'),n(19780780n)];Object.assign(s,{positionId:'13844',fromAssetId:X,toAssetId:T,minReceive:'1.9780780',recipient:M});break;
-  case 'return':m='transfer_margin_to_spot';a=[addr(W),addr(TOKEN),n(999999n)];Object.assign(s,{fromAssetId:R,amount:'0.999999'});break;
-  case 'vault_withdraw':c=V;m='withdraw';a=[addr(W),n(999999n)];Object.assign(s,{fromAssetId:R,toAssetId:T,amount:'0.999999'});break;
+  case 'return':m='transfer_margin_to_spot';a=[addr(W),addr(TOKEN),n(999999n)];Object.assign(s,{fromAssetId:R,amount:'0.999999',positionId:'13844'});break;
+  case 'vault_withdraw':c=V;m='withdraw';a=[addr(W),n(999999n)];Object.assign(s,{fromAssetId:R,toAssetId:T,amount:'0.999999',positionId:'13844'});break;
  }
  s.contractId=c;const root=node(fn(c,m,a),child?[node(child)]:[]),auth=new xdr.SorobanAuthorizationEntry({credentials:xdr.SorobanCredentials.sorobanCredentialsSourceAccount(),rootInvocation:root});
  const data=new xdr.SorobanTransactionData({ext:new xdr.SorobanTransactionDataExt(0),resources:new xdr.SorobanResources({footprint:new xdr.LedgerFootprint({readOnly:[],readWrite:[]}),instructions:1,diskReadBytes:0,writeBytes:0}),resourceFee:xdr.Int64.fromString('100')});
@@ -62,6 +63,20 @@ describe('Exact Peridot browser intent approval; SDK fixtures only, no signing o
   const tx=new TransactionBuilder(new Account('GAJZ5PEECGFB46QXKFW2QTWRXHYL4SOBS5VE2JDGJ4TDUIAUWEAHKV34','1'),{fee:'1000',networkPassphrase:NETWORK_PASSPHRASE}).addOperation(op).setTimeout(60).build();
   expect(()=>inspectMarginApproval(f.action,tx.operations[0]!)).not.toThrow();
   f.action.summary.positionId='13845';expect(()=>inspectMarginApproval(f.action,tx.operations[0]!)).toThrow();
+ });
+
+ it.each(['return','vault_withdraw']as const)('requires canonical repaid-position context for %s without adding a deployed argument',step=>{
+  for(const id of [undefined,'0','-1','13844.0','18446744073709551616','wrong']){const f=fixture(step);f.action.summary.positionId=id;expect(()=>inspectMarginApproval(f.action,f.op)).toThrow();}
+  const f=fixture(step);expect(()=>inspectMarginApproval(f.action,f.op)).not.toThrow();
+  // The contract call contains owner/asset/amount only. Exact workflow-to-position binding is checked server-side.
+  expect(invoke(f.op).func.invokeContract().args()).toHaveLength(step==='return'?3:2);
+ });
+ it.each(['return','vault_withdraw']as const)('accepts actual recorded %s envelope with the customer adapter summary',step=>{
+  const label=step==='return'?'margin_return':'vault_withdraw',raw=JSON.parse(readFileSync(new URL(`../../../api/src/adapters/peridot/customer/research/${label}-transaction.json`,import.meta.url),'utf8'));
+  const tx=TransactionBuilder.fromXDR(raw.response.result.envelopeXdr,NETWORK_PASSPHRASE)as Transaction,f=fixture(step);
+  f.action.walletAddress=tx.source;f.action.unsignedXdr=tx.toXDR();Object.assign(f.action.summary,{positionId:'13844',amount:'9.879964',recipient:tx.source,maxFeeStroops:tx.fee});
+  expect(()=>inspectMarginApproval(f.action,tx.operations[0]!)).not.toThrow();
+  f.action.summary.amount='9.879965';expect(()=>inspectMarginApproval(f.action,tx.operations[0]!)).toThrow();
  });
 
 });

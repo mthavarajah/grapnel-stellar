@@ -55,8 +55,9 @@ export function inspectMarginApproval(action:PreparedAction,operation:Transactio
    case 'margin.open_swap':case 'margin.open_cancel':{method=s.action==='margin.open_swap'?'swap_open_position_v3':'cancel_pending_open_v3';from=RECEIPT_ID;to=s.action==='margin.open_swap'?XLM_ID:undefined;recipient=s.action==='margin.open_swap'?MARGIN:user;hasAmount=hasPosition=true;amount(s.amount,6,10000000n);args=[addr(user),position(s.positionId)];break;}
    case 'margin.open_activate':{method='activate_open_position_v3';hasPosition=true;args=[addr(user),position(s.positionId)];break;}
    case 'margin.close_atomic':{method='close_position_v3';from=XLM_ID;to=MOCK_ID;recipient=MARGIN;hasMinimum=hasPosition=true;args=[addr(user),position(s.positionId),num(amount(s.minReceive,7),'u128')];break;}
-   case 'margin.return':{method='transfer_margin_to_spot';from=RECEIPT_ID;hasAmount=true;args=[addr(user),addr(MOCK),num(amount(s.amount,6),'u128')];break;}
-   case 'margin.vault_withdraw':{contract=VAULT;method='withdraw';from=RECEIPT_ID;to=MOCK_ID;hasAmount=true;args=[addr(user),num(amount(s.amount,6),'u128')];break;}
+   // Repaid position is server-verified workflow context; these deployed methods have no position argument.
+   case 'margin.return':{method='transfer_margin_to_spot';from=RECEIPT_ID;hasAmount=hasPosition=true;position(s.positionId);args=[addr(user),addr(MOCK),num(amount(s.amount,6),'u128')];break;}
+   case 'margin.vault_withdraw':{contract=VAULT;method='withdraw';from=RECEIPT_ID;to=MOCK_ID;hasAmount=hasPosition=true;position(s.positionId);args=[addr(user),num(amount(s.amount,6),'u128')];break;}
    default:return fail();
   }
   if(s.contractId!==contract||s.recipient!==recipient||s.fromAssetId!==from||s.toAssetId!==to||(!hasAmount&&s.amount!==undefined)||(!hasMinimum&&s.minReceive!==undefined)||(!hasPosition&&s.positionId!==undefined))return fail();
