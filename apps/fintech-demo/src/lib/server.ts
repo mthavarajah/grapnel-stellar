@@ -204,6 +204,9 @@ export function clearSession(response: NextResponse): void {
   for (const name of SESSION_COOKIE_NAMES)
     response.cookies.set(name, "", { ...cookieOptions(), maxAge: 0 });
 }
+// Preserve the SDK's bounded remote-JWKS cache instead of constructing a new
+// JWKS fetcher for every login. This caches keys, never JWT acceptance.
+let identityClient: {configurationHash:string;client:PrivyClient}|undefined;
 export async function verifyIdentity(token: string): Promise<string> {
   if (!process.env.PRIVY_APP_ID || !process.env.PRIVY_APP_SECRET)
     throw new BffError(
@@ -212,12 +215,15 @@ export async function verifyIdentity(token: string): Promise<string> {
       "Sign-in is temporarily unavailable",
     );
   try {
-    const client = new PrivyClient({
+    if(!token || token.length>32768)throw Error('Invalid identity token');
+    const configurationHash=createHash('sha256').update(JSON.stringify([process.env.PRIVY_APP_ID,process.env.PRIVY_APP_SECRET])).digest('hex');
+    if(identityClient?.configurationHash!==configurationHash)identityClient={configurationHash,client:new PrivyClient({
       appId: process.env.PRIVY_APP_ID,
       appSecret: process.env.PRIVY_APP_SECRET,
       fetch: (url, init) => fetch(url, { ...init, redirect: "error", signal: AbortSignal.timeout(15000) }),
-    });
-    const user = await client.users().get({ id_token: token });
+    })};
+    const user = await identityClient.client.users().get({ id_token: token });
+    if(typeof user.id!=='string'||!user.id.startsWith('did:privy:'))throw Error('Invalid identity');
     return user.id;
   } catch {
     throw new BffError(

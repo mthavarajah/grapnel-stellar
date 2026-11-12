@@ -3,6 +3,8 @@ import { NextResponse } from "next/server";
 import { cookies as readCookies } from "next/headers";
 vi.mock("server-only", () => ({}));
 vi.mock("next/headers", () => ({ cookies: vi.fn() }));
+const identitySdk=vi.hoisted(()=>({construct:vi.fn(),verify:vi.fn()}));
+vi.mock('@privy-io/node',()=>({PrivyClient:class {constructor(options:unknown){identitySdk.construct(options);}users(){return {get:identitySdk.verify};}}}));
 import {
   clearSession,
   grapnel,
@@ -13,6 +15,7 @@ import {
   sessionCookieValues,
   setSession,
   SESSION_COOKIE_NAMES,
+  verifyIdentity,
 } from "./server.js";
 const fixture = (identityToken = "sensitive-token") => ({
   userId: "did:privy:test",
@@ -24,7 +27,7 @@ const fixture = (identityToken = "sensitive-token") => ({
 });
 process.env.FINTECH_SESSION_SECRET =
   "test-session-secret-with-at-least-32-characters";
-afterEach(() => vi.unstubAllGlobals());
+afterEach(() => {vi.unstubAllGlobals();vi.unstubAllEnvs();identitySdk.construct.mockClear();identitySdk.verify.mockReset();});
 describe("encrypted bounded customer sessions", () => {
   it("hides identity tokens and binds integrity", () => {
     const session = fixture();
@@ -133,4 +136,19 @@ describe("credential-bearing Grapnel fetch", () => {
       },
     });
   });
+});
+describe('Privy identity client reuse, mocked interface only',()=>{
+ it('reuses configured SDK/JWKS while verifying every token and replaces it on config rotation',async()=>{
+  vi.stubEnv('PRIVY_APP_ID','offline-reuse-app');vi.stubEnv('PRIVY_APP_SECRET','offline-secret');identitySdk.verify.mockResolvedValue({id:'did:privy:fixture'});
+  await verifyIdentity('token-one');await verifyIdentity('token-two');expect(identitySdk.construct).toHaveBeenCalledTimes(1);expect(identitySdk.verify).toHaveBeenCalledTimes(2);
+  vi.stubEnv('PRIVY_APP_SECRET','rotated-offline-secret');await verifyIdentity('token-three');expect(identitySdk.construct).toHaveBeenCalledTimes(2);expect(identitySdk.verify).toHaveBeenCalledTimes(3);
+ });
+ it('does not retain successful JWT acceptance after the SDK rejects a later call',async()=>{
+  vi.stubEnv('PRIVY_APP_ID','offline-rejection-app');vi.stubEnv('PRIVY_APP_SECRET','offline-secret');identitySdk.verify.mockResolvedValueOnce({id:'did:privy:fixture'}).mockRejectedValueOnce(Error('opaque provider details'));
+  await verifyIdentity('same-token');await expect(verifyIdentity('same-token')).rejects.toMatchObject({status:401,code:'INVALID_CUSTOMER_IDENTITY'});expect(identitySdk.verify).toHaveBeenCalledTimes(2);
+ });
+ it('rejects missing/oversized tokens before the SDK and malformed verified user identities',async()=>{
+  vi.stubEnv('PRIVY_APP_ID','offline-input-app');vi.stubEnv('PRIVY_APP_SECRET','offline-secret');for(const token of ['', 'a'.repeat(32769)])await expect(verifyIdentity(token)).rejects.toMatchObject({status:401});expect(identitySdk.verify).not.toHaveBeenCalled();
+  identitySdk.verify.mockResolvedValue({id:'not-a-privy-user'});await expect(verifyIdentity('token')).rejects.toMatchObject({status:401});
+ });
 });
