@@ -61,3 +61,14 @@ Provider POST requests and durable-worker broadcasts now revalidate the current 
 ## Customer USDC Earn withdrawal — verified
 
 Transaction `12ec0c2e584b344cde01c51f03342d2ae39dba90a3a111fefc2410462771b5cd` succeeded at ledger5686843 and completed as `blend.withdraw` in Grapnel. It returned exactly4.0000000USDC to the wallet (646.7419161→650.7419161); Earn collateral decreased4.0006381→0.0006383USDC. The remaining0.0006383USDC is still in Earn, not withdrawn wallet funds. Actual network fee13097stroops. This proves USDC withdrawal from the original Earn pool, separately from borrowing-pool collateral removal. See `evidence/earn-usdc-withdraw-customer.json`.
+
+
+## November 12 market integration checkpoint
+
+The localhost API and Velocity frontend were rebuilt/restarted with the full Hyperliquid Testnet catalog and selected-venue detail reads. Independent source QA found279 DEXes,1008 total market slots and658 active listings. The Stocks view has39 stock/index aliases (34 equity and5 index); these are perpetual futures, not shares. Metadata listings do not establish liquidity or executable orders. Source availability and sparse Testnet history remain explicit; no prices or candles are fabricated.
+
+Live authenticated API reads returned200 for both catalogs, BTC detail plus97 1D candles, and AAPL detail plus63 1D candles. The signed-in browser showed the Crypto XLM reference chart, AAPL search/price/metrics/1D chart and the658-listing Perpetuals page with SOL price/chart. Source units are preserved across different venue collateral assets. Crypto external reference charts do not change actual Soroswap quotes, balances or wallet valuation.
+
+Combined offline validation:1491 tests passed,122 opt-in checks skipped; all workspace/root typechecks passed; Velocity production build and secret scan passed. The new Hyperliquid IOC execution adapter has51 offline tests and the CCTP registry/unsigned burn preparation has57 tests. These tests do not prove live execution. Customer funding/approval/account binding and durable route/worker integration remain incomplete. No Hyperliquid order, CCTP burn/mint or customer crosschain transfer was made at this checkpoint.
+
+The customer's current GATALT-issued USDC is different from canonical Circle-USDC required for CCTP. Actual source preflight found no canonical Circle-USDC trustline and zero allowance. Destination account eligibility/funding and customer signing authority are still required. Peridot is retired from customer trading; earlier Margin paragraphs describe historical QA only. Deployment remains deferred by owner instruction.
