@@ -109,6 +109,17 @@
       "send_status": "PENDING",
       "ledger": 5685559,
       "return_value": null
+    },
+    {
+      "label": "qa_margin_return_recovered_receipts",
+      "hash": "9f9fe59ddedc24480747057af60cf4ca7f965821786a52e3e0c28a43efdeffbe",
+      "sequence": "24403398585483274",
+      "max_fee_stroops": "50054",
+      "status": "SUCCESS",
+      "explorer": "https://stellar.expert/explorer/testnet/tx/9f9fe59ddedc24480747057af60cf4ca7f965821786a52e3e0c28a43efdeffbe",
+      "send_status": "PENDING",
+      "ledger": 5685684,
+      "return_value": null
     }
   ],
   "snapshots": [
@@ -988,6 +999,34 @@
       "quoted_output_atomic": "19880180",
       "expected_receipt_atomic": "9879964",
       "actual_receipt_atomic": "9879964"
+    },
+    {
+      "phase": "qa_margin_return",
+      "intent": {
+        "step": "margin_return",
+        "walletAddress": "GAJZ5PEECGFB46QXKFW2QTWRXHYL4SOBS5VE2JDGJ4TDUIAUWEAHKV34",
+        "receiptAtomic": "9879964",
+        "repaidPositionId": "13844"
+      },
+      "before": {
+        "native": "9984.4357840",
+        "mock_usdt_atomic": "5300316",
+        "vault_receipt_atomic": "0",
+        "margin_receipt_atomic": "9879964"
+      },
+      "after": {
+        "native": "9984.4317537",
+        "mock_usdt_atomic": "5300316",
+        "vault_receipt_atomic": "9879964",
+        "margin_receipt_atomic": "0"
+      },
+      "debt": {
+        "principalAtomic": "0",
+        "balanceAtomic": "0",
+        "borrowIndex": "1000050736357816808",
+        "snapshotInterestIndex": "1000050736357816808",
+        "ledger": 5685684
+      }
     }
   ],
   "last_error": "The QA open swap exceeds its exact reviewed Testnet scope",
