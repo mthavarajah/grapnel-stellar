@@ -1,5 +1,5 @@
 import {createHash} from 'node:crypto';
-import {scValToNative,nativeToScVal} from '@stellar/stellar-sdk';
+import {Address,scValToNative,nativeToScVal,xdr} from '@stellar/stellar-sdk';
 import type {CustomerContext} from '@grapnel/contracts';
 import type {MarginBalanceEvidence,MarginEvidence,MarginPositionEvidence,MarginStepContext} from '../../../modules/margin/types.js';
 import {PERIDOT_MARKET_ID,PERIDOT_TESTNET_PINS as P} from '../config.js';
@@ -44,4 +44,22 @@ export function openCancelEvidence(context:MarginStepContext,baseline:PrivateMar
  if(context.step!=='open_cancel'||!before.position||!pending||baseline.helper.pendingDigest!==digest(pending)||before.marginDebtAtomic!=='0'||after.marginDebtAtomic!=='0'||after.position!==null||before.position.openExecution!==null)return invalid('CANCEL_OWNED_PENDING_ZERO_DEBT');
  inspectQaOpenCancelStateChanges(committedStateCheckInput(confirmed.meta,confirmed.ledger),{step:'open_cancel',walletAddress:customer.walletAddress,positionId:unsigned(context.workflow.positionId,true).toString()},pending);
  return{...evidence,cancellationVerified:true};
+}
+
+/** Prove activation using actual receipt mint/balance/supply deltas; never invent an execution exchange rate. */
+export function activationEvidence(context:MarginStepContext,baseline:PrivateMarginBaseline,confirmed:ConfirmedPeridotTransaction,after:CustomerSnapshot,customer:CustomerContext,now=Date.now()):MarginEvidence {
+ const {before,changes,evidence}=phaseEvidenceBase(context,baseline,confirmed,after,customer,now),pending=before.position?.pendingOpen,execution=before.position?.openExecution,id=unsigned(context.workflow.positionId,true).toString(),key=nativeToScVal(BigInt(id),{type:'u64'});
+ if(context.step!=='open_activate'||!before.position||!after.position||!pending||!execution||baseline.helper.pendingDigest!==digest(pending)||baseline.helper.executionDigest!==digest(execution)||unsigned(before.marginDebtAtomic)<=0n||unsigned(after.marginDebtAtomic)<unsigned(before.marginDebtAtomic))return invalid('ACTIVATION_EXISTING_EXECUTION_DEBT');
+ const position=changes.entry(P.margin.address,contractKey('Position',key)),perps=changes.entry(P.margin.address,contractKey('PerpsPositionData',key)),removedPending=changes.entry(P.margin.address,contractKey('PendingPerpsOpenPosition',key)),removedExecution=changes.entry(P.margin.address,contractKey('PendingPerpsOpenExecution',key));
+ if(!position?.before||!position.after||!perps?.created||!perps.after||!removedPending?.removed||!removedPending.before||!removedExecution?.removed||!removedExecution.before||!equal(scValToNative(position.before),before.position.position)||!equal(scValToNative(position.after),after.position.position)||!equal(scValToNative(perps.after),after.position.perps)||!equal(scValToNative(removedPending.before),pending)||!equal(scValToNative(removedExecution.before),execution)||after.position.status!=='Open'||after.position.pendingOpen!==null||after.position.openExecution!==null)return invalid('ACTIVATION_EXACT_RECORD_TRANSITION');
+ const amount=unsigned(String(execution.position_amount),true),receipt=changes.balance(P.native_vault.address,contractKey('Balance',addressValue(P.margin.address)));
+ if(!receipt)return invalid('ACTIVATION_RECEIPT_MINT');const minted=unsigned(receipt.after)-unsigned(receipt.before),nativeInstance=changes.entry(P.native_vault.address,xdr.ScVal.scvLedgerKeyContractInstance());
+ const total=(value:import('@stellar/stellar-sdk').xdr.ScVal|null)=>{if(!value||value.switch().name!=='scvContractInstance')return invalid('ACTIVATION_SUPPLY_INSTANCE');const rows=(value.instance().storage()??[]).filter(e=>equal(scValToNative(e.key()),['TotalSupply']));if(rows.length!==1)return invalid('ACTIVATION_SUPPLY_IDENTITY');return unsigned(String(scValToNative(rows[0]!.val())),true);};
+ if(!nativeInstance?.before||!nativeInstance.after||minted<=0n||total(nativeInstance.after)-total(nativeInstance.before)!==minted||after.position.position.collateral_ptokens!==minted||after.position.position.owner!==customer.walletAddress||after.position.position.opened_at!==before.position.position.opened_at||after.position.position.entry_price_scaled!==unsigned(String(pending.notional_value),true)*1000000n/amount||after.position.perps?.margin_amount!==pending.margin_amount||after.position.perps?.notional_value!==pending.notional_value||after.position.perps?.maintenance_margin_scaled!==50000n||after.position.perps?.liquidation_incentive_scaled!==10000n)return invalid('ACTIVATION_MINTED_POSITION_RISK');
+ for(const field of ['ManagedCash','TotalDeposited']){const delta=changes.balance(P.native_vault.address,contractKey(field));if(!delta||unsigned(delta.after)-unsigned(delta.before)!==amount)return invalid('ACTIVATION_EXACT_NATIVE_VAULT_PRINCIPAL');}
+ const native=(contractOwner:string)=>{const row=changes.entry(P.native_token.address,contractKey('Balance',addressValue(contractOwner)));if(!row?.before||!row.after)return invalid('ACTIVATION_NATIVE_MOVEMENT');const n=(v:import('@stellar/stellar-sdk').xdr.ScVal)=>{const b=scValToNative(v)as Record<string,unknown>;if(b?.authorized!==true||b.clawback!==false)return invalid('ACTIVATION_NATIVE_FLAGS');return unsigned(String(b.amount));};return n(row.after)-n(row.before);};
+ if(native(P.margin.address)!==-amount||native(P.native_vault.address)!==amount)return invalid('ACTIVATION_NATIVE_RECIPIENT');
+ const state=committedStateCheckInput(confirmed.meta,confirmed.ledger);
+ if(state.stateChanges!.some(row=>row.key.switch().name==='contractData'&&Address.fromScAddress(row.key.contractData().contract()).toString()===P.mock_usdt_vault.address&&row.key.contractData().key().switch().name==='scvVec'&&['MarginBorrowPrincipal','MarginBorrowSnapshots','TotalBorrowed'].includes(row.key.contractData().key().vec()?.[0]?.sym()?.toString()??'')))return invalid('ACTIVATION_NO_NEW_BORROW');
+ return evidence;
 }

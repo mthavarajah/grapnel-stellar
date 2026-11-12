@@ -9,7 +9,7 @@ import {PERIDOT_MARKET_ID,PERIDOT_TESTNET_PINS as P} from '../config.js';
 import {validateMarginPositionSnapshot} from '../execution/state.js';
 import {createCustomerTerms} from './policy.js';
 import {PeridotTransactionChanges,contractKey} from './metadata.js';
-import {openSwapEvidence,openCancelEvidence} from './phase-evidence.js';
+import {openSwapEvidence,openCancelEvidence,activationEvidence} from './phase-evidence.js';
 import {PeridotCustomerChain,type ConfirmedPeridotTransaction,type CustomerSnapshot} from './chain.js';
 import {encodePrivate} from './encoding.js';
 import type {PrivateMarginBaseline,PhasePrepared} from './bindings.js';
@@ -41,6 +41,17 @@ describe('Actual open-swap and cancellation metadata (QA signer, not customer ac
  it('rejects a changed stored pending digest or a second claimed swap output',()=>{
   const f=phase('open_swap');expect(()=>openSwapEvidence(f.c,{...f.baseline,helper:{...f.baseline.helper,pendingDigest:'f'.repeat(64)}},f.confirmed,f.after,customer,f.now)).toThrow();
   expect(()=>openSwapEvidence(f.c,f.baseline,f.confirmed,{...f.after,position:{...f.after.position!,openExecution:{margin_received:9999999n,position_amount:129932006n}}},customer,f.now)).toThrow();
+ });
+ it('proves actual activation receipt mint/supply and owner transition without inferring debt from legacy shares',()=>{
+  const swapped=phase('open_swap'),tx=fixture('activate'),id=xdr.ScVal.scvU64(xdr.Uint64.fromString('13844')),changes=new PeridotTransactionChanges(tx.confirmed.meta),now=Date.parse(tx.raw.observed_at),at=new Date(now).toISOString(),before={...swapped.after,observedAt:at,ledger:tx.b.ledger-1};
+  const position=validateMarginPositionSnapshot({positionId:'13844',walletAddress:owner,direction:'long',position:scValToNative(changes.entry(P.margin.address,contractKey('Position',id))!.after!),perps:scValToNative(changes.entry(P.margin.address,contractKey('PerpsPositionData',id))!.after!),pendingOpen:null,pendingClose:null,openExecution:null,observedLedger:tx.b.ledger,observedAt:at});
+  const workflow={...swapped.c.workflow,phase:'opening_swapped' as const},c:MarginStepContext={...swapped.c,workflow,step:'open_activate',intentHash:digest(canonicalJson({workflowId:workflow.id,termsHash:workflow.termsHash,step:'open_activate',terms:{},positionId:'13844',receiptAtomic:'9999780'}))};
+  const digestValue=(v:unknown)=>createHash('sha256').update(JSON.stringify(v,(_,n)=>typeof n==='bigint'?n.toString():n)).digest('hex'),helper:PhasePrepared={intent:{step:'open_activate',walletAddress:owner,positionId:'13844'},pendingDigest:digestValue(before.position!.pendingOpen),executionDigest:digestValue(before.position!.openExecution),unsignedXdr:tx.unsigned.toXDR(),signingHashHex:tx.raw.hash,expiresAt:new Date(Number(tx.unsigned.timeBounds!.maxTime)*1000).toISOString(),feeStroops:tx.unsigned.fee,networkPassphrase:NETWORK_PASSPHRASE};
+  const baseline={version:1,intentHash:c.intentHash,workflowRevision:1,helper,before:encodePrivate(before)}as PrivateMarginBaseline,after:CustomerSnapshot={...before,ledger:tx.b.ledger,nativeWalletAtomic:(BigInt(before.nativeWalletAtomic)-BigInt(tx.confirmed.feeAtomic)).toString(),position};
+  const evidence=activationEvidence(c,baseline,tx.confirmed,after,customer,now);
+  expect(position.position.debt_shares).toBe(0n);expect(evidence.after.position).toMatchObject({status:'Open',debtAtomic:'9999998'});expect(position.position.collateral_ptokens).toBe(129932005n);
+  expect(()=>activationEvidence(c,baseline,tx.confirmed,{...after,marginDebtAtomic:'0'},customer,now)).toThrow();
+  expect(()=>activationEvidence(c,baseline,tx.confirmed,{...after,position:{...position,position:{...position.position,collateral_ptokens:1n}}},customer,now)).toThrow();
  });
  it('proves cancellation through exact deleted owned records and restored controller receipts',()=>{
   const f=phase('open_cancel'),proof=openCancelEvidence(f.c,f.baseline,f.confirmed,f.after,customer,f.now);
