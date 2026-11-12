@@ -1,0 +1,487 @@
+{
+  "observed_at": "2026-11-12T02:45:00.268Z",
+  "network": "stellar-testnet",
+  "mode": "unsigned_multirequest_diagnostic_simulation_only",
+  "pool_id": "CB3447A446DY3USGWPIDXTNQHF5EX24XDQA2EN6TAZP62JTPBTNOA52Q",
+  "wallet": "GB4PC65ZHBPVEZMAHY2K2KYMS3RFBIN2FQIE3LGTLEHT2DEWVMTD7JYQ",
+  "registry_and_wasm_verified": true,
+  "latest_ledger": 5685571,
+  "requests": [
+    {
+      "request_type": 2,
+      "address": "CAQCFVLOBK5GIULPNZRGATJJMIZL5BSP7X5YJVMGCPTUEPFM4AVSRCJU",
+      "amount": "10000000"
+    },
+    {
+      "request_type": 4,
+      "address": "CAQCFVLOBK5GIULPNZRGATJJMIZL5BSP7X5YJVMGCPTUEPFM4AVSRCJU",
+      "amount": "1000000"
+    },
+    {
+      "request_type": 5,
+      "address": "CAQCFVLOBK5GIULPNZRGATJJMIZL5BSP7X5YJVMGCPTUEPFM4AVSRCJU",
+      "amount": "1001002"
+    }
+  ],
+  "signatures": 0,
+  "broadcast": false,
+  "operations_persisted": 0,
+  "sessions_created": 0,
+  "tx_hash": null,
+  "new_transaction_hashes": [],
+  "customer_authorized": false,
+  "production_preparer_unchanged_single_request": true,
+  "unsigned_diagnostic_xdr": "AAAAAgAAAAB48Xu5OF9SZYA+NK0rDJbiUKG6LBBNrNNZDz0MlqsmPwAAAGQAVoB4AAAADQAAAAEAAAAAAAAAAAAAAABq9ShJAAAAAAAAAAEAAAAAAAAAGAAAAAAAAAABd858HOeHjdJGs9A7zbA5ekvrlxwBojfTBl/tJm8M2uAAAAAGc3VibWl0AAAAAAAEAAAAEgAAAAAAAAAAePF7uThfUmWAPjStKwyW4lChuiwQTazTWQ89DJarJj8AAAASAAAAAAAAAAB48Xu5OF9SZYA+NK0rDJbiUKG6LBBNrNNZDz0MlqsmPwAAABIAAAAAAAAAAHjxe7k4X1JlgD40rSsMluJQobosEE2s01kPPQyWqyY/AAAAEAAAAAEAAAADAAAAEQAAAAEAAAADAAAADwAAAAdhZGRyZXNzAAAAABIAAAABICLVbgq6ZFFvbmJgTSliMr6GT/37hNWGE+dCPKzgKygAAAAPAAAABmFtb3VudAAAAAAACgAAAAAAAAAAAAAAAACYloAAAAAPAAAADHJlcXVlc3RfdHlwZQAAAAMAAAACAAAAEQAAAAEAAAADAAAADwAAAAdhZGRyZXNzAAAAABIAAAABICLVbgq6ZFFvbmJgTSliMr6GT/37hNWGE+dCPKzgKygAAAAPAAAABmFtb3VudAAAAAAACgAAAAAAAAAAAAAAAAAPQkAAAAAPAAAADHJlcXVlc3RfdHlwZQAAAAMAAAAEAAAAEQAAAAEAAAADAAAADwAAAAdhZGRyZXNzAAAAABIAAAABICLVbgq6ZFFvbmJgTSliMr6GT/37hNWGE+dCPKzgKygAAAAPAAAABmFtb3VudAAAAAAACgAAAAAAAAAAAAAAAAAPRioAAAAPAAAADHJlcXVlc3RfdHlwZQAAAAMAAAAFAAAAAAAAAAAAAAAA",
+  "auth": [
+    {
+      "credentials": "sorobanCredentialsSourceAccount",
+      "root": {
+        "function": {
+          "contract": "CB3447A446DY3USGWPIDXTNQHF5EX24XDQA2EN6TAZP62JTPBTNOA52Q",
+          "fn": "submit",
+          "args": [
+            "GB4PC65ZHBPVEZMAHY2K2KYMS3RFBIN2FQIE3LGTLEHT2DEWVMTD7JYQ",
+            "GB4PC65ZHBPVEZMAHY2K2KYMS3RFBIN2FQIE3LGTLEHT2DEWVMTD7JYQ",
+            "GB4PC65ZHBPVEZMAHY2K2KYMS3RFBIN2FQIE3LGTLEHT2DEWVMTD7JYQ",
+            [
+              {
+                "address": "CAQCFVLOBK5GIULPNZRGATJJMIZL5BSP7X5YJVMGCPTUEPFM4AVSRCJU",
+                "amount": "10000000",
+                "request_type": 2
+              },
+              {
+                "address": "CAQCFVLOBK5GIULPNZRGATJJMIZL5BSP7X5YJVMGCPTUEPFM4AVSRCJU",
+                "amount": "1000000",
+                "request_type": 4
+              },
+              {
+                "address": "CAQCFVLOBK5GIULPNZRGATJJMIZL5BSP7X5YJVMGCPTUEPFM4AVSRCJU",
+                "amount": "1001002",
+                "request_type": 5
+              }
+            ]
+          ]
+        },
+        "children": [
+          {
+            "function": {
+              "contract": "CAQCFVLOBK5GIULPNZRGATJJMIZL5BSP7X5YJVMGCPTUEPFM4AVSRCJU",
+              "fn": "transfer",
+              "args": [
+                "GB4PC65ZHBPVEZMAHY2K2KYMS3RFBIN2FQIE3LGTLEHT2DEWVMTD7JYQ",
+                "CB3447A446DY3USGWPIDXTNQHF5EX24XDQA2EN6TAZP62JTPBTNOA52Q",
+                "11001002"
+              ]
+            },
+            "children": []
+          }
+        ]
+      },
+      "xdr": "AAAAAAAAAAAAAAABd858HOeHjdJGs9A7zbA5ekvrlxwBojfTBl/tJm8M2uAAAAAGc3VibWl0AAAAAAAEAAAAEgAAAAAAAAAAePF7uThfUmWAPjStKwyW4lChuiwQTazTWQ89DJarJj8AAAASAAAAAAAAAAB48Xu5OF9SZYA+NK0rDJbiUKG6LBBNrNNZDz0MlqsmPwAAABIAAAAAAAAAAHjxe7k4X1JlgD40rSsMluJQobosEE2s01kPPQyWqyY/AAAAEAAAAAEAAAADAAAAEQAAAAEAAAADAAAADwAAAAdhZGRyZXNzAAAAABIAAAABICLVbgq6ZFFvbmJgTSliMr6GT/37hNWGE+dCPKzgKygAAAAPAAAABmFtb3VudAAAAAAACgAAAAAAAAAAAAAAAACYloAAAAAPAAAADHJlcXVlc3RfdHlwZQAAAAMAAAACAAAAEQAAAAEAAAADAAAADwAAAAdhZGRyZXNzAAAAABIAAAABICLVbgq6ZFFvbmJgTSliMr6GT/37hNWGE+dCPKzgKygAAAAPAAAABmFtb3VudAAAAAAACgAAAAAAAAAAAAAAAAAPQkAAAAAPAAAADHJlcXVlc3RfdHlwZQAAAAMAAAAEAAAAEQAAAAEAAAADAAAADwAAAAdhZGRyZXNzAAAAABIAAAABICLVbgq6ZFFvbmJgTSliMr6GT/37hNWGE+dCPKzgKygAAAAPAAAABmFtb3VudAAAAAAACgAAAAAAAAAAAAAAAAAPRioAAAAPAAAADHJlcXVlc3RfdHlwZQAAAAMAAAAFAAAAAQAAAAAAAAABICLVbgq6ZFFvbmJgTSliMr6GT/37hNWGE+dCPKzgKygAAAAIdHJhbnNmZXIAAAADAAAAEgAAAAAAAAAAePF7uThfUmWAPjStKwyW4lChuiwQTazTWQ89DJarJj8AAAASAAAAAXfOfBznh43SRrPQO82wOXpL65ccAaI30wZf7SZvDNrgAAAACgAAAAAAAAAAAAAAAACn3KoAAAAA"
+    }
+  ],
+  "events": [
+    {
+      "successful": true,
+      "type": "diagnostic",
+      "contract": null,
+      "topics": [
+        "fn_call",
+        {
+          "type": "Buffer",
+          "data": [
+            119,
+            206,
+            124,
+            28,
+            231,
+            135,
+            141,
+            210,
+            70,
+            179,
+            208,
+            59,
+            205,
+            176,
+            57,
+            122,
+            75,
+            235,
+            151,
+            28,
+            1,
+            162,
+            55,
+            211,
+            6,
+            95,
+            237,
+            38,
+            111,
+            12,
+            218,
+            224
+          ]
+        },
+        "submit"
+      ],
+      "data": [
+        "GB4PC65ZHBPVEZMAHY2K2KYMS3RFBIN2FQIE3LGTLEHT2DEWVMTD7JYQ",
+        "GB4PC65ZHBPVEZMAHY2K2KYMS3RFBIN2FQIE3LGTLEHT2DEWVMTD7JYQ",
+        "GB4PC65ZHBPVEZMAHY2K2KYMS3RFBIN2FQIE3LGTLEHT2DEWVMTD7JYQ",
+        [
+          {
+            "address": "CAQCFVLOBK5GIULPNZRGATJJMIZL5BSP7X5YJVMGCPTUEPFM4AVSRCJU",
+            "amount": "10000000",
+            "request_type": 2
+          },
+          {
+            "address": "CAQCFVLOBK5GIULPNZRGATJJMIZL5BSP7X5YJVMGCPTUEPFM4AVSRCJU",
+            "amount": "1000000",
+            "request_type": 4
+          },
+          {
+            "address": "CAQCFVLOBK5GIULPNZRGATJJMIZL5BSP7X5YJVMGCPTUEPFM4AVSRCJU",
+            "amount": "1001002",
+            "request_type": 5
+          }
+        ]
+      ],
+      "xdr": "AAAAAQAAAAAAAAAAAAAAAgAAAAAAAAADAAAADwAAAAdmbl9jYWxsAAAAAA0AAAAgd858HOeHjdJGs9A7zbA5ekvrlxwBojfTBl/tJm8M2uAAAAAPAAAABnN1Ym1pdAAAAAAAEAAAAAEAAAAEAAAAEgAAAAAAAAAAePF7uThfUmWAPjStKwyW4lChuiwQTazTWQ89DJarJj8AAAASAAAAAAAAAAB48Xu5OF9SZYA+NK0rDJbiUKG6LBBNrNNZDz0MlqsmPwAAABIAAAAAAAAAAHjxe7k4X1JlgD40rSsMluJQobosEE2s01kPPQyWqyY/AAAAEAAAAAEAAAADAAAAEQAAAAEAAAADAAAADwAAAAdhZGRyZXNzAAAAABIAAAABICLVbgq6ZFFvbmJgTSliMr6GT/37hNWGE+dCPKzgKygAAAAPAAAABmFtb3VudAAAAAAACgAAAAAAAAAAAAAAAACYloAAAAAPAAAADHJlcXVlc3RfdHlwZQAAAAMAAAACAAAAEQAAAAEAAAADAAAADwAAAAdhZGRyZXNzAAAAABIAAAABICLVbgq6ZFFvbmJgTSliMr6GT/37hNWGE+dCPKzgKygAAAAPAAAABmFtb3VudAAAAAAACgAAAAAAAAAAAAAAAAAPQkAAAAAPAAAADHJlcXVlc3RfdHlwZQAAAAMAAAAEAAAAEQAAAAEAAAADAAAADwAAAAdhZGRyZXNzAAAAABIAAAABICLVbgq6ZFFvbmJgTSliMr6GT/37hNWGE+dCPKzgKygAAAAPAAAABmFtb3VudAAAAAAACgAAAAAAAAAAAAAAAAAPRioAAAAPAAAADHJlcXVlc3RfdHlwZQAAAAMAAAAF"
+    },
+    {
+      "successful": true,
+      "type": "contract",
+      "contract": "CB3447A446DY3USGWPIDXTNQHF5EX24XDQA2EN6TAZP62JTPBTNOA52Q",
+      "topics": [
+        "supply_collateral",
+        "CAQCFVLOBK5GIULPNZRGATJJMIZL5BSP7X5YJVMGCPTUEPFM4AVSRCJU",
+        "GB4PC65ZHBPVEZMAHY2K2KYMS3RFBIN2FQIE3LGTLEHT2DEWVMTD7JYQ"
+      ],
+      "data": [
+        "10000000",
+        "9923088"
+      ],
+      "xdr": "AAAAAQAAAAAAAAABd858HOeHjdJGs9A7zbA5ekvrlxwBojfTBl/tJm8M2uAAAAABAAAAAAAAAAMAAAAPAAAAEXN1cHBseV9jb2xsYXRlcmFsAAAAAAAAEgAAAAEgItVuCrpkUW9uYmBNKWIyvoZP/fuE1YYT50I8rOArKAAAABIAAAAAAAAAAHjxe7k4X1JlgD40rSsMluJQobosEE2s01kPPQyWqyY/AAAAEAAAAAEAAAACAAAACgAAAAAAAAAAAAAAAACYloAAAAAKAAAAAAAAAAAAAAAAAJdqEA=="
+    },
+    {
+      "successful": true,
+      "type": "contract",
+      "contract": "CB3447A446DY3USGWPIDXTNQHF5EX24XDQA2EN6TAZP62JTPBTNOA52Q",
+      "topics": [
+        "borrow",
+        "CAQCFVLOBK5GIULPNZRGATJJMIZL5BSP7X5YJVMGCPTUEPFM4AVSRCJU",
+        "GB4PC65ZHBPVEZMAHY2K2KYMS3RFBIN2FQIE3LGTLEHT2DEWVMTD7JYQ"
+      ],
+      "data": [
+        "1000000",
+        "989367"
+      ],
+      "xdr": "AAAAAQAAAAAAAAABd858HOeHjdJGs9A7zbA5ekvrlxwBojfTBl/tJm8M2uAAAAABAAAAAAAAAAMAAAAPAAAABmJvcnJvdwAAAAAAEgAAAAEgItVuCrpkUW9uYmBNKWIyvoZP/fuE1YYT50I8rOArKAAAABIAAAAAAAAAAHjxe7k4X1JlgD40rSsMluJQobosEE2s01kPPQyWqyY/AAAAEAAAAAEAAAACAAAACgAAAAAAAAAAAAAAAAAPQkAAAAAKAAAAAAAAAAAAAAAAAA8Ytw=="
+    },
+    {
+      "successful": true,
+      "type": "contract",
+      "contract": "CB3447A446DY3USGWPIDXTNQHF5EX24XDQA2EN6TAZP62JTPBTNOA52Q",
+      "topics": [
+        "repay",
+        "CAQCFVLOBK5GIULPNZRGATJJMIZL5BSP7X5YJVMGCPTUEPFM4AVSRCJU",
+        "GB4PC65ZHBPVEZMAHY2K2KYMS3RFBIN2FQIE3LGTLEHT2DEWVMTD7JYQ"
+      ],
+      "data": [
+        "1000001",
+        "989367"
+      ],
+      "xdr": "AAAAAQAAAAAAAAABd858HOeHjdJGs9A7zbA5ekvrlxwBojfTBl/tJm8M2uAAAAABAAAAAAAAAAMAAAAPAAAABXJlcGF5AAAAAAAAEgAAAAEgItVuCrpkUW9uYmBNKWIyvoZP/fuE1YYT50I8rOArKAAAABIAAAAAAAAAAHjxe7k4X1JlgD40rSsMluJQobosEE2s01kPPQyWqyY/AAAAEAAAAAEAAAACAAAACgAAAAAAAAAAAAAAAAAPQkEAAAAKAAAAAAAAAAAAAAAAAA8Ytw=="
+    },
+    {
+      "successful": true,
+      "type": "diagnostic",
+      "contract": "CB3447A446DY3USGWPIDXTNQHF5EX24XDQA2EN6TAZP62JTPBTNOA52Q",
+      "topics": [
+        "fn_call",
+        {
+          "type": "Buffer",
+          "data": [
+            32,
+            34,
+            213,
+            110,
+            10,
+            186,
+            100,
+            81,
+            111,
+            110,
+            98,
+            96,
+            77,
+            41,
+            98,
+            50,
+            190,
+            134,
+            79,
+            253,
+            251,
+            132,
+            213,
+            134,
+            19,
+            231,
+            66,
+            60,
+            172,
+            224,
+            43,
+            40
+          ]
+        },
+        "transfer"
+      ],
+      "data": [
+        "GB4PC65ZHBPVEZMAHY2K2KYMS3RFBIN2FQIE3LGTLEHT2DEWVMTD7JYQ",
+        "CB3447A446DY3USGWPIDXTNQHF5EX24XDQA2EN6TAZP62JTPBTNOA52Q",
+        "11001002"
+      ],
+      "xdr": "AAAAAQAAAAAAAAABd858HOeHjdJGs9A7zbA5ekvrlxwBojfTBl/tJm8M2uAAAAACAAAAAAAAAAMAAAAPAAAAB2ZuX2NhbGwAAAAADQAAACAgItVuCrpkUW9uYmBNKWIyvoZP/fuE1YYT50I8rOArKAAAAA8AAAAIdHJhbnNmZXIAAAAQAAAAAQAAAAMAAAASAAAAAAAAAAB48Xu5OF9SZYA+NK0rDJbiUKG6LBBNrNNZDz0MlqsmPwAAABIAAAABd858HOeHjdJGs9A7zbA5ekvrlxwBojfTBl/tJm8M2uAAAAAKAAAAAAAAAAAAAAAAAKfcqg=="
+    },
+    {
+      "successful": true,
+      "type": "contract",
+      "contract": "CAQCFVLOBK5GIULPNZRGATJJMIZL5BSP7X5YJVMGCPTUEPFM4AVSRCJU",
+      "topics": [
+        "transfer",
+        "GB4PC65ZHBPVEZMAHY2K2KYMS3RFBIN2FQIE3LGTLEHT2DEWVMTD7JYQ",
+        "CB3447A446DY3USGWPIDXTNQHF5EX24XDQA2EN6TAZP62JTPBTNOA52Q",
+        "USDC:GATALTGTWIOT6BUDBCZM3Q4OQ4BO2COLOAZ7IYSKPLC2PMSOPPGF5V56"
+      ],
+      "data": "11001002",
+      "xdr": "AAAAAQAAAAAAAAABICLVbgq6ZFFvbmJgTSliMr6GT/37hNWGE+dCPKzgKygAAAABAAAAAAAAAAQAAAAPAAAACHRyYW5zZmVyAAAAEgAAAAAAAAAAePF7uThfUmWAPjStKwyW4lChuiwQTazTWQ89DJarJj8AAAASAAAAAXfOfBznh43SRrPQO82wOXpL65ccAaI30wZf7SZvDNrgAAAADgAAAD1VU0RDOkdBVEFMVEdUV0lPVDZCVURCQ1pNM1E0T1E0Qk8yQ09MT0FaN0lZU0tQTEMyUE1TT1BQR0Y1VjU2AAAAAAAACgAAAAAAAAAAAAAAAACn3Ko="
+    },
+    {
+      "successful": true,
+      "type": "diagnostic",
+      "contract": "CAQCFVLOBK5GIULPNZRGATJJMIZL5BSP7X5YJVMGCPTUEPFM4AVSRCJU",
+      "topics": [
+        "fn_return",
+        "transfer"
+      ],
+      "data": null,
+      "xdr": "AAAAAQAAAAAAAAABICLVbgq6ZFFvbmJgTSliMr6GT/37hNWGE+dCPKzgKygAAAACAAAAAAAAAAIAAAAPAAAACWZuX3JldHVybgAAAAAAAA8AAAAIdHJhbnNmZXIAAAAB"
+    },
+    {
+      "successful": true,
+      "type": "diagnostic",
+      "contract": "CB3447A446DY3USGWPIDXTNQHF5EX24XDQA2EN6TAZP62JTPBTNOA52Q",
+      "topics": [
+        "fn_call",
+        {
+          "type": "Buffer",
+          "data": [
+            32,
+            34,
+            213,
+            110,
+            10,
+            186,
+            100,
+            81,
+            111,
+            110,
+            98,
+            96,
+            77,
+            41,
+            98,
+            50,
+            190,
+            134,
+            79,
+            253,
+            251,
+            132,
+            213,
+            134,
+            19,
+            231,
+            66,
+            60,
+            172,
+            224,
+            43,
+            40
+          ]
+        },
+        "transfer"
+      ],
+      "data": [
+        "CB3447A446DY3USGWPIDXTNQHF5EX24XDQA2EN6TAZP62JTPBTNOA52Q",
+        "GB4PC65ZHBPVEZMAHY2K2KYMS3RFBIN2FQIE3LGTLEHT2DEWVMTD7JYQ",
+        "1001001"
+      ],
+      "xdr": "AAAAAQAAAAAAAAABd858HOeHjdJGs9A7zbA5ekvrlxwBojfTBl/tJm8M2uAAAAACAAAAAAAAAAMAAAAPAAAAB2ZuX2NhbGwAAAAADQAAACAgItVuCrpkUW9uYmBNKWIyvoZP/fuE1YYT50I8rOArKAAAAA8AAAAIdHJhbnNmZXIAAAAQAAAAAQAAAAMAAAASAAAAAXfOfBznh43SRrPQO82wOXpL65ccAaI30wZf7SZvDNrgAAAAEgAAAAAAAAAAePF7uThfUmWAPjStKwyW4lChuiwQTazTWQ89DJarJj8AAAAKAAAAAAAAAAAAAAAAAA9GKQ=="
+    },
+    {
+      "successful": true,
+      "type": "contract",
+      "contract": "CAQCFVLOBK5GIULPNZRGATJJMIZL5BSP7X5YJVMGCPTUEPFM4AVSRCJU",
+      "topics": [
+        "transfer",
+        "CB3447A446DY3USGWPIDXTNQHF5EX24XDQA2EN6TAZP62JTPBTNOA52Q",
+        "GB4PC65ZHBPVEZMAHY2K2KYMS3RFBIN2FQIE3LGTLEHT2DEWVMTD7JYQ",
+        "USDC:GATALTGTWIOT6BUDBCZM3Q4OQ4BO2COLOAZ7IYSKPLC2PMSOPPGF5V56"
+      ],
+      "data": "1001001",
+      "xdr": "AAAAAQAAAAAAAAABICLVbgq6ZFFvbmJgTSliMr6GT/37hNWGE+dCPKzgKygAAAABAAAAAAAAAAQAAAAPAAAACHRyYW5zZmVyAAAAEgAAAAF3znwc54eN0kaz0DvNsDl6S+uXHAGiN9MGX+0mbwza4AAAABIAAAAAAAAAAHjxe7k4X1JlgD40rSsMluJQobosEE2s01kPPQyWqyY/AAAADgAAAD1VU0RDOkdBVEFMVEdUV0lPVDZCVURCQ1pNM1E0T1E0Qk8yQ09MT0FaN0lZU0tQTEMyUE1TT1BQR0Y1VjU2AAAAAAAACgAAAAAAAAAAAAAAAAAPRik="
+    },
+    {
+      "successful": true,
+      "type": "diagnostic",
+      "contract": "CAQCFVLOBK5GIULPNZRGATJJMIZL5BSP7X5YJVMGCPTUEPFM4AVSRCJU",
+      "topics": [
+        "fn_return",
+        "transfer"
+      ],
+      "data": null,
+      "xdr": "AAAAAQAAAAAAAAABICLVbgq6ZFFvbmJgTSliMr6GT/37hNWGE+dCPKzgKygAAAACAAAAAAAAAAIAAAAPAAAACWZuX3JldHVybgAAAAAAAA8AAAAIdHJhbnNmZXIAAAAB"
+    },
+    {
+      "successful": true,
+      "type": "diagnostic",
+      "contract": "CB3447A446DY3USGWPIDXTNQHF5EX24XDQA2EN6TAZP62JTPBTNOA52Q",
+      "topics": [
+        "fn_return",
+        "submit"
+      ],
+      "data": {
+        "collateral": {
+          "3": "9923088"
+        },
+        "liabilities": {},
+        "supply": {}
+      },
+      "xdr": "AAAAAQAAAAAAAAABd858HOeHjdJGs9A7zbA5ekvrlxwBojfTBl/tJm8M2uAAAAACAAAAAAAAAAIAAAAPAAAACWZuX3JldHVybgAAAAAAAA8AAAAGc3VibWl0AAAAAAARAAAAAQAAAAMAAAAPAAAACmNvbGxhdGVyYWwAAAAAABEAAAABAAAAAQAAAAMAAAADAAAACgAAAAAAAAAAAAAAAACXahAAAAAPAAAAC2xpYWJpbGl0aWVzAAAAABEAAAABAAAAAAAAAA8AAAAGc3VwcGx5AAAAAAARAAAAAQAAAAA="
+    }
+  ],
+  "state_changes": [
+    {
+      "type": "updated",
+      "key_xdr": "AAAAAQAAAAB48Xu5OF9SZYA+NK0rDJbiUKG6LBBNrNNZDz0MlqsmPwAAAAFVU0RDAAAAACYFzNOyHT8GgwiyzcOOhwLtCctwM/RiSnrFp7JOe8xe",
+      "before_xdr": "AFaldgAAAAEAAAAAePF7uThfUmWAPjStKwyW4lChuiwQTazTWQ89DJarJj8AAAABVVNEQwAAAAAmBczTsh0/BoMIss3DjocC7QnLcDP0Ykp6xaeyTnvMXgAAAAAF+qXsAAAAAlQL5AAAAAABAAAAAAAAAAA=",
+      "after_xdr": "AAAAAAAAAAEAAAAAePF7uThfUmWAPjStKwyW4lChuiwQTazTWQ89DJarJj8AAAABVVNEQwAAAAAmBczTsh0/BoMIss3DjocC7QnLcDP0Ykp6xaeyTnvMXgAAAAAFYg9rAAAAAlQL5AAAAAABAAAAAAAAAAA="
+    },
+    {
+      "type": "updated",
+      "key_xdr": "AAAABgAAAAEgItVuCrpkUW9uYmBNKWIyvoZP/fuE1YYT50I8rOArKAAAABAAAAABAAAAAgAAAA8AAAAHQmFsYW5jZQAAAAASAAAAAXfOfBznh43SRrPQO82wOXpL65ccAaI30wZf7SZvDNrgAAAAAQ==",
+      "before_xdr": "AFa7ngAAAAYAAAAAAAAAASAi1W4KumRRb25iYE0pYjK+hk/9+4TVhhPnQjys4CsoAAAAEAAAAAEAAAACAAAADwAAAAdCYWxhbmNlAAAAABIAAAABd858HOeHjdJGs9A7zbA5ekvrlxwBojfTBl/tJm8M2uAAAAABAAAAEQAAAAEAAAADAAAADwAAAAZhbW91bnQAAAAAAAoAAAAAAAAAAAAAADUspnLTAAAADwAAAAphdXRob3JpemVkAAAAAAAAAAAAAQAAAA8AAAAIY2xhd2JhY2sAAAAAAAAAAAAAAAA=",
+      "after_xdr": "AFa7ngAAAAYAAAAAAAAAASAi1W4KumRRb25iYE0pYjK+hk/9+4TVhhPnQjys4CsoAAAAEAAAAAEAAAACAAAADwAAAAdCYWxhbmNlAAAAABIAAAABd858HOeHjdJGs9A7zbA5ekvrlxwBojfTBl/tJm8M2uAAAAABAAAAEQAAAAEAAAADAAAADwAAAAZhbW91bnQAAAAAAAoAAAAAAAAAAAAAADUtPwlUAAAADwAAAAphdXRob3JpemVkAAAAAAAAAAAAAQAAAA8AAAAIY2xhd2JhY2sAAAAAAAAAAAAAAAA="
+    },
+    {
+      "type": "created",
+      "key_xdr": "AAAABgAAAAF3znwc54eN0kaz0DvNsDl6S+uXHAGiN9MGX+0mbwza4AAAABAAAAABAAAAAgAAAA8AAAAJUG9zaXRpb25zAAAAAAAAEgAAAAAAAAAAePF7uThfUmWAPjStKwyW4lChuiwQTazTWQ89DJarJj8AAAAB",
+      "before_xdr": null,
+      "after_xdr": "AAAAAAAAAAYAAAAAAAAAAXfOfBznh43SRrPQO82wOXpL65ccAaI30wZf7SZvDNrgAAAAEAAAAAEAAAACAAAADwAAAAlQb3NpdGlvbnMAAAAAAAASAAAAAAAAAAB48Xu5OF9SZYA+NK0rDJbiUKG6LBBNrNNZDz0MlqsmPwAAAAEAAAARAAAAAQAAAAMAAAAPAAAACmNvbGxhdGVyYWwAAAAAABEAAAABAAAAAQAAAAMAAAADAAAACgAAAAAAAAAAAAAAAACXahAAAAAPAAAAC2xpYWJpbGl0aWVzAAAAABEAAAABAAAAAAAAAA8AAAAGc3VwcGx5AAAAAAARAAAAAQAAAAAAAAAA"
+    },
+    {
+      "type": "updated",
+      "key_xdr": "AAAABgAAAAF3znwc54eN0kaz0DvNsDl6S+uXHAGiN9MGX+0mbwza4AAAABAAAAABAAAAAgAAAA8AAAAHUmVzRGF0YQAAAAASAAAAASAi1W4KumRRb25iYE0pYjK+hk/9+4TVhhPnQjys4CsoAAAAAQ==",
+      "before_xdr": "AFa7ngAAAAYAAAAAAAAAAXfOfBznh43SRrPQO82wOXpL65ccAaI30wZf7SZvDNrgAAAAEAAAAAEAAAACAAAADwAAAAdSZXNEYXRhAAAAABIAAAABICLVbgq6ZFFvbmJgTSliMr6GT/37hNWGE+dCPKzgKygAAAABAAAAEQAAAAEAAAAHAAAADwAAAAZiX3JhdGUAAAAAAAoAAAAAAAAAAAAAAOqhaXzcAAAADwAAAAhiX3N1cHBseQAAAAoAAAAAAAAAAAAAAQkhjUKWAAAADwAAAA9iYWNrc3RvcF9jcmVkaXQAAAAACgAAAAAAAAAAAAAAADmXfGoAAAAPAAAABmRfcmF0ZQAAAAAACgAAAAAAAAAAAAAA61OWzJ8AAAAPAAAACGRfc3VwcGx5AAAACgAAAAAAAAAAAAAA0/WD3rUAAAAPAAAABmlyX21vZAAAAAAACgAAAAAAAAAAAAAAAAEGUqoAAAAPAAAACWxhc3RfdGltZQAAAAAAAAUAAAAAavUL8QAAAAA=",
+      "after_xdr": "AFa7ngAAAAYAAAAAAAAAAXfOfBznh43SRrPQO82wOXpL65ccAaI30wZf7SZvDNrgAAAAEAAAAAEAAAACAAAADwAAAAdSZXNEYXRhAAAAABIAAAABICLVbgq6ZFFvbmJgTSliMr6GT/37hNWGE+dCPKzgKygAAAABAAAAEQAAAAEAAAAHAAAADwAAAAZiX3JhdGUAAAAAAAoAAAAAAAAAAAAAAOqioMsgAAAADwAAAAhiX3N1cHBseQAAAAoAAAAAAAAAAAAAAQkiJKymAAAADwAAAA9iYWNrc3RvcF9jcmVkaXQAAAAACgAAAAAAAAAAAAAAADm+38QAAAAPAAAABmRfcmF0ZQAAAAAACgAAAAAAAAAAAAAA61VHdz4AAAAPAAAACGRfc3VwcGx5AAAACgAAAAAAAAAAAAAA0/WD3rUAAAAPAAAABmlyX21vZAAAAAAACgAAAAAAAAAAAAAAAAEGjCMAAAAPAAAACWxhc3RfdGltZQAAAAAAAAUAAAAAavUoKgAAAAA="
+    },
+    {
+      "type": "created",
+      "key_xdr": "AAAABgAAAAF3znwc54eN0kaz0DvNsDl6S+uXHAGiN9MGX+0mbwza4AAAABAAAAABAAAAAgAAAA8AAAAIVXNlckVtaXMAAAARAAAAAQAAAAIAAAAPAAAACnJlc2VydmVfaWQAAAAAAAMAAAAGAAAADwAAAAR1c2VyAAAAEgAAAAAAAAAAePF7uThfUmWAPjStKwyW4lChuiwQTazTWQ89DJarJj8AAAAB",
+      "before_xdr": null,
+      "after_xdr": "AAAAAAAAAAYAAAAAAAAAAXfOfBznh43SRrPQO82wOXpL65ccAaI30wZf7SZvDNrgAAAAEAAAAAEAAAACAAAADwAAAAhVc2VyRW1pcwAAABEAAAABAAAAAgAAAA8AAAAKcmVzZXJ2ZV9pZAAAAAAAAwAAAAYAAAAPAAAABHVzZXIAAAASAAAAAAAAAAB48Xu5OF9SZYA+NK0rDJbiUKG6LBBNrNNZDz0MlqsmPwAAAAEAAAARAAAAAQAAAAIAAAAPAAAAB2FjY3J1ZWQAAAAACgAAAAAAAAAAAAAAAAAAAAAAAAAPAAAABWluZGV4AAAAAAAACgAAAAAAAAAAAAAAC+iDTssAAAAA"
+    }
+  ],
+  "simulated_positions": {
+    "collateral": {
+      "3": "9923088"
+    },
+    "liabilities": {},
+    "supply": {}
+  },
+  "repay_requested_atomic": "1001002",
+  "repay_actual_principal_atomic": "1000001",
+  "repay_refund_atomic": "1001",
+  "batch_incoming_usdc_atomic": "11001002",
+  "batch_outgoing_usdc_atomic": "1001001",
+  "simulated_remaining_debt_tokens": "0",
+  "actual_positions_before": [
+    {
+      "market_id": "stellar-testnet:blend:CB3447A446DY3USGWPIDXTNQHF5EX24XDQA2EN6TAZP62JTPBTNOA52Q:CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC",
+      "pool_contract_id": "CB3447A446DY3USGWPIDXTNQHF5EX24XDQA2EN6TAZP62JTPBTNOA52Q",
+      "reserve_contract_id": "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC",
+      "asset_id": "stellar-testnet:native:XLM",
+      "supplied": "0.0000000",
+      "collateral": "0.0000000",
+      "borrowed": "0.0000000",
+      "as_of": "2026-11-12T02:44:59.400Z",
+      "as_of_ledger": 5685571,
+      "debt_tokens": "0",
+      "debt_rate": "1104570807715",
+      "rate_decimals": 12,
+      "reserve_index": 0,
+      "collateral_tokens": "0",
+      "collateral_rate": "1086158363990"
+    },
+    {
+      "market_id": "stellar-testnet:blend:CB3447A446DY3USGWPIDXTNQHF5EX24XDQA2EN6TAZP62JTPBTNOA52Q:CAQCFVLOBK5GIULPNZRGATJJMIZL5BSP7X5YJVMGCPTUEPFM4AVSRCJU",
+      "pool_contract_id": "CB3447A446DY3USGWPIDXTNQHF5EX24XDQA2EN6TAZP62JTPBTNOA52Q",
+      "reserve_contract_id": "CAQCFVLOBK5GIULPNZRGATJJMIZL5BSP7X5YJVMGCPTUEPFM4AVSRCJU",
+      "asset_id": "stellar-testnet:classic:USDC:GATALTGTWIOT6BUDBCZM3Q4OQ4BO2COLOAZ7IYSKPLC2PMSOPPGF5V56",
+      "supplied": "0.0000000",
+      "collateral": "0.0000000",
+      "borrowed": "0.0000000",
+      "as_of": "2026-11-12T02:44:59.400Z",
+      "as_of_ledger": 5685571,
+      "debt_tokens": "0",
+      "debt_rate": "1010748061502",
+      "rate_decimals": 12,
+      "reserve_index": 3,
+      "collateral_tokens": "0",
+      "collateral_rate": "1007750794016"
+    }
+  ],
+  "actual_positions_after": [
+    {
+      "market_id": "stellar-testnet:blend:CB3447A446DY3USGWPIDXTNQHF5EX24XDQA2EN6TAZP62JTPBTNOA52Q:CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC",
+      "pool_contract_id": "CB3447A446DY3USGWPIDXTNQHF5EX24XDQA2EN6TAZP62JTPBTNOA52Q",
+      "reserve_contract_id": "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC",
+      "asset_id": "stellar-testnet:native:XLM",
+      "supplied": "0.0000000",
+      "collateral": "0.0000000",
+      "borrowed": "0.0000000",
+      "as_of": "2026-11-12T02:45:00.268Z",
+      "as_of_ledger": 5685571,
+      "debt_tokens": "0",
+      "debt_rate": "1104570873909",
+      "rate_decimals": 12,
+      "reserve_index": 0,
+      "collateral_tokens": "0",
+      "collateral_rate": "1086158418512"
+    },
+    {
+      "market_id": "stellar-testnet:blend:CB3447A446DY3USGWPIDXTNQHF5EX24XDQA2EN6TAZP62JTPBTNOA52Q:CAQCFVLOBK5GIULPNZRGATJJMIZL5BSP7X5YJVMGCPTUEPFM4AVSRCJU",
+      "pool_contract_id": "CB3447A446DY3USGWPIDXTNQHF5EX24XDQA2EN6TAZP62JTPBTNOA52Q",
+      "reserve_contract_id": "CAQCFVLOBK5GIULPNZRGATJJMIZL5BSP7X5YJVMGCPTUEPFM4AVSRCJU",
+      "asset_id": "stellar-testnet:classic:USDC:GATALTGTWIOT6BUDBCZM3Q4OQ4BO2COLOAZ7IYSKPLC2PMSOPPGF5V56",
+      "supplied": "0.0000000",
+      "collateral": "0.0000000",
+      "borrowed": "0.0000000",
+      "as_of": "2026-11-12T02:45:00.268Z",
+      "as_of_ledger": 5685571,
+      "debt_tokens": "0",
+      "debt_rate": "1010748065427",
+      "rate_decimals": 12,
+      "reserve_index": 3,
+      "collateral_tokens": "0",
+      "collateral_rate": "1007750796840"
+    }
+  ],
+  "actual_position_tokens_unchanged": true,
+  "acceptance": "Deployed-contract simulation only. Actual customer-signed nonzero-refund repayment acceptance remains pending."
+}
