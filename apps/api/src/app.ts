@@ -28,7 +28,6 @@ const metadata:Record<ModuleId,{name:string;provider:string;description:string}>
  'trade.spot':{name:'Crypto',provider:'soroswap',description:'Stellar Testnet swaps'},
  'trade.stocks':{name:'Tokenized Stocks',provider:'sodax',description:'Provider stock route is mainnet-only; Testnet execution is blocked'},
  'trade.perps':{name:'Margin Trading',provider:'peridot',description:'Stellar Testnet leveraged margin markets'},
- 'trade.commodities':{name:'Commodity-linked Assets',provider:'stellar',description:'No verified Testnet commodity issuer and liquid route'}
 };
 export async function buildApp(options:AppOptions={}):Promise<FastifyInstance>{
  const config=options.config??loadConfig();const ownPool=!options.pool;const pool=options.pool??createPool(config.databaseUrl);

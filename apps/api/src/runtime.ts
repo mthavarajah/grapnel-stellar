@@ -36,7 +36,6 @@ import {SpotProofReadiness} from './modules/spot/proof.js';
 import { SpotService } from './modules/spot/service.js';
 import { registerSpotRoutes } from './modules/spot/routes.js';
 import {StocksTestnetDiscovery} from './adapters/stocks/index.js';
-import {CommodityAdapter,COMMODITIES_BLOCK_REASON} from './adapters/commodities/index.js';
 import {PeridotMarginAdapter,PERIDOT_COLLATERAL,PERIDOT_TESTNET_PINS} from './adapters/peridot/index.js';
 import { WalletService } from './modules/wallets/service.js';
 import { hasFundingRoundTripProof, verifyNativeTransfer } from './modules/funding/readiness.js';
@@ -109,7 +108,6 @@ export async function createRuntime(pool?:Pool,marginRoutes:RuntimeMarginBinding
   collateralFunding:{adapter:marginFunding,ready:()=>customerMargin.executionReady()},fundingExecution:createMarginFundingExecutionBridge(operations,marginFunding),...marginRoutes,
  };
  const stocks=new StocksTestnetDiscovery({network:config.network,networkPassphrase:NETWORK_PASSPHRASE});
- const commodities=new CommodityAdapter({network:config.network,passphrase:NETWORK_PASSPHRASE});
  let stocksReason='STOCKS_ROUTE_USES_MAINNET_ASSETS',stocksProbeAt=0,stocksProbeRunning=false;
  const stocksReadiness=async()=>{
   if(!stocksProbeRunning&&Date.now()-stocksProbeAt>60000){stocksProbeRunning=true;void stocks.probe().then(result=>{stocksReason=result.reason;}).catch(()=>{stocksReason='STOCKS_DISCOVERY_UNAVAILABLE';}).finally(()=>{stocksProbeAt=Date.now();stocksProbeRunning=false;});}
@@ -210,7 +208,6 @@ export async function createRuntime(pool?:Pool,marginRoutes:RuntimeMarginBinding
     if(Date.now()-marginAt>15000&&!marginLoading)void readMarginMarkets().catch(()=>{});
     const current=marginRows?.[0];return {execution_status:current?'discovery_only' as const:'blocked' as const,reason:current?.reason??'PERIDOT_DISCOVERY_PENDING',actions:current?['read_markets']:[]};
    },
-   'trade.commodities':async()=>({execution_status:'blocked' as const,reason:COMMODITIES_BLOCK_REASON,actions:[]}),
    'capital.wallets':async()=>{const current=await hasGate1Proof(chain);return {execution_status:current?'testnet_verified':'blocked',reason:current?null:privy?'Privy-signed Testnet payment proof is pending':'PRIVY_APP_ID and PRIVY_APP_SECRET are required',actions:current?['provision','balances','test_payment']:[]};},
    'capital.testnet_funding':readFundingReadiness
   },
@@ -270,7 +267,7 @@ export async function createRuntime(pool?:Pool,marginRoutes:RuntimeMarginBinding
    await registerMarginFundingRoutes(app,{operations,...marginBindings.collateralFunding});
    await registerLendingRoutes(app,{adapter:blend,borrowing,operations,balanceReader:address=>chain.getClassicBalances(address)});
    await registerSpotRoutes(app,{service:new SpotService(spot,db,operations,createSpotReservation(operations,readSpotBalances)),refreshReadiness:()=>spotReadiness.refresh(),requireBusiness,requireCustomer,success,
-    readDiscoveryMarkets:async category=>category==='perps'?readMarginMarkets():category==='commodities'?commodities.markets():(await stocks.catalog()).map(market=>({...market,underlying:{symbol:market.symbol,name:market.name}})),
+    readDiscoveryMarkets:async category=>category==='perps'?readMarginMarkets():(await stocks.catalog()).map(market=>({...market,underlying:{symbol:market.symbol,name:market.name}})),
     readPositions:async customer=>({wallet_holdings:await wallets.balances(customer.businessId,customer.walletId),venue_positions:[]})});
    await registerFundingRoutes(app,{service:new FundingService(funding,operations),requireBusiness,requireCustomer,success});
   }

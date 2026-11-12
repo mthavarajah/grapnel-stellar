@@ -127,7 +127,11 @@ describe.skipIf(!url)('Spot HTTP/DB workflow — isolated provider and chain fix
   await noDeltaWorker.tick();expect((await operations.get(tenantA,id)).status).toBe('confirming');expect(send).toHaveBeenCalledTimes(1);expect(verify).toHaveBeenCalledTimes(1);
   expect((await app.inject({url:'/v1/trade/orders/'+id,headers:auth()})).json().data).toMatchObject({actual_in_atomic:null,actual_out_atomic:null});
  });
- it('does not return P2 stock/perp/commodity markets or invented fills',async()=>{
-  for(const type of ['stocks','perps','commodities']){const response=await app.inject({url:'/v1/trade/markets?asset_class='+type,headers:auth()});expect(response.statusCode).toBe(200);expect(response.json().data).toEqual([]);}
+ it('does not return unconfigured stock/perp markets or invented fills',async()=>{
+  for(const type of ['stocks','perps']){const response=await app.inject({url:'/v1/trade/markets?asset_class='+type,headers:auth()});expect(response.statusCode).toBe(200);expect(response.json().data).toEqual([]);}
+ });
+ it('rejects the removed commodity market category',async()=>{
+  const response=await app.inject({url:'/v1/trade/markets?asset_class=commodities',headers:auth()});
+  expect(response.statusCode).toBe(422);expect(response.json().error.code).toBe('VALIDATION_ERROR');
  });
 });

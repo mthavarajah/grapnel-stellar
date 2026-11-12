@@ -13,9 +13,6 @@ const YAHOO_TICKERS = {
   AAPL: "AAPL",
   NVDA: "NVDA",
   TSLA: "TSLA",
-  "GC=F": "GC=F",
-  "SI=F": "SI=F",
-  "CL=F": "CL=F",
 } as const;
 type YahooSymbol = keyof typeof YAHOO_TICKERS;
 
@@ -33,7 +30,7 @@ export interface MarketOverviewItem {
   as_of: string;
 }
 export interface MarketOverviewSection {
-  id: "spot" | "perps" | "stocks" | "commodities" | "lending";
+  id: "spot" | "perps" | "stocks" | "lending";
   label: string;
   items: MarketOverviewItem[];
   available: boolean;
@@ -49,7 +46,7 @@ export interface MarketOverviewDependencies {
   now?: () => number;
 }
 
-const referenceItems: Record<"spot" | "stocks" | "commodities", Array<{ symbol: YahooSymbol; name: string; maxAgeMs: number; unit_detail?: string }>> = {
+const referenceItems: Record<"spot" | "stocks", Array<{ symbol: YahooSymbol; name: string; maxAgeMs: number; unit_detail?: string }>> = {
   spot: [
     { symbol: "BTC", name: "Bitcoin", maxAgeMs: 15 * 60_000 },
     { symbol: "ETH", name: "Ethereum", maxAgeMs: 15 * 60_000 },
@@ -59,11 +56,6 @@ const referenceItems: Record<"spot" | "stocks" | "commodities", Array<{ symbol: 
     { symbol: "AAPL", name: "Apple", maxAgeMs: 7 * 86_400_000 },
     { symbol: "NVDA", name: "NVIDIA", maxAgeMs: 7 * 86_400_000 },
     { symbol: "TSLA", name: "Tesla", maxAgeMs: 7 * 86_400_000 },
-  ],
-  commodities: [
-    { symbol: "GC=F", name: "Gold futures", unit_detail: "USD per troy ounce", maxAgeMs: 7 * 86_400_000 },
-    { symbol: "SI=F", name: "Silver futures", unit_detail: "USD per troy ounce", maxAgeMs: 7 * 86_400_000 },
-    { symbol: "CL=F", name: "Crude oil futures", unit_detail: "USD per barrel", maxAgeMs: 7 * 86_400_000 },
   ],
 };
 
@@ -79,7 +71,7 @@ function sourceDate(value: unknown, now: number, maxAgeMs: number): string | nul
 }
 
 async function referenceSection(
-  id: "spot" | "stocks" | "commodities",
+  id: "spot" | "stocks",
   label: string,
   items: Array<{ symbol: YahooSymbol; name: string; maxAgeMs: number; unit_detail?: string }>,
   deps: MarketOverviewDependencies,
@@ -159,7 +151,6 @@ export class MarketOverviewService {
       return { id: "perps", label: "Margin prices", items, available: items.length > 0 };
     })();
     if (enabled.has("trade.stocks")) sections.stocks = referenceSection("stocks", "Stock prices", referenceItems.stocks, this.deps, this.now());
-    if (enabled.has("trade.commodities")) sections.commodities = referenceSection("commodities", "Commodity futures", referenceItems.commodities, this.deps, this.now());
     if (enabled.has("capital.lending")) sections.lending = (async () => {
       let markets: BlendMarket[] = [];
       try { markets = await this.deps.lending(); } catch { /* preserve other enabled sections */ }
@@ -177,7 +168,7 @@ export class MarketOverviewService {
       }
       return { id: "lending", label: "Lending rates", items, available: items.length > 0 };
     })();
-    const ordered = (["spot", "perps", "stocks", "commodities", "lending"] as const).flatMap(id => sections[id] ? [sections[id]!] : []);
+    const ordered = (["spot", "perps", "stocks", "lending"] as const).flatMap(id => sections[id] ? [sections[id]!] : []);
     return { as_of: new Date(this.now()).toISOString(), sections: await Promise.all(ordered) };
   }
 }

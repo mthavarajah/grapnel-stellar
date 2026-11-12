@@ -9,12 +9,12 @@ export interface SpotRouteDependencies {
  requireCustomer(request:FastifyRequest,customerId:string,walletId?:string):Promise<CustomerContext>;
  success(request:FastifyRequest,data:unknown):unknown;
  readPositions?(customer:CustomerContext):Promise<unknown>;
- readDiscoveryMarkets?(category:'stocks'|'perps'|'commodities'):Promise<unknown[]>;
+ readDiscoveryMarkets?(category:'stocks'|'perps'):Promise<unknown[]>;
 }
 const key=(request:FastifyRequest)=>typeof request.headers['idempotency-key']==='string'?request.headers['idempotency-key']:'';
 export async function registerSpotRoutes(app:FastifyInstance,deps:SpotRouteDependencies):Promise<void> {
  app.get('/v1/trade/markets',async request=>{
-  const query=z.object({asset_class:z.enum(['crypto_spot','stocks','perps','commodities']).default('crypto_spot')}).parse(request.query);
+  const query=z.object({asset_class:z.enum(['crypto_spot','stocks','perps']).default('crypto_spot')}).parse(request.query);
   const module:ModuleId=query.asset_class==='crypto_spot'?'trade.spot':`trade.${query.asset_class}`;
   await deps.requireBusiness(request,module);
   if(query.asset_class==='crypto_spot')await deps.refreshReadiness?.();

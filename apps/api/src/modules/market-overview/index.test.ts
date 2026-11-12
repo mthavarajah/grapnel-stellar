@@ -32,17 +32,17 @@ function blendMarket(code: "XLM" | "USDC", apy: number | null, as_of = new Date(
 }
 
 describe("MarketOverviewService", () => {
-  it("returns enabled sections only with real bounded symbols, unit-aware futures, current perps and exact-asset Blend rates", async () => {
-    const referencePrice = vi.fn(async (symbol: string) => ({ BTC: quote("74200.5"), ETH: quote("2100"), XLM: quote("0.15"), AAPL: quote("355.15"), NVDA: quote("190"), TSLA: quote("330"), "GC=F": quote("4000"), "SI=F": quote("45"), "CL=F": quote("60") }[symbol] ?? null));
+  it("returns enabled sections only with real bounded symbols, current perps and exact-asset Blend rates", async () => {
+    const referencePrice = vi.fn(async (symbol: string) => ({ BTC: quote("74200.5"), ETH: quote("2100"), XLM: quote("0.15"), AAPL: quote("355.15"), NVDA: quote("190"), TSLA: quote("330") }[symbol] ?? null));
     const service = new MarketOverviewService({
       referencePrice,
       perps: async () => [perps("BTC", "74201.0000000"), perps("ETH", "2101.0000000"), perps("XLM", "0.1500000"), perps("SOL", "150.0000000")],
       lending: async () => [blendMarket("XLM", 0.0525), blendMarket("USDC", 0.0375), blendMarket("USDC", 99, asOf, "classic", "GWRONGISSUER"), blendMarket("USDC", 99, asOf, "soroban")],
       now: () => now,
     });
-    const result = await service.read(["trade.spot", "trade.perps", "trade.stocks", "trade.commodities", "capital.lending"]);
+    const result = await service.read(["trade.spot", "trade.perps", "trade.stocks", "capital.lending"]);
     expect(result.as_of).toBe(new Date(now).toISOString());
-    expect(result.sections.map(section => section.id)).toEqual(["spot", "perps", "stocks", "commodities", "lending"]);
+    expect(result.sections.map(section => section.id)).toEqual(["spot", "perps", "stocks", "lending"]);
     expect(result.sections.every(section => section.available && section.items.length <= 3)).toBe(true);
     expect(result.sections.find(section => section.id === "spot")?.items).toMatchObject([
       { symbol: "BTC", value: "74200.5", unit: "USD", as_of: asOf },
@@ -50,17 +50,12 @@ describe("MarketOverviewService", () => {
       { symbol: "XLM", value: "0.15", unit: "USD" },
     ]);
     expect(result.sections.find(section => section.id === "stocks")?.items.map(item => item.symbol)).toEqual(["AAPL", "NVDA", "TSLA"]);
-    expect(result.sections.find(section => section.id === "commodities")?.items).toMatchObject([
-      { symbol: "GC=F", name: "Gold futures", unit_detail: "USD per troy ounce" },
-      { symbol: "SI=F", name: "Silver futures", unit_detail: "USD per troy ounce" },
-      { symbol: "CL=F", name: "Crude oil futures", unit_detail: "USD per barrel" },
-    ]);
     expect(result.sections.find(section => section.id === "perps")?.items.map(item => item.symbol)).toEqual(["BTC", "ETH", "XLM"]);
     expect(result.sections.find(section => section.id === "lending")?.items).toMatchObject([
       { symbol: "XLM", value: "5.25", unit: "percent", unit_detail: "Variable APY" },
       { symbol: "USDC", value: "3.75", unit: "percent", unit_detail: "Variable APY" },
     ]);
-    expect(referencePrice).toHaveBeenCalledTimes(9);
+    expect(referencePrice).toHaveBeenCalledTimes(6);
   });
 
   it("omits disabled sections and does not touch their providers", async () => {
@@ -126,18 +121,18 @@ function yahooBody(symbol: string, price = 123.45, time = Math.floor(now / 1000)
 
 describe("Yahoo fixed-allowlist reference reader", () => {
   it("uses a fixed HTTPS ticker map, USD metadata, timeouts, safe cache and request coalescing", async () => {
-    const fetcher = vi.fn<typeof fetch>().mockResolvedValue(new Response(JSON.stringify(yahooBody("GC=F", 3998.4)), { status: 200 }));
+    const fetcher = vi.fn<typeof fetch>().mockResolvedValue(new Response(JSON.stringify(yahooBody("AAPL", 355.15)), { status: 200 }));
     let clock = now;
     const read = createYahooReferencePriceReader({ fetcher, now: () => clock });
-    const [first, second] = await Promise.all([read("GC=F"), read("GC=F")]);
-    expect(first).toEqual({ value: "3998.4", as_of: new Date(now - 30_000).toISOString() });
+    const [first, second] = await Promise.all([read("AAPL"), read("AAPL")]);
+    expect(first).toEqual({ value: "355.15", as_of: new Date(now - 30_000).toISOString() });
     expect(second).toEqual(first);
     expect(fetcher).toHaveBeenCalledTimes(1);
     const [url, init] = fetcher.mock.calls[0]!;
-    expect(String(url)).toBe("https://query1.finance.yahoo.com/v8/finance/chart/GC%3DF?range=1d&interval=1m");
+    expect(String(url)).toBe("https://query1.finance.yahoo.com/v8/finance/chart/AAPL?range=1d&interval=1m");
     expect(init).toMatchObject({ method: "GET", headers: { Accept: "application/json" }, redirect: "error" });
     clock += 61_000;
-    await read("GC=F");
+    await read("AAPL");
     expect(fetcher).toHaveBeenCalledTimes(2);
   });
 
@@ -152,6 +147,7 @@ describe("Yahoo fixed-allowlist reference reader", () => {
     });
     const read = createYahooReferencePriceReader({ fetcher, now: () => now });
     await expect(read("../private" )).resolves.toBeNull();
+    for (const symbol of ["GC=F", "SI=F", "CL=F"]) await expect(read(symbol)).resolves.toBeNull();
     for (const symbol of ["BTC", "ETH", "XLM", "AAPL", "NVDA"]) await expect(read(symbol)).resolves.toBeNull();
     expect(fetcher).toHaveBeenCalledTimes(5);
   });
