@@ -5,7 +5,7 @@ import type {PerpetualScope} from '../perpetuals/workflow-contract.js';
 export type StockExecutionScope=PerpetualScope;
 export type StockExecutionProof=Awaited<ReturnType<ReturnType<typeof createRobinhoodTransactionAdapter>['reconcileTransaction']>>;
 export interface StockExecutionTransaction {chainId:46630;type:'eip1559';to:Hex;data:Hex;value:'0';nonce:string;gas:string;maxFeePerGas:string;maxPriorityFeePerGas:string;}
-export interface StockExecutionPrepared {id:string;marketId:string;side:'buy'|'sell';intent:StockPreparedTransaction;transaction:StockExecutionTransaction;signingHash:Hex;}
+export interface StockExecutionPrepared {id:string;marketId:string;side:'buy'|'sell';intent:StockPreparedTransaction;quote:{amountOutBaseUnits:string;minimumOutBaseUnits:string;slippageBps:number;observedAt:string;expiresAt:string;blockNumber:string}|null;transaction:StockExecutionTransaction;signingHash:Hex;}
 export interface StockExecutionRequest {id:string;scope:StockExecutionScope;accountAddress:Hex;kind:'approval'|'swap';marketId:string;side:'buy'|'sell';idempotencyKey:string;requestHash:string;state:'prepared'|'sending'|'confirming'|'completed'|'reverted'|'unknown'|'cancelled';prepared:StockExecutionPrepared;signedTransaction:Hex|null;txHash:Hex|null;proof:StockExecutionProof|null;createdAt:string;}
 export interface StockExecutionStore {
  create(scope:StockExecutionScope,key:string,requestHash:string,prepared:StockExecutionPrepared):Promise<StockExecutionRequest>;
