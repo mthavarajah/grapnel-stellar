@@ -10,9 +10,11 @@ export interface StockActionPorts{
 }
 /** Called only from Buy/Sell. Approval confirmation may advance this same intent;
  * passive recovery never calls this function and unknown sends are never repeated. */
-export async function executeStockTrade(input:RobinhoodDraft,p:StockActionPorts){
+export async function executeStockTrade(input:RobinhoodDraft,p:StockActionPorts,retryRequest?:RobinhoodRequest){
  const sameRequest=(a:RobinhoodRequest,b:RobinhoodRequest)=>a.id===b.id&&a.kind===b.kind&&a.market_id===b.market_id&&JSON.stringify(Object.entries(a.intent).sort())===JSON.stringify(Object.entries(b.intent).sort());
- p.current();const first=await p.prepare(input);p.current();let result=await p.authorize(first,input);p.current();
+ // Explicit Retry continues the inspected, unsigned request. It must run the
+ // same approval-to-swap sequence rather than treating an allowance as a trade.
+ p.current();const first=retryRequest??await p.prepare(input);p.current();let result=await p.authorize(first,input);p.current();
  if(!sameRequest(first,result))throw Error('The transaction status does not match this trade.');
  if(input.kind==='swap')return result;
  for(let n=0;!['completed','cancelled','reverted'].includes(result.state)&&n<12;n++){

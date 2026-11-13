@@ -1,0 +1,33 @@
+{
+  "observed_at": "2026-11-13T00:02:03.582Z",
+  "chain_id": 46630,
+  "tx_hash": "0x4d58307453739100b5073d5db16e847545542b406473dbf7fc9a3b028d08e04c",
+  "from": "0x023274335f7e2ae6102f8a1c987378d896177699",
+  "to": "0x7e955252e15c84f5768b83c41a71f9eba181802f",
+  "status": "success",
+  "receipt_block": "152534031",
+  "current_block": "152535607",
+  "confirmations": "1577",
+  "call": {
+    "functionName": "approve",
+    "args": [
+      "0x3Ce954107b1A675826B33bF23060Dd655e3758fE",
+      "1000000"
+    ]
+  },
+  "events": [
+    {
+      "address": "0x7e955252e15c84f5768b83c41a71f9eba181802f",
+      "eventName": "Approval",
+      "args": {
+        "owner": "0x023274335f7e2ae6102F8a1C987378d896177699",
+        "spender": "0x3Ce954107b1A675826B33bF23060Dd655e3758fE",
+        "value": "1000000"
+      }
+    }
+  ],
+  "usdg_balance_base_units": "220000000",
+  "tsla_balance_base_units": "0",
+  "usdg_allowance_base_units": "1000000",
+  "conclusion": "Confirmed approval of 1 USDG; no stock swap or stock transfer in this transaction."
+}
