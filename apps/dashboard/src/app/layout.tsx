@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import {DashboardRouter} from "../components/dashboard-router";
 export const metadata: Metadata = {
   title: "Grapnel · Developer Console",
   icons: { icon: "/brand/logo-white.png" },
@@ -12,7 +13,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body><DashboardRouter/>{children}</body>
     </html>
   );
 }

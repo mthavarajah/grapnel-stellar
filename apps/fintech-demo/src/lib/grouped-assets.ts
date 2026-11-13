@@ -1,5 +1,5 @@
 /** Asset presentation aggregation only. No balance, price or dollar peg is inferred. */
-import {formatTokenAmount} from '@grapnel/contracts';
+import {formatTokenAmount,ZENEX_USDC_ID} from '@grapnel/contracts';
 import {ROBINHOOD_CUSTOMER} from './robinhood-customer';
 export type AssetBalanceRow={asset_id:string;asset?:{id:string;code:string;name?:string;verified?:boolean;kind?:string;network?:string;decimals?:number};wallet_amount:string|null;reserved?:string|null;spendable?:string|null;network_label?:string;feature_label?:string;balance_verified?:boolean;value_usd?:string|null;valuation_basis?:string|null};
 export type AssetBalanceValuation={assets?:{asset_id:string;wallet_amount:string;value_usd:string|null}[]}|null;
@@ -46,4 +46,4 @@ export function buildGroupedAssets(balances:AssetBalanceRow[],valuation?:AssetBa
 export function groupedAmount(value:string|null|undefined):string{if(value==null)return '—';const display=formatTokenAmount(value);return display==='Unavailable'?'—':display;}
 /** Round source-provided USD values to cents with bigint; never Number or a symbol peg. */
 export function groupedUsd(value:string|null):string{const canonical=normalize(value,38);if(canonical===null)return '—';const scale=canonical.split('.')[1]?.length??0,power=10n**BigInt(scale),cents=(units(canonical,scale)*100n+power/2n)/power,whole=(cents/100n).toString().replace(/\B(?=(\d{3})+(?!\d))/g,',');return '$'+whole+'.'+(cents%100n).toString().padStart(2,'0');}
-export function groupedSourceLabel(row:GroupedAssetSource):string{const network=row.network_label??({ 'stellar-testnet':'Stellar','hyperevm-testnet':'HyperEVM','arbitrum-sepolia':'Arbitrum Sepolia','robinhood-testnet':'Robinhood'}as Record<string,string>)[row.asset?.network??'']??(row.asset_id.startsWith('stellar-testnet:')?'Stellar':'Network');return network+(row.feature_label?' · '+row.feature_label:'');}
+export function groupedSourceLabel(row:GroupedAssetSource):string{if(row.asset_id===ZENEX_USDC_ID)return "Stellar · Perpetuals collateral";const network=row.network_label??({ 'stellar-testnet':'Stellar','hyperevm-testnet':'HyperEVM','arbitrum-sepolia':'Arbitrum Sepolia','robinhood-testnet':'Robinhood'}as Record<string,string>)[row.asset?.network??'']??(row.asset_id.startsWith('stellar-testnet:')?'Stellar':'Network');return network+(row.feature_label?' · '+row.feature_label:'');}

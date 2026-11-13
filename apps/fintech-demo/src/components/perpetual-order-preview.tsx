@@ -22,10 +22,10 @@ export function PerpetualMarketMetrics({stats,symbol,maxLeverage,quoteSymbol,set
  return <dl className="public-market-stats" data-testid="perps-market-metrics">
   {typeof maxLeverage==='number'&&Number.isSafeInteger(maxLeverage)&&maxLeverage>0&&<div><dt>Maximum leverage</dt><dd>{maxLeverage}×</dd></div>}
   <div><dt>Settlement</dt><dd>{assetCode(settlementAsset)}</dd></div>
-  <div><dt>Mark price</dt><dd>{shown(stats?.mark_price)} {unit}</dd></div>
-  <div><dt>Oracle price</dt><dd>{shown(stats?.oracle_price)} {unit}</dd></div>
-  <div><dt>24h volume</dt><dd>{shown(stats?.day_notional_volume)} {unit}</dd></div>
-  <div><dt>Open interest</dt><dd>{shown(stats?.open_interest)} {symbol}</dd></div>
-  <div><dt>Funding rate (fraction)</dt><dd>{stats?.funding_rate??'—'}</dd></div>
+  {stats?.mark_price!=null&&<div><dt>Mark price</dt><dd>{shown(stats?.mark_price)} {unit}</dd></div>}
+  {stats?.oracle_price!=null&&<div><dt>Oracle price</dt><dd>{shown(stats?.oracle_price)} {unit}</dd></div>}
+  {stats?.day_notional_volume!=null&&<div><dt>24h volume</dt><dd>{shown(stats?.day_notional_volume)} {unit}</dd></div>}
+  {stats?.open_interest!=null&&<div><dt>Open interest</dt><dd>{shown(stats?.open_interest)} {symbol}</dd></div>}
+  {stats?.funding_rate!=null&&<div><dt>Funding rate (fraction)</dt><dd>{stats.funding_rate}</dd></div>}
  </dl>;
 }

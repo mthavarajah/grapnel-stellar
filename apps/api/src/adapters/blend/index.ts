@@ -113,7 +113,7 @@ export class BlendAdapter {
  }
  async markets():Promise<BlendMarket[]>{return (await this.snapshot()).markets;}
  async capabilities():Promise<{execution_status:'discovery_only'|'blocked';reason:string;actions:string[]}> {
-  try{await this.snapshot();return {execution_status:'discovery_only',reason:!this.config.gate1Passed?'Live pool reads work; Gate 1 customer signing proof is required':'Live pool reads work; Soroban simulation/auth/submission proof is required',actions:[]};}
+  try{await this.snapshot();return {execution_status:'discovery_only',reason:!this.config.gate1Passed?'Live pool reads work; Gate 1 customer signing proof is required':'Live pool reads work; execution availability is verified separately for each asset and action',actions:[]};}
   catch{return {execution_status:'blocked',reason:'Current official Blend Testnet pool data is unavailable',actions:[]};}
  }
  private normalizePosition(pool:Pool,user:PoolUser,reserve:Reserve,market:BlendMarket):BlendPosition {

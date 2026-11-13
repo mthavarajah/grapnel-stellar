@@ -1,4 +1,6 @@
 "use client";
+import {earnAmountMessage} from "../lib/earn-amount";
+import {currentCustomerOperation} from "../lib/prepared-operation";
 import {ZenexPerpetualExecution} from "./zenex-perpetual-execution";
 import {ActionDialog} from './action-dialog';
 import {PerpetualActivity} from './perpetual-activity';
@@ -438,6 +440,7 @@ function FinanceShell({ page, auth, initialCategory }: { page: string; auth?: Au
   const [marketResultsOpen, setMarketResultsOpen] = useState(false);
 
   const [lending, setLending] = useState<any[]>([]);
+  const [lendingLoading,setLendingLoading]=useState(true);
   const [borrowing,setBorrowing] = useState<Borrowing|null>(null);
   const [borrowingLoading,setBorrowingLoading] = useState(false);
   const [borrowingError,setBorrowingError] = useState("");
@@ -777,11 +780,14 @@ function FinanceShell({ page, auth, initialCategory }: { page: string; auth?: Au
         }
         if (page === "earn") {
           void refreshEarnBalances();
+          setLendingLoading(true);
+          try {
           const m = await api("grapnel/lending-markets");
           if (alive) setLending((Array.isArray(m) ? m : (m.markets ?? [])).filter((market: {asset_id:string}) => [
             "stellar-testnet:native:XLM",
             "stellar-testnet:classic:USDC:GATALTGTWIOT6BUDBCZM3Q4OQ4BO2COLOAZ7IYSKPLC2PMSOPPGF5V56",
           ].includes(market.asset_id)));
+          } finally {if(alive)setLendingLoading(false);}
         }
       } catch (e) {
         if (alive) setError(e instanceof Error ? e.message : "Request failed");
@@ -931,7 +937,12 @@ function FinanceShell({ page, auth, initialCategory }: { page: string; auth?: Au
       if(op.customer_id!==owner.customer_id||op.wallet_id!==owner.wallet_id)throw Error('This action belongs to another wallet session.');
       openOperation(op);
     }
-    if(op.status==='awaiting_customer_authorization')await approve(op);
+    if(op.status==='awaiting_customer_authorization'){
+      op=await currentCustomerOperation(op,owner,id=>api('grapnel/operations/'+id));
+      if(marginSession.current?.customer_id!==owner.customer_id||marginSession.current?.wallet_id!==owner.wallet_id)throw Error('Your wallet session changed.');
+      openOperation(op);
+      if(op.status==='awaiting_customer_authorization')await approve(op);
+    }
   }
   async function approve(operation:Operation|null=active) {
     if (
@@ -1015,7 +1026,7 @@ function FinanceShell({ page, auth, initialCategory }: { page: string; auth?: Au
           {nav.filter(([id])=>id!=="borrow"||capability("capital.lending")?.enabled).map(([id, label]) => (
             <Link
               key={id}
-              href={"/" + id}
+              href={id==="markets"?`/markets?category=${category==="unavailable"?"crypto_spot":category}`:"/" + id}
               prefetch={true}
               onNavigate={()=>setNavigationTarget(id)}
               className={
@@ -1172,7 +1183,7 @@ function FinanceShell({ page, auth, initialCategory }: { page: string; auth?: Au
                   </div>
                   </div><section className="account-assets-total" aria-label="Account assets" data-testid="account-assets-total" title={accountValuation?.as_of?`As of ${marketDate(accountValuation.as_of,true,true)}`:undefined}>
                     <span className="account-assets-label">{accountPartial?"Estimated priced assets":"Total Assets"}</span>
-                    <strong className="account-assets-value" aria-live="polite">{accountValueLoading||accountValueUnavailable||!accountValuation?"—":accountTotal==null?"—":`$${formatTokenAmount(accountTotal)}`}</strong>
+                    <strong className="account-assets-value" aria-live="polite">{accountValueLoading||accountValueUnavailable||!accountValuation?"—":accountTotal==null?"—":groupedUsd(accountTotal)}</strong>
                     {accountValuation?.as_of&&<small><time dateTime={accountValuation.as_of}>as of {balanceTimestamp(accountValuation.as_of)}</time></small>}
                   </section></div>
                 </div>
@@ -1311,9 +1322,11 @@ function FinanceShell({ page, auth, initialCategory }: { page: string; auth?: Au
                     onClick={() => {
                       if(category===id)return;
                       setCategory(id!);
+                      router.replace(`/${page}?category=${id}`,{scroll:false});
                       setError("");
                       setMarket("");
                       setMarkets([]);
+                      setMarketsLoading(true);
                       setQuote(null);
                     }}
                   >
@@ -1344,7 +1357,7 @@ function FinanceShell({ page, auth, initialCategory }: { page: string; auth?: Au
                       {category==="stocks"&&selectedSpotMarket.instrument_type!=="perpetual_futures"&&activePublicHistory?.metrics&&<dl className="public-market-stats" data-testid="stock-market-metrics">
                         {([["day_high","Day high"],["day_low","Day low"],["previous_close","Previous close"],["fifty_two_week_high","52-week high"],["fifty_two_week_low","52-week low"],["day_volume","Day volume"]] as const).map(([field,label])=><div key={field}><dt>{label}</dt><dd>{activePublicHistory.metrics?.[field]==null?"—":`${formatTokenAmount(activePublicHistory.metrics[field])} ${field==="day_volume"?"shares":activePublicHistory.quote_symbol}`}</dd></div>)}
                       </dl>}
-                      <PerpetualMarketMetrics stats={selectedSpotMarket.perpetuals_stats} symbol={selectedSpotMarket.underlying?.symbol??selectedSpotMarket.label} maxLeverage={selectedSpotMarket.max_leverage} quoteSymbol={selectedSpotMarket.quote_symbol} settlementAsset={selectedSpotMarket.settlement_asset}/>
+                      {(category==="perps"||selectedSpotMarket.instrument_type==="perpetual_futures")&&<PerpetualMarketMetrics stats={selectedSpotMarket.perpetuals_stats} symbol={selectedSpotMarket.underlying?.symbol??selectedSpotMarket.label} maxLeverage={selectedSpotMarket.max_leverage} quoteSymbol={selectedSpotMarket.quote_symbol} settlementAsset={selectedSpotMarket.settlement_asset}/>}
                       {category==="stocks"&&selectedSpotMarket.instrument_type!=="perpetual_futures"&&selectedSpotMarket.stats&&<>
                         <dl className="public-market-stats" data-testid="market-stats">
                           <div><dt>24h volume</dt><dd>{displayPublicNotional(selectedSpotMarket.stats.volume_24h_atomic)}</dd></div>
@@ -1374,11 +1387,11 @@ function FinanceShell({ page, auth, initialCategory }: { page: string; auth?: Au
                 <div className="market-detail-layout">
                   <section className="market-price-card" aria-label="Asset price">
                     <div className="market-asset-heading">
-                      {marketHistory&&<AssetLogo symbol={marketHistory.base_symbol} name={swapAssetMap.get(marketHistory.base_asset_id)?.name} assetId={marketHistory.base_asset_id} size={48} />}
-                      <div><h2>{marketHistory ? (swapAssetMap.get(marketHistory.base_asset_id)?.name ?? marketHistory.base_symbol) : "Asset price"}</h2><span>{marketHistory?.price_basis==="underlying_reference"?`${marketHistory.base_symbol} reference`:marketHistory?.base_symbol??""}</span></div>
+                      {activePublicHistory&&<AssetLogo symbol={activePublicHistory.base_symbol} name={swapAssetMap.get(activePublicHistory.base_asset_id)?.name} assetId={activePublicHistory.base_asset_id} size={48} />}
+                      <div><h2>{activePublicHistory ? (swapAssetMap.get(activePublicHistory.base_asset_id)?.name ?? activePublicHistory.base_symbol) : "Asset price"}</h2><span>{activePublicHistory?.price_basis==="underlying_reference"?`${activePublicHistory.base_symbol} reference`:activePublicHistory?.base_symbol??""}</span></div>
                     </div>
-                    <div className="market-price-heading"><strong>{marketHistory?.latest_price ? formatTokenAmount(marketHistory.latest_price) : "—"}</strong><span>{marketHistory?.latest_price ? `${marketHistory.quote_symbol} per ${marketHistory.base_symbol}` : "Price unavailable"}</span></div>
-                    <div className="market-price-change" aria-label="Price change"><strong>{marketHistory&&marketHistory.points.length>1?displayChange(marketHistory.change_absolute):"—"}</strong>{marketHistory?.change_absolute&&marketHistory.points.length>1&&<span>{marketHistory.quote_symbol}</span>}<span>({marketHistory&&marketHistory.points.length>1?displayChange(marketHistory.change_percent):"—"}{marketHistory?.change_percent&&marketHistory.points.length>1?"%":""})</span></div>
+                    <div className="market-price-heading"><strong>{activePublicHistory?.latest_price ? formatTokenAmount(activePublicHistory.latest_price) : "—"}</strong><span>{activePublicHistory?.latest_price ? `${activePublicHistory.quote_symbol} per ${activePublicHistory.base_symbol}` : historyLoading ? "Loading current price…" : "Price unavailable"}</span></div>
+                    <div className="market-price-change" aria-label="Price change"><strong>{activePublicHistory&&activePublicHistory.points.length>1?displayChange(activePublicHistory.change_absolute):"—"}</strong>{activePublicHistory?.change_absolute&&activePublicHistory.points.length>1&&<span>{activePublicHistory.quote_symbol}</span>}<span>({activePublicHistory&&activePublicHistory.points.length>1?displayChange(activePublicHistory.change_percent):"—"}{activePublicHistory?.change_percent&&activePublicHistory.points.length>1?"%":""})</span></div>
                     <PriceChart history={activePublicHistory} loading={historyLoading} />
                     <div className="market-periods" role="group" aria-label="Price timeframe">{(["live","1d","1w","1m","1y","all"] as const).map(period => <button type="button" key={period} aria-pressed={historyRange===period} onClick={()=>setHistoryRange(period)}>{period.toUpperCase()}</button>)}</div>
                   </section>
@@ -1450,7 +1463,7 @@ function FinanceShell({ page, auth, initialCategory }: { page: string; auth?: Au
                 </section>
                 </div>
                 </>
-              ) : category === "crypto_spot" || category === "unavailable" ? <section className="card"><Empty icon="markets" title="No markets available." text={category === "crypto_spot" ? "Try refreshing to check available assets." : "This category is currently unavailable."} /></section> : null}
+              ) : category === "crypto_spot" && marketsLoading ? <section className="card" role="status"><ProgressIndicator label="Loading markets" spinning/></section> : category === "crypto_spot" || category === "unavailable" ? <section className="card"><Empty icon="markets" title="No markets available." text={category === "crypto_spot" ? "Try refreshing to check available assets." : "This category is currently unavailable."} /></section> : null}
             </>
           )}
           {page === "earn" && (
@@ -1467,6 +1480,7 @@ function FinanceShell({ page, auth, initialCategory }: { page: string; auth?: Au
                       const needsTrustline = isUsdc && balance?.trustline_required === true;
                       const canPrepare = canPrepareBlendAction() &&
                         (m.asset_id === XLM_ASSET || (isUsdc && balance?.trustline_required === false));
+                      const amountFeedback=earnAmountMessage(earnAmounts[amountKey]??"",earnAction==="supply"?balance?.spendable:balance?.in_earn,m.asset?.decimals??7,earnAction);
                       const shown = (value: string | null | undefined) => earnBalancesLoading&&value==null ? "Loading…" : formatTokenAmount(value);
                       return <div className="pool" key={m.market_id ?? m.id}>
                         <AssetLogo symbol={m.asset?.code??m.code??m.symbol??assetCode(m.asset_id)} name={m.asset?.name} assetId={m.asset_id} size={48} />
@@ -1511,17 +1525,18 @@ function FinanceShell({ page, auth, initialCategory }: { page: string; auth?: Au
                                 <input inputMode="decimal" value={earnAmounts[amountKey] ?? ""} placeholder="0.00"
                                   onChange={e => {setEarnAmounts(current => ({...current, [amountKey]: e.target.value}));setActionErrors(current=>({...current,[`earn:${m.asset_id}`]:""}));}} />
                               </label>
-                              <button className="button" disabled={busy || !session || !canPrepare || !earnAmounts[amountKey]}
+                              <button className="button" disabled={busy || !session || !canPrepare || !earnAmounts[amountKey] || !!amountFeedback}
                                 onClick={() => action(() => start("lending/" + earnAction, {
                                   market_id: m.market_id ?? m.id, asset_id: m.asset_id, amount: earnAmounts[amountKey],
                                 }), `earn:${m.asset_id}`)}>{busy&&busyLocation===`earn:${m.asset_id}`?<ProgressIndicator label="Processing" spinning/>:earnAction === "supply" ? "Supply" : "Withdraw"}</button>
                             </div>
+                            {amountFeedback&&<p className="small muted" role="status">{amountFeedback}</p>}
                           </div>
                         )}
                       </div>;
                     })}
                   </div>
-                ) : (
+                ) : lendingLoading ? <ProgressIndicator label="Loading earning options" spinning/> : (
                   <Empty
                     icon="earn"
                     title={

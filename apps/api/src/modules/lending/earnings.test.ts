@@ -161,3 +161,18 @@ describe('tenant-scoped Blend earnings since verified baseline', () => {
     expect(query.mock.calls[0]?.[0]).toContain('o.business_id=$1 AND o.customer_id=$2 AND o.wallet_id=$3 AND w.stellar_address=$4');
   });
 });
+
+
+it('does not blank Earn interest when the customer also uses the separate borrowing pool',async()=>{
+ const supply=operation('blend.supply',XLM.id,'market-XLM',reserveXlm,'0.1000000',supplyAt,'0.0000000',100);
+ const borrowed={...supply,id:'separate-borrow',type:'blend.borrow',request_json:{amount:'0.1',market_id:'separate-borrow-pool'},result_json:{}};
+ const history={complete:true,transactions:[chainRecord(supply,101,'2026-11-11T16:42:00.000Z')]};
+ const f=makeReader([supply,borrowed],[pos(XLM.id,'market-XLM',reserveXlm,'0.1003000')],history);
+ expect((await f.reader.getEarnings(customer))[0]?.earned).toBe('0.0003000');
+});
+it('still rejects untracked Earn-pool activity when a database row is classified as borrowing',async()=>{
+ const supply=operation('blend.supply',XLM.id,'market-XLM',reserveXlm,'0.1000000',supplyAt,'0.0000000',100);
+ const hidden=operation('blend.withdraw',XLM.id,'market-XLM',reserveXlm,'0.0500000',withdrawAt,'0.1000000',102);
+ const f=makeReader([supply,{...hidden,type:'blend.borrow'}],[pos(XLM.id,'market-XLM',reserveXlm,'0.0503000')],{complete:true,transactions:[chainRecord(supply,101,'2026-11-11T16:42:00.000Z'),chainRecord(hidden,103,'2026-11-11T16:51:00.000Z')]});
+ expect((await f.reader.getEarnings(customer))[0]?.earned).toBeNull();
+});

@@ -46,6 +46,7 @@ const rowsSql = `SELECT o.id,o.business_id,o.customer_id,o.wallet_id,w.stellar_a
  JOIN customers c ON c.business_id=o.business_id AND c.id=o.customer_id
  WHERE o.business_id=$1 AND o.customer_id=$2 AND o.wallet_id=$3 AND w.stellar_address=$4
  AND o.module_code='capital.lending' AND o.provider='blend' AND o.type LIKE 'blend.%'
+ AND o.type NOT IN ('blend.borrow','blend.repay','blend.borrow_collateral_supply','blend.borrow_collateral_withdraw')
  ORDER BY o.created_at ASC,o.id ASC`;
 
 interface Snapshot {
@@ -198,7 +199,9 @@ export class LendingEarningsReader {
     let rows: EarningsRow[], positions: BlendPosition[];
     try {
       const result = await this.deps.pool.query(rowsSql, [customer.businessId, customer.customerId, customer.walletId, customer.walletAddress]);
-      rows = result.rows as EarningsRow[];
+      // Borrow uses its separately pinned pool. Its operations are not Earn cash flows.
+      // Chain history below still rejects every untracked change to this Earn pool.
+      rows = (result.rows as EarningsRow[]).filter(row=>!['blend.borrow','blend.repay','blend.borrow_collateral_supply','blend.borrow_collateral_withdraw'].includes(row.type));
       positions = await this.deps.positions(customer);
     } catch { return empty(); }
     const now = this.now();

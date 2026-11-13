@@ -1,0 +1,286 @@
+{
+  "observed_at": "2026-11-13T19:20:56.820Z",
+  "scope": "Local API request log sample; not browser render latency; includes initial failing client flow before fixes",
+  "profile": [
+    {
+      "path_template": "/v1/trade/stocks/authorize",
+      "requests": 3,
+      "mean_ms": 16661,
+      "max_ms": 19689,
+      "errors": 0
+    },
+    {
+      "path_template": "/v1/trade/zenex/fund",
+      "requests": 1,
+      "mean_ms": 7742,
+      "max_ms": 7742,
+      "errors": 0
+    },
+    {
+      "path_template": "/v1/trade/stocks/prepare",
+      "requests": 5,
+      "mean_ms": 4319,
+      "max_ms": 5247,
+      "errors": 0
+    },
+    {
+      "path_template": "/v1/portfolio/valuation",
+      "requests": 4,
+      "mean_ms": 4059,
+      "max_ms": 11575,
+      "errors": 0
+    },
+    {
+      "path_template": "/v1/market-overview",
+      "requests": 4,
+      "mean_ms": 3483,
+      "max_ms": 11476,
+      "errors": 0
+    },
+    {
+      "path_template": "/v1/capital/wallets/:id/network-assets",
+      "requests": 18,
+      "mean_ms": 3481,
+      "max_ms": 5463,
+      "errors": 0
+    },
+    {
+      "path_template": "/v1/capital/lending/borrowing/collateral/supply",
+      "requests": 1,
+      "mean_ms": 2988,
+      "max_ms": 2988,
+      "errors": 0
+    },
+    {
+      "path_template": "/v1/capital/lending/borrow",
+      "requests": 1,
+      "mean_ms": 2962,
+      "max_ms": 2962,
+      "errors": 0
+    },
+    {
+      "path_template": "/v1/capital/lending/repay",
+      "requests": 1,
+      "mean_ms": 2957,
+      "max_ms": 2957,
+      "errors": 0
+    },
+    {
+      "path_template": "/v1/capital/lending/borrowing/collateral/withdraw",
+      "requests": 1,
+      "mean_ms": 2713,
+      "max_ms": 2713,
+      "errors": 0
+    },
+    {
+      "path_template": "/v1/trade/orders",
+      "requests": 2,
+      "mean_ms": 2542,
+      "max_ms": 3098,
+      "errors": 0
+    },
+    {
+      "path_template": "/v1/capital/lending/withdraw",
+      "requests": 1,
+      "mean_ms": 2323,
+      "max_ms": 2323,
+      "errors": 0
+    },
+    {
+      "path_template": "/v1/capital/wallets/:id/valuation",
+      "requests": 6,
+      "mean_ms": 2160,
+      "max_ms": 7633,
+      "errors": 0
+    },
+    {
+      "path_template": "/v1/trade/quotes",
+      "requests": 3,
+      "mean_ms": 2068,
+      "max_ms": 2574,
+      "errors": 0
+    },
+    {
+      "path_template": "/v1/trade/stocks/status",
+      "requests": 49,
+      "mean_ms": 2043,
+      "max_ms": 6375,
+      "errors": 0
+    },
+    {
+      "path_template": "/v1/capital/lending/supply",
+      "requests": 1,
+      "mean_ms": 1463,
+      "max_ms": 1463,
+      "errors": 0
+    },
+    {
+      "path_template": "/v1/capital/lending/borrowing",
+      "requests": 18,
+      "mean_ms": 1390,
+      "max_ms": 3103,
+      "errors": 0
+    },
+    {
+      "path_template": "/v1/trade/zenex/prepare",
+      "requests": 3,
+      "mean_ms": 1243,
+      "max_ms": 1701,
+      "errors": 0
+    },
+    {
+      "path_template": "/v1/trade/markets",
+      "requests": 51,
+      "mean_ms": 1238,
+      "max_ms": 4058,
+      "errors": 0
+    },
+    {
+      "path_template": "/v1/trade/stocks/funding",
+      "requests": 6,
+      "mean_ms": 1102,
+      "max_ms": 1737,
+      "errors": 0
+    },
+    {
+      "path_template": "/v1/trade/zenex/status",
+      "requests": 19,
+      "mean_ms": 1055,
+      "max_ms": 1581,
+      "errors": 0
+    },
+    {
+      "path_template": "/v1/trade/stocks/requests",
+      "requests": 54,
+      "mean_ms": 693,
+      "max_ms": 4589,
+      "errors": 0
+    },
+    {
+      "path_template": "/v1/capital/wallets",
+      "requests": 1,
+      "mean_ms": 678,
+      "max_ms": 678,
+      "errors": 0
+    },
+    {
+      "path_template": "/v1/operations/:id/authorize",
+      "requests": 11,
+      "mean_ms": 551,
+      "max_ms": 1335,
+      "errors": 0
+    },
+    {
+      "path_template": "/v1/capital/testnet/fund",
+      "requests": 1,
+      "mean_ms": 488,
+      "max_ms": 488,
+      "errors": 0
+    },
+    {
+      "path_template": "/v1/trade/markets/:id",
+      "requests": 44,
+      "mean_ms": 487,
+      "max_ms": 3343,
+      "errors": 0
+    },
+    {
+      "path_template": "/v1/capital/testnet/return",
+      "requests": 1,
+      "mean_ms": 484,
+      "max_ms": 484,
+      "errors": 0
+    },
+    {
+      "path_template": "/v1/capital/lending/earnings",
+      "requests": 9,
+      "mean_ms": 451,
+      "max_ms": 751,
+      "errors": 0
+    },
+    {
+      "path_template": "/v1/capital/lending/positions",
+      "requests": 9,
+      "mean_ms": 415,
+      "max_ms": 750,
+      "errors": 0
+    },
+    {
+      "path_template": "/v1/capital/wallets/:id/balances",
+      "requests": 31,
+      "mean_ms": 404,
+      "max_ms": 664,
+      "errors": 0
+    },
+    {
+      "path_template": "/v1/trade/gmx/activity",
+      "requests": 9,
+      "mean_ms": 401,
+      "max_ms": 557,
+      "errors": 0
+    },
+    {
+      "path_template": "/v1/trade/stocks/activity",
+      "requests": 9,
+      "mean_ms": 376,
+      "max_ms": 629,
+      "errors": 0
+    },
+    {
+      "path_template": "/v1/trade/markets/:id/history",
+      "requests": 61,
+      "mean_ms": 368,
+      "max_ms": 2075,
+      "errors": 0
+    },
+    {
+      "path_template": "/v1/capital/lending/markets",
+      "requests": 9,
+      "mean_ms": 308,
+      "max_ms": 695,
+      "errors": 0
+    },
+    {
+      "path_template": "/v1/trade/stocks/grants",
+      "requests": 6,
+      "mean_ms": 226,
+      "max_ms": 536,
+      "errors": 0
+    },
+    {
+      "path_template": "/v1/capital/testnet/funding-assets",
+      "requests": 9,
+      "mean_ms": 209,
+      "max_ms": 359,
+      "errors": 0
+    },
+    {
+      "path_template": "/v1/operations",
+      "requests": 16,
+      "mean_ms": 138,
+      "max_ms": 873,
+      "errors": 0
+    },
+    {
+      "path_template": "/v1/capabilities",
+      "requests": 629,
+      "mean_ms": 69,
+      "max_ms": 3516,
+      "errors": 0
+    },
+    {
+      "path_template": "/v1/operations/:id",
+      "requests": 100,
+      "mean_ms": 54,
+      "max_ms": 838,
+      "errors": 0
+    },
+    {
+      "path_template": "/v1/customers",
+      "requests": 1,
+      "mean_ms": 4,
+      "max_ms": 4,
+      "errors": 0
+    }
+  ]
+}

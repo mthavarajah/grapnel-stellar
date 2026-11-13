@@ -1,0 +1,4 @@
+import {expect,it}from'vitest';import{earnAmountMessage}from'./earn-amount';
+it('prevents a repeated withdrawal after the balance refreshes to zero',()=>{expect(earnAmountMessage('0.0999999','0.0999999',7,'withdraw')).toBeNull();expect(earnAmountMessage('0.0999999','0',7,'withdraw')).toContain('exceeds your Earn balance');});
+it.each(['-1','NaN','0.00000001'])('rejects invalid amounts %s',amount=>expect(earnAmountMessage(amount,'1',7,'supply')).toContain('positive amount'));
+it('distinguishes pending balances from insufficient funds and accepts exact balances',()=>{expect(earnAmountMessage('1',null,7,'supply')).toContain('Waiting');expect(earnAmountMessage('1','1',7,'supply')).toBeNull();expect(earnAmountMessage('1.0000001','1',7,'supply')).toContain('exceeds');expect(earnAmountMessage('','0',7,'withdraw')).toBeNull();});

@@ -1,0 +1,1073 @@
+{
+  "observed_at": "2026-11-13T19:20:56.818Z",
+  "network": "stellar-testnet",
+  "wallet": "GDUGWEZI6JC7BDGXVG4QLRFXBRVFIQW3JFZAXGQC2A2W7USMSYJGI6ZO",
+  "operations": [
+    {
+      "id": "81947655-de6d-4aef-9694-740d7d7aa321",
+      "type": "spot.swap",
+      "state": "expired",
+      "tx_hash": null,
+      "error_code": "ACTION_EXPIRED",
+      "created_at": "2026-11-13T18:54:43.384Z",
+      "updated_at": "2026-11-13T18:55:01.591Z",
+      "result_json": {
+        "spot_swap_baseline": {
+          "as_of": "2026-11-13T18:54:44.638Z",
+          "market_id": "stellar-testnet:soroswap:CBR76WMT6J733CCVBP23M2EL5QGP5HXLPEFNFZGZ7IB6QHOJAHP7YM3V:XLM-USDC",
+          "asset_in_id": "stellar-testnet:native:XLM",
+          "asset_out_id": "stellar-testnet:classic:USDC:GATALTGTWIOT6BUDBCZM3Q4OQ4BO2COLOAZ7IYSKPLC2PMSOPPGF5V56",
+          "min_out_atomic": "1485484",
+          "wallet_address": "GDUGWEZI6JC7BDGXVG4QLRFXBRVFIQW3JFZAXGQC2A2W7USMSYJGI6ZO",
+          "max_fee_stroops": "329349",
+          "amount_in_atomic": "10000000",
+          "signing_hash_hex": "2b37a907592b3227588e10e09a6e2ddaf58afb30e37ba6e604ad094f5ef0ea08",
+          "wallet_in_amount": "2999.8983393",
+          "wallet_out_amount": "802.0102409"
+        }
+      }
+    },
+    {
+      "id": "01868afd-18f7-4b6c-b486-224a5e72a2bd",
+      "type": "spot.swap",
+      "state": "completed",
+      "tx_hash": "981f6c681cd7405f7fefd9a99bf0905f2fc336c4b7d0e09d1afa775c362f6373",
+      "error_code": null,
+      "created_at": "2026-11-13T18:57:06.383Z",
+      "updated_at": "2026-11-13T18:57:15.723Z",
+      "result_json": {
+        "spot_swap_baseline": {
+          "as_of": "2026-11-13T18:57:07.746Z",
+          "market_id": "stellar-testnet:soroswap:CBR76WMT6J733CCVBP23M2EL5QGP5HXLPEFNFZGZ7IB6QHOJAHP7YM3V:XLM-USDC",
+          "asset_in_id": "stellar-testnet:native:XLM",
+          "asset_out_id": "stellar-testnet:classic:USDC:GATALTGTWIOT6BUDBCZM3Q4OQ4BO2COLOAZ7IYSKPLC2PMSOPPGF5V56",
+          "min_out_atomic": "1485484",
+          "wallet_address": "GDUGWEZI6JC7BDGXVG4QLRFXBRVFIQW3JFZAXGQC2A2W7USMSYJGI6ZO",
+          "max_fee_stroops": "142072",
+          "amount_in_atomic": "10000000",
+          "signing_hash_hex": "981f6c681cd7405f7fefd9a99bf0905f2fc336c4b7d0e09d1afa775c362f6373",
+          "wallet_in_amount": "2999.8983393",
+          "wallet_out_amount": "802.0102409"
+        },
+        "spot_swap_verification": {
+          "verified": true,
+          "asset_in_id": "stellar-testnet:native:XLM",
+          "fee_stroops": "33847",
+          "observed_at": "2026-11-13T18:57:15.720Z",
+          "asset_out_id": "stellar-testnet:classic:USDC:GATALTGTWIOT6BUDBCZM3Q4OQ4BO2COLOAZ7IYSKPLC2PMSOPPGF5V56",
+          "wallet_in_after": "2998.8949546",
+          "actual_in_atomic": "10000000",
+          "confirmed_ledger": 5714518,
+          "wallet_in_before": "2999.8983393",
+          "wallet_out_after": "802.1595357",
+          "actual_out_atomic": "1492948",
+          "wallet_out_before": "802.0102409"
+        }
+      }
+    },
+    {
+      "id": "1bb99e4c-06ad-4042-b6f3-cdcc3b531267",
+      "type": "blend.supply",
+      "state": "completed",
+      "tx_hash": "870712b1f42642963da9ff7e7139c496899046d137e27410a3fdd09005026b89",
+      "error_code": null,
+      "created_at": "2026-11-13T18:58:07.360Z",
+      "updated_at": "2026-11-13T18:58:17.293Z",
+      "result_json": {
+        "blend_supply_baseline": {
+          "as_of": "2026-11-13T18:58:08.418Z",
+          "asset_id": "stellar-testnet:classic:USDC:GATALTGTWIOT6BUDBCZM3Q4OQ4BO2COLOAZ7IYSKPLC2PMSOPPGF5V56",
+          "market_id": "stellar-testnet:blend:CCEBVDYM32YNYCVNRXQKDFFPISJJCV557CDZEIRBEE4NCV4KHPQ44HGF:CAQCFVLOBK5GIULPNZRGATJJMIZL5BSP7X5YJVMGCPTUEPFM4AVSRCJU",
+          "collateral": "0.0000000",
+          "wallet_amount": "802.1595357",
+          "position_as_of": "2026-11-13T18:58:07.668Z",
+          "wallet_address": "GDUGWEZI6JC7BDGXVG4QLRFXBRVFIQW3JFZAXGQC2A2W7USMSYJGI6ZO",
+          "position_ledger": 5714528,
+          "pool_contract_id": "CCEBVDYM32YNYCVNRXQKDFFPISJJCV557CDZEIRBEE4NCV4KHPQ44HGF",
+          "reserve_contract_id": "CAQCFVLOBK5GIULPNZRGATJJMIZL5BSP7X5YJVMGCPTUEPFM4AVSRCJU"
+        },
+        "blend_usdc_verification": {
+          "asset_id": "stellar-testnet:classic:USDC:GATALTGTWIOT6BUDBCZM3Q4OQ4BO2COLOAZ7IYSKPLC2PMSOPPGF5V56",
+          "verified": true,
+          "market_id": "stellar-testnet:blend:CCEBVDYM32YNYCVNRXQKDFFPISJJCV557CDZEIRBEE4NCV4KHPQ44HGF:CAQCFVLOBK5GIULPNZRGATJJMIZL5BSP7X5YJVMGCPTUEPFM4AVSRCJU",
+          "operation": "supply",
+          "observed_at": "2026-11-13T18:58:17.292Z",
+          "wallet_after": "802.0595357",
+          "wallet_as_of": "2026-11-13T18:58:16.995Z",
+          "wallet_delta": "-0.1000000",
+          "wallet_before": "802.1595357",
+          "position_as_of": "2026-11-13T18:58:17.035Z",
+          "observed_ledger": 5714530,
+          "collateral_after": "0.0999999",
+          "collateral_delta": "0.0999999",
+          "confirmed_ledger": 5714530,
+          "pool_contract_id": "CCEBVDYM32YNYCVNRXQKDFFPISJJCV557CDZEIRBEE4NCV4KHPQ44HGF",
+          "requested_atomic": "1000000",
+          "collateral_before": "0.0000000",
+          "reserve_contract_id": "CAQCFVLOBK5GIULPNZRGATJJMIZL5BSP7X5YJVMGCPTUEPFM4AVSRCJU",
+          "soroban_fee_asset_id": "stellar-testnet:native:XLM"
+        }
+      }
+    },
+    {
+      "id": "d7c2513d-18fd-4064-9654-016edb77efe2",
+      "type": "blend.withdraw",
+      "state": "completed",
+      "tx_hash": "9a2da781a4c0a76d9a20a7f99e3462370d8fecd7960e8a6621c03782af7244c6",
+      "error_code": null,
+      "created_at": "2026-11-13T18:58:45.857Z",
+      "updated_at": "2026-11-13T18:58:56.837Z",
+      "result_json": {
+        "blend_usdc_verification": {
+          "asset_id": "stellar-testnet:classic:USDC:GATALTGTWIOT6BUDBCZM3Q4OQ4BO2COLOAZ7IYSKPLC2PMSOPPGF5V56",
+          "verified": true,
+          "market_id": "stellar-testnet:blend:CCEBVDYM32YNYCVNRXQKDFFPISJJCV557CDZEIRBEE4NCV4KHPQ44HGF:CAQCFVLOBK5GIULPNZRGATJJMIZL5BSP7X5YJVMGCPTUEPFM4AVSRCJU",
+          "operation": "withdraw",
+          "observed_at": "2026-11-13T18:58:56.837Z",
+          "wallet_after": "802.1595356",
+          "wallet_as_of": "2026-11-13T18:58:56.627Z",
+          "wallet_delta": "0.0999999",
+          "wallet_before": "802.0595357",
+          "position_as_of": "2026-11-13T18:58:56.585Z",
+          "observed_ledger": 5714538,
+          "collateral_after": "0.0000000",
+          "collateral_delta": "-0.0999999",
+          "confirmed_ledger": 5714538,
+          "pool_contract_id": "CCEBVDYM32YNYCVNRXQKDFFPISJJCV557CDZEIRBEE4NCV4KHPQ44HGF",
+          "requested_atomic": "999999",
+          "collateral_before": "0.0999999",
+          "reserve_contract_id": "CAQCFVLOBK5GIULPNZRGATJJMIZL5BSP7X5YJVMGCPTUEPFM4AVSRCJU",
+          "soroban_fee_asset_id": "stellar-testnet:native:XLM"
+        },
+        "blend_withdraw_baseline": {
+          "as_of": "2026-11-13T18:58:47.704Z",
+          "asset_id": "stellar-testnet:classic:USDC:GATALTGTWIOT6BUDBCZM3Q4OQ4BO2COLOAZ7IYSKPLC2PMSOPPGF5V56",
+          "market_id": "stellar-testnet:blend:CCEBVDYM32YNYCVNRXQKDFFPISJJCV557CDZEIRBEE4NCV4KHPQ44HGF:CAQCFVLOBK5GIULPNZRGATJJMIZL5BSP7X5YJVMGCPTUEPFM4AVSRCJU",
+          "collateral": "0.0999999",
+          "wallet_amount": "802.0595357",
+          "position_as_of": "2026-11-13T18:58:46.841Z",
+          "wallet_address": "GDUGWEZI6JC7BDGXVG4QLRFXBRVFIQW3JFZAXGQC2A2W7USMSYJGI6ZO",
+          "position_ledger": 5714536,
+          "pool_contract_id": "CCEBVDYM32YNYCVNRXQKDFFPISJJCV557CDZEIRBEE4NCV4KHPQ44HGF",
+          "reserve_contract_id": "CAQCFVLOBK5GIULPNZRGATJJMIZL5BSP7X5YJVMGCPTUEPFM4AVSRCJU"
+        }
+      }
+    },
+    {
+      "id": "63e03401-e6e3-4962-99ad-635b1c8c71f2",
+      "type": "blend.borrow_collateral_supply",
+      "state": "completed",
+      "tx_hash": "c0b2ef815196bfd4c2d235b8dfc75c136ef6b911a16eaa6eedd1b09ca61bb7d9",
+      "error_code": null,
+      "created_at": "2026-11-13T18:59:57.784Z",
+      "updated_at": "2026-11-13T19:00:12.352Z",
+      "result_json": {
+        "blend_borrowing_baseline": {
+          "as_of": "2026-11-13T19:00:00.717Z",
+          "asset_id": "stellar-testnet:classic:USDC:GATALTGTWIOT6BUDBCZM3Q4OQ4BO2COLOAZ7IYSKPLC2PMSOPPGF5V56",
+          "borrowed": "0.0000000",
+          "debt_rate": "1011321764166",
+          "market_id": "stellar-testnet:blend:CB3447A446DY3USGWPIDXTNQHF5EX24XDQA2EN6TAZP62JTPBTNOA52Q:CAQCFVLOBK5GIULPNZRGATJJMIZL5BSP7X5YJVMGCPTUEPFM4AVSRCJU",
+          "collateral": "0.0000000",
+          "debt_tokens": "0",
+          "native_as_of": "2026-11-13T19:00:00.717Z",
+          "rate_decimals": 12,
+          "reserve_index": 3,
+          "wallet_amount": "802.1595356",
+          "position_as_of": "2026-11-13T19:00:00.601Z",
+          "wallet_address": "GDUGWEZI6JC7BDGXVG4QLRFXBRVFIQW3JFZAXGQC2A2W7USMSYJGI6ZO",
+          "collateral_rate": "1008163569179",
+          "position_ledger": 5714551,
+          "pool_contract_id": "CB3447A446DY3USGWPIDXTNQHF5EX24XDQA2EN6TAZP62JTPBTNOA52Q",
+          "collateral_tokens": "0",
+          "reserve_contract_id": "CAQCFVLOBK5GIULPNZRGATJJMIZL5BSP7X5YJVMGCPTUEPFM4AVSRCJU",
+          "native_wallet_amount": "2998.8481989"
+        },
+        "blend_borrowing_verification": {
+          "tx_hash": "c0b2ef815196bfd4c2d235b8dfc75c136ef6b911a16eaa6eedd1b09ca61bb7d9",
+          "asset_id": "stellar-testnet:classic:USDC:GATALTGTWIOT6BUDBCZM3Q4OQ4BO2COLOAZ7IYSKPLC2PMSOPPGF5V56",
+          "verified": true,
+          "operation": "collateral_supply",
+          "repay_all": false,
+          "observed_at": "2026-11-13T19:00:12.351Z",
+          "wallet_after": "801.1595356",
+          "wallet_before": "802.1595356",
+          "observed_ledger": 5714553,
+          "confirmed_ledger": 5714553,
+          "pool_contract_id": "CB3447A446DY3USGWPIDXTNQHF5EX24XDQA2EN6TAZP62JTPBTNOA52Q",
+          "requested_atomic": "10000000",
+          "debt_tokens_after": "0",
+          "actual_fee_stroops": "454622",
+          "debt_tokens_before": "0",
+          "repay_refund_atomic": null,
+          "reserve_contract_id": "CAQCFVLOBK5GIULPNZRGATJJMIZL5BSP7X5YJVMGCPTUEPFM4AVSRCJU",
+          "debt_principal_delta": "0.0000000",
+          "repay_incoming_atomic": null,
+          "wallet_principal_delta": "-1.0000000",
+          "collateral_tokens_after": "9919025",
+          "collateral_tokens_before": "0",
+          "collateral_principal_delta": "0.9999999"
+        }
+      }
+    },
+    {
+      "id": "74e5e305-cd1f-4aba-b042-46baa7b3dbcf",
+      "type": "blend.borrow",
+      "state": "completed",
+      "tx_hash": "8799d7c88e8503ede872777842cbc52a54a0f18d935302a83878199aa6cd12ca",
+      "error_code": null,
+      "created_at": "2026-11-13T19:00:53.635Z",
+      "updated_at": "2026-11-13T19:01:07.289Z",
+      "result_json": {
+        "blend_borrowing_baseline": {
+          "as_of": "2026-11-13T19:00:56.542Z",
+          "asset_id": "stellar-testnet:classic:USDC:GATALTGTWIOT6BUDBCZM3Q4OQ4BO2COLOAZ7IYSKPLC2PMSOPPGF5V56",
+          "borrowed": "0.0000000",
+          "debt_rate": "1011321988171",
+          "market_id": "stellar-testnet:blend:CB3447A446DY3USGWPIDXTNQHF5EX24XDQA2EN6TAZP62JTPBTNOA52Q:CAQCFVLOBK5GIULPNZRGATJJMIZL5BSP7X5YJVMGCPTUEPFM4AVSRCJU",
+          "collateral": "1.0000001",
+          "debt_tokens": "0",
+          "native_as_of": "2026-11-13T19:00:56.542Z",
+          "rate_decimals": 12,
+          "reserve_index": 3,
+          "wallet_amount": "801.1595356",
+          "position_as_of": "2026-11-13T19:00:56.413Z",
+          "wallet_address": "GDUGWEZI6JC7BDGXVG4QLRFXBRVFIQW3JFZAXGQC2A2W7USMSYJGI6ZO",
+          "collateral_rate": "1008163730347",
+          "position_ledger": 5714562,
+          "pool_contract_id": "CB3447A446DY3USGWPIDXTNQHF5EX24XDQA2EN6TAZP62JTPBTNOA52Q",
+          "collateral_tokens": "9919025",
+          "reserve_contract_id": "CAQCFVLOBK5GIULPNZRGATJJMIZL5BSP7X5YJVMGCPTUEPFM4AVSRCJU",
+          "native_wallet_amount": "2998.8027367"
+        },
+        "blend_borrowing_verification": {
+          "tx_hash": "8799d7c88e8503ede872777842cbc52a54a0f18d935302a83878199aa6cd12ca",
+          "asset_id": "stellar-testnet:classic:USDC:GATALTGTWIOT6BUDBCZM3Q4OQ4BO2COLOAZ7IYSKPLC2PMSOPPGF5V56",
+          "verified": true,
+          "operation": "borrow",
+          "repay_all": false,
+          "observed_at": "2026-11-13T19:01:07.288Z",
+          "wallet_after": "801.2595356",
+          "wallet_before": "801.1595356",
+          "observed_ledger": 5714564,
+          "confirmed_ledger": 5714564,
+          "pool_contract_id": "CB3447A446DY3USGWPIDXTNQHF5EX24XDQA2EN6TAZP62JTPBTNOA52Q",
+          "requested_atomic": "1000000",
+          "debt_tokens_after": "988805",
+          "actual_fee_stroops": "505047",
+          "debt_tokens_before": "0",
+          "repay_refund_atomic": null,
+          "reserve_contract_id": "CAQCFVLOBK5GIULPNZRGATJJMIZL5BSP7X5YJVMGCPTUEPFM4AVSRCJU",
+          "debt_principal_delta": "0.1000001",
+          "repay_incoming_atomic": null,
+          "wallet_principal_delta": "0.1000000",
+          "collateral_tokens_after": "9919025",
+          "collateral_tokens_before": "9919025",
+          "collateral_principal_delta": "0.0000000"
+        }
+      }
+    },
+    {
+      "id": "8fa3875b-dc6f-4b19-aa7c-a42735fde63f",
+      "type": "blend.repay",
+      "state": "completed",
+      "tx_hash": "d107e3f4742004f7ad18dad0555d06bdf2b3fa7005bbf0b1d4fc1a49315dd8f7",
+      "error_code": null,
+      "created_at": "2026-11-13T19:01:44.508Z",
+      "updated_at": "2026-11-13T19:01:58.279Z",
+      "result_json": {
+        "blend_borrowing_baseline": {
+          "as_of": "2026-11-13T19:01:47.416Z",
+          "asset_id": "stellar-testnet:classic:USDC:GATALTGTWIOT6BUDBCZM3Q4OQ4BO2COLOAZ7IYSKPLC2PMSOPPGF5V56",
+          "borrowed": "0.1000001",
+          "debt_rate": "1011322188186",
+          "market_id": "stellar-testnet:blend:CB3447A446DY3USGWPIDXTNQHF5EX24XDQA2EN6TAZP62JTPBTNOA52Q:CAQCFVLOBK5GIULPNZRGATJJMIZL5BSP7X5YJVMGCPTUEPFM4AVSRCJU",
+          "repay_all": true,
+          "collateral": "1.0000002",
+          "debt_tokens": "988805",
+          "native_as_of": "2026-11-13T19:01:47.416Z",
+          "rate_decimals": 12,
+          "reserve_index": 3,
+          "wallet_amount": "801.2595356",
+          "position_as_of": "2026-11-13T19:01:47.302Z",
+          "wallet_address": "GDUGWEZI6JC7BDGXVG4QLRFXBRVFIQW3JFZAXGQC2A2W7USMSYJGI6ZO",
+          "collateral_rate": "1008163874254",
+          "position_ledger": 5714572,
+          "pool_contract_id": "CB3447A446DY3USGWPIDXTNQHF5EX24XDQA2EN6TAZP62JTPBTNOA52Q",
+          "collateral_tokens": "9919025",
+          "reserve_contract_id": "CAQCFVLOBK5GIULPNZRGATJJMIZL5BSP7X5YJVMGCPTUEPFM4AVSRCJU",
+          "native_wallet_amount": "2998.7522320"
+        },
+        "blend_borrowing_verification": {
+          "tx_hash": "d107e3f4742004f7ad18dad0555d06bdf2b3fa7005bbf0b1d4fc1a49315dd8f7",
+          "asset_id": "stellar-testnet:classic:USDC:GATALTGTWIOT6BUDBCZM3Q4OQ4BO2COLOAZ7IYSKPLC2PMSOPPGF5V56",
+          "verified": true,
+          "operation": "repay",
+          "repay_all": true,
+          "observed_at": "2026-11-13T19:01:58.279Z",
+          "wallet_after": "801.1595355",
+          "wallet_before": "801.2595356",
+          "observed_ledger": 5714574,
+          "confirmed_ledger": 5714574,
+          "pool_contract_id": "CB3447A446DY3USGWPIDXTNQHF5EX24XDQA2EN6TAZP62JTPBTNOA52Q",
+          "requested_atomic": "1001004",
+          "debt_tokens_after": "0",
+          "actual_fee_stroops": "14385",
+          "debt_tokens_before": "988805",
+          "repay_refund_atomic": "1003",
+          "reserve_contract_id": "CAQCFVLOBK5GIULPNZRGATJJMIZL5BSP7X5YJVMGCPTUEPFM4AVSRCJU",
+          "debt_principal_delta": "-0.1000001",
+          "repay_incoming_atomic": "1001004",
+          "wallet_principal_delta": "-0.1000001",
+          "collateral_tokens_after": "9919025",
+          "collateral_tokens_before": "9919025",
+          "collateral_principal_delta": "0.0000000"
+        }
+      }
+    },
+    {
+      "id": "90c3cedc-c4e4-47d5-81c7-755ed2f96042",
+      "type": "blend.borrow_collateral_withdraw",
+      "state": "completed",
+      "tx_hash": "4b913e5677d995aa2af537fca06a546511fb8d225ab39db62688625539eb59cd",
+      "error_code": null,
+      "created_at": "2026-11-13T19:02:35.770Z",
+      "updated_at": "2026-11-13T19:02:49.072Z",
+      "result_json": {
+        "blend_borrowing_baseline": {
+          "as_of": "2026-11-13T19:02:38.426Z",
+          "asset_id": "stellar-testnet:classic:USDC:GATALTGTWIOT6BUDBCZM3Q4OQ4BO2COLOAZ7IYSKPLC2PMSOPPGF5V56",
+          "borrowed": "0.0000000",
+          "debt_rate": "1011322392202",
+          "market_id": "stellar-testnet:blend:CB3447A446DY3USGWPIDXTNQHF5EX24XDQA2EN6TAZP62JTPBTNOA52Q:CAQCFVLOBK5GIULPNZRGATJJMIZL5BSP7X5YJVMGCPTUEPFM4AVSRCJU",
+          "collateral": "1.0000004",
+          "debt_tokens": "0",
+          "native_as_of": "2026-11-13T19:02:38.426Z",
+          "rate_decimals": 12,
+          "reserve_index": 3,
+          "wallet_amount": "801.1595355",
+          "position_as_of": "2026-11-13T19:02:38.307Z",
+          "wallet_address": "GDUGWEZI6JC7BDGXVG4QLRFXBRVFIQW3JFZAXGQC2A2W7USMSYJGI6ZO",
+          "collateral_rate": "1008164021041",
+          "position_ledger": 5714582,
+          "pool_contract_id": "CB3447A446DY3USGWPIDXTNQHF5EX24XDQA2EN6TAZP62JTPBTNOA52Q",
+          "collateral_tokens": "9919025",
+          "reserve_contract_id": "CAQCFVLOBK5GIULPNZRGATJJMIZL5BSP7X5YJVMGCPTUEPFM4AVSRCJU",
+          "native_wallet_amount": "2998.7507935"
+        },
+        "blend_borrowing_verification": {
+          "tx_hash": "4b913e5677d995aa2af537fca06a546511fb8d225ab39db62688625539eb59cd",
+          "asset_id": "stellar-testnet:classic:USDC:GATALTGTWIOT6BUDBCZM3Q4OQ4BO2COLOAZ7IYSKPLC2PMSOPPGF5V56",
+          "verified": true,
+          "operation": "collateral_withdraw",
+          "repay_all": false,
+          "observed_at": "2026-11-13T19:02:49.072Z",
+          "wallet_after": "802.1595355",
+          "wallet_before": "801.1595355",
+          "observed_ledger": 5714584,
+          "confirmed_ledger": 5714584,
+          "pool_contract_id": "CB3447A446DY3USGWPIDXTNQHF5EX24XDQA2EN6TAZP62JTPBTNOA52Q",
+          "requested_atomic": "10000000",
+          "debt_tokens_after": "0",
+          "actual_fee_stroops": "13017",
+          "debt_tokens_before": "0",
+          "repay_refund_atomic": null,
+          "reserve_contract_id": "CAQCFVLOBK5GIULPNZRGATJJMIZL5BSP7X5YJVMGCPTUEPFM4AVSRCJU",
+          "debt_principal_delta": "0.0000000",
+          "repay_incoming_atomic": null,
+          "wallet_principal_delta": "1.0000000",
+          "collateral_tokens_after": "4",
+          "collateral_tokens_before": "9919025",
+          "collateral_principal_delta": "-1.0000000"
+        }
+      }
+    },
+    {
+      "id": "99920899-44f0-40fd-988b-870171455b3d",
+      "type": "zenex.trustline",
+      "state": "completed",
+      "tx_hash": "2d9dff305c4e592a40b135da950005f7d7b9ce52c9bcc75a4fb2d05d70d2ad91",
+      "error_code": null,
+      "created_at": "2026-11-13T19:06:20.097Z",
+      "updated_at": "2026-11-13T19:06:31.306Z",
+      "result_json": {
+        "zenex": {
+          "kind": "trustline",
+          "ledger": 5714629,
+          "tx_hash": "2d9dff305c4e592a40b135da950005f7d7b9ce52c9bcc75a4fb2d05d70d2ad91"
+        },
+        "zenex_baseline": {
+          "as_of": "2026-11-13T19:06:20.718Z",
+          "quote": {
+            "ask": "149225863549271200",
+            "bid": "149136638757362800",
+            "price": "149182806265078200",
+            "feedID": "0x000358cb12b1f5bbeca8b5b4666025a40b15520af1f82516ee2fb9a335055e9a",
+            "marketId": "xlm-usd",
+            "validFromTimestamp": 1794596778,
+            "observationsTimestamp": 1794596778
+          },
+          "rates": {
+            "data": {
+              "current": {
+                "long": {
+                  "fundingPerSec": "6373921868",
+                  "borrowingPerSec": "2441548266"
+                },
+                "short": {
+                  "fundingPerSec": "0",
+                  "borrowingPerSec": "0"
+                },
+                "observedAt": "2026-11-13T19:02:20.025Z"
+              },
+              "averages": {
+                "8h": {
+                  "long": {
+                    "fundingPerSec": "6373921868",
+                    "borrowingPerSec": "2424796699"
+                  },
+                  "short": {
+                    "fundingPerSec": "0",
+                    "borrowingPerSec": "0"
+                  }
+                },
+                "24h": {
+                  "long": {
+                    "fundingPerSec": "6373921868",
+                    "borrowingPerSec": "2311208654"
+                  },
+                  "short": {
+                    "fundingPerSec": "-18590605448",
+                    "borrowingPerSec": "0"
+                  }
+                }
+              }
+            },
+            "meta": {
+              "asOf": "2026-11-13T19:06:20.327Z",
+              "apiVersion": "v1",
+              "throughLedger": "5714624",
+              "indexedFromLedger": "4937285"
+            }
+          },
+          "config": {
+            "fee_dom": "600000000000000",
+            "liq_fee": "5000000000000000",
+            "exec_fee": "100000",
+            "redeem_fee": "2500000000000000",
+            "adl_max_pnl": "550000000000000000",
+            "borrow_rate": "15854895992",
+            "deposit_fee": "1000000000000000",
+            "fee_non_dom": "400000000000000",
+            "funding_max": "6373921868",
+            "funding_min": "317097920",
+            "init_margin": "50000000000000000",
+            "keeper_rate": "100000000000000000",
+            "min_deposit": "100000000",
+            "redeem_lock": "3600",
+            "target_util": "800000000000000000",
+            "impact_scalar": "100000000000000",
+            "max_util_open": "800000000000000000",
+            "notional_lock": "30",
+            "max_pnl_trader": "900000000000000000",
+            "adl_clear_target": "400000000000000000",
+            "funding_decrease": "36885",
+            "funding_increase": "885267",
+            "max_pnl_withdraw": "150000000000000000",
+            "min_order_margin": "10000000",
+            "max_open_interest": "500000000000",
+            "max_util_withdraw": "900000000000000000",
+            "max_vault_balance": "1000000000000",
+            "maintenance_margin": "20000000000000000",
+            "min_order_notional": "10000000",
+            "increased_borrow_rate": "15854895992",
+            "max_position_notional": "250000000000",
+            "min_position_notional": "10000000",
+            "threshold_stable_funding": "40000000000000000",
+            "threshold_decrease_funding": "0"
+          },
+          "balance": "0",
+          "network": "stellar-testnet",
+          "market_id": "zenex-testnet:perps:XLM",
+          "positions": [],
+          "market_data": {
+            "margin": {
+              "long": "1298793285",
+              "short": "0"
+            },
+            "tokens": {
+              "long": "17658679014",
+              "short": "0"
+            },
+            "notional": {
+              "long": "3200000000",
+              "short": "0"
+            },
+            "accrued_at": "1794596539",
+            "credit_owed": "489529",
+            "credit_pool": "118076218",
+            "funding_idx": {
+              "long": "24678250311346861",
+              "short": "-2019959804869301"
+            },
+            "funding_rate": "6373921868",
+            "borrowing_idx": {
+              "long": "22947006167706227",
+              "short": "144176035774270"
+            }
+          },
+          "has_trustline": false,
+          "wallet_address": "GDUGWEZI6JC7BDGXVG4QLRFXBRVFIQW3JFZAXGQC2A2W7USMSYJGI6ZO",
+          "collateral_asset_id": "stellar-testnet:classic:USDC:GCLSQU55UGBZQITOD4JFGEMIFAAUZSHZ6V2BK7BQNZ2F76V5KNXLOUGC"
+        }
+      }
+    },
+    {
+      "id": "8dabfd28-7861-4635-a778-73706e92942a",
+      "type": "zenex.faucet",
+      "state": "completed",
+      "tx_hash": "dee1c98a899de7782726b27831ee5da8f60daaf83f200b31822bcf6bf29ed09b",
+      "error_code": null,
+      "created_at": "2026-11-13T19:06:33.379Z",
+      "updated_at": "2026-11-13T19:06:41.928Z",
+      "result_json": {
+        "zenex": {
+          "kind": "fund",
+          "amount": "1000.0000000",
+          "ledger": 5714631,
+          "tx_hash": "dee1c98a899de7782726b27831ee5da8f60daaf83f200b31822bcf6bf29ed09b",
+          "asset_id": "stellar-testnet:classic:USDC:GCLSQU55UGBZQITOD4JFGEMIFAAUZSHZ6V2BK7BQNZ2F76V5KNXLOUGC",
+          "verified": true
+        },
+        "faucet_claimed": true,
+        "zenex_baseline": {
+          "as_of": "2026-11-13T19:06:33.861Z",
+          "quote": {
+            "ask": "149340132373896600",
+            "bid": "149258030816179400",
+            "price": "149299914769135000",
+            "feedID": "0x000358cb12b1f5bbeca8b5b4666025a40b15520af1f82516ee2fb9a335055e9a",
+            "marketId": "xlm-usd",
+            "validFromTimestamp": 1794596792,
+            "observationsTimestamp": 1794596792
+          },
+          "rates": {
+            "data": {
+              "current": {
+                "long": {
+                  "fundingPerSec": "6373921868",
+                  "borrowingPerSec": "2441548266"
+                },
+                "short": {
+                  "fundingPerSec": "0",
+                  "borrowingPerSec": "0"
+                },
+                "observedAt": "2026-11-13T19:02:20.025Z"
+              },
+              "averages": {
+                "8h": {
+                  "long": {
+                    "fundingPerSec": "6373921868",
+                    "borrowingPerSec": "2424796699"
+                  },
+                  "short": {
+                    "fundingPerSec": "0",
+                    "borrowingPerSec": "0"
+                  }
+                },
+                "24h": {
+                  "long": {
+                    "fundingPerSec": "6373921868",
+                    "borrowingPerSec": "2311208654"
+                  },
+                  "short": {
+                    "fundingPerSec": "-18590605448",
+                    "borrowingPerSec": "0"
+                  }
+                }
+              }
+            },
+            "meta": {
+              "asOf": "2026-11-13T19:06:33.440Z",
+              "apiVersion": "v1",
+              "throughLedger": "5714624",
+              "indexedFromLedger": "4937285"
+            }
+          },
+          "config": {
+            "fee_dom": "600000000000000",
+            "liq_fee": "5000000000000000",
+            "exec_fee": "100000",
+            "redeem_fee": "2500000000000000",
+            "adl_max_pnl": "550000000000000000",
+            "borrow_rate": "15854895992",
+            "deposit_fee": "1000000000000000",
+            "fee_non_dom": "400000000000000",
+            "funding_max": "6373921868",
+            "funding_min": "317097920",
+            "init_margin": "50000000000000000",
+            "keeper_rate": "100000000000000000",
+            "min_deposit": "100000000",
+            "redeem_lock": "3600",
+            "target_util": "800000000000000000",
+            "impact_scalar": "100000000000000",
+            "max_util_open": "800000000000000000",
+            "notional_lock": "30",
+            "max_pnl_trader": "900000000000000000",
+            "adl_clear_target": "400000000000000000",
+            "funding_decrease": "36885",
+            "funding_increase": "885267",
+            "max_pnl_withdraw": "150000000000000000",
+            "min_order_margin": "10000000",
+            "max_open_interest": "500000000000",
+            "max_util_withdraw": "900000000000000000",
+            "max_vault_balance": "1000000000000",
+            "maintenance_margin": "20000000000000000",
+            "min_order_notional": "10000000",
+            "increased_borrow_rate": "15854895992",
+            "max_position_notional": "250000000000",
+            "min_position_notional": "10000000",
+            "threshold_stable_funding": "40000000000000000",
+            "threshold_decrease_funding": "0"
+          },
+          "balance": "0.0000000",
+          "network": "stellar-testnet",
+          "market_id": "zenex-testnet:perps:XLM",
+          "positions": [],
+          "market_data": {
+            "margin": {
+              "long": "1298793285",
+              "short": "0"
+            },
+            "tokens": {
+              "long": "17658679014",
+              "short": "0"
+            },
+            "notional": {
+              "long": "3200000000",
+              "short": "0"
+            },
+            "accrued_at": "1794596539",
+            "credit_owed": "489529",
+            "credit_pool": "118076218",
+            "funding_idx": {
+              "long": "24678250311346861",
+              "short": "-2019959804869301"
+            },
+            "funding_rate": "6373921868",
+            "borrowing_idx": {
+              "long": "22947006167706227",
+              "short": "144176035774270"
+            }
+          },
+          "has_trustline": true,
+          "wallet_address": "GDUGWEZI6JC7BDGXVG4QLRFXBRVFIQW3JFZAXGQC2A2W7USMSYJGI6ZO",
+          "collateral_asset_id": "stellar-testnet:classic:USDC:GCLSQU55UGBZQITOD4JFGEMIFAAUZSHZ6V2BK7BQNZ2F76V5KNXLOUGC"
+        }
+      }
+    },
+    {
+      "id": "9ec2fc1e-a631-4f81-837e-5d48b2fdbb01",
+      "type": "zenex.open",
+      "state": "completed",
+      "tx_hash": "7e4344cc0380d35b13ad2586b663fc81f10088aec53068ac211edc0b1db1b5cb",
+      "error_code": null,
+      "created_at": "2026-11-13T19:06:44.888Z",
+      "updated_at": "2026-11-13T19:07:04.596Z",
+      "result_json": {
+        "zenex": {
+          "kind": "zenex.open",
+          "event": {
+            "id": "0024544170433613824-0000000001",
+            "topic": [
+              "open_fill",
+              "GDUGWEZI6JC7BDGXVG4QLRFXBRVFIQW3JFZAXGQC2A2W7USMSYJGI6ZO",
+              1,
+              true
+            ],
+            "value": {
+              "price": "149473911030403325",
+              "keeper": "GDDHPJCKJY6RYUNFXX552A542S75JF64Y46MDCJZETVOYSFZ2DZ44REN",
+              "margin": "10000000",
+              "tokens": "133802613",
+              "base_fee": "12000",
+              "notional": "20000000",
+              "impact_fee": "4"
+            },
+            "ledger": 5714635,
+            "txHash": "ff9fed89045f9f4523429dee2c96ba6e156d28ab6814d1508b76ebeb138dbe02"
+          },
+          "order_id": 1,
+          "verified": true,
+          "creation_hash": "7e4344cc0380d35b13ad2586b663fc81f10088aec53068ac211edc0b1db1b5cb",
+          "execution_hash": "ff9fed89045f9f4523429dee2c96ba6e156d28ab6814d1508b76ebeb138dbe02",
+          "position_after": {
+            "margin": "9987996",
+            "tokens": "133802613",
+            "notional": "20000000",
+            "priced_at": "1794596816",
+            "unlocks_at": "1794596849",
+            "funding_idx": "24680035009469901",
+            "borrowing_idx": "22947691110444147",
+            "decrease_orders": [],
+            "locked_notional": "20000000"
+          },
+          "position_before": null
+        },
+        "zenex_baseline": {
+          "as_of": "2026-11-13T19:06:45.481Z",
+          "quote": {
+            "ask": "149414960000000000",
+            "bid": "149269730000000000",
+            "price": "149341428474762100",
+            "feedID": "0x000358cb12b1f5bbeca8b5b4666025a40b15520af1f82516ee2fb9a335055e9a",
+            "marketId": "xlm-usd",
+            "validFromTimestamp": 1794596804,
+            "observationsTimestamp": 1794596804
+          },
+          "rates": {
+            "data": {
+              "current": {
+                "long": {
+                  "fundingPerSec": "6373921868",
+                  "borrowingPerSec": "2441548266"
+                },
+                "short": {
+                  "fundingPerSec": "0",
+                  "borrowingPerSec": "0"
+                },
+                "observedAt": "2026-11-13T19:02:20.025Z"
+              },
+              "averages": {
+                "8h": {
+                  "long": {
+                    "fundingPerSec": "6373921868",
+                    "borrowingPerSec": "2424796699"
+                  },
+                  "short": {
+                    "fundingPerSec": "0",
+                    "borrowingPerSec": "0"
+                  }
+                },
+                "24h": {
+                  "long": {
+                    "fundingPerSec": "6373921868",
+                    "borrowingPerSec": "2311208654"
+                  },
+                  "short": {
+                    "fundingPerSec": "-18590605448",
+                    "borrowingPerSec": "0"
+                  }
+                }
+              }
+            },
+            "meta": {
+              "asOf": "2026-11-13T19:06:45.092Z",
+              "apiVersion": "v1",
+              "throughLedger": "5714624",
+              "indexedFromLedger": "4937285"
+            }
+          },
+          "config": {
+            "fee_dom": "600000000000000",
+            "liq_fee": "5000000000000000",
+            "exec_fee": "100000",
+            "redeem_fee": "2500000000000000",
+            "adl_max_pnl": "550000000000000000",
+            "borrow_rate": "15854895992",
+            "deposit_fee": "1000000000000000",
+            "fee_non_dom": "400000000000000",
+            "funding_max": "6373921868",
+            "funding_min": "317097920",
+            "init_margin": "50000000000000000",
+            "keeper_rate": "100000000000000000",
+            "min_deposit": "100000000",
+            "redeem_lock": "3600",
+            "target_util": "800000000000000000",
+            "impact_scalar": "100000000000000",
+            "max_util_open": "800000000000000000",
+            "notional_lock": "30",
+            "max_pnl_trader": "900000000000000000",
+            "adl_clear_target": "400000000000000000",
+            "funding_decrease": "36885",
+            "funding_increase": "885267",
+            "max_pnl_withdraw": "150000000000000000",
+            "min_order_margin": "10000000",
+            "max_open_interest": "500000000000",
+            "max_util_withdraw": "900000000000000000",
+            "max_vault_balance": "1000000000000",
+            "maintenance_margin": "20000000000000000",
+            "min_order_notional": "10000000",
+            "increased_borrow_rate": "15854895992",
+            "max_position_notional": "250000000000",
+            "min_position_notional": "10000000",
+            "threshold_stable_funding": "40000000000000000",
+            "threshold_decrease_funding": "0"
+          },
+          "balance": "1000.0000000",
+          "network": "stellar-testnet",
+          "market_id": "zenex-testnet:perps:XLM",
+          "positions": [],
+          "market_data": {
+            "margin": {
+              "long": "1298793285",
+              "short": "0"
+            },
+            "tokens": {
+              "long": "17658679014",
+              "short": "0"
+            },
+            "notional": {
+              "long": "3200000000",
+              "short": "0"
+            },
+            "accrued_at": "1794596539",
+            "credit_owed": "489529",
+            "credit_pool": "118076218",
+            "funding_idx": {
+              "long": "24678250311346861",
+              "short": "-2019959804869301"
+            },
+            "funding_rate": "6373921868",
+            "borrowing_idx": {
+              "long": "22947006167706227",
+              "short": "144176035774270"
+            }
+          },
+          "has_trustline": true,
+          "wallet_address": "GDUGWEZI6JC7BDGXVG4QLRFXBRVFIQW3JFZAXGQC2A2W7USMSYJGI6ZO",
+          "collateral_asset_id": "stellar-testnet:classic:USDC:GCLSQU55UGBZQITOD4JFGEMIFAAUZSHZ6V2BK7BQNZ2F76V5KNXLOUGC"
+        }
+      }
+    },
+    {
+      "id": "539345e9-b889-4582-be89-a136e6969213",
+      "type": "zenex.close",
+      "state": "completed",
+      "tx_hash": "396ea823b83d477cd2903e4c48ff6aa62864e109680d61d0307a9116cc47a5ee",
+      "error_code": null,
+      "created_at": "2026-11-13T19:07:54.672Z",
+      "updated_at": "2026-11-13T19:08:12.181Z",
+      "result_json": {
+        "zenex": {
+          "kind": "zenex.close",
+          "event": {
+            "id": "0024544226268209152-0000000001",
+            "topic": [
+              "close_fill",
+              "GDUGWEZI6JC7BDGXVG4QLRFXBRVFIQW3JFZAXGQC2A2W7USMSYJGI6ZO",
+              2,
+              true
+            ],
+            "value": {
+              "pnl": "-22116",
+              "price": "149308625764563725",
+              "keeper": "GDDHPJCKJY6RYUNFXX552A542S75JF64Y46MDCJZETVOYSFZ2DZ44REN",
+              "margin": "9987996",
+              "tokens": "133802613",
+              "funding": "9",
+              "bad_debt": "0",
+              "base_fee": "8000",
+              "notional": "20000000",
+              "returned": "9957863",
+              "borrowing": "4",
+              "impact_fee": "4"
+            },
+            "ledger": 5714648,
+            "txHash": "9d0c3489668f38015e23ec9c2d01ea0df0f9d4d6749f8b71f3794c5a36c9d5af"
+          },
+          "order_id": 2,
+          "verified": true,
+          "creation_hash": "396ea823b83d477cd2903e4c48ff6aa62864e109680d61d0307a9116cc47a5ee",
+          "execution_hash": "9d0c3489668f38015e23ec9c2d01ea0df0f9d4d6749f8b71f3794c5a36c9d5af",
+          "position_after": {
+            "margin": "0",
+            "tokens": "0",
+            "notional": "0",
+            "priced_at": "0",
+            "unlocks_at": "0",
+            "funding_idx": "0",
+            "borrowing_idx": "0",
+            "decrease_orders": [],
+            "locked_notional": "0"
+          },
+          "position_before": {
+            "margin": "9987996",
+            "tokens": "133802613",
+            "is_long": true,
+            "notional": "20000000",
+            "priced_at": "1794596816",
+            "unlocks_at": "1794596849",
+            "funding_idx": "24680035009469901",
+            "borrowing_idx": "22947691110444147",
+            "decrease_orders": [],
+            "locked_notional": "20000000"
+          }
+        },
+        "zenex_baseline": {
+          "as_of": "2026-11-13T19:07:55.554Z",
+          "quote": {
+            "ask": "149388085561202100",
+            "bid": "149274030000000000",
+            "price": "149329637032171500",
+            "feedID": "0x000358cb12b1f5bbeca8b5b4666025a40b15520af1f82516ee2fb9a335055e9a",
+            "marketId": "xlm-usd",
+            "validFromTimestamp": 1794596874,
+            "observationsTimestamp": 1794596874
+          },
+          "rates": {
+            "data": {
+              "current": {
+                "long": {
+                  "fundingPerSec": "6373921868",
+                  "borrowingPerSec": "2464759077"
+                },
+                "short": {
+                  "fundingPerSec": "0",
+                  "borrowingPerSec": "0"
+                },
+                "observedAt": "2026-11-13T19:07:00.468Z"
+              },
+              "averages": {
+                "8h": {
+                  "long": {
+                    "fundingPerSec": "6373921868",
+                    "borrowingPerSec": "2426007680"
+                  },
+                  "short": {
+                    "fundingPerSec": "0",
+                    "borrowingPerSec": "0"
+                  }
+                },
+                "24h": {
+                  "long": {
+                    "fundingPerSec": "6373921868",
+                    "borrowingPerSec": "2312617373"
+                  },
+                  "short": {
+                    "fundingPerSec": "-18420049435",
+                    "borrowingPerSec": "0"
+                  }
+                }
+              }
+            },
+            "meta": {
+              "asOf": "2026-11-13T19:07:55.055Z",
+              "apiVersion": "v1",
+              "throughLedger": "5714638",
+              "indexedFromLedger": "4937285"
+            }
+          },
+          "config": {
+            "fee_dom": "600000000000000",
+            "liq_fee": "5000000000000000",
+            "exec_fee": "100000",
+            "redeem_fee": "2500000000000000",
+            "adl_max_pnl": "550000000000000000",
+            "borrow_rate": "15854895992",
+            "deposit_fee": "1000000000000000",
+            "fee_non_dom": "400000000000000",
+            "funding_max": "6373921868",
+            "funding_min": "317097920",
+            "init_margin": "50000000000000000",
+            "keeper_rate": "100000000000000000",
+            "min_deposit": "100000000",
+            "redeem_lock": "3600",
+            "target_util": "800000000000000000",
+            "impact_scalar": "100000000000000",
+            "max_util_open": "800000000000000000",
+            "notional_lock": "30",
+            "max_pnl_trader": "900000000000000000",
+            "adl_clear_target": "400000000000000000",
+            "funding_decrease": "36885",
+            "funding_increase": "885267",
+            "max_pnl_withdraw": "150000000000000000",
+            "min_order_margin": "10000000",
+            "max_open_interest": "500000000000",
+            "max_util_withdraw": "900000000000000000",
+            "max_vault_balance": "1000000000000",
+            "maintenance_margin": "20000000000000000",
+            "min_order_notional": "10000000",
+            "increased_borrow_rate": "15854895992",
+            "max_position_notional": "250000000000",
+            "min_position_notional": "10000000",
+            "threshold_stable_funding": "40000000000000000",
+            "threshold_decrease_funding": "0"
+          },
+          "balance": "998.9900000",
+          "network": "stellar-testnet",
+          "market_id": "zenex-testnet:perps:XLM",
+          "positions": [
+            {
+              "margin": "9987996",
+              "tokens": "133802613",
+              "is_long": true,
+              "notional": "20000000",
+              "priced_at": "1794596816",
+              "unlocks_at": "1794596849",
+              "funding_idx": "24680035009469901",
+              "borrowing_idx": "22947691110444147",
+              "decrease_orders": [],
+              "locked_notional": "20000000"
+            }
+          ],
+          "market_data": {
+            "margin": {
+              "long": "1308781281",
+              "short": "0"
+            },
+            "tokens": {
+              "long": "17792481627",
+              "short": "0"
+            },
+            "notional": {
+              "long": "3220000000",
+              "short": "0"
+            },
+            "accrued_at": "1794596819",
+            "credit_owed": "489529",
+            "credit_pool": "118076218",
+            "funding_idx": {
+              "long": "24680035009469901",
+              "short": "-2019959804869301"
+            },
+            "funding_rate": "6373921868",
+            "borrowing_idx": {
+              "long": "22947691110444147",
+              "short": "144176035774270"
+            }
+          },
+          "has_trustline": true,
+          "wallet_address": "GDUGWEZI6JC7BDGXVG4QLRFXBRVFIQW3JFZAXGQC2A2W7USMSYJGI6ZO",
+          "collateral_asset_id": "stellar-testnet:classic:USDC:GCLSQU55UGBZQITOD4JFGEMIFAAUZSHZ6V2BK7BQNZ2F76V5KNXLOUGC"
+        }
+      }
+    },
+    {
+      "id": "c45c0c1e-d7fb-4935-969c-ea63c759c179",
+      "type": "testnet.fund",
+      "state": "completed",
+      "tx_hash": "95d063b4985ef5908cfba92dc0627a810700d78177f4724341df4bc47e763caf",
+      "error_code": null,
+      "created_at": "2026-11-13T19:11:02.901Z",
+      "updated_at": "2026-11-13T19:11:09.885Z",
+      "result_json": {
+        "asset_id": "stellar-testnet:native:XLM",
+        "recipient": "GDUGWEZI6JC7BDGXVG4QLRFXBRVFIQW3JFZAXGQC2A2W7USMSYJGI6ZO",
+        "expires_at": "2026-11-13T19:13:03.033Z",
+        "amount_atomic": "10000000",
+        "before_recipient_atomic": "29984924208"
+      }
+    },
+    {
+      "id": "4d8bbbf8-0d1c-40f0-a23e-49c6fdcff33a",
+      "type": "testnet.return",
+      "state": "completed",
+      "tx_hash": "876e9af048f9a1d81b543419563b261cb3331701095cccdf61868055f28979d6",
+      "error_code": null,
+      "created_at": "2026-11-13T19:11:25.156Z",
+      "updated_at": "2026-11-13T19:11:32.616Z",
+      "result_json": {}
+    }
+  ]
+}
