@@ -481,13 +481,6 @@ export default function Dashboard({ section }: { section: string }) {
           ))}
         </nav>
         <div className="sidebar-bottom">
-          <div className="network-card">
-            <span className="orb" />
-            <div>
-              <strong>Stellar Testnet</strong>
-              <p>Demo assets only</p>
-            </div>
-          </div>
           <button onClick={logout} className="logout" disabled={busy}>
             <Icon name="logout" size={18} />
             Sign out
