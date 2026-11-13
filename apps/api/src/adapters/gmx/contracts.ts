@@ -1,5 +1,5 @@
 import type { Hex } from 'viem';
-export type GmxSymbol = 'ETH' | 'BTC';
+export type GmxSymbol = 'ETH' | 'BTC' | 'CRV' | 'XAU' | 'XAG' | 'XPT';
 export interface GmxReadTransport {
     request(method: string, params: unknown[]): Promise<unknown>;
 }

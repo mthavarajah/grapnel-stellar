@@ -43,15 +43,47 @@ export const GMX_TESTNET = {
     }
   },
   "markets": {
-    "ETH": {
-      "market": "0xb6fc4c9eb02c35a134044526c62bb15014ac0bcc",
-      "indexToken": "0x980b62da83eff3d4576c647993b0c1d7faf17c73",
-      "decimals": 18
-    },
-    "BTC": {
-      "market": "0x3a83246bddd60c4e71c91c10d9a66fd64399bbcf",
-      "indexToken": "0xf79ce1cf38a09d572b021b4c5548b75a14082f12",
-      "decimals": 8
-    }
+  "ETH": {
+    "market": "0xb6fc4c9eb02c35a134044526c62bb15014ac0bcc",
+    "indexToken": "0x980b62da83eff3d4576c647993b0c1d7faf17c73",
+    "decimals": 18,
+    "longToken": "0x980b62da83eff3d4576c647993b0c1d7faf17c73",
+    "longDecimals": 18
+  },
+  "BTC": {
+    "market": "0x3a83246bddd60c4e71c91c10d9a66fd64399bbcf",
+    "indexToken": "0xf79ce1cf38a09d572b021b4c5548b75a14082f12",
+    "decimals": 8,
+    "longToken": "0xf79ce1cf38a09d572b021b4c5548b75a14082f12",
+    "longDecimals": 8
+  },
+  "CRV": {
+    "market": "0xade9d177b9e060d2064ee9f798125e6539fdaa1c",
+    "indexToken": "0xd5ddaed48b09fa1d7944bd662cb05265fcd7077c",
+    "decimals": 18,
+    "longToken": "0x980b62da83eff3d4576c647993b0c1d7faf17c73",
+    "longDecimals": 18
+  },
+  "XAU": {
+    "market": "0x860f6b4b2f218885935c306b1c782a864ed2d67f",
+    "indexToken": "0x0f16dfba0242f23f4a5fade95cd138139dd7592f",
+    "decimals": 18,
+    "longToken": "0x980b62da83eff3d4576c647993b0c1d7faf17c73",
+    "longDecimals": 18
+  },
+  "XAG": {
+    "market": "0x8490d84c29134da93f434210d76721179c382471",
+    "indexToken": "0xac0cee37770fdc16732c1f591a6b90a4ea580643",
+    "decimals": 18,
+    "longToken": "0x980b62da83eff3d4576c647993b0c1d7faf17c73",
+    "longDecimals": 18
+  },
+  "XPT": {
+    "market": "0x02f0d10977f044d59460b2e71afb8c07dc7b5e1f",
+    "indexToken": "0xf3a3486de22725d8d762671ac4479d8ab9c21173",
+    "decimals": 18,
+    "longToken": "0x980b62da83eff3d4576c647993b0c1d7faf17c73",
+    "longDecimals": 18
   }
+}
 } as const;

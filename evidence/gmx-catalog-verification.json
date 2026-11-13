@@ -1,8 +1,8 @@
 {
-  "checked_at": "2026-11-12T22:39:44.851Z",
+  "checked_at": "2026-11-13T01:57:08.353Z",
   "network": "arbitrum-sepolia",
   "chain_id": 421614,
-  "block_number": "328639127",
+  "block_number": "328681009",
   "source": "https://arbitrum-sepolia-test.gmxapi.ai/v1/markets",
   "reader": "0x1543f5e73b9d329d7de25adc98120f13d29bc53b",
   "onchain_market_count": 10,
@@ -113,8 +113,8 @@
       "isSpotOnly": false,
       "leverageTiers": [
         {
-          "maxLeverage": "500000",
-          "minCollateralFactor": "20000000000000000000000000000"
+          "maxLeverage": "1000000",
+          "minCollateralFactor": "10000000000000000000000000000"
         }
       ],
       "minPositionSizeUsd": "1000000000000000000000000000000",
@@ -124,7 +124,14 @@
     }
   ],
   "execution_verified_symbols": [
-    "ETH"
+    "ETH",
+    "BTC",
+    "CRV",
+    "XAU",
+    "XAG",
+    "XPT"
   ],
-  "note": "Catalog and matching onchain market identities are verified; listing alone is not trade execution acceptance."
+  "note": "Catalog and matching onchain market identities are verified; listing alone is not trade execution acceptance.",
+  "execution_verification_basis": "Per-symbol independent canonical keeper open/close proof in evidence/gmx-*-roundtrip.json; ETH uses gmx-own-roundtrip.json.",
+  "direction_limits_note": "XAG and XPT verified Short roundtrips. Long capacity was below $1 at verification; current onchain side capacity is enforced."
 }

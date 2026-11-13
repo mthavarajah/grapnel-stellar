@@ -2,7 +2,7 @@ import type { Pool } from 'pg';
 import { GrapnelError, fromAtomic } from '@grapnel/contracts';
 import { createGmxTestnetAdapter, GMX_TESTNET, type GmxTestnetAdapter, type GmxSymbol } from '../../adapters/gmx/index.js';
 import { HISTORY_RANGES, MarketDataService, priceChange, type HistoryRange, type MarketHistory } from '../market-data/service.js';
-const P = GMX_TESTNET, PREFIX = 'gmx-testnet:perps:', SYMBOLS = ['ETH', 'BTC'] as const, NAMES = { ETH: 'Ethereum', BTC: 'Bitcoin' };
+const P = GMX_TESTNET, PREFIX = 'gmx-testnet:perps:', SYMBOLS = ['ETH', 'BTC', 'CRV', 'XAU', 'XAG', 'XPT'] as const, NAMES = { ETH: 'Ethereum', BTC: 'Bitcoin', CRV: 'Curve', XAU: 'Gold', XAG: 'Silver', XPT: 'Platinum' };
 const WINDOWS: Record<Exclude<HistoryRange, 'all'>, number> = { live: 3600000, '1d': 86400000, '1w': 604800000, '1m': 2592000000, '1y': 31536000000 };
 type Quote = Awaited<ReturnType<GmxTestnetAdapter['readMarket']>>;
 const unavailable = (): never => { throw new GrapnelError(503, 'MARKET_PRICE_UNAVAILABLE', 'An exact current GMX Testnet oracle observation is required', true); };
@@ -47,12 +47,12 @@ export class GmxMarketData {
     private metadata(symbol: GmxSymbol) {
         const market = P.markets[symbol], collateral = P.pins.collateral.address, settlementId = `arbitrum-sepolia:erc20:${collateral}`;
         return {
-            id: PREFIX + symbol, market_id: PREFIX + symbol, label: `${symbol} / USDC`, asset_class: 'perps' as const, asset_category: 'crypto' as const, module: 'trade.perps' as const, provider: 'gmx' as const, network: P.network, chain_id: P.chainId, instrument_type: 'perpetual_futures' as const,
+            id: PREFIX + symbol, market_id: PREFIX + symbol, label: `${symbol} / USDC`, asset_class: 'perps' as const, asset_category: (['XAU','XAG','XPT'].includes(symbol)?'commodity':'crypto') as 'commodity'|'crypto', module: 'trade.perps' as const, provider: 'gmx' as const, network: P.network, chain_id: P.chainId, instrument_type: 'perpetual_futures' as const,
             provider_symbol: symbol, provider_dex: 'gmx-v2', underlying: { symbol, name: NAMES[symbol], display_decimals: market.decimals }, base_asset_id: `arbitrum-sepolia:underlying:${symbol}`, market_address: market.market, index_token: market.indexToken, index_decimals: market.decimals,
             quote_symbol: 'USDC', reference_quote_symbol: 'USD', reference_currency: 'USD', price_basis: 'provider_oracle_reference' as const, reference_price_type: 'oracle_min' as const,
             min_leverage: 1, max_leverage: 20, only_isolated: true,
             settlement_asset: { id: settlementId, code: 'USDC', symbol: 'USDC.SG', name: 'USDC.SG', decimals: 6, transfer_decimals: 6, address: collateral, contract_id: collateral, token_id: collateral, network: P.network, chain_id: P.chainId, compatibility: 'usdc' as const, circle_usdc: false },
-            source_category: 'crypto', source_classification: 'gmx_official_testnet_index_oracle', source_url: P.prices, registry_source: 'https://github.com/gmx-io/gmx-interface/blob/master/sdk/src/configs/contracts.ts', history_available: true,
+            source_category: ['XAU','XAG','XPT'].includes(symbol)?'commodity':'crypto', source_classification: 'gmx_official_testnet_index_oracle', source_url: P.prices, registry_source: 'https://github.com/gmx-io/gmx-interface/blob/master/sdk/src/configs/contracts.ts', history_available: true,
             execution_status: 'discovery_only' as const, executable: false, execution_available: false, preparation_available: false, actions: [], reason: 'GMX_CUSTOMER_EXECUTION_PROOF_REQUIRED', reason_message: 'Trading setup is being verified.',
         };
     }

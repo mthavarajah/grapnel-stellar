@@ -86,7 +86,7 @@ export async function GET(
     if(key==='gmx-status'||key==='gmx-request'){
       await requireModule('trade.perps',s);await requireModule('capital.wallets',s);
       if(key==='gmx-status'){
-        const address=z.string().regex(/^0x[0-9a-fA-F]{40}$/).optional().parse(request.nextUrl.searchParams.get('account_address')??undefined),id=z.enum(['gmx-testnet:perps:ETH','gmx-testnet:perps:BTC']).parse(request.nextUrl.searchParams.get('market_id'));
+        const address=z.string().regex(/^0x[0-9a-fA-F]{40}$/).optional().parse(request.nextUrl.searchParams.get('account_address')??undefined),id=z.enum(['gmx-testnet:perps:ETH','gmx-testnet:perps:BTC','gmx-testnet:perps:CRV','gmx-testnet:perps:XAU','gmx-testnet:perps:XAG','gmx-testnet:perps:XPT']).parse(request.nextUrl.searchParams.get('market_id'));
         return json(await grapnel(`/trade/gmx/status?customer_id=${s.customerId}&wallet_id=${s.walletId}&market_id=${encodeURIComponent(id)}${address?'&account_address='+address:''}`,s));
       }
       const id=z.string().uuid().optional().parse(request.nextUrl.searchParams.get('request_id')??undefined);
@@ -249,7 +249,7 @@ export async function POST(
       await requireModule('trade.perps',s);await requireModule('capital.wallets',s);
       const address=z.string().regex(/^0x[0-9a-fA-F]{40}$/);
       const schemas={
-        'gmx-prepare':z.object({account_address:address,kind:z.enum(['mint','approve','open','close']),market_id:z.enum(['gmx-testnet:perps:ETH','gmx-testnet:perps:BTC']),is_long:z.boolean().optional(),amount:money.optional(),collateral:money.optional(),size_usd:money.optional(),slippage_bps:z.number().int().min(1).max(100).optional()}).strict(),
+        'gmx-prepare':z.object({account_address:address,kind:z.enum(['mint','approve','open','close']),market_id:z.enum(['gmx-testnet:perps:ETH','gmx-testnet:perps:BTC','gmx-testnet:perps:CRV','gmx-testnet:perps:XAU','gmx-testnet:perps:XAG','gmx-testnet:perps:XPT']),is_long:z.boolean().optional(),amount:money.optional(),collateral:money.optional(),size_usd:money.optional(),slippage_bps:z.number().int().min(1).max(100).optional()}).strict(),
         'gmx-authorize':z.object({request_id:z.string().uuid(),signed_transaction:z.string().regex(/^0x[0-9a-fA-F]+$/).max(100000)}).strict(),
         'gmx-gas':z.object({account_address:address}).strict(),
       };

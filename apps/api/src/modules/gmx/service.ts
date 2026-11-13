@@ -16,11 +16,11 @@ export interface GmxServiceDependencies {
 }
 export class GmxCustomerService {
  constructor(readonly d:GmxServiceDependencies){}
- private symbol(id:string):GmxSymbol {if(!/^gmx-testnet:perps:(ETH|BTC)$/.test(id))throw new GrapnelError(404,'NOT_FOUND','Market not found');return id.endsWith(':ETH')?'ETH':'BTC';}
+ private symbol(id:string):GmxSymbol {if(!/^gmx-testnet:perps:(ETH|BTC|CRV|XAU|XAG|XPT)$/.test(id))throw new GrapnelError(404,'NOT_FOUND','Market not found');return id.slice('gmx-testnet:perps:'.length) as GmxSymbol;}
  async account(c:CustomerContext,address?:string){const rows=await this.d.readWallets(c),normalized=address?.toLowerCase();if(normalized&&!rows.some(w=>w.address.toLowerCase()===normalized))throw new GrapnelError(403,'WALLET_OWNERSHIP_INVALID','Choose your connected trading wallet');return(normalized??rows[0]?.address.toLowerCase()??null) as Hex|null;}
- async status(c:CustomerContext,address:string|undefined,id:string){const symbol=this.symbol(id),account=await this.account(c,address),available=await this.d.acceptance(symbol),market=await this.d.adapter.readMarket(symbol);
+ async status(c:CustomerContext,address:string|undefined,id:string){const symbol=this.symbol(id),account=await this.account(c,address),available=await this.d.acceptance(symbol),[market,liquidity]=await Promise.all([this.d.adapter.readMarket(symbol),this.d.adapter.readCapacity(symbol)]);
   const scope={business_id:c.businessId,customer_id:c.customerId,wallet_id:c.walletId};
-  const common={scope,provider:'gmx',network:'arbitrum-sepolia',chain_id:421614,account_address:account,asset:{symbol:'USDC',decimals:6,address:GMX_TESTNET.pins.collateral.address,identity:'USDC.SG'},market,execution_available:available,reason:available?null:'GMX_OWN_EXECUTION_PROOF_REQUIRED'};
+  const common={scope,provider:'gmx',network:'arbitrum-sepolia',chain_id:421614,account_address:account,asset:{symbol:'USDC',decimals:6,address:GMX_TESTNET.pins.collateral.address,identity:'USDC.SG'},market,liquidity,execution_available:available,reason:available?null:'GMX_OWN_EXECUTION_PROOF_REQUIRED'};
   if(!account)return {...common,native_balance:null,collateral_balance:null,allowance:null,positions:[],gas_funding_available:false,gas_grant:null};
   const [status,positions,gas]=await Promise.all([this.d.adapter.readStatus(account),this.d.adapter.readPositions(account),this.d.gasStatus?.(c,account)??null]);
   return {...common,native_balance:fromAtomic(BigInt(status.nativeWei),18),collateral_balance:fromAtomic(BigInt(status.collateralAtomic6),6),allowance:fromAtomic(BigInt(status.allowanceAtomic6),6),positions,gas_funding_available:!!this.d.gasStatus,gas_grant:gas,observed_at:status.observedAt};

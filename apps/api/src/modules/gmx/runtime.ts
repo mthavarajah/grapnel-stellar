@@ -22,9 +22,9 @@ export function createGmxRuntime(d:{pool:Pool;readWallets:(c:CustomerContext)=>P
  });
  const readiness=new Map<string,{at:number;value:boolean}>();
  const acceptance=async(symbol?:string)=>{
-  const selected=symbol??'ETH';if(selected!=='ETH'&&selected!=='BTC')return false;
+  const selected=symbol??'ETH';if(!Object.hasOwn(GMX_TESTNET.markets,selected))return false;
   const cached=readiness.get(selected);if(cached&&Date.now()-cached.at<30000)return cached.value;
-  try{const file=selected==='ETH'?'gmx-own-roundtrip.json':'gmx-btc-roundtrip.json';const p=JSON.parse(fs.readFileSync(new URL('../../../../../evidence/'+file,import.meta.url),'utf8'));
+  try{const file=selected==='ETH'?'gmx-own-roundtrip.json':`gmx-${selected.toLowerCase()}-roundtrip.json`;const p=JSON.parse(fs.readFileSync(new URL('../../../../../evidence/'+file,import.meta.url),'utf8'));
    if(p.steps?.open?.prepared?.intent?.symbol!==selected)return false;
    const value=await verifyGmxEventRoundtrip(p);readiness.set(selected,{at:Date.now(),value});return value;
   }catch{return false;}

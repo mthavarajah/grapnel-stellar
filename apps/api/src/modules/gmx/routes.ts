@@ -4,7 +4,7 @@ import {GrapnelError} from '@grapnel/contracts';
 import {requireBusiness,requireCustomer,success} from '../../lib/context.js';
 import type {GmxCustomerService} from './service.js';
 import type {GmxGasTreasury} from './gas.js';
-const identity=z.object({customer_id:z.string().uuid(),wallet_id:z.string().uuid()}),address=z.string().regex(/^0x[0-9a-fA-F]{40}$/),market=z.enum(['gmx-testnet:perps:ETH','gmx-testnet:perps:BTC']);
+const identity=z.object({customer_id:z.string().uuid(),wallet_id:z.string().uuid()}),address=z.string().regex(/^0x[0-9a-fA-F]{40}$/),market=z.enum(['gmx-testnet:perps:ETH','gmx-testnet:perps:BTC','gmx-testnet:perps:CRV','gmx-testnet:perps:XAU','gmx-testnet:perps:XAG','gmx-testnet:perps:XPT']);
 export async function registerGmxCustomerRoutes(app:FastifyInstance,d:{service:GmxCustomerService;gas:GmxGasTreasury|null;verifyGate1:()=>Promise<boolean>}){
  const base='/v1/trade/gmx';
  const scope=async(request:FastifyRequest,input:z.infer<typeof identity>)=>{await requireBusiness(request,'trade.perps');await requireBusiness(request,'capital.wallets');return requireCustomer(request,input.customer_id,input.wallet_id);};
