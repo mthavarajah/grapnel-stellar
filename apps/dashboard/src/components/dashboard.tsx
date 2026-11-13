@@ -525,15 +525,6 @@ export default function Dashboard({ section }: { section: string }) {
                           : "Build financial products. We handle the infrastructure."}
               </p>
             </div>
-            <button
-              className="secondary refresh"
-              aria-label="Refresh workspace"
-              disabled={busy || loading}
-              onClick={() => action(reload)}
-            >
-              <Icon name="refresh" size={17} />
-              Refresh
-            </button>
           </div>
           {error && (
             <div role="alert" className="message error">
