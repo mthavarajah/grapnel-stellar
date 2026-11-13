@@ -1,0 +1,37 @@
+{
+  "status": 200,
+  "markets": [
+    {
+      "id": "gmx-testnet:perps:ETH",
+      "executable": true,
+      "reason": null
+    },
+    {
+      "id": "gmx-testnet:perps:BTC",
+      "executable": true,
+      "reason": null
+    },
+    {
+      "id": "gmx-testnet:perps:CRV",
+      "executable": true,
+      "reason": null
+    },
+    {
+      "id": "gmx-testnet:perps:XAU",
+      "executable": true,
+      "reason": null
+    },
+    {
+      "id": "gmx-testnet:perps:XAG",
+      "executable": true,
+      "reason": null
+    },
+    {
+      "id": "gmx-testnet:perps:XPT",
+      "executable": true,
+      "reason": null
+    }
+  ],
+  "checked_at": "2026-11-13T02:24:25.605775+00:00",
+  "scope": "Local authenticated business market catalog; canonical own-QA per-market proof is independently checked by the API."
+}

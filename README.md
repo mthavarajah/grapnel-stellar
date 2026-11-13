@@ -2,7 +2,7 @@
 
 Grapnel is a **Stellar Testnet B2B infrastructure API** with a business dashboard and a separate sample fintech frontend/backend. Businesses enable modules and keep their API key on their server; customers separately authorize wallet spending through Privy.
 
-**The core onchain Gate 2 MVP is verified locally; public deployment is pending.** Gate 0 foundation and Gate 1 customer signing are committed and verified. Real customer transactions prove treasury funding/return, Soroswap swaps and Blend XLM supply/withdraw. USDC supply and withdrawal are also verified. The customer Privy USDC borrow, full repayment and borrowing-collateral withdrawal are verified; Hyperliquid Testnet Perpetuals integration is in progress. See [gate status](docs/15_GATE_STATUS.md) and [evidence](evidence/testnet.json). No fiat rails, mainnet writes or custom Grapnel contracts.
+**The core onchain Gate 2 MVP is verified locally; public deployment is pending.** Gate 0 foundation and Gate 1 customer signing are committed and verified. Real customer transactions prove treasury funding/return, Soroswap swaps and Blend XLM supply/withdraw. USDC supply and withdrawal are also verified. The customer Privy USDC borrow, full repayment and borrowing-collateral withdrawal are verified; GMX Arbitrum Sepolia Perpetuals has six listed markets with controlled-QA open/close proof; customer Privy execution testing remains separate. See [gate status](docs/15_GATE_STATUS.md) and [evidence](evidence/testnet.json). No fiat rails, mainnet writes or custom Grapnel contracts.
 
 Public source: [mthavarajah/grapnel-stellar](https://github.com/mthavarajah/grapnel-stellar). Local verification: [test/build results](evidence/local-verification.json).
 
