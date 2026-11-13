@@ -39,7 +39,7 @@ const nav = [
   ["customers", "Customers", "wallet"],
   ["modules", "API modules", "layers"],
   ["api-keys", "API keys", "key"],
-  ["activity", "Activity", "activity"],
+  ["activity", "Activity", "history"],
   ["logs", "Request logs", "activity"],
   ["docs", "Documentation", "book"],
 ] as const;
@@ -73,6 +73,12 @@ function Icon({ name, size = 20 }: { name: string; size?: number }) {
       <>
         <circle cx="8" cy="8" r="5" />
         <path d="m12 12 9 9m-4-4 3-3m-6 0 3-3" />
+      </>
+    ),
+    history: (
+      <>
+        <path d="M3 11a9 9 0 1 1 2.6 7.4M3 4v7h7" />
+        <path d="M12 7v5l3 2" />
       </>
     ),
     activity: <path d="M2 12h5l3-8 4 16 3-8h5" />,
