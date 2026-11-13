@@ -1,0 +1,231 @@
+{
+  "network": "stellar-testnet",
+  "signer": "controlled_qa_keypair",
+  "identity_verification": "explicit isolated test identity verifier; not production Privy authentication",
+  "database": "disposable _test database",
+  "account": "GCDRDEN2IOS3NNI3HCYOWU7XLHGC4VNIGY6PS2X7TFYA6BKOBJREHU6T",
+  "complete": true,
+  "checked_at": "2026-11-13T04:33:52.695Z",
+  "steps": [
+    {
+      "kind": "open",
+      "is_long": true,
+      "operation_id": "809d2f04-df2a-4e98-8ca4-7ac7a9315b4c",
+      "state": "completed",
+      "creation_hash": "6ca75f19d5d048553bf2b8dc7138aaf239cf43d8e3787d92f53ece84fb115a88",
+      "verification": {
+        "kind": "zenex.open",
+        "event": {
+          "id": "0024499081866940416-0000000001",
+          "topic": [
+            "open_fill",
+            "GCDRDEN2IOS3NNI3HCYOWU7XLHGC4VNIGY6PS2X7TFYA6BKOBJREHU6T",
+            10,
+            true
+          ],
+          "value": {
+            "price": "142546248799561700",
+            "keeper": "GDDHPJCKJY6RYUNFXX552A542S75JF64Y46MDCJZETVOYSFZ2DZ44REN",
+            "margin": "10000000",
+            "tokens": "140305340",
+            "base_fee": "12000",
+            "notional": "20000000",
+            "impact_fee": "4"
+          },
+          "ledger": 5704137,
+          "txHash": "eca55a6403cd175e51c09cb38e70af93fe7eed02ad0d18fa326a3aff86473533"
+        },
+        "order_id": 10,
+        "verified": true,
+        "creation_hash": "6ca75f19d5d048553bf2b8dc7138aaf239cf43d8e3787d92f53ece84fb115a88",
+        "execution_hash": "eca55a6403cd175e51c09cb38e70af93fe7eed02ad0d18fa326a3aff86473533",
+        "position_after": {
+          "margin": "9987996",
+          "tokens": "140305340",
+          "notional": "20000000",
+          "priced_at": "1794544324",
+          "unlocks_at": "1794544359",
+          "funding_idx": "24345467850618581",
+          "borrowing_idx": "22821740815802617",
+          "decrease_orders": [],
+          "locked_notional": "20000000"
+        },
+        "position_before": null
+      },
+      "active_reservations": 0
+    },
+    {
+      "kind": "close",
+      "is_long": true,
+      "operation_id": "3d11546b-27e7-4eba-bf29-56486ddd9a61",
+      "state": "completed",
+      "creation_hash": "35fd52aeb9fc3e53bf1d8ec72c6a5b765876a0bf884ed7a4386a8740d321eafd",
+      "verification": {
+        "kind": "zenex.close",
+        "event": {
+          "id": "0024499116226682880-0000000001",
+          "topic": [
+            "close_fill",
+            "GCDRDEN2IOS3NNI3HCYOWU7XLHGC4VNIGY6PS2X7TFYA6BKOBJREHU6T",
+            11,
+            true
+          ],
+          "value": {
+            "pnl": "18630",
+            "price": "142679035345630025",
+            "keeper": "GDDHPJCKJY6RYUNFXX552A542S75JF64Y46MDCJZETVOYSFZ2DZ44REN",
+            "margin": "9987996",
+            "tokens": "140305340",
+            "funding": "6",
+            "bad_debt": "0",
+            "base_fee": "8000",
+            "notional": "20000000",
+            "returned": "9998614",
+            "borrowing": "2",
+            "impact_fee": "4"
+          },
+          "ledger": 5704145,
+          "txHash": "50f8330c71b7395b7847d1ec258767b5bd42fed3c24c113e6a481f1001275c93"
+        },
+        "order_id": 11,
+        "verified": true,
+        "creation_hash": "35fd52aeb9fc3e53bf1d8ec72c6a5b765876a0bf884ed7a4386a8740d321eafd",
+        "execution_hash": "50f8330c71b7395b7847d1ec258767b5bd42fed3c24c113e6a481f1001275c93",
+        "position_after": {
+          "margin": "0",
+          "tokens": "0",
+          "notional": "0",
+          "priced_at": "0",
+          "unlocks_at": "0",
+          "funding_idx": "0",
+          "borrowing_idx": "0",
+          "decrease_orders": [],
+          "locked_notional": "0"
+        },
+        "position_before": {
+          "margin": "9987996",
+          "tokens": "140305340",
+          "is_long": true,
+          "notional": "20000000",
+          "priced_at": "1794544324",
+          "unlocks_at": "1794544359",
+          "funding_idx": "24345467850618581",
+          "borrowing_idx": "22821740815802617",
+          "decrease_orders": [],
+          "locked_notional": "20000000"
+        }
+      },
+      "active_reservations": 0
+    },
+    {
+      "kind": "open",
+      "is_long": false,
+      "operation_id": "f85016db-7044-44e4-83ee-ec870519af1c",
+      "state": "completed",
+      "creation_hash": "6a4f748515bc244c1ccbe46ad1d3b0e6797885d48d4dd031c8059ab2902329f1",
+      "verification": {
+        "kind": "zenex.open",
+        "event": {
+          "id": "0024499124816605184-0000000001",
+          "topic": [
+            "open_fill",
+            "GCDRDEN2IOS3NNI3HCYOWU7XLHGC4VNIGY6PS2X7TFYA6BKOBJREHU6T",
+            12,
+            false
+          ],
+          "value": {
+            "price": "142849201878131650",
+            "keeper": "GDDHPJCKJY6RYUNFXX552A542S75JF64Y46MDCJZETVOYSFZ2DZ44REN",
+            "margin": "10000000",
+            "tokens": "140007783",
+            "base_fee": "8000",
+            "notional": "20000000",
+            "impact_fee": "4"
+          },
+          "ledger": 5704147,
+          "txHash": "eb399fa5e00bb3064d2d845a40c00a53bcb391448e6b3acab3f7bc56bca73b83"
+        },
+        "order_id": 12,
+        "verified": true,
+        "creation_hash": "6a4f748515bc244c1ccbe46ad1d3b0e6797885d48d4dd031c8059ab2902329f1",
+        "execution_hash": "eb399fa5e00bb3064d2d845a40c00a53bcb391448e6b3acab3f7bc56bca73b83",
+        "position_after": {
+          "margin": "9991996",
+          "tokens": "140007783",
+          "notional": "20000000",
+          "priced_at": "1794544374",
+          "unlocks_at": "1794544409",
+          "funding_idx": "-1976935832260301",
+          "borrowing_idx": "144176035774270",
+          "decrease_orders": [],
+          "locked_notional": "20000000"
+        },
+        "position_before": null
+      },
+      "active_reservations": 0
+    },
+    {
+      "kind": "close",
+      "is_long": false,
+      "operation_id": "f84d78d9-d0f4-437d-8214-13c8a6075a22",
+      "state": "completed",
+      "creation_hash": "f689cd238295cfab527d28807b7b31dd6bc7baec70e07f3700814138e73ab575",
+      "verification": {
+        "kind": "zenex.close",
+        "event": {
+          "id": "0024499163471310848-0000000001",
+          "topic": [
+            "close_fill",
+            "GCDRDEN2IOS3NNI3HCYOWU7XLHGC4VNIGY6PS2X7TFYA6BKOBJREHU6T",
+            13,
+            false
+          ],
+          "value": {
+            "pnl": "-13248",
+            "price": "142943824060655925",
+            "keeper": "GDDHPJCKJY6RYUNFXX552A542S75JF64Y46MDCJZETVOYSFZ2DZ44REN",
+            "margin": "9991996",
+            "tokens": "140007783",
+            "funding": "-860",
+            "bad_debt": "0",
+            "base_fee": "12000",
+            "notional": "20000000",
+            "returned": "9966744",
+            "borrowing": "0",
+            "impact_fee": "4"
+          },
+          "ledger": 5704156,
+          "txHash": "a308480a0ba4edc1738f932a194cf34a33642cf3dfc21b80bd3e4c210e05a723"
+        },
+        "order_id": 13,
+        "verified": true,
+        "creation_hash": "f689cd238295cfab527d28807b7b31dd6bc7baec70e07f3700814138e73ab575",
+        "execution_hash": "a308480a0ba4edc1738f932a194cf34a33642cf3dfc21b80bd3e4c210e05a723",
+        "position_after": {
+          "margin": "0",
+          "tokens": "0",
+          "notional": "0",
+          "priced_at": "0",
+          "unlocks_at": "0",
+          "funding_idx": "0",
+          "borrowing_idx": "0",
+          "decrease_orders": [],
+          "locked_notional": "0"
+        },
+        "position_before": {
+          "margin": "9991996",
+          "tokens": "140007783",
+          "is_long": false,
+          "notional": "20000000",
+          "priced_at": "1794544374",
+          "unlocks_at": "1794544409",
+          "funding_idx": "-1976935832260301",
+          "borrowing_idx": "144176035774270",
+          "decrease_orders": [],
+          "locked_notional": "20000000"
+        }
+      },
+      "active_reservations": 0
+    }
+  ]
+}
