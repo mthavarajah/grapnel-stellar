@@ -149,3 +149,9 @@ Responses follow `modules/perpetuals/cctp-contract.ts` and include exact scope, 
 ## v0.4.2 — capability loading
 
 `GET /v1/capabilities` keeps its full default response. Optional `module=<frozen module ID>` selects one provider and `readiness=omit` reads only live tenant entitlements without provider probes. Omitted-readiness rows explicitly use `discovery_only`, `READINESS_NOT_REQUESTED` and empty actions; they cannot establish financial execution permission. Existing/revoked keys and current enabled-module records are checked on every request. Full readiness failures are isolated to the affected module instead of failing the complete catalog.
+
+### Perpetual activity — additive GMX customer contract v3
+
+`GET /v1/trade/gmx/activity?customer_id=<uuid>&wallet_id=<uuid>` requires current business `trade.perps` and `capital.wallets`, verified customer identity and current EVM wallet ownership. Response is `{scope:{business_id,customer_id,wallet_id},items:[{id,kind,state,symbol,side,size_usd,amount,collateral,tx_hash,created_at}]}`. Kinds are `mint|approve|open|close|gas`; side is `long|short|null`; token amounts and USD notional are decimal strings or null. Actual completed open/close events link to the keeper transaction; accepted order creation does not establish a fill. All records are tenant/customer/wallet/account scoped. The fintech BFF injects identity at `gmx-activity` and never exposes the business key.
+
+Version0.4.3 publishes the existing GMX status/request/prepare/authorize/gas surfaces and the new activity read in OpenAPI, with the six exact market IDs, customer identity header, idempotency headers and conditional preparation bodies. This is an additive lead-approved extension; existing module identifiers and Stellar/Stocks contracts remain unchanged.

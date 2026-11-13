@@ -43,7 +43,7 @@ export class GmxCustomerService {
   return this.public(await this.d.store.create(scope,key,requestHash,prepared,input.market_id));
  }
  async get(c:CustomerContext,id?:string){const s=gmxScope(c);let r=id?await this.d.store.get(s,id):await this.d.store.pending(s);if(!r)return null;await this.account(c,r.accountAddress);
-  if(r.txHash&&!r.creationProof){try{const proof=await this.d.adapter.confirmTransaction(r.prepared,r.txHash);await this.d.store.creation(s,r.id,proof);}catch{/* Keep the same retained hash through chain/indexing delays. */}}
+  if(r.txHash&&!r.creationProof){try{const proof=await this.d.adapter.confirmTransaction(r.prepared,r.txHash);await this.d.store.creation(s,r.id,proof);}catch{if(this.d.store.reverted){try{const failed=await this.d.adapter.confirmReverted(r.prepared,r.txHash);if(failed)await this.d.store.reverted(s,r.id,failed);}catch{/* Pending or unavailable evidence never becomes a failure or new send. */}}}}
   r=(await this.d.store.get(s,r.id))!;
   if(r.creationProof&&'orderKey'in r.creationProof&&(!r.settlement||r.settlement.state==='pending')){try{const result=await this.d.adapter.reconcileOrder(r.prepared,r.creationProof as GmxCreationProof);await this.d.store.settlement(s,r.id,result);}catch{/* Acknowledgement or a local error never substitutes for a fill. */}}
   return this.public((await this.d.store.get(s,r.id))!);

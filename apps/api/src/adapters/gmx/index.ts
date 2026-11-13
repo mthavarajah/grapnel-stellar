@@ -4,7 +4,7 @@ import { z } from 'zod';
 import { decodeErrorResult, decodeEventLog, decodeFunctionData, decodeFunctionResult, encodeAbiParameters, encodeFunctionData, keccak256, parseAbi, parseTransaction, recoverTransactionAddress, serializeTransaction, zeroAddress, zeroHash, type Abi, type Hex, type TransactionSerialized } from 'viem';
 import { GMX_TESTNET as P } from './registry.js';
 import { EXCHANGE_ABI, READER_ABI, EVENT_ABI } from './abi.js';
-import type { GmxReadTransport, GmxPosition, GmxStatus, GmxBaseIntent, GmxTokenIntent, GmxTradeIntent, GmxOpenIntent, GmxPrepared, GmxCreationProof, GmxTokenProof, GmxExecutionResult, GmxSymbol } from './contracts.js';
+import type { GmxReadTransport, GmxPosition, GmxStatus, GmxBaseIntent, GmxTokenIntent, GmxTradeIntent, GmxOpenIntent, GmxPrepared, GmxCreationProof, GmxTokenProof, GmxExecutionResult, GmxSymbol, GmxRevertProof } from './contracts.js';
 export type * from './contracts.js';
 export { GMX_TESTNET } from './registry.js';
 const ERC = parseAbi(['function mint(address,uint256)', 'function approve(address,uint256) returns(bool)', 'function allowance(address,address) view returns(uint256)', 'function balanceOf(address) view returns(uint256)', 'function decimals() view returns(uint8)', 'function symbol() view returns(string)', 'event Transfer(address indexed from,address indexed to,uint256 value)', 'event Approval(address indexed owner,address indexed spender,uint256 value)']);
@@ -175,9 +175,9 @@ export class GmxTestnetAdapter {
         if (v.addresses.receiver.toLowerCase() !== p.account || v.addresses.market.toLowerCase() !== p.intent.market || v.addresses.initialCollateralToken.toLowerCase() !== A.collateral.address || v.addresses.callbackContract !== zeroAddress || v.addresses.uiFeeReceiver !== zeroAddress || v.addresses.cancellationReceiver !== zeroAddress || v.addresses.swapPath.length || v.numbers.sizeDeltaUsd !== BigInt(p.intent.sizeUsd30!) || v.numbers.initialCollateralDeltaAmount !== 0n || v.numbers.acceptablePrice !== BigInt(p.intent.acceptablePrice!) || v.numbers.executionFee !== t.value || v.numbers.triggerPrice || v.numbers.callbackGasLimit || v.numbers.minOutputAmount || v.numbers.validFromTime || v.orderType !== (p.kind === 'open' ? 2 : 4) || v.decreasePositionSwapType !== 0 || v.isLong !== p.intent.isLong || v.shouldUnwrapNativeToken || v.autoCancel || v.referralCode !== zeroHash || v.dataList.length)
             return fail('GMX_ORDER_INTENT_MISMATCH');
     } }
-    private async receipt(hash: Hex) { if (!/^0x[a-f0-9]{64}$/.test(hash))
+    private async receipt(hash: Hex,allowReverted=false) { if (!/^0x[a-f0-9]{64}$/.test(hash))
         return fail('GMX_HASH_INVALID'); if (await this.t.request('eth_chainId', []) !== '0x66eee')
-        return fail('GMX_TESTNET_CHAIN_REQUIRED'); const r = await this.t.request('eth_getTransactionReceipt', [hash]) as any; if (!r || r.transactionHash?.toLowerCase() !== hash || r.status !== '0x1' || !Array.isArray(r.logs) || r.logs.length > 200)
+        return fail('GMX_TESTNET_CHAIN_REQUIRED'); const r = await this.t.request('eth_getTransactionReceipt', [hash]) as any; if (!r || r.transactionHash?.toLowerCase() !== hash || (allowReverted?!['0x0','0x1'].includes(r.status):r.status!=='0x1') || !Array.isArray(r.logs) || r.logs.length > 200)
         return fail('GMX_RECEIPT_UNCONFIRMED'); const block = quantity(r.blockNumber), [canonical, head] = await Promise.all([this.t.request('eth_getBlockByNumber', [r.blockNumber, false]), this.t.request('eth_blockNumber', [])]); if (block <= 0n || (canonical as any)?.hash?.toLowerCase() !== r.blockHash?.toLowerCase() || quantity(head) < block + 1n)
         return fail('GMX_CONFIRMATIONS_REQUIRED'); return r; }
     private events(receipt: any) { const result: {
@@ -200,13 +200,15 @@ export class GmxTestnetAdapter {
     private value(data: any, group: string, key: string): any { const rows = data?.[group]?.items?.filter((v: any) => v.key === key); if (!Array.isArray(rows) || rows.length !== 1)
         return fail('GMX_EVENT_FIELD_REQUIRED'); return rows[0].value; }
     private scopedEvent(p: GmxPrepared, e: any) { return address(this.value(e, 'addressItems', 'account')) === p.account && address(this.value(e, 'addressItems', 'market')) === p.intent.market && address(this.value(e, 'addressItems', p.kind === 'open' || p.kind === 'close' ? 'collateralToken' : 'initialCollateralToken')) === A.collateral.address; }
+    private async minedBody(p:GmxPrepared,txHash:Hex,receipt:any){
+        const tx=await this.t.request('eth_getTransactionByHash',[txHash]) as any,t=p.transaction;
+        if (!tx || tx.hash?.toLowerCase() !== txHash || tx.blockHash?.toLowerCase() !== receipt.blockHash?.toLowerCase() || tx.from?.toLowerCase() !== p.account || tx.to?.toLowerCase() !== t.to || tx.input?.toLowerCase() !== t.data || quantity(tx.value) !== t.value || quantity(tx.nonce) !== BigInt(t.nonce) || quantity(tx.chainId) !== 421614n || quantity(tx.gas) !== t.gas || quantity(tx.maxFeePerGas) !== t.maxFeePerGas || quantity(tx.maxPriorityFeePerGas) !== 0n)return fail('GMX_MINED_BODY_MISMATCH');
+    }
+    async confirmReverted(p:GmxPrepared,txHash:Hex):Promise<GmxRevertProof|null>{this.inspectPrepared(p);await this.verifyRegistry();const receipt=await this.receipt(txHash,true);if(receipt.status!=='0x0')return null;if(receipt.logs.length)return fail('GMX_REVERT_LOGS_INVALID');await this.minedBody(p,txHash,receipt);return{network:P.network,account:p.account,txHash,blockNumber:quantity(receipt.blockNumber).toString(),kind:p.kind,reverted:true,confirmed:true};}
     async confirmTransaction(p: GmxPrepared, txHash: Hex): Promise<GmxTokenProof | GmxCreationProof> {
         this.inspectPrepared(p);
         await this.verifyRegistry();
-        const receipt = await this.receipt(txHash), tx = await this.t.request('eth_getTransactionByHash', [txHash]) as any, t = p.transaction;
-        if (!tx || tx.hash?.toLowerCase() !== txHash || tx.blockHash?.toLowerCase() !== receipt.blockHash?.toLowerCase() || tx.from?.toLowerCase() !== p.account || tx.to?.toLowerCase() !== t.to || tx.input?.toLowerCase() !== t.data || quantity(tx.value) !== t.value || quantity(tx.nonce) !== BigInt(t.nonce) || quantity(tx.chainId) !== 421614n || quantity(tx.gas) !== t.gas || quantity(tx.maxFeePerGas) !== t.maxFeePerGas || quantity(tx.maxPriorityFeePerGas) !== 0n)
-            return fail('GMX_MINED_BODY_MISMATCH');
-        const block = quantity(receipt.blockNumber);
+        const receipt=await this.receipt(txHash);await this.minedBody(p,txHash,receipt);const block=quantity(receipt.blockNumber);
         if (p.kind === 'mint' || p.kind === 'approve') {
             const n = BigInt(p.intent.amountAtomic6!);
             let matched = 0;

@@ -64,3 +64,7 @@ Create `Demo Fintech` tenant through dashboard flow, optional fixture user and m
 ## Durable Margin workflows (migration 0003)
 
 `margin_workflows` stores one active workflow per tenant/wallet, immutable economic terms and ownership, a revision and its active child operation. `margin_workflow_steps` binds each attempt to a real existing customer operation with composite tenant/customer/wallet foreign keys, exact intent digest, provider baseline and verified chain evidence. The parent is not an operation and never blocks its own child through the wallet pending-operation rule. Creation and steps are idempotent; a completed signed child and independent matching transaction proof are required before phase advancement. No next step is automatically authorized. Provider execution remains unavailable until each adapter step and customer signing path is integrated.
+
+### GMX six-market persistence extension — migration0013
+
+Lead-approved additive CHECK expansion for `gmx_customer_requests.market_id` to ETH, BTC, CRV, XAU, XAG and XPT on the unchanged `gmx-testnet:perps:` namespace. Tenant FKs, exact intent envelopes, one pending account, immutable signed nonce/hash, and send-claim constraints remain enforced. Failed canonical receipts reuse the existing proof JSON and terminal `reverted` state; no synthetic financial balance or extra ledger is introduced.

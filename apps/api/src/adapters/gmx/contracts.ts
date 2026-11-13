@@ -117,3 +117,6 @@ export type GmxExecutionResult = {
     collateralBalanceAtomic6: string;
     event: Record<string, unknown>;
 };
+
+/** Actual canonical failed receipt, never a local exception or submission timeout. */
+export interface GmxRevertProof {network:'arbitrum-sepolia';account:Hex;txHash:Hex;blockNumber:string;kind:GmxPrepared['kind'];reverted:true;confirmed:true;}

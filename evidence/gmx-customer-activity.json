@@ -1,0 +1,66 @@
+{
+  "checked_at": "2026-11-13T03:09:28.131Z",
+  "method": "Read-only source verification with explicit owned-account fixture; HTTP authorization is tested separately.",
+  "items": [
+    {
+      "id": "fe849388-78b6-4c84-8aa6-af0798313247",
+      "kind": "close",
+      "state": "completed",
+      "symbol": "ETH",
+      "side": "long",
+      "size_usd": "20.000000000000000000000000000000",
+      "amount": null,
+      "collateral": "0.000000",
+      "tx_hash": "0x465d384b22d15f0e7b02b485917a188878034390bfa436ccc04b5bcf331f2b15",
+      "created_at": "2026-11-13T01:56:32.819Z"
+    },
+    {
+      "id": "cd1829bb-714c-4c7a-814f-9367efa879a2",
+      "kind": "open",
+      "state": "completed",
+      "symbol": "ETH",
+      "side": "long",
+      "size_usd": "20.000000000000000000000000000000",
+      "amount": null,
+      "collateral": "10.000000",
+      "tx_hash": "0x749a1183486b07a737dcd055eaa0755fa09aa795a6a3ef1baf0701d29f8ab1e0",
+      "created_at": "2026-11-13T01:55:10.204Z"
+    },
+    {
+      "id": "2f6d295c-b723-499c-9cc2-17690d2f33ae",
+      "kind": "approve",
+      "state": "completed",
+      "symbol": "ETH",
+      "side": null,
+      "size_usd": null,
+      "amount": "10.000000",
+      "collateral": null,
+      "tx_hash": "0xe8620deab468622173562cf80b2776a0874972be28f578ed1046b74d0b338938",
+      "created_at": "2026-11-13T01:55:01.235Z"
+    },
+    {
+      "id": "20123ad5-5097-4017-8862-8c09898cdf3f",
+      "kind": "mint",
+      "state": "completed",
+      "symbol": "USDC",
+      "side": null,
+      "size_usd": null,
+      "amount": "100.000000",
+      "collateral": null,
+      "tx_hash": "0x7576f8fea2c6ad46dd65411f1b58dfc24a4372449212fc1a63208d5893f9725e",
+      "created_at": "2026-11-13T01:54:40.670Z"
+    },
+    {
+      "id": "f5743ad8-3edf-4032-a408-925dabf7f0d6",
+      "kind": "gas",
+      "state": "completed",
+      "symbol": "ETH",
+      "side": null,
+      "size_usd": null,
+      "amount": "0.002000000000000000",
+      "collateral": null,
+      "tx_hash": "0x16f5551f075c114a6b2519b49f41655a3f4fad8e993b76251a3dcfdb82ad61b0",
+      "created_at": "2026-11-13T01:54:36.827Z"
+    }
+  ]
+}

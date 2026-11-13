@@ -64,7 +64,10 @@ describe('GMX exact Testnet preparation (offline transport fixtures)', () => {
  const events=new GmxTestnetAdapter({transport:{request:f.call},now:()=>now,tokenConfirmationMode:'events'});vi.spyOn(events,'verifyRegistry').mockImplementation(()=>f.a.verifyRegistry());f.call.mockClear();
  expect(await events.confirmTransaction(p,txHash)).toMatchObject({proof_basis:'canonical_token_event',balanceDeltaAtomic6:'1000000',confirmed:true});
  expect(f.call.mock.calls.some(([method,params])=>method==='eth_call'&&params[1]!=='latest')).toBe(false);
- receipt.logs[0]!.data=encodeAbiParameters([{type:'uint256'}],[999999n]);await expect(events.confirmTransaction(p,txHash)).rejects.toThrow(); });
+ receipt.logs[0]!.data=encodeAbiParameters([{type:'uint256'}],[999999n]);await expect(events.confirmTransaction(p,txHash)).rejects.toThrow();
+ receipt.status='0x0';await expect(events.confirmReverted(p,txHash)).rejects.toThrow();receipt.logs=[];
+ expect(await events.confirmReverted(p,txHash)).toMatchObject({reverted:true,confirmed:true,kind:'mint',txHash,blockNumber:'101'});
+ await expect(events.confirmTransaction(p,txHash)).rejects.toThrow();receipt.status='0x1';expect(await events.confirmReverted(p,txHash)).toBeNull(); });
     it('decodes the actual nonempty QA position returned by pinned live reader1543 v2.2.1',()=>{const fixture=JSON.parse(readFileSync(new URL('./fixtures/reader-v221-qa.json',import.meta.url),'utf8'));const rows=decodeFunctionResult({abi:READER_ABI,functionName:'getAccountPositions',data:fixture.data});expect(rows).toHaveLength(1);expect(rows[0]?.addresses.account.toLowerCase()).toBe(fixture.account.toLowerCase());expect(rows[0]?.numbers.sizeInUsd).toBe(20n*10n**30n);expect(rows[0]?.numbers.collateralAmount).toBe(9991998n);expect(rows[0]?.flags.isLong).toBe(true);expect(rows[0]?.numbers.realizedPnlUsd).toBe(0n);});
 
 });

@@ -1,5 +1,6 @@
 "use client";
 import {ActionDialog} from './action-dialog';
+import {PerpetualActivity} from './perpetual-activity';
 import {StockActivity} from "./stock-activity";
 import {RobinhoodExecution} from "./robinhood-execution";
 import {groupedUsd} from '../lib/grouped-assets';
@@ -1354,7 +1355,7 @@ function FinanceShell({ page, auth, initialCategory }: { page: string; auth?: Au
                         {(selectedSpotMarket.stats.pool?.stale===true||selectedSpotMarket.stats.custody?.stale===true)&&<p className="small muted">Market activity delayed</p>}
                       </>}
                     </section>
-                    {selectedSpotMarket.provider==="robinhood"&&session ? <RobinhoodExecution key={`${session.customer_id}:${session.wallet_id}:${selectedSpotMarket.market_id}`} api={api} customerId={session.customer_id} walletId={session.wallet_id} symbol={selectedSpotMarket.underlying?.symbol as "TSLA"|"AMZN"|"PLTR"|"NFLX"|"AMD"}/> : selectedSpotMarket.provider==="gmx"&&session ? <GmxPerpetualExecution key={`${session.customer_id}:${session.wallet_id}:${selectedSpotMarket.market_id}`} api={api} customerId={session.customer_id} walletId={session.wallet_id} symbol={selectedSpotMarket.provider_symbol as import("../lib/gmx-customer").GmxCustomerSymbol}/> : (category==="perps"||selectedSpotMarket.instrument_type==="perpetual_futures") ? (auth?.signRawHash&&session?<PrivyPerpetualExecution key={`${session.customer_id}:${session.wallet_id}:${selectedSpotMarket.market_id}`} api={api} customerId={session.customer_id} walletId={session.wallet_id} stellarAddress={session.stellar_address} signRawHash={auth.signRawHash} market={selectedSpotMarket} onSetup={async(kind,amount)=>{openOperation(await api(`grapnel/perps-funding-${kind}`,{asset_class:"perps",...(amount?{amount}:{})}));}}/>:<PerpetualOrderPreview symbol={selectedSpotMarket.underlying?.symbol??selectedSpotMarket.label} price={selectedSpotMarket.reference_price} quoteSymbol={selectedSpotMarket.quote_symbol} settlementAsset={selectedSpotMarket.settlement_asset} stock={category==="stocks"||selectedSpotMarket.asset_category==="equity"} index={selectedSpotMarket.asset_category==="index"} error={detailError} loading={detailLoading}/>) : <section className="market-order-card" aria-label="Trade market" data-testid="market-order-card">
+                    {selectedSpotMarket.provider==="robinhood"&&session ? <RobinhoodExecution key={`${session.customer_id}:${session.wallet_id}:${selectedSpotMarket.market_id}`} api={api} customerId={session.customer_id} walletId={session.wallet_id} symbol={selectedSpotMarket.underlying?.symbol as "TSLA"|"AMZN"|"PLTR"|"NFLX"|"AMD"}/> : selectedSpotMarket.provider==="gmx"&&session ? <GmxPerpetualExecution key={`${session.customer_id}:${session.wallet_id}:${selectedSpotMarket.market_id}`} api={api} customerId={session.customer_id} walletId={session.wallet_id} symbol={selectedSpotMarket.provider_symbol as import("../lib/gmx-customer").GmxCustomerSymbol} onSelectMarket={next=>setMarket(`gmx-testnet:perps:${next}`)}/> : (category==="perps"||selectedSpotMarket.instrument_type==="perpetual_futures") ? (auth?.signRawHash&&session?<PrivyPerpetualExecution key={`${session.customer_id}:${session.wallet_id}:${selectedSpotMarket.market_id}`} api={api} customerId={session.customer_id} walletId={session.wallet_id} stellarAddress={session.stellar_address} signRawHash={auth.signRawHash} market={selectedSpotMarket} onSetup={async(kind,amount)=>{openOperation(await api(`grapnel/perps-funding-${kind}`,{asset_class:"perps",...(amount?{amount}:{})}));}}/>:<PerpetualOrderPreview symbol={selectedSpotMarket.underlying?.symbol??selectedSpotMarket.label} price={selectedSpotMarket.reference_price} quoteSymbol={selectedSpotMarket.quote_symbol} settlementAsset={selectedSpotMarket.settlement_asset} stock={category==="stocks"||selectedSpotMarket.asset_category==="equity"} index={selectedSpotMarket.asset_category==="index"} error={detailError} loading={detailLoading}/>) : <section className="market-order-card" aria-label="Trade market" data-testid="market-order-card">
                       <h2>Trade {selectedSpotMarket.underlying?.symbol}</h2>
                       <div className="public-order-direction" role="group" aria-label="Order direction"><button type="button" disabled>Buy</button><button type="button" disabled>Sell</button></div>
                       <p className="small muted">Available: {formatTokenAmount(swapBalance(selectedSpotMarket.base?.id??selectedSpotMarket.asset_in_id))} {selectedSpotMarket.base?.code??selectedSpotMarket.underlying?.symbol}</p>
@@ -1583,6 +1584,7 @@ function FinanceShell({ page, auth, initialCategory }: { page: string; auth?: Au
                 </span>
               </div>
               {session&&capability("trade.stocks")?.enabled&&<StockActivity api={api} customerId={session.customer_id} walletId={session.wallet_id}/>}
+              {session&&capability("trade.perps")?.enabled&&<PerpetualActivity api={api} customerId={session.customer_id} walletId={session.wallet_id}/>}
               {operations.length ? (
                 <div className="activity-list">
                   {operations.map((op) => (
@@ -1622,7 +1624,7 @@ function FinanceShell({ page, auth, initialCategory }: { page: string; auth?: Au
                     </button>
                   ))}
                 </div>
-              ) : !capability("trade.stocks")?.enabled ? (
+              ) : !capability("trade.stocks")?.enabled&&!capability("trade.perps")?.enabled ? (
                 <Empty
                   icon="activity"
                   title="No activity yet."

@@ -2,8 +2,8 @@
   "openapi": "3.1.0",
   "info": {
     "title": "Grapnel Testnet API",
-    "version": "0.3.0",
-    "description": "Testnet prototype. Stellar customer-wallet execution; Hyperliquid Testnet perpetuals discovery. Financial bridge/trading execution remains gated by verified proof. See docs/16_PERPETUALS_INTEGRATION.md."
+    "version": "0.4.3",
+    "description": "Testnet B2B API with independently authorized customer wallets. Stellar funding, Crypto and Blend; canonical Robinhood Testnet USDG stock execution. Financial writes require current tenant permissions, customer ownership and actual chain proof. See docs/20_STOCKS_CUSTOMER_EXECUTION.md. GMX Arbitrum Sepolia perpetuals use the same customer authorization model with exact signed EVM transactions and canonical keeper execution proof."
   },
   "servers": [
     {
@@ -183,7 +183,40 @@
               }
             }
           }
-        }
+        },
+        "parameters": [
+          {
+            "name": "module",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "capital.wallets",
+                "capital.testnet_funding",
+                "capital.lending",
+                "trade.spot",
+                "trade.stocks",
+                "trade.perps"
+              ]
+            },
+            "description": "Return only the selected module; current entitlements remain checked."
+          },
+          {
+            "name": "readiness",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "full",
+                "omit"
+              ],
+              "default": "full"
+            },
+            "description": "omit returns current entitlements without provider probes. Such rows are discovery_only with no executable actions; financial routes still enforce current readiness."
+          }
+        ]
       }
     },
     "/v1/dashboard/login": {
@@ -929,6 +962,133 @@
             }
           }
         ]
+      }
+    },
+    "/v1/dashboard/customers": {
+      "get": {
+        "operationId": "get_v1_dashboard_customers",
+        "security": [
+          {
+            "ownerSession": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Tenant-scoped customer and wallet metadata",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Owner session required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/dashboard/customers/{id}/balances": {
+      "get": {
+        "operationId": "get_v1_dashboard_customer_balances",
+        "security": [
+          {
+            "ownerSession": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Live tenant-scoped wallet balances with wallet_amount, reserved, spendable and as_of; no protocol position substitution"
+          },
+          "401": {
+            "description": "Owner session required"
+          },
+          "404": {
+            "description": "Customer not found in this tenant"
+          }
+        }
+      }
+    },
+    "/v1/dashboard/customers/{id}/lending-positions": {
+      "get": {
+        "operationId": "get_v1_dashboard_customer_lending_positions",
+        "security": [
+          {
+            "ownerSession": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Fresh Testnet Blend position for the tenant customer wallet",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Owner session required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Customer does not belong to this tenant",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Live Blend read unavailable",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
       }
     },
     "/v1/dashboard/requests": {
@@ -1873,6 +2033,214 @@
         }
       }
     },
+    "/v1/capital/wallets/{id}/valuation": {
+      "get": {
+        "operationId": "get_customer_wallet_valuation",
+        "security": [
+          {
+            "businessKey": []
+          }
+        ],
+        "description": "Requires capital.wallets and verified customer binding to the exact wallet. Wallet holdings only; estimated source-priced USD amounts. No fixed dollar peg is assumed.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "customer_id",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Envelope data: wallet_id, total_usd nullable, priced_subtotal_usd, unpriced_asset_count, as_of. Positive unpriced assets make total_usd null."
+          },
+          "401": {
+            "description": "Business/customer authentication required"
+          },
+          "403": {
+            "description": "Wallet module disabled"
+          },
+          "404": {
+            "description": "Wallet/customer binding not found"
+          }
+        }
+      }
+    },
+    "/v1/portfolio/valuation": {
+      "get": {
+        "operationId": "get_customer_account_valuation",
+        "security": [
+          {
+            "businessKey": []
+          }
+        ],
+        "description": "Requires capital.wallets and verified customer/wallet binding. Gross supported account assets include wallet holdings plus verified Earn and borrowing-pool supplied positions, with collateral counted once. Liabilities and net equity are separate. Missing sources or prices never imply a complete total.",
+        "parameters": [
+          {
+            "name": "customer_id",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "wallet_id",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Envelope data: wallet_id, total_usd nullable, priced_subtotal_usd, unpriced_asset_count, unknown_source_count, liabilities_usd nullable, net_equity_usd nullable, as_of."
+          },
+          "401": {
+            "description": "Business/customer authentication required"
+          },
+          "403": {
+            "description": "Wallet module disabled"
+          },
+          "404": {
+            "description": "Wallet/customer binding not found"
+          }
+        }
+      }
+    },
+    "/v1/capital/lending/borrowing": {
+      "get": {
+        "operationId": "get_customer_borrowing_capacity",
+        "security": [
+          {
+            "businessKey": []
+          }
+        ],
+        "description": "Customer-scoped state in the separately pinned Testnet v2.1 pool. Rates are ratios; capacity uses the fresh protocol oracle and conservative health buffer. Existing Earn collateral is not moved or counted in this pool.",
+        "parameters": [
+          {
+            "name": "customer_id",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "wallet_id",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Envelope data: pool_id, as_of, assets with actual debt/collateral, APR/APY ratios, nullable health/capacity and preparation flags. Each asset may include repay_all_amount (nullable exact maximum debit) and can_prepare_repay_all; unavailable confirmed spendable funds disable Max."
+          },
+          "401": {
+            "description": "Customer authentication required"
+          },
+          "403": {
+            "description": "Lending module disabled"
+          }
+        }
+      }
+    },
+    "/v1/market-overview": {
+      "get": {
+        "operationId": "get_market_overview",
+        "security": [
+          {
+            "businessKey": []
+          }
+        ],
+        "description": "Requires capital.wallets. Only enabled trade.spot, trade.perps, trade.stocks and capital.lending sections are included. Read-only source reference prices and supply rates; no executable quote or holdings are implied.",
+        "responses": {
+          "200": {
+            "description": "Envelope data: as_of, sections[{id,label,available,items[{symbol,name,value,unit,as_of}]}]. Maximum three source-backed items per section. USD reference prices or percentage-point supply APY strings; unavailable items omitted, never zero-filled."
+          },
+          "401": {
+            "description": "Business key required"
+          },
+          "403": {
+            "description": "Wallet module disabled"
+          }
+        }
+      }
+    },
+    "/v1/trade/markets/{id}/history": {
+      "get": {
+        "operationId": "get_market_observed_history",
+        "security": [
+          {
+            "businessKey": []
+          }
+        ],
+        "description": "Entitled public market observations and source historical candles. Peridot Testnet history requires trade.perps; informational sodax:catalog identifiers require trade.stocks and resolve an exact verified catalog identity. Stock history is the underlying stock reference price, never a token execution quote. Prices use the explicit quote_symbol; no invented historical candles or USD peg is implied. Optional source_url, interval, price_basis, observed_at, metrics and real candles preserve source provenance.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "maxLength": 200
+            }
+          },
+          {
+            "name": "range",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "live",
+                "1d",
+                "1w",
+                "1m",
+                "1y",
+                "all"
+              ],
+              "default": "live"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Envelope data: market_id, base_asset_id, base_symbol, quote_symbol, latest_price, as_of, points[{timestamp,price}], change_absolute and change_percent. Missing prices/changes are null; all amounts are decimal strings."
+          },
+          "401": {
+            "description": "Business key required"
+          },
+          "403": {
+            "description": "Market module disabled"
+          },
+          "404": {
+            "description": "Unknown verified market"
+          },
+          "503": {
+            "description": "Current price cannot be verified"
+          }
+        }
+      }
+    },
     "/v1/trade/markets/{id}": {
       "get": {
         "operationId": "get_v1_trade_markets_id",
@@ -2255,6 +2623,50 @@
                 }
               }
             }
+          }
+        }
+      }
+    },
+    "/v1/capital/lending/earnings": {
+      "get": {
+        "operationId": "get_customer_verified_earnings",
+        "security": [
+          {
+            "businessKey": []
+          }
+        ],
+        "description": "Requires verified customer identity and capital.lending entitlement. Realized plus unrealized token interest from verified principal flows and current positions. Incomplete proof/history returns null, never projected APY.",
+        "parameters": [
+          {
+            "name": "customer_id",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "wallet_id",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Envelope data: earnings[{asset_id,earned:string|null,earned_since:string|null}], as_of"
+          },
+          "401": {
+            "description": "Business key required"
+          },
+          "403": {
+            "description": "Customer identity or lending entitlement required"
+          },
+          "404": {
+            "description": "Customer wallet not found in tenant"
           }
         }
       }
@@ -2740,7 +3152,8 @@
               "type": "string"
             }
           }
-        ]
+        ],
+        "description": "Existing amount is the exact customer-approved maximum repayment transfer. Fresh server bound is debt+ceil(debt/1000)+2atomic, limited by confirmed reservation-adjusted wallet funds. XLM Max includes1XLM fee headroom. Excess above actual execution debt must be refunded and independently verified; full repayment requires actual zero debt tokens. No202success claim."
       }
     },
     "/v1/operations": {
@@ -2852,6 +3265,2611 @@
           },
           "409": {
             "description": "Execution unavailable"
+          }
+        }
+      }
+    },
+    "/v1/capital/wallets/{id}/usdc-trustline": {
+      "post": {
+        "operationId": "prepare_usdc_trustline",
+        "security": [
+          {
+            "businessKey": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "X-Customer-Identity",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "customer_id",
+                  "limit"
+                ],
+                "properties": {
+                  "customer_id": {
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  "limit": {
+                    "const": "1000"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "202": {
+            "description": "Customer approval required for exact Testnet USDC trustline; summary.amount is trust limit, not transfer amount"
+          },
+          "401": {
+            "description": "Business key required"
+          },
+          "403": {
+            "description": "Customer session/module denied"
+          },
+          "409": {
+            "description": "Gate, trustline or reserve preflight unavailable"
+          }
+        }
+      }
+    },
+    "/v1/capital/lending/borrowing/collateral/supply": {
+      "post": {
+        "operationId": "prepare_borrowing_collateral_supply",
+        "security": [
+          {
+            "businessKey": []
+          }
+        ],
+        "description": "Prepare exact customer-authorized supply in the separately pinned borrowing pool. Requires capital.lending, verified customer/wallet binding and Idempotency-Key. Existing Earn collateral is separate. A 202 is not chain success.",
+        "parameters": [
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LendingInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "202": {
+            "description": "Durable operation requiring customer authorization and confirmed chain reconciliation"
+          },
+          "403": {
+            "description": "Module disabled or customer authorization mismatch"
+          },
+          "409": {
+            "description": "Unavailable preparation, insufficient capacity or pending lending operation"
+          }
+        }
+      }
+    },
+    "/v1/capital/lending/borrowing/collateral/withdraw": {
+      "post": {
+        "operationId": "prepare_borrowing_collateral_withdraw",
+        "security": [
+          {
+            "businessKey": []
+          }
+        ],
+        "description": "Prepare exact customer-authorized withdraw in the separately pinned borrowing pool. Requires capital.lending, verified customer/wallet binding and Idempotency-Key. Existing Earn collateral is separate. A 202 is not chain success.",
+        "parameters": [
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LendingInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "202": {
+            "description": "Durable operation requiring customer authorization and confirmed chain reconciliation"
+          },
+          "403": {
+            "description": "Module disabled or customer authorization mismatch"
+          },
+          "409": {
+            "description": "Unavailable preparation, insufficient capacity or pending lending operation"
+          }
+        }
+      }
+    },
+    "/v1/trade/margin/workflows": {
+      "get": {
+        "operationId": "list_customer_margin_workflows",
+        "security": [
+          {
+            "businessKey": []
+          }
+        ],
+        "description": "Customer-bound durable workflow recovery, at most20 newest workflows. No private policy or chain baseline is exposed.",
+        "parameters": [
+          {
+            "name": "customer_id",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "wallet_id",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "JSON data envelope; workflow state is not chain success. Step operations require exact customer authorization and polling."
+          },
+          "401": {
+            "description": "Business/customer identity required"
+          },
+          "403": {
+            "description": "Margin module disabled or authorization mismatch"
+          },
+          "404": {
+            "description": "Exact customer/wallet workflow not found"
+          },
+          "409": {
+            "description": "Execution unavailable, pending or phase/policy conflict"
+          }
+        }
+      },
+      "post": {
+        "operationId": "create_customer_margin_workflow",
+        "security": [
+          {
+            "businessKey": []
+          }
+        ],
+        "description": "Records immutable intent using server-owned provider policy. Does not sign, broadcast or imply executable provider readiness.",
+        "parameters": [
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 200
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "JSON data envelope; workflow state is not chain success. Step operations require exact customer authorization and polling."
+          },
+          "401": {
+            "description": "Business/customer identity required"
+          },
+          "403": {
+            "description": "Margin module disabled or authorization mismatch"
+          },
+          "404": {
+            "description": "Exact customer/wallet workflow not found"
+          },
+          "409": {
+            "description": "Execution unavailable, pending or phase/policy conflict"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MarginWorkflowInput"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/trade/margin/workflows/{id}": {
+      "get": {
+        "operationId": "get_customer_margin_workflow",
+        "security": [
+          {
+            "businessKey": []
+          }
+        ],
+        "description": "Customer-bound current workflow and server-verified executable next steps. Defaults blocked without reviewed provider binding.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "customer_id",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "wallet_id",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "JSON data envelope; workflow state is not chain success. Step operations require exact customer authorization and polling."
+          },
+          "401": {
+            "description": "Business/customer identity required"
+          },
+          "403": {
+            "description": "Margin module disabled or authorization mismatch"
+          },
+          "404": {
+            "description": "Exact customer/wallet workflow not found"
+          },
+          "409": {
+            "description": "Execution unavailable, pending or phase/policy conflict"
+          }
+        }
+      }
+    },
+    "/v1/trade/margin/workflows/{id}/reconcile": {
+      "post": {
+        "operationId": "reconcile_customer_margin_workflow",
+        "security": [
+          {
+            "businessKey": []
+          }
+        ],
+        "description": "Advances only after matching completed signed child hash and independent exact chain evidence. Request never supplies evidence.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "JSON data envelope; workflow state is not chain success. Step operations require exact customer authorization and polling."
+          },
+          "401": {
+            "description": "Business/customer identity required"
+          },
+          "403": {
+            "description": "Margin module disabled or authorization mismatch"
+          },
+          "404": {
+            "description": "Exact customer/wallet workflow not found"
+          },
+          "409": {
+            "description": "Execution unavailable, pending or phase/policy conflict"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MarginCustomerBinding"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/trade/margin/workflows/{id}/steps/{step}/quote": {
+      "post": {
+        "operationId": "quote_customer_margin_step",
+        "security": [
+          {
+            "businessKey": []
+          }
+        ],
+        "description": "Trusted fresh step amount bounds, revision and expiry. No operation, signature or submission is created. Unproven steps remain unavailable.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "step",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "vault_deposit",
+                "margin_transfer",
+                "open_begin",
+                "open_swap",
+                "open_activate",
+                "open_cancel",
+                "close_atomic",
+                "close_prepare",
+                "close_swap",
+                "close_short_swap",
+                "close_finish",
+                "close_cancel",
+                "margin_return",
+                "vault_withdraw"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "JSON data envelope; workflow state is not chain success. Step operations require exact customer authorization and polling."
+          },
+          "401": {
+            "description": "Business/customer identity required"
+          },
+          "403": {
+            "description": "Margin module disabled or authorization mismatch"
+          },
+          "404": {
+            "description": "Exact customer/wallet workflow not found"
+          },
+          "409": {
+            "description": "Execution unavailable, pending or phase/policy conflict"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MarginCustomerBinding"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/trade/margin/workflows/{id}/steps/{step}": {
+      "post": {
+        "operationId": "prepare_customer_margin_step",
+        "security": [
+          {
+            "businessKey": []
+          }
+        ],
+        "description": "Creates one durable exact approval for the permitted next step. Fresh provider quote/oracle/pins/phase guards are mandatory.202 is not execution success.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "step",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "vault_deposit",
+                "margin_transfer",
+                "open_begin",
+                "open_swap",
+                "open_activate",
+                "open_cancel",
+                "close_atomic",
+                "close_prepare",
+                "close_swap",
+                "close_short_swap",
+                "close_finish",
+                "close_cancel",
+                "margin_return",
+                "vault_withdraw"
+              ]
+            }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 200
+            }
+          }
+        ],
+        "responses": {
+          "202": {
+            "description": "JSON data envelope; workflow state is not chain success. Step operations require exact customer authorization and polling."
+          },
+          "401": {
+            "description": "Business/customer identity required"
+          },
+          "403": {
+            "description": "Margin module disabled or authorization mismatch"
+          },
+          "404": {
+            "description": "Exact customer/wallet workflow not found"
+          },
+          "409": {
+            "description": "Execution unavailable, pending or phase/policy conflict"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MarginStepInput"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/trade/margin/collateral/quote": {
+      "post": {
+        "operationId": "margin_collateral_quote",
+        "security": [
+          {
+            "businessKey": []
+          }
+        ],
+        "description": "Requires trade.perps and exact verified customer/wallet. Fixed pinned native XLM to distinct MockUSDT pool, cap10XLM and1XLMfee; no caller-selected network/pool/asset/recipient. Default blocked without full round-trip execution proof. A swap202 is only a durable approval, not success.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MarginCollateralFundingQuoteInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Exact asset IDs, amount_in_atomic, expected_out_atomic, minimum_out_atomic and expires_at"
+          },
+          "403": {
+            "description": "Module disabled or customer authorization mismatch"
+          },
+          "409": {
+            "description": "Current proof unavailable or quote/operation conflict"
+          }
+        }
+      }
+    },
+    "/v1/trade/margin/collateral/swap": {
+      "post": {
+        "operationId": "margin_collateral_swap",
+        "security": [
+          {
+            "businessKey": []
+          }
+        ],
+        "description": "Requires trade.perps and exact verified customer/wallet. Fixed pinned native XLM to distinct MockUSDT pool, cap10XLM and1XLMfee; no caller-selected network/pool/asset/recipient. Default blocked without full round-trip execution proof. A swap202 is only a durable approval, not success.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MarginCollateralFundingInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "202": {
+            "description": "Operation requiring exact customer authorization and chain reconciliation"
+          },
+          "403": {
+            "description": "Module disabled or customer authorization mismatch"
+          },
+          "409": {
+            "description": "Current proof unavailable or quote/operation conflict"
+          }
+        },
+        "parameters": [
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 200
+            }
+          }
+        ]
+      }
+    },
+    "/v1/trade/perpetuals/account": {
+      "get": {
+        "operationId": "get__v1_trade_perpetuals_account",
+        "security": [
+          {
+            "businessKey": []
+          }
+        ],
+        "description": "Requires a verified customer identity header and the exact current Stocks or Perpetuals entitlement. No business key alone authorizes signing.",
+        "responses": {
+          "200": {
+            "description": "JSON data envelope; accepted operations require polling",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Permission denied",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict or execution unavailable",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "X-Customer-Identity",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "customer_id",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "wallet_id",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "asset_class",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "perps",
+                "stocks"
+              ],
+              "default": "perps"
+            }
+          },
+          {
+            "name": "market_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "pattern": "^hyperliquid-testnet:(perps|stocks):(0|[1-9][0-9]{0,8})$"
+            }
+          }
+        ]
+      }
+    },
+    "/v1/trade/perpetuals/accounts/challenge": {
+      "post": {
+        "operationId": "post__v1_trade_perpetuals_accounts_challenge",
+        "security": [
+          {
+            "businessKey": []
+          }
+        ],
+        "description": "Requires a verified customer identity header and the exact current Stocks or Perpetuals entitlement. No business key alone authorizes signing.",
+        "responses": {
+          "200": {
+            "description": "JSON data envelope; accepted operations require polling",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Permission denied",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict or execution unavailable",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "X-Customer-Identity",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 200
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "customer_id": {
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  "wallet_id": {
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  "asset_class": {
+                    "type": "string",
+                    "enum": [
+                      "perps",
+                      "stocks"
+                    ],
+                    "default": "perps"
+                  },
+                  "account_address": {
+                    "type": "string",
+                    "pattern": "^0x[0-9a-fA-F]{40}$"
+                  }
+                },
+                "required": [
+                  "customer_id",
+                  "wallet_id",
+                  "asset_class",
+                  "account_address"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/trade/perpetuals/accounts/bind": {
+      "post": {
+        "operationId": "post__v1_trade_perpetuals_accounts_bind",
+        "security": [
+          {
+            "businessKey": []
+          }
+        ],
+        "description": "Requires a verified customer identity header and the exact current Stocks or Perpetuals entitlement. No business key alone authorizes signing.",
+        "responses": {
+          "200": {
+            "description": "JSON data envelope; accepted operations require polling",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Permission denied",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict or execution unavailable",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "X-Customer-Identity",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 200
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "customer_id": {
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  "wallet_id": {
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  "asset_class": {
+                    "type": "string",
+                    "enum": [
+                      "perps",
+                      "stocks"
+                    ],
+                    "default": "perps"
+                  },
+                  "challenge_id": {
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  "stellar_signature": {
+                    "type": "string"
+                  },
+                  "evm_signature": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "customer_id",
+                  "wallet_id",
+                  "asset_class",
+                  "challenge_id",
+                  "stellar_signature",
+                  "evm_signature"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/trade/perpetuals/orders/prepare": {
+      "post": {
+        "operationId": "post__v1_trade_perpetuals_orders_prepare",
+        "security": [
+          {
+            "businessKey": []
+          }
+        ],
+        "description": "Requires a verified customer identity header and the exact current Stocks or Perpetuals entitlement. No business key alone authorizes signing.",
+        "responses": {
+          "200": {
+            "description": "JSON data envelope; accepted operations require polling",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Permission denied",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict or execution unavailable",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "X-Customer-Identity",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 200
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "customer_id": {
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  "wallet_id": {
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  "market_id": {
+                    "type": "string",
+                    "pattern": "^hyperliquid-testnet:(perps|stocks):(0|[1-9][0-9]{0,8})$"
+                  },
+                  "side": {
+                    "type": "string",
+                    "enum": [
+                      "buy",
+                      "sell"
+                    ]
+                  },
+                  "size": {
+                    "type": "string"
+                  },
+                  "limit_price": {
+                    "type": "string"
+                  },
+                  "leverage": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 1000
+                  },
+                  "reduce_only": {
+                    "type": "boolean"
+                  }
+                },
+                "required": [
+                  "customer_id",
+                  "wallet_id",
+                  "market_id",
+                  "side",
+                  "size",
+                  "limit_price",
+                  "leverage",
+                  "reduce_only"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/trade/perpetuals/orders/{id}/authorize": {
+      "post": {
+        "operationId": "post__v1_trade_perpetuals_orders_id_authorize",
+        "security": [
+          {
+            "businessKey": []
+          }
+        ],
+        "description": "Requires a verified customer identity header and the exact current Stocks or Perpetuals entitlement. No business key alone authorizes signing.",
+        "responses": {
+          "200": {
+            "description": "JSON data envelope; accepted operations require polling",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Permission denied",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict or execution unavailable",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "X-Customer-Identity",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 200
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "customer_id": {
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  "wallet_id": {
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  "stellar_signature": {
+                    "type": "string"
+                  },
+                  "evm_signature": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "customer_id",
+                  "wallet_id",
+                  "stellar_signature",
+                  "evm_signature"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/trade/perpetuals/orders/{id}": {
+      "get": {
+        "operationId": "get__v1_trade_perpetuals_orders_id",
+        "security": [
+          {
+            "businessKey": []
+          }
+        ],
+        "description": "Requires a verified customer identity header and the exact current Stocks or Perpetuals entitlement. No business key alone authorizes signing.",
+        "responses": {
+          "200": {
+            "description": "JSON data envelope; accepted operations require polling",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Permission denied",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict or execution unavailable",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "X-Customer-Identity",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "customer_id",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "wallet_id",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ]
+      }
+    },
+    "/v1/trade/stocks/funding": {
+      "get": {
+        "operationId": "get_robinhood_funding",
+        "description": "Requires trade.stocks, capital.wallets, verified tenant-bound customer and current Privy EVM ownership. Testnet46630 only. HTTP202 is pending; poll requests/grants for actual canonical chain proof.",
+        "security": [
+          {
+            "businessKey": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "X-Customer-Identity",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "customer_id",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "wallet_id",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "account_address",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "pattern": "^0x[0-9a-fA-F]{40}$"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Scoped JSON data envelope; receipts and exact balance/transfer proof determine completion.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Current entitlement or wallet ownership denied"
+          },
+          "409": {
+            "description": "Execution/funding unavailable, pending request or fresh approval required"
+          }
+        }
+      }
+    },
+    "/v1/trade/stocks/status": {
+      "get": {
+        "operationId": "get_robinhood_status",
+        "description": "Requires trade.stocks, capital.wallets, verified tenant-bound customer and current Privy EVM ownership. Testnet46630 only. HTTP202 is pending; poll requests/grants for actual canonical chain proof.",
+        "security": [
+          {
+            "businessKey": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "X-Customer-Identity",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "customer_id",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "wallet_id",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "account_address",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "pattern": "^0x[0-9a-fA-F]{40}$"
+            }
+          },
+          {
+            "name": "market_id",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "robinhood-testnet:stocks:TSLA",
+                "robinhood-testnet:stocks:AMZN",
+                "robinhood-testnet:stocks:PLTR",
+                "robinhood-testnet:stocks:NFLX",
+                "robinhood-testnet:stocks:AMD"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Scoped JSON data envelope; receipts and exact balance/transfer proof determine completion.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Current entitlement or wallet ownership denied"
+          },
+          "409": {
+            "description": "Execution/funding unavailable, pending request or fresh approval required"
+          }
+        }
+      }
+    },
+    "/v1/trade/stocks/grants": {
+      "get": {
+        "operationId": "get_robinhood_grants",
+        "description": "Requires trade.stocks, capital.wallets, verified tenant-bound customer and current Privy EVM ownership. Testnet46630 only. HTTP202 is pending; poll requests/grants for actual canonical chain proof.",
+        "security": [
+          {
+            "businessKey": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "X-Customer-Identity",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "customer_id",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "wallet_id",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "account_address",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^0x[0-9a-fA-F]{40}$"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Scoped JSON data envelope; receipts and exact balance/transfer proof determine completion.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Current entitlement or wallet ownership denied"
+          },
+          "409": {
+            "description": "Execution/funding unavailable, pending request or fresh approval required"
+          }
+        }
+      }
+    },
+    "/v1/trade/stocks/requests": {
+      "get": {
+        "operationId": "get_robinhood_requests",
+        "description": "Requires trade.stocks, capital.wallets, verified tenant-bound customer and current Privy EVM ownership. Testnet46630 only. HTTP202 is pending; poll requests/grants for actual canonical chain proof.",
+        "security": [
+          {
+            "businessKey": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "X-Customer-Identity",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "customer_id",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "wallet_id",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "request_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Scoped JSON data envelope; receipts and exact balance/transfer proof determine completion.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Current entitlement or wallet ownership denied"
+          },
+          "409": {
+            "description": "Execution/funding unavailable, pending request or fresh approval required"
+          }
+        }
+      }
+    },
+    "/v1/trade/stocks/fund": {
+      "post": {
+        "operationId": "post_robinhood_fund",
+        "description": "Requires trade.stocks, capital.wallets, verified tenant-bound customer and current Privy EVM ownership. Testnet46630 only. HTTP202 is pending; poll requests/grants for actual canonical chain proof.",
+        "security": [
+          {
+            "businessKey": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "X-Customer-Identity",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "maxLength": 200
+            }
+          }
+        ],
+        "responses": {
+          "202": {
+            "description": "Scoped JSON data envelope; receipts and exact balance/transfer proof determine completion.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Current entitlement or wallet ownership denied"
+          },
+          "409": {
+            "description": "Execution/funding unavailable, pending request or fresh approval required"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/StockFundingIdentity"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/trade/stocks/prepare": {
+      "post": {
+        "operationId": "post_robinhood_prepare",
+        "description": "Requires trade.stocks, capital.wallets, verified tenant-bound customer and current Privy EVM ownership. Testnet46630 only. HTTP202 is pending; poll requests/grants for actual canonical chain proof.",
+        "security": [
+          {
+            "businessKey": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "X-Customer-Identity",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "maxLength": 200
+            }
+          }
+        ],
+        "responses": {
+          "202": {
+            "description": "Scoped JSON data envelope; receipts and exact balance/transfer proof determine completion.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Current entitlement or wallet ownership denied"
+          },
+          "409": {
+            "description": "Execution/funding unavailable, pending request or fresh approval required"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/StockExecutionPrepare"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/trade/stocks/authorize": {
+      "post": {
+        "operationId": "post_robinhood_authorize",
+        "description": "Requires trade.stocks, capital.wallets, verified tenant-bound customer and current Privy EVM ownership. Testnet46630 only. HTTP202 is pending; poll requests/grants for actual canonical chain proof.",
+        "security": [
+          {
+            "businessKey": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "X-Customer-Identity",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "maxLength": 200
+            }
+          }
+        ],
+        "responses": {
+          "202": {
+            "description": "Scoped JSON data envelope; receipts and exact balance/transfer proof determine completion.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Current entitlement or wallet ownership denied"
+          },
+          "409": {
+            "description": "Execution/funding unavailable, pending request or fresh approval required"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/StockExecutionAuthorize"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/trade/stocks/activity": {
+      "get": {
+        "operationId": "get_robinhood_activity",
+        "security": [
+          {
+            "businessKey": []
+          }
+        ],
+        "description": "Current trade.stocks and capital.wallets permissions, verified customer identity and current EVM ownership are required. Returns durable signed order and funding activity with confirmed share/USDG amounts; no optimistic fills.",
+        "parameters": [
+          {
+            "name": "X-Customer-Identity",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "customer_id",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "wallet_id",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Scoped items array in the JSON data envelope.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Tenant entitlement or current wallet ownership denied"
+          }
+        }
+      }
+    },
+    "/v1/trade/gmx/status": {
+      "get": {
+        "operationId": "get_gmx_status",
+        "tags": [
+          "Perpetuals"
+        ],
+        "summary": "Read customer GMX status",
+        "security": [
+          {
+            "businessKey": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "header",
+            "name": "X-Customer-Identity",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Verified current customer identity; a business key alone cannot access another customer wallet."
+          },
+          {
+            "in": "query",
+            "name": "customer_id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "in": "query",
+            "name": "wallet_id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "in": "query",
+            "name": "market_id",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/GmxMarketId"
+            }
+          },
+          {
+            "in": "query",
+            "name": "account_address",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "pattern": "^0x[0-9a-fA-F]{40}$"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Verified source data envelope; 202 is not a fill or confirmation.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Permission denied",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict or execution unavailable",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/trade/gmx/requests": {
+      "get": {
+        "operationId": "get_gmx_requests",
+        "tags": [
+          "Perpetuals"
+        ],
+        "summary": "Read customer GMX requests",
+        "security": [
+          {
+            "businessKey": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "header",
+            "name": "X-Customer-Identity",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Verified current customer identity; a business key alone cannot access another customer wallet."
+          },
+          {
+            "in": "query",
+            "name": "customer_id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "in": "query",
+            "name": "wallet_id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "in": "query",
+            "name": "request_id",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Verified source data envelope; 202 is not a fill or confirmation.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Permission denied",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict or execution unavailable",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/trade/gmx/activity": {
+      "get": {
+        "operationId": "get_gmx_activity",
+        "tags": [
+          "Perpetuals"
+        ],
+        "summary": "Read customer GMX activity",
+        "security": [
+          {
+            "businessKey": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "header",
+            "name": "X-Customer-Identity",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Verified current customer identity; a business key alone cannot access another customer wallet."
+          },
+          {
+            "in": "query",
+            "name": "customer_id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "in": "query",
+            "name": "wallet_id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Verified source data envelope; 202 is not a fill or confirmation.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Permission denied",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict or execution unavailable",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/trade/gmx/prepare": {
+      "post": {
+        "operationId": "post_gmx_prepare",
+        "tags": [
+          "Perpetuals"
+        ],
+        "summary": "Prepare an exact unsigned customer Testnet action",
+        "security": [
+          {
+            "businessKey": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "header",
+            "name": "X-Customer-Identity",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Verified current customer identity; a business key alone cannot access another customer wallet."
+          },
+          {
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 200
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "oneOf": [
+                  {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "properties": {
+                      "customer_id": {
+                        "type": "string",
+                        "format": "uuid"
+                      },
+                      "wallet_id": {
+                        "type": "string",
+                        "format": "uuid"
+                      },
+                      "account_address": {
+                        "type": "string",
+                        "pattern": "^0x[0-9a-fA-F]{40}$"
+                      },
+                      "market_id": {
+                        "$ref": "#/components/schemas/GmxMarketId"
+                      },
+                      "kind": {
+                        "enum": [
+                          "mint",
+                          "approve"
+                        ]
+                      },
+                      "amount": {
+                        "type": "string",
+                        "pattern": "^(0|[1-9][0-9]*)(\\.[0-9]+)?$"
+                      }
+                    },
+                    "required": [
+                      "customer_id",
+                      "wallet_id",
+                      "account_address",
+                      "market_id",
+                      "kind",
+                      "amount"
+                    ]
+                  },
+                  {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "properties": {
+                      "customer_id": {
+                        "type": "string",
+                        "format": "uuid"
+                      },
+                      "wallet_id": {
+                        "type": "string",
+                        "format": "uuid"
+                      },
+                      "account_address": {
+                        "type": "string",
+                        "pattern": "^0x[0-9a-fA-F]{40}$"
+                      },
+                      "market_id": {
+                        "$ref": "#/components/schemas/GmxMarketId"
+                      },
+                      "kind": {
+                        "const": "open"
+                      },
+                      "is_long": {
+                        "type": "boolean"
+                      },
+                      "collateral": {
+                        "type": "string",
+                        "pattern": "^(0|[1-9][0-9]*)(\\.[0-9]+)?$"
+                      },
+                      "size_usd": {
+                        "type": "string",
+                        "pattern": "^(0|[1-9][0-9]*)(\\.[0-9]+)?$"
+                      },
+                      "slippage_bps": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 100
+                      }
+                    },
+                    "required": [
+                      "customer_id",
+                      "wallet_id",
+                      "account_address",
+                      "market_id",
+                      "kind",
+                      "is_long",
+                      "collateral",
+                      "size_usd"
+                    ]
+                  },
+                  {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "properties": {
+                      "customer_id": {
+                        "type": "string",
+                        "format": "uuid"
+                      },
+                      "wallet_id": {
+                        "type": "string",
+                        "format": "uuid"
+                      },
+                      "account_address": {
+                        "type": "string",
+                        "pattern": "^0x[0-9a-fA-F]{40}$"
+                      },
+                      "market_id": {
+                        "$ref": "#/components/schemas/GmxMarketId"
+                      },
+                      "kind": {
+                        "const": "close"
+                      },
+                      "is_long": {
+                        "type": "boolean"
+                      },
+                      "slippage_bps": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 100
+                      }
+                    },
+                    "required": [
+                      "customer_id",
+                      "wallet_id",
+                      "account_address",
+                      "market_id",
+                      "kind",
+                      "is_long"
+                    ]
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "202": {
+            "description": "Verified source data envelope; 202 is not a fill or confirmation.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Permission denied",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict or execution unavailable",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/trade/gmx/authorize": {
+      "post": {
+        "operationId": "post_gmx_authorize",
+        "tags": [
+          "Perpetuals"
+        ],
+        "summary": "Persist and relay the exact authorized transaction once",
+        "security": [
+          {
+            "businessKey": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "header",
+            "name": "X-Customer-Identity",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Verified current customer identity; a business key alone cannot access another customer wallet."
+          },
+          {
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 200
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "customer_id": {
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  "wallet_id": {
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  "request_id": {
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  "signed_transaction": {
+                    "type": "string",
+                    "pattern": "^0x[0-9a-fA-F]+$",
+                    "maxLength": 100000
+                  }
+                },
+                "required": [
+                  "customer_id",
+                  "wallet_id",
+                  "request_id",
+                  "signed_transaction"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "202": {
+            "description": "Verified source data envelope; 202 is not a fill or confirmation.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Permission denied",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict or execution unavailable",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/trade/gmx/gas": {
+      "post": {
+        "operationId": "post_gmx_gas",
+        "tags": [
+          "Perpetuals"
+        ],
+        "summary": "Request a capped real Testnet fee grant",
+        "security": [
+          {
+            "businessKey": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "header",
+            "name": "X-Customer-Identity",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Verified current customer identity; a business key alone cannot access another customer wallet."
+          },
+          {
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 200
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "customer_id": {
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  "wallet_id": {
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  "account_address": {
+                    "type": "string",
+                    "pattern": "^0x[0-9a-fA-F]{40}$"
+                  }
+                },
+                "required": [
+                  "customer_id",
+                  "wallet_id",
+                  "account_address"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "202": {
+            "description": "Verified source data envelope; 202 is not a fill or confirmation.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Permission denied",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict or execution unavailable",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
           }
         }
       }
@@ -3234,6 +6252,13 @@
           },
           "customer_action_token": {
             "type": "string"
+          },
+          "display_amount": {
+            "type": "string",
+            "description": "Exact approved input amount for customer activity"
+          },
+          "display_asset_id": {
+            "type": "string"
           }
         },
         "required": [
@@ -3243,6 +6268,345 @@
           "tx_hash"
         ],
         "additionalProperties": false
+      },
+      "MarginCustomerBinding": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "customer_id"
+        ],
+        "properties": {
+          "customer_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "wallet_id": {
+            "type": "string",
+            "format": "uuid"
+          }
+        }
+      },
+      "MarginWorkflowInput": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "customer_id",
+          "market_id",
+          "direction",
+          "leverage",
+          "amount",
+          "slippage_bps"
+        ],
+        "properties": {
+          "customer_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "wallet_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "market_id": {
+            "type": "string",
+            "maxLength": 200
+          },
+          "direction": {
+            "type": "string",
+            "enum": [
+              "long",
+              "short"
+            ]
+          },
+          "leverage": {
+            "type": "integer",
+            "enum": [
+              2,
+              3,
+              4,
+              5
+            ]
+          },
+          "amount": {
+            "type": "string",
+            "pattern": "^(0|[1-9][0-9]*)(\\.[0-9]{1,7})?$",
+            "description": "Must be positive; exact seven-decimal amount conversion."
+          },
+          "slippage_bps": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 50
+          }
+        }
+      },
+      "MarginStepTerms": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "minimumOutputAtomic": {
+            "type": "string",
+            "pattern": "^[1-9][0-9]{0,37}$"
+          },
+          "maximumInputAtomic": {
+            "type": "string",
+            "pattern": "^[1-9][0-9]{0,37}$"
+          },
+          "minimumDebtOutputAtomic": {
+            "type": "string",
+            "pattern": "^[1-9][0-9]{0,37}$"
+          }
+        }
+      },
+      "MarginStepInput": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "customer_id",
+          "terms"
+        ],
+        "properties": {
+          "customer_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "wallet_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "terms": {
+            "$ref": "#/components/schemas/MarginStepTerms"
+          }
+        }
+      },
+      "MarginCollateralFundingQuoteInput": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "customer_id",
+          "amount"
+        ],
+        "properties": {
+          "customer_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "wallet_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "amount": {
+            "type": "string",
+            "description": "Positive exact native XLM amount, at most10XLM and seven decimals."
+          }
+        }
+      },
+      "MarginCollateralFundingInput": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "customer_id",
+          "amount",
+          "minimum_output_atomic"
+        ],
+        "properties": {
+          "customer_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "wallet_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "amount": {
+            "type": "string",
+            "description": "Positive exact native XLM amount, at most10XLM and seven decimals."
+          },
+          "minimum_output_atomic": {
+            "type": "string",
+            "pattern": "^[1-9][0-9]{0,37}$"
+          }
+        }
+      },
+      "StockFundingIdentity": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "customer_id",
+          "wallet_id",
+          "account_address"
+        ],
+        "properties": {
+          "customer_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "wallet_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "account_address": {
+            "type": "string",
+            "pattern": "^0x[0-9a-fA-F]{40}$"
+          }
+        }
+      },
+      "StockExecutionPrepare": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "customer_id",
+          "wallet_id",
+          "account_address",
+          "market_id",
+          "kind",
+          "side",
+          "amount",
+          "slippage_bps"
+        ],
+        "properties": {
+          "customer_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "wallet_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "account_address": {
+            "type": "string",
+            "pattern": "^0x[0-9a-fA-F]{40}$"
+          },
+          "market_id": {
+            "type": "string",
+            "enum": [
+              "robinhood-testnet:stocks:TSLA",
+              "robinhood-testnet:stocks:AMZN",
+              "robinhood-testnet:stocks:PLTR",
+              "robinhood-testnet:stocks:NFLX",
+              "robinhood-testnet:stocks:AMD"
+            ]
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "approval",
+              "swap"
+            ]
+          },
+          "side": {
+            "type": "string",
+            "enum": [
+              "buy",
+              "sell"
+            ]
+          },
+          "amount": {
+            "type": "string",
+            "pattern": "^(0|[1-9][0-9]*)(\\.[0-9]+)?$"
+          },
+          "slippage_bps": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 100
+          }
+        }
+      },
+      "StockExecutionAuthorize": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "customer_id",
+          "wallet_id",
+          "request_id",
+          "signed_transaction"
+        ],
+        "properties": {
+          "customer_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "wallet_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "request_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "signed_transaction": {
+            "type": "string",
+            "pattern": "^0x([a-fA-F0-9]{2})+$",
+            "description": "Exact customer-signed Robinhood46630 EIP1559 transaction; no arbitrary calldata accepted."
+          }
+        }
+      },
+      "StockCanonicalDeltaProof": {
+        "type": "object",
+        "required": [
+          "state",
+          "txHash",
+          "blockNumber",
+          "confirmations",
+          "amountInBaseUnits",
+          "amountOutBaseUnits",
+          "balance_basis",
+          "balanceDeltas"
+        ],
+        "properties": {
+          "state": {
+            "const": "confirmed"
+          },
+          "txHash": {
+            "type": "string",
+            "pattern": "^0x[0-9a-f]{64}$"
+          },
+          "blockNumber": {
+            "type": "string"
+          },
+          "confirmations": {
+            "type": "string"
+          },
+          "amountInBaseUnits": {
+            "type": "string"
+          },
+          "amountOutBaseUnits": {
+            "type": "string"
+          },
+          "balance_basis": {
+            "const": "canonical_transfer_events"
+          },
+          "balanceDeltas": {
+            "type": "array",
+            "minItems": 2,
+            "maxItems": 2,
+            "items": {
+              "type": "object",
+              "required": [
+                "token",
+                "deltaBaseUnits"
+              ],
+              "properties": {
+                "token": {
+                  "type": "string"
+                },
+                "deltaBaseUnits": {
+                  "type": "string",
+                  "pattern": "^-?[0-9]+$"
+                }
+              }
+            }
+          }
+        }
+      },
+      "GmxMarketId": {
+        "type": "string",
+        "enum": [
+          "gmx-testnet:perps:ETH",
+          "gmx-testnet:perps:BTC",
+          "gmx-testnet:perps:CRV",
+          "gmx-testnet:perps:XAU",
+          "gmx-testnet:perps:XAG",
+          "gmx-testnet:perps:XPT"
+        ]
       }
     }
   }

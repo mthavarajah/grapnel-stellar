@@ -19,6 +19,7 @@ export function createGmxRuntime(d:{pool:Pool;readWallets:(c:CustomerContext)=>P
   verifyAccount:async(scope,address,client)=>(await d.readWallets(await customer(scope,client))).some(w=>w.address.toLowerCase()===address),
   verifySigned:(r,raw)=>adapter.verifySigned(r.prepared,raw),
   verifyCreation:(r,p)=>adapter.confirmTransaction(r.prepared,'creationTxHash'in p?p.creationTxHash:p.txHash),
+  verifyReverted:async(r)=>{const proof=await adapter.confirmReverted(r.prepared,r.txHash!);if(!proof)return fail();return proof;},
   verifySettlement:(r)=>{if(!r.creationProof||!('orderKey'in r.creationProof))return fail();return adapter.reconcileOrder(r.prepared,r.creationProof);},
  });
  const verifyMarket=createGmxReadiness(async selected=>{

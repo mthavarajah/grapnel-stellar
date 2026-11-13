@@ -2,8 +2,8 @@
   "openapi": "3.1.0",
   "info": {
     "title": "Grapnel Testnet API",
-    "version": "0.4.2",
-    "description": "Testnet B2B API with independently authorized customer wallets. Stellar funding, Crypto and Blend; canonical Robinhood Testnet USDG stock execution. Financial writes require current tenant permissions, customer ownership and actual chain proof. See docs/20_STOCKS_CUSTOMER_EXECUTION.md."
+    "version": "0.4.3",
+    "description": "Testnet B2B API with independently authorized customer wallets. Stellar funding, Crypto and Blend; canonical Robinhood Testnet USDG stock execution. Financial writes require current tenant permissions, customer ownership and actual chain proof. See docs/20_STOCKS_CUSTOMER_EXECUTION.md. GMX Arbitrum Sepolia perpetuals use the same customer authorization model with exact signed EVM transactions and canonical keeper execution proof."
   },
   "servers": [
     {
@@ -5095,6 +5095,784 @@
           }
         }
       }
+    },
+    "/v1/trade/gmx/status": {
+      "get": {
+        "operationId": "get_gmx_status",
+        "tags": [
+          "Perpetuals"
+        ],
+        "summary": "Read customer GMX status",
+        "security": [
+          {
+            "businessKey": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "header",
+            "name": "X-Customer-Identity",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Verified current customer identity; a business key alone cannot access another customer wallet."
+          },
+          {
+            "in": "query",
+            "name": "customer_id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "in": "query",
+            "name": "wallet_id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "in": "query",
+            "name": "market_id",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/GmxMarketId"
+            }
+          },
+          {
+            "in": "query",
+            "name": "account_address",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "pattern": "^0x[0-9a-fA-F]{40}$"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Verified source data envelope; 202 is not a fill or confirmation.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Permission denied",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict or execution unavailable",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/trade/gmx/requests": {
+      "get": {
+        "operationId": "get_gmx_requests",
+        "tags": [
+          "Perpetuals"
+        ],
+        "summary": "Read customer GMX requests",
+        "security": [
+          {
+            "businessKey": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "header",
+            "name": "X-Customer-Identity",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Verified current customer identity; a business key alone cannot access another customer wallet."
+          },
+          {
+            "in": "query",
+            "name": "customer_id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "in": "query",
+            "name": "wallet_id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "in": "query",
+            "name": "request_id",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Verified source data envelope; 202 is not a fill or confirmation.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Permission denied",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict or execution unavailable",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/trade/gmx/activity": {
+      "get": {
+        "operationId": "get_gmx_activity",
+        "tags": [
+          "Perpetuals"
+        ],
+        "summary": "Read customer GMX activity",
+        "security": [
+          {
+            "businessKey": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "header",
+            "name": "X-Customer-Identity",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Verified current customer identity; a business key alone cannot access another customer wallet."
+          },
+          {
+            "in": "query",
+            "name": "customer_id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "in": "query",
+            "name": "wallet_id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Verified source data envelope; 202 is not a fill or confirmation.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Permission denied",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict or execution unavailable",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/trade/gmx/prepare": {
+      "post": {
+        "operationId": "post_gmx_prepare",
+        "tags": [
+          "Perpetuals"
+        ],
+        "summary": "Prepare an exact unsigned customer Testnet action",
+        "security": [
+          {
+            "businessKey": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "header",
+            "name": "X-Customer-Identity",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Verified current customer identity; a business key alone cannot access another customer wallet."
+          },
+          {
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 200
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "oneOf": [
+                  {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "properties": {
+                      "customer_id": {
+                        "type": "string",
+                        "format": "uuid"
+                      },
+                      "wallet_id": {
+                        "type": "string",
+                        "format": "uuid"
+                      },
+                      "account_address": {
+                        "type": "string",
+                        "pattern": "^0x[0-9a-fA-F]{40}$"
+                      },
+                      "market_id": {
+                        "$ref": "#/components/schemas/GmxMarketId"
+                      },
+                      "kind": {
+                        "enum": [
+                          "mint",
+                          "approve"
+                        ]
+                      },
+                      "amount": {
+                        "type": "string",
+                        "pattern": "^(0|[1-9][0-9]*)(\\.[0-9]+)?$"
+                      }
+                    },
+                    "required": [
+                      "customer_id",
+                      "wallet_id",
+                      "account_address",
+                      "market_id",
+                      "kind",
+                      "amount"
+                    ]
+                  },
+                  {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "properties": {
+                      "customer_id": {
+                        "type": "string",
+                        "format": "uuid"
+                      },
+                      "wallet_id": {
+                        "type": "string",
+                        "format": "uuid"
+                      },
+                      "account_address": {
+                        "type": "string",
+                        "pattern": "^0x[0-9a-fA-F]{40}$"
+                      },
+                      "market_id": {
+                        "$ref": "#/components/schemas/GmxMarketId"
+                      },
+                      "kind": {
+                        "const": "open"
+                      },
+                      "is_long": {
+                        "type": "boolean"
+                      },
+                      "collateral": {
+                        "type": "string",
+                        "pattern": "^(0|[1-9][0-9]*)(\\.[0-9]+)?$"
+                      },
+                      "size_usd": {
+                        "type": "string",
+                        "pattern": "^(0|[1-9][0-9]*)(\\.[0-9]+)?$"
+                      },
+                      "slippage_bps": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 100
+                      }
+                    },
+                    "required": [
+                      "customer_id",
+                      "wallet_id",
+                      "account_address",
+                      "market_id",
+                      "kind",
+                      "is_long",
+                      "collateral",
+                      "size_usd"
+                    ]
+                  },
+                  {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "properties": {
+                      "customer_id": {
+                        "type": "string",
+                        "format": "uuid"
+                      },
+                      "wallet_id": {
+                        "type": "string",
+                        "format": "uuid"
+                      },
+                      "account_address": {
+                        "type": "string",
+                        "pattern": "^0x[0-9a-fA-F]{40}$"
+                      },
+                      "market_id": {
+                        "$ref": "#/components/schemas/GmxMarketId"
+                      },
+                      "kind": {
+                        "const": "close"
+                      },
+                      "is_long": {
+                        "type": "boolean"
+                      },
+                      "slippage_bps": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 100
+                      }
+                    },
+                    "required": [
+                      "customer_id",
+                      "wallet_id",
+                      "account_address",
+                      "market_id",
+                      "kind",
+                      "is_long"
+                    ]
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "202": {
+            "description": "Verified source data envelope; 202 is not a fill or confirmation.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Permission denied",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict or execution unavailable",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/trade/gmx/authorize": {
+      "post": {
+        "operationId": "post_gmx_authorize",
+        "tags": [
+          "Perpetuals"
+        ],
+        "summary": "Persist and relay the exact authorized transaction once",
+        "security": [
+          {
+            "businessKey": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "header",
+            "name": "X-Customer-Identity",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Verified current customer identity; a business key alone cannot access another customer wallet."
+          },
+          {
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 200
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "customer_id": {
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  "wallet_id": {
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  "request_id": {
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  "signed_transaction": {
+                    "type": "string",
+                    "pattern": "^0x[0-9a-fA-F]+$",
+                    "maxLength": 100000
+                  }
+                },
+                "required": [
+                  "customer_id",
+                  "wallet_id",
+                  "request_id",
+                  "signed_transaction"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "202": {
+            "description": "Verified source data envelope; 202 is not a fill or confirmation.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Permission denied",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict or execution unavailable",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/trade/gmx/gas": {
+      "post": {
+        "operationId": "post_gmx_gas",
+        "tags": [
+          "Perpetuals"
+        ],
+        "summary": "Request a capped real Testnet fee grant",
+        "security": [
+          {
+            "businessKey": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "header",
+            "name": "X-Customer-Identity",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Verified current customer identity; a business key alone cannot access another customer wallet."
+          },
+          {
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 200
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "customer_id": {
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  "wallet_id": {
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  "account_address": {
+                    "type": "string",
+                    "pattern": "^0x[0-9a-fA-F]{40}$"
+                  }
+                },
+                "required": [
+                  "customer_id",
+                  "wallet_id",
+                  "account_address"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "202": {
+            "description": "Verified source data envelope; 202 is not a fill or confirmation.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Permission denied",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict or execution unavailable",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
@@ -5818,6 +6596,17 @@
             }
           }
         }
+      },
+      "GmxMarketId": {
+        "type": "string",
+        "enum": [
+          "gmx-testnet:perps:ETH",
+          "gmx-testnet:perps:BTC",
+          "gmx-testnet:perps:CRV",
+          "gmx-testnet:perps:XAU",
+          "gmx-testnet:perps:XAG",
+          "gmx-testnet:perps:XPT"
+        ]
       }
     }
   }
