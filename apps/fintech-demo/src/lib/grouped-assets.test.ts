@@ -29,3 +29,5 @@ it('displays only verified canonical stock sell-quote values independently of re
  expect(buildGroupedAssets([source])[0]).toMatchObject({value_usd:'0.994009',reserved:'0',spendable:'1.80622045738304213'});
  for(const change of [{balance_verified:false},{value_usd:null},{valuation_basis:'reference_price'},{asset_id:'unverified',asset:{...source.asset,id:'unverified'}}])expect(buildGroupedAssets([{...source,...change}])[0]!.value_usd).toBeNull();
 });
+
+it('shows only verified GMX collateral settlement values without inventing a price for other USDC tokens',()=>{const id='arbitrum-sepolia:erc20:0x3253a335e7bffb4790aa4c25c4250d206e9b9773',source={asset_id:id,asset:{id,code:'USDC.SG',verified:true,decimals:6},wallet_amount:'100',reserved:'0',spendable:'100',balance_verified:true,value_usd:'100',valuation_basis:'testnet_settlement_unit'};expect(buildGroupedAssets([source])[0]).toMatchObject({value_usd:'100',reserved:'0',spendable:'100'});expect(buildGroupedAssets([{...source,value_usd:'101'}])[0]!.value_usd).toBeNull();});

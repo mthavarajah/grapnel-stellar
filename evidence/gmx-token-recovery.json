@@ -1,0 +1,28 @@
+{
+  "checked_at": "2026-11-13T01:39:13.106Z",
+  "network": "arbitrum-sepolia",
+  "proofs": [
+    {
+      "network": "arbitrum-sepolia",
+      "account": "0x80bd216c39869cec85e37ee37c020530d144799a",
+      "txHash": "0x2b08c3fc333423f5ecac81e6748080965d8ad0b9172b4bb3b30009aa5c99408f",
+      "blockNumber": "328595232",
+      "kind": "mint",
+      "amountAtomic6": "100000000",
+      "proof_basis": "canonical_token_event",
+      "balanceDeltaAtomic6": "100000000",
+      "confirmed": true
+    },
+    {
+      "network": "arbitrum-sepolia",
+      "account": "0x80bd216c39869cec85e37ee37c020530d144799a",
+      "txHash": "0xf2e6b5af7646ea9393cb43de8c006af3c39712e7b256de0665a0294c7787f916",
+      "blockNumber": "328595428",
+      "kind": "approve",
+      "amountAtomic6": "20000000",
+      "proof_basis": "canonical_token_event",
+      "allowanceAtomic6": "20000000",
+      "confirmed": true
+    }
+  ]
+}

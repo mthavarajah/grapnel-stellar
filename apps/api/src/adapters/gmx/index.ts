@@ -31,16 +31,19 @@ export function createGmxTestnetAdapter(d: {
     transport?: GmxReadTransport;
     fetcher?: typeof fetch;
     now?: () => number;
+    tokenConfirmationMode?: 'historical'|'events';
 } = {}) { return new GmxTestnetAdapter(d); }
 export class GmxTestnetAdapter {
     private t: GmxReadTransport;
     private now: () => number;
     private fetcher: typeof fetch;
+    private tokenConfirmationMode:'historical'|'events';
     constructor(d: {
         transport?: GmxReadTransport;
         fetcher?: typeof fetch;
         now?: () => number;
-    } = {}) { this.fetcher = d.fetcher ?? fetch; this.t = d.transport ?? createGmxReadTransport(this.fetcher); this.now = d.now ?? Date.now; }
+    tokenConfirmationMode?: 'historical'|'events';
+    } = {}) { this.tokenConfirmationMode=d.tokenConfirmationMode??'historical'; this.fetcher = d.fetcher ?? fetch; this.t = d.transport ?? createGmxReadTransport(this.fetcher); this.now = d.now ?? Date.now; }
     private async call(to: Hex, abi: Abi, functionName: string, args: readonly unknown[] = [], block = 'latest'): Promise<any> { const data = encodeFunctionData({ abi, functionName, args }), result = await this.t.request('eth_call', [{ to, data }, block]); if (typeof result !== 'string')
         return fail('GMX_CALL_INVALID'); return decodeFunctionResult({ abi, functionName, data: result as Hex }); }
     private base(i: GmxBaseIntent) { z.string().uuid().parse(i.id); address(i.account); const at = Date.parse(i.expiresAt); if (!Number.isFinite(at) || at <= this.now() || at > this.now() + 120000)
@@ -218,6 +221,7 @@ export class GmxTestnetAdapter {
             }
             if (matched !== 1)
                 return fail('GMX_EXACT_TOKEN_EVENT_REQUIRED');
+            if(this.tokenConfirmationMode==='events')return {network:P.network,account:p.account,txHash,blockNumber:block.toString(),kind:p.kind,amountAtomic6:n.toString(),proof_basis:'canonical_token_event',...(p.kind==='mint'?{balanceDeltaAtomic6:n.toString()}:{allowanceAtomic6:n.toString()}),confirmed:true};
             const functionName = p.kind === 'mint' ? 'balanceOf' : 'allowance', args = p.kind === 'mint' ? [p.account] : [p.account, A.router.address], before = await this.call(A.collateral.address, ERC, functionName, args, q(block - 1n)), after = await this.call(A.collateral.address, ERC, functionName, args, q(block));
             if (p.kind === 'mint' ? BigInt(after) - BigInt(before) !== n : after !== n)
                 return fail('GMX_TOKEN_DELTA_MISMATCH');

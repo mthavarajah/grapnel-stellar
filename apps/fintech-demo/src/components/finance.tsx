@@ -404,8 +404,8 @@ function FinanceShell({ page, auth, initialCategory }: { page: string; auth?: Au
     };
     void read();const changed=()=>{void read();},visible=()=>{if(document.visibilityState==="visible")void read();};
     const timer=setInterval(()=>{if(document.visibilityState==="visible")void read();},15000);
-    window.addEventListener('grapnel:stocks-updated',changed);document.addEventListener('visibilitychange',visible);
-    return()=>{alive=false;clearInterval(timer);window.removeEventListener('grapnel:stocks-updated',changed);document.removeEventListener('visibilitychange',visible);};
+    window.addEventListener('grapnel:stocks-updated',changed);window.addEventListener('grapnel:perps-updated',changed);document.addEventListener('visibilitychange',visible);
+    return()=>{alive=false;clearInterval(timer);window.removeEventListener('grapnel:stocks-updated',changed);window.removeEventListener('grapnel:perps-updated',changed);document.removeEventListener('visibilitychange',visible);};
   },[session?.customer_id,session?.wallet_id,page]);
   const [assets, setAssets] = useState<any[]>([]);
   const [fundingError, setFundingError] = useState("");

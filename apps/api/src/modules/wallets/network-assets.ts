@@ -46,9 +46,9 @@ export async function readNetworkAssets(c:CustomerContext,readWallets:NetworkAss
      const quote=await createRobinhoodReader().quoteExactInput({symbol:source.code as typeof STOCKS[number]['symbol'],side:'sell',amountInBaseUnits:atomic.toString(),slippageBps:0});
      value_usd=fromAtomic(BigInt(quote.amountOutBaseUnits),6);valuation_basis='testnet_pool_sell_quote';
     }catch{/* Preserve verified holdings when a current sell valuation is unavailable. */}
-   }
+   }else if(source.chain===421614&&source.code==='USDC.SG'){value_usd=amount;valuation_basis='testnet_settlement_unit';}
   }catch{/* Missing observations remain unknown. */}}
-  return {asset_id,asset:{id:asset_id,code:source.code,name:source.code,kind:'erc20',network:source.id,decimals:source.decimals,verified:true},balance_verified:verified,wallet_amount:amount,reserved:verified&&source.chain===46630?'0':null,spendable:verified&&source.chain===46630?amount:null,value_usd,valuation_basis,network_label:source.label,feature_label:'Wallet',observed_at};
+  return {asset_id,asset:{id:asset_id,code:source.code,name:source.code,kind:'erc20',network:source.id,decimals:source.decimals,verified:true},balance_verified:verified,wallet_amount:amount,reserved:verified&&(source.chain===46630||source.chain===421614)?'0':null,spendable:verified&&(source.chain===46630||source.chain===421614)?amount:null,value_usd,valuation_basis,network_label:source.label,feature_label:'Wallet',observed_at};
  }));
  return {scope:{business_id:c.businessId,customer_id:c.customerId,wallet_id:c.walletId},balances};
 }

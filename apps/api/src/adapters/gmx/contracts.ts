@@ -91,8 +91,11 @@ export interface GmxTokenProof {
     blockNumber: string;
     kind: 'mint' | 'approve';
     amountAtomic6: string;
-    beforeAtomic6: string;
-    afterAtomic6: string;
+    proof_basis?: 'canonical_token_event';
+    balanceDeltaAtomic6?: string;
+    allowanceAtomic6?: string;
+    beforeAtomic6?: string;
+    afterAtomic6?: string;
     confirmed: true;
 }
 export type GmxExecutionResult = {

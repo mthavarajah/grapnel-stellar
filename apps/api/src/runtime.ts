@@ -331,6 +331,7 @@ export async function createRuntime(pool?:Pool,marginRoutes:RuntimeMarginBinding
    await registerRobinhoodFundingRoutes(app,{readEthereumWallets});
    await registerRobinhoodTreasuryRoutes(app,{treasury:stockTreasury,readWallets:readEthereumWallets,verifyGate1:()=>hasGate1Proof(chain)});
    await registerRobinhoodExecutionRoutes(app,{service:stockExecution.service,verifyGate1:()=>hasGate1Proof(chain)});
+   let gmxSettling=false;const gmxTimer=setInterval(()=>{if(gmxSettling)return;gmxSettling=true;void gmxRuntime.reconcilePending().catch(()=>{}).finally(()=>{gmxSettling=false;});},3000);gmxTimer.unref();app.addHook('onClose',async()=>{clearInterval(gmxTimer);});
    await registerGmxCustomerRoutes(app,{service:gmxRuntime.service,gas:gmxRuntime.gas,verifyGate1:()=>hasGate1Proof(chain)});
    await registerUsdcTrustline(app,{chain,operations,verifyGate1:()=>hasGate1Proof(chain)});
    // Revalidate the actual chain proof for every new provider intent. A

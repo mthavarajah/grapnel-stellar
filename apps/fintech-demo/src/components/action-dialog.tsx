@@ -2,7 +2,7 @@
 import{useEffect,useId,useRef,type ReactNode}from'react';
 import{createPortal}from'react-dom';
 /** A review can be dismissed without cancelling or resending the retained request. */
-export function ActionDialog({title,onClose,children,suspendFocus=false}:{title:string;onClose:()=>void;children:ReactNode;suspendFocus?:boolean}){
+export function ActionDialog({title,onClose,children,suspendFocus=false,transactionLabel='Stock transaction'}:{title:string;onClose:()=>void;children:ReactNode;suspendFocus?:boolean;transactionLabel?:string}){
  const titleId=useId(),panel=useRef<HTMLElement>(null),close=useRef(onClose),suspended=useRef(suspendFocus);close.current=onClose;suspended.current=suspendFocus;
  useEffect(()=>{
   const previous=document.activeElement as HTMLElement|null,overflow=document.body.style.overflow;document.body.style.overflow='hidden';panel.current?.focus();
@@ -13,5 +13,5 @@ export function ActionDialog({title,onClose,children,suspendFocus=false}:{title:
   document.addEventListener('keydown',key);return()=>{document.removeEventListener('keydown',key);document.body.style.overflow=overflow;if(previous?.isConnected)previous.focus();};
  },[]);
  if(typeof document==='undefined')return null;
- return createPortal(<div className="modal-backdrop" role="presentation"><section className="modal stock-action-modal" role="dialog" aria-modal={!suspendFocus} aria-labelledby={titleId} tabIndex={-1} ref={panel}><button type="button" className="close" aria-label="Close stock transaction" onClick={onClose}>×</button><p className="eyebrow">STOCK TRANSACTION</p><h2 id={titleId}>{title}</h2>{children}</section></div>,document.body);
+ return createPortal(<div className="modal-backdrop" role="presentation"><section className="modal stock-action-modal" role="dialog" aria-modal={!suspendFocus} aria-labelledby={titleId} tabIndex={-1} ref={panel}><button type="button" className="close" aria-label={'Close '+transactionLabel.toLowerCase()} onClick={onClose}>×</button><p className="eyebrow">{transactionLabel.toUpperCase()}</p><h2 id={titleId}>{title}</h2>{children}</section></div>,document.body);
 }

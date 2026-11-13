@@ -22,7 +22,7 @@ function identityKey(row:AssetBalanceRow):string{const a=metadata(row);return JS
 function valuationFor(row:AssetBalanceRow,amount:string|null,valuation?:AssetBalanceValuation):string|null{
  if(amount===null)return null;
  // Explicit server accounting basis for the pinned Robinhood Testnet settlement token.
- if(row.balance_verified===true&&metadata(row)?.verified===true&&row.asset_id==='robinhood-testnet:erc20:0x7e955252e15c84f5768b83c41a71f9eba181802f'&&row.valuation_basis==='testnet_settlement_unit'&&normalize(row.value_usd,38)===amount)return amount;
+ if(row.balance_verified===true&&metadata(row)?.verified===true&&(row.asset_id==='robinhood-testnet:erc20:0x7e955252e15c84f5768b83c41a71f9eba181802f'||row.asset_id===GMX_SG)&&row.valuation_basis==='testnet_settlement_unit'&&normalize(row.value_usd,38)===amount)return amount;
  if(row.balance_verified===true&&metadata(row)?.verified===true&&row.valuation_basis==='testnet_pool_sell_quote'&&Object.values(ROBINHOOD_CUSTOMER.stocks).some(stock=>row.asset_id===`robinhood-testnet:erc20:${stock.address}`))return normalize(row.value_usd,6);
  const matches=valuation?.assets?.filter(v=>v.asset_id===row.asset_id&&normalize(v.wallet_amount,precision(row))===amount)??[];if(!matches.length)return null;
  const values=matches.map(v=>normalize(v.value_usd,38));return values.every(value=>value!==null&&value===values[0])?values[0]!:null;
