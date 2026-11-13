@@ -1838,3 +1838,12 @@ footer strong {
 .velocity-wordmark img { position: static; width: 100%; height: 100%; object-fit: contain; max-width: 100%; filter: none; }
 @media(max-width:1100px) { .sidebar .velocity-brand-lockup { display: none; } }
 .activity-item > svg:last-child { flex-shrink: 0; color: #111; }
+
+.initial-loading { min-height: 100vh; display: grid; place-items: center; }
+.nav-loading { margin-left: auto; display: inline-flex; font-size: 11px; }
+.button, .nav-link, .text-button, .tabs button, .earn-action-toggle button { touch-action: manipulation; }
+.button:active:not(:disabled), .text-button:active:not(:disabled) { transform: translateY(1px); }
+.nav-link, .tabs button, .earn-action-toggle button { transition: background-color 120ms ease, color 120ms ease; }
+@media(prefers-reduced-motion: reduce) { .nav-link, .tabs button, .earn-action-toggle button { transition: none; } }
+.refresh.refreshing { animation: operation-rotate .8s linear infinite; }
+@media(prefers-reduced-motion: reduce) { .refresh.refreshing { animation: none; } }

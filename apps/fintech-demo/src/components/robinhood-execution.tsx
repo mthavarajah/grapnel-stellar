@@ -99,8 +99,8 @@ export function RobinhoodExecutionCard({ api, customerId, walletId, symbol, wall
     useEffect(() => { if (!account || !uncertain && (!record || terminal.has(record.state)))
         return; const captured = owner; const timer = setInterval(() => { if (active.current||pollingRead.current)
         return; pollingRead.current=true;void (async()=>{try{guard(captured);if(!scope().businessId)await refresh(captured);const id=recordRef.current?.id;const value=await api('grapnel/stocks-request'+(id?'?request_id='+encodeURIComponent(id):''));guard(captured);if(active.current)return;if(value)accept(value,captured,id);else{setRecord(null);setUncertain(false);}void refresh(captured).catch(()=>{});}catch{/* Keep checking the retained request; transient reads are not execution errors. */}finally{pollingRead.current=false;}})(); }, 2500); return () => clearInterval(timer); }, [owner, account, uncertain, record?.id, record?.state]);
-    useEffect(() => { if (!record)
-        return; const timer = setInterval(() => setClock(Date.now()), 500); return () => clearInterval(timer); }, [record?.id]);
+    useEffect(() => { if (!record||terminal.has(record.state))
+        return; const timer = setInterval(() => setClock(Date.now()), 500); return () => clearInterval(timer); }, [record?.id,record?.state]);
     const foreign = !!record && record.market_id !== `robinhood-testnet:stocks:${symbol}`, pending = !!record && !terminal.has(record.state), ready = !!wallet && !!snapshot?.execution_available && !loading, expired = !!record && Date.parse(record.expires_at) <= clock;
     const balance = side === 'buy' ? snapshot?.settlement_balance : snapshot?.stock_balance, allowance = side === 'buy' ? snapshot?.settlement_allowance : snapshot?.stock_allowance, source = side === 'buy' ? 'USDG' : symbol, output = side === 'buy' ? symbol : 'USDG';
     const {valid,needsApproval,feedback:amountFeedback}=stockTradeInput(amount,side,symbol,balance,allowance,snapshot?.native_balance);

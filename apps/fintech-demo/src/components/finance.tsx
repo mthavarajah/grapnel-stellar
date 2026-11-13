@@ -1,4 +1,5 @@
 "use client";
+import {ActionDialog} from './action-dialog';
 import {StockActivity} from "./stock-activity";
 import {RobinhoodExecution} from "./robinhood-execution";
 import {groupedUsd} from '../lib/grouped-assets';
@@ -7,7 +8,7 @@ import {createIdentityTokenResolver} from '@/lib/identity-token';
 import Link from "next/link";
 import {VelocityBrand} from "./velocity-brand";
 import {OperationProgress,ProgressIndicator} from "./operation-progress";
-import {trackApproval,type ApprovalPhase} from "@/lib/operation-progress";
+import {trackApproval,operationPollDelay,type ApprovalPhase} from "@/lib/operation-progress";
 import { AssetLogo } from "./asset-logo";
 import {GmxPerpetualExecution} from "./gmx-perpetual-execution";
 import {PrivyPerpetualExecution} from "./perpetual-execution";
@@ -15,7 +16,7 @@ import {PerpetualOrderPreview,PerpetualMarketMetrics} from "./perpetual-order-pr
 import {isCurrentDerivativeMarket,isRecognizedDerivativeMarket,bindMarketDetail,clearMarketLiveFields} from "@/lib/perpetual-market";
 import {assertMarginPositionBinding,marginPositionAction,type MarginReviewBinding} from "@/lib/margin-workflow";
 import { useRouter } from "next/navigation";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import {
   getIdentityToken,
   usePrivy,
@@ -216,15 +217,18 @@ function PriceChart({history,loading}:{history:MarketHistory|null;loading:boolea
   const [selectedIndex,setSelectedIndex]=useState<number|null>(null);
   const chartRef=useRef<SVGSVGElement|null>(null);
   useEffect(()=>{setSelectedIndex(null);},[history?.market_id,history?.as_of,history?.points]);
-  const points=(history?.points??[]).flatMap(point=>{
+  const points=useMemo(()=>(history?.points??[]).flatMap(point=>{
     try {const timestamp=Date.parse(point.timestamp),price=toAtomic(point.price,38);return Number.isFinite(timestamp)?[{timestamp,price,originalPrice:point.price,originalTimestamp:point.timestamp}]:[];}catch{return [];}
-  }).sort((a,b)=>a.timestamp-b.timestamp).filter((point,index,all)=>index===0||point.timestamp!==all[index-1]!.timestamp);
-  if(loading)return <div className="market-chart-empty" role="status">Loading price history…</div>;
+  }).sort((a,b)=>a.timestamp-b.timestamp).filter((point,index,all)=>index===0||point.timestamp!==all[index-1]!.timestamp),[history?.points]);
+  const coordinates=useMemo(()=>{
+    if(!points.length)return [];
+    const min=points.reduce((current,p)=>p.price<current?p.price:current,points[0]!.price),max=points.reduce((current,p)=>p.price>current?p.price:current,points[0]!.price),first=points[0]!.timestamp,last=points[points.length-1]!.timestamp;
+    return points.map(point=>({x:last===first?300:20+(point.timestamp-first)*560/(last-first),y:max===min?140:260-Number((point.price-min)*240000n/(max-min))/1000}));
+  },[points]);
+  const linePoints=useMemo(()=>coordinates.map(p=>`${p.x},${p.y}`).join(" "),[coordinates]);
+  if(loading&&!points.length)return <div className="market-chart-empty" role="status">Loading price history…</div>;
   if(!points.length)return <div className="market-chart-empty" role="status">Price history is not available yet.</div>;
-  const min=points.reduce((current,p)=>p.price<current?p.price:current,points[0]!.price);
-  const max=points.reduce((current,p)=>p.price>current?p.price:current,points[0]!.price);
   const first=points[0]!.timestamp,last=points[points.length-1]!.timestamp;
-  const coordinates=points.map(point=>({x:last===first?300:20+(point.timestamp-first)*560/(last-first),y:max===min?140:260-Number((point.price-min)*240000n/(max-min))/1000}));
   const index=selectedIndex==null?null:Math.max(0,Math.min(selectedIndex,points.length-1));
   const selected=index==null?null:points[index]!,coordinate=index==null?null:coordinates[index]!;
   const selectAtX=(clientX:number)=>{
@@ -246,7 +250,7 @@ function PriceChart({history,loading}:{history:MarketHistory|null;loading:boolea
         }}>
         <title>{`${history!.base_symbol} price in ${history!.quote_symbol}`}</title>
         {[60,140,220].map(y=><line key={y} x1="20" x2="580" y1={y} y2={y} className="market-chart-grid" />)}
-        {coordinates.length>1&&<polyline points={coordinates.map(p=>`${p.x},${p.y}`).join(" ")} className="market-chart-line" />}
+        {coordinates.length>1&&<polyline points={linePoints} className="market-chart-line" />}
         <circle cx={coordinates.at(-1)!.x} cy={coordinates.at(-1)!.y} r="4" className="market-chart-dot" />
         {coordinate&&<><line x1={coordinate.x} x2={coordinate.x} y1="15" y2="265" className="market-chart-crosshair" data-testid="price-chart-crosshair"/><circle cx={coordinate.x} cy={coordinate.y} r="5" className="market-chart-dot" data-testid="price-chart-selected-point"/></>}
       </svg>
@@ -339,10 +343,12 @@ function PrivyFinance({ page, initialCategory }: { page: string; initialCategory
     sign: (a, address) => signPreparedAction(a, signRawHash, address),
     signRawHash,
   };
-  return <FinanceShell page={page} auth={auth} initialCategory={initialCategory} />;
+  return <FinanceShell key={`${privyAppId}:${user?.id??"signed-out"}`} page={page} auth={auth} initialCategory={initialCategory} />;
 }
 function FinanceShell({ page, auth, initialCategory }: { page: string; auth?: Auth;initialCategory?:string }) {
   const router = useRouter();
+  const [navigationTarget,setNavigationTarget]=useState<string|null>(null);
+  useEffect(()=>{setNavigationTarget(null);setProfileOpen(false);},[page]);
   const [sessionChecked, setSessionChecked] = useState(false);
   const attemptedConnection = useRef(false);
   const [loginTimedOut, setLoginTimedOut] = useState(false);
@@ -354,6 +360,7 @@ function FinanceShell({ page, auth, initialCategory }: { page: string; auth?: Au
   const [status, setStatus] = useState<any>(null);
   const [session, setSession] = useState<Session | null>(null);
   const marginSession=useRef(session);marginSession.current=session;
+  useEffect(()=>()=>{marginSession.current=null;},[]);
   const marginReviewBindings=useRef(new Map<string,{owner:{customer_id:string;wallet_id:string};binding:MarginReviewBinding}>());
   useEffect(()=>{marginReviewBindings.current.clear();},[session?.customer_id,session?.wallet_id]);
   const [profileOpen,setProfileOpen]=useState(false);
@@ -367,7 +374,7 @@ function FinanceShell({ page, auth, initialCategory }: { page: string; auth?: Au
   useEffect(()=>{
     if((!profileOpen&&page!=="home"&&page!=="funds")||!session)return;
     let alive=true;const owner=`${session.customer_id}:${session.wallet_id}`,walletId=session.wallet_id;
-    setValuationLoading(true);setWalletValuation(null);setValuationUnavailable(false);
+    setValuationLoading(!walletValuation);setValuationUnavailable(false);
     let pending=valuationFlight.current?.owner===owner?valuationFlight.current.promise:null;
     if(!pending){
       pending=api("grapnel/wallet-valuation").then(value=>{
@@ -402,8 +409,11 @@ function FinanceShell({ page, auth, initialCategory }: { page: string; auth?: Au
   const [overviewLoading,setOverviewLoading] = useState(false);
   const [balances, setBalances] = useState<any[]>([]);
   const [networkAssets,setNetworkAssets]=useState<any[]>([]);
+  const showNetworkAssets=page==="home"||page==="funds"||profileOpen;
+  useEffect(()=>{setNetworkAssets([]);},[session?.customer_id,session?.wallet_id]);
   useEffect(()=>{
-    let alive=true,inFlight=false,queued=false;setNetworkAssets([]);
+    if(!showNetworkAssets)return;
+    let alive=true,inFlight=false,queued=false;
     const read=async()=>{if(!session||!alive)return;if(inFlight){queued=true;return;}inFlight=true;
       try{const value=await api("grapnel/network-assets");if(alive&&value.scope?.customer_id===session.customer_id&&value.scope?.wallet_id===session.wallet_id&&Array.isArray(value.balances))setNetworkAssets(value.balances);}
       catch{}finally{inFlight=false;if(alive&&queued){queued=false;void read();}}
@@ -412,7 +422,7 @@ function FinanceShell({ page, auth, initialCategory }: { page: string; auth?: Au
     const timer=setInterval(()=>{if(document.visibilityState==="visible")void read();},15000);
     window.addEventListener('grapnel:stocks-updated',changed);window.addEventListener('grapnel:perps-updated',changed);document.addEventListener('visibilitychange',visible);
     return()=>{alive=false;clearInterval(timer);window.removeEventListener('grapnel:stocks-updated',changed);window.removeEventListener('grapnel:perps-updated',changed);document.removeEventListener('visibilitychange',visible);};
-  },[session?.customer_id,session?.wallet_id,page]);
+  },[session?.customer_id,session?.wallet_id,showNetworkAssets]);
   const [assets, setAssets] = useState<any[]>([]);
   const [fundingError, setFundingError] = useState("");
   const [markets, setMarkets] = useState<any[]>([]);
@@ -477,6 +487,7 @@ function FinanceShell({ page, auth, initialCategory }: { page: string; auth?: Au
   }, [session?.customer_id]);
   const [operations, setOperations] = useState<Operation[]>([]);
   const [active, setActive] = useState<Operation | null>(null);
+  const [preparingAction,setPreparingAction]=useState<string|null>(null);
   const isMaximumRepayment=active?.type==="blend.repay"&&!!active.prepared_action&&Object.entries(repayAllAmounts).some(([marketId,value])=>{
     const row=borrowing?.assets.find(entry=>entry.market_id===marketId);if(!row||row.asset.id!==active.prepared_action?.summary.fromAssetId)return false;
     try{return toAtomic(value,row.asset.decimals)===toAtomic(active.prepared_action.summary.amount??"",row.asset.decimals);}catch{return false;}
@@ -508,7 +519,7 @@ function FinanceShell({ page, auth, initialCategory }: { page: string; auth?: Au
   const [quote, setQuote] = useState<any>(null);
   const [swapAmount, setSwapAmount] = useState("");
   const [category, setCategory] = useState(initialCategory??"crypto_spot");
-  useEffect(()=>{if(initialCategory&&(page==="markets"||page==="trade"))setCategory(initialCategory);},[initialCategory,page]);
+  useLayoutEffect(()=>{if(initialCategory&&(page==="markets"||page==="trade"))setCategory(initialCategory);},[initialCategory,page]);
   const [slippageBps, setSlippageBps] = useState(50);
   const [quoteClock, setQuoteClock] = useState(Date.now());
   const [usdcStatus, setUsdcStatus] = useState<{enabled:boolean;wallet_amount?:string;spendable?:string;as_of?:string} | null>(null);
@@ -518,7 +529,7 @@ function FinanceShell({ page, auth, initialCategory }: { page: string; auth?: Au
   const refreshUsdcStatus = useCallback(async () => {
     const customerId = session?.customer_id;
     if (!customerId) return;
-    setUsdcStatus(null); setUsdcStatusError("");
+    setUsdcStatusError("");
     try {
       const value = await api("grapnel/usdc-status");
       if (spotCustomer.current !== customerId) return;
@@ -532,13 +543,13 @@ function FinanceShell({ page, auth, initialCategory }: { page: string; auth?: Au
   useEffect(() => {
     if (!quote) return;
     setQuoteClock(Date.now());
-    const timer = setInterval(() => setQuoteClock(Date.now()), 1000);
+    const timer = setInterval(() => {const now=Date.now();setQuoteClock(now);if(now>=Date.parse(quote.expires_at))clearInterval(timer);}, 1000);
     return () => clearInterval(timer);
   }, [quote]);
   const polling = useRef({ id: "", attempt: 0 });
   const capability = (module: string) => caps.find((c) => c.module === module);
+  useEffect(()=>{setOverviewSections([]);setAccountValuation(null);setAccountValueUnavailable(false);},[session?.customer_id,session?.wallet_id]);
   useEffect(()=>{
-    setOverviewSections([]);
     if(!session||!(page==="home"||page==="login")||!capability("capital.wallets")?.enabled){setOverviewLoading(false);return;}
     let alive=true;setOverviewLoading(true);
     void api("grapnel/market-overview").then(result=>{
@@ -551,10 +562,10 @@ function FinanceShell({ page, auth, initialCategory }: { page: string; auth?: Au
     else if(page==="borrow"){setBorrowing(null);setBorrowingError("");}
   },[page,session?.customer_id,caps,refreshBorrowing]);
   useEffect(()=>{
-    setAccountValuation(null);setAccountValueUnavailable(false);
+    setAccountValueUnavailable(false);
     if(!session||!(page==="home"||page==="login")||!capability("capital.wallets")?.enabled){setAccountValueLoading(false);return;}
     let alive=true;const owner=`${session.customer_id}:${session.wallet_id}`,walletId=session.wallet_id;
-    setAccountValueLoading(true);
+    setAccountValueLoading(!accountValuation);
     void api("grapnel/account-valuation").then(value=>{
       const money=(amount:unknown)=>typeof amount==="string"&&/^\d+(?:\.\d+)?$/.test(amount)&&formatTokenAmount(amount)!=="Unavailable";
       if(value?.wallet_id!==walletId||!Number.isInteger(value.unpriced_asset_count)||value.unpriced_asset_count<0||!(value.total_usd===null||money(value.total_usd))||!money(value.priced_subtotal_usd)||!Number.isFinite(Date.parse(value.as_of)))throw Error("Account value is unavailable.");
@@ -597,7 +608,7 @@ function FinanceShell({ page, auth, initialCategory }: { page: string; auth?: Au
     const isCurrent=()=>alive&&publicMarketOwner.current===owner;
     const refreshPublicMarkets=async()=>{
       if(inFlight||document.visibilityState!=="visible"||!isCurrent())return;
-      inFlight=true;if(firstLoad)setMarketsLoading(true);
+      inFlight=true;if(firstLoad)setMarketsLoading(!markets.some(entry=>isRecognizedDerivativeMarket(entry,assetClass)));
       try{const result=await api("grapnel/markets?asset_class="+assetClass),rows=Array.isArray(result)?result:result?.markets;
         if(!Array.isArray(rows))throw Error("Market data is unavailable.");
         if(isCurrent())setMarkets(rows.filter((entry:unknown)=>isRecognizedDerivativeMarket(entry,assetClass)));
@@ -632,7 +643,6 @@ function FinanceShell({ page, auth, initialCategory }: { page: string; auth?: Au
   const activePublicHistory = marketHistory?.market_id===(selectedSpotMarket?.market_id??selectedSpotMarket?.id)&&historyScope===`${selectedSpotMarket?.market_id??selectedSpotMarket?.id}:${historyRange}`?marketHistory:null;
   const visiblePublicMarkets = markets.filter(entry => `${entry.underlying?.symbol ?? ""} ${entry.underlying?.name ?? ""} ${entry.provider_symbol??""} ${entry.label ?? ""}`.toLowerCase().includes(marketSearch.trim().toLowerCase()));
   useEffect(()=>{
-    setMarketHistory(null);
     if((selectedSpotMarket?.network==="stellar-mainnet"||String(selectedSpotMarket?.market_id??"").startsWith("sodax:catalog:"))&&selectedSpotMarket?.history_available!==true){setHistoryLoading(false);return;}
     if(!session||!selectedSpotMarket||!(page==="markets"||page==="trade")||!capability("trade."+(category==="crypto_spot"?"spot":category))?.enabled){setHistoryLoading(false);return;}
     let alive=true,inFlight=false;setHistoryLoading(true);
@@ -798,10 +808,7 @@ function FinanceShell({ page, auth, initialCategory }: { page: string; auth?: Au
     let alive = true;
     if (polling.current.id !== active.operation_id)
       polling.current = { id: active.operation_id, attempt: 0 };
-    const delay = Math.min(
-      15000,
-      2000 * 2 ** Math.min(polling.current.attempt++, 3),
-    );
+    const delay=operationPollDelay(polling.current.attempt++,document.visibilityState==='visible');
     const timer = setTimeout(async () => {
       try {
         const op = await api("grapnel/operations/" + active.operation_id);
@@ -847,12 +854,14 @@ function FinanceShell({ page, auth, initialCategory }: { page: string; auth?: Au
       assertMarginPositionBinding(op,approved.binding.position_id);
     }
     visibleOperation.current=op.operation_id;
-    setActive(op);
+    setPreparingAction(null);setActive(op);
     setOperations(current => [op, ...current.filter(item => item.operation_id !== op.operation_id)]);
   }
   async function resumeOperation(id: string) {
     if (!session || !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id)) throw Error("Wallet action could not be found.");
-    const op = await api("grapnel/operations/" + id);
+    const cached=operations.find(op=>op.operation_id===id&&op.customer_id===session.customer_id&&op.wallet_id===session.wallet_id);
+    if(cached)openOperation(cached);else setPreparingAction('Transaction details');
+    let op:Operation;try{op=await api("grapnel/operations/"+id);}catch(cause){setPreparingAction(null);throw cause;}
     if (op.customer_id !== session.customer_id || op.wallet_id !== session.wallet_id) throw Error("Wallet action could not be found.");
     if(marginPositionAction(op)&&["accepted","validating","preparing","awaiting_customer_authorization"].includes(op.status)){
       const parents=await api("grapnel/margin/workflows");
@@ -891,10 +900,13 @@ function FinanceShell({ page, auth, initialCategory }: { page: string; auth?: Au
   async function start(path: string, body: unknown) {
     if(!session)throw Error('A current customer session is required');
     const key=operationRequestKey(session.customer_id,path,body);
+    const preparingTitle=path==='fund'?'Get funds':path==='return'?'Return funds':path==='order'?'Swap':path.includes('withdraw')?'Withdraw':path.includes('supply')?'Supply':path.includes('borrow')?'Borrow':path.includes('repay')?'Repay':'Wallet action';
+    setPreparingAction(preparingTitle);
     let op;
     try{
       op=await api('grapnel/'+path,body,'POST',key);
     }catch(error){
+      setPreparingAction(null);
       if(error instanceof ClientError && error.status<500 && error.status!==408)clearOperationRequest(session.customer_id,path,body);
       if (error instanceof ClientError && error.code === "WALLET_OPERATION_PENDING") {
         await recoverPendingWalletAction(error);
@@ -902,7 +914,8 @@ function FinanceShell({ page, auth, initialCategory }: { page: string; auth?: Au
       }
       throw error;
     }
-    if(!op?.operation_id)throw Error('Operation status is uncertain; retry this same action to recover it');
+    if(marginSession.current?.customer_id!==session.customer_id||marginSession.current?.wallet_id!==session.wallet_id){setPreparingAction(null);throw Error('Your wallet session changed.');}
+    if(!op?.operation_id){setPreparingAction(null);throw Error('Operation status is uncertain; retry this same action to recover it');}
     clearOperationRequest(session.customer_id,path,body);
     openOperation(op);
     const owner={customer_id:session.customer_id,wallet_id:session.wallet_id};
@@ -913,7 +926,7 @@ function FinanceShell({ page, auth, initialCategory }: { page: string; auth?: Au
       if(op.customer_id!==owner.customer_id||op.wallet_id!==owner.wallet_id)throw Error('This action belongs to another wallet session.');
       openOperation(op);
     }
-    if(op.status==='awaiting_customer_authorization'){const prepared=await resumeOperation(op.operation_id);if(prepared)await approve(prepared);}
+    if(op.status==='awaiting_customer_authorization')await approve(op);
   }
   async function approve(operation:Operation|null=active) {
     if (
@@ -923,6 +936,7 @@ function FinanceShell({ page, auth, initialCategory }: { page: string; auth?: Au
       !session
     )
       throw Error("A current customer authorization is required");
+    if(marginSession.current?.customer_id!==session.customer_id||marginSession.current?.wallet_id!==session.wallet_id)throw Error('Your wallet session changed.');
     if(Date.parse(operation.prepared_action.summary.expiresAt)<=Date.now())throw Error("This approval has expired. Refresh the operation before continuing.");
     if(operation.customer_id!==session.customer_id||operation.wallet_id!==session.wallet_id)throw Error("This action belongs to another wallet session.");
     if(authorizationAttempts.current.has(operation.operation_id))throw Error('Check this transaction’s status before trying again.');
@@ -997,14 +1011,16 @@ function FinanceShell({ page, auth, initialCategory }: { page: string; auth?: Au
             <Link
               key={id}
               href={"/" + id}
+              prefetch={true}
+              onNavigate={()=>setNavigationTarget(id)}
               className={
-                page === id || (id === "markets" && page === "trade")
+                (navigationTarget??page) === id || (id === "markets" && (navigationTarget??page) === "trade")
                   ? "nav-link current"
                   : "nav-link"
               }
             >
               <Icon name={id === "funds" ? "fund" : id!} />
-              {label}
+              {label}{navigationTarget===id&&<span className="nav-loading" aria-label="Opening page"><span className="operation-spinner" aria-hidden="true"/></span>}
 
             </Link>
           ))}
@@ -1050,7 +1066,8 @@ function FinanceShell({ page, auth, initialCategory }: { page: string; auth?: Au
 
             </div>
             <button
-              className="refresh"
+              className={busy&&busyLocation==="page"?"refresh refreshing":"refresh"}
+              aria-label={busy&&busyLocation==="page"?"Refreshing data":"Refresh data"}
               onClick={() => action(refresh)}
               disabled={busy}
               title="Refresh live data"
@@ -1357,7 +1374,7 @@ function FinanceShell({ page, auth, initialCategory }: { page: string; auth?: Au
                     </div>
                     <div className="market-price-heading"><strong>{marketHistory?.latest_price ? formatTokenAmount(marketHistory.latest_price) : "—"}</strong><span>{marketHistory?.latest_price ? `${marketHistory.quote_symbol} per ${marketHistory.base_symbol}` : "Price unavailable"}</span></div>
                     <div className="market-price-change" aria-label="Price change"><strong>{marketHistory&&marketHistory.points.length>1?displayChange(marketHistory.change_absolute):"—"}</strong>{marketHistory?.change_absolute&&marketHistory.points.length>1&&<span>{marketHistory.quote_symbol}</span>}<span>({marketHistory&&marketHistory.points.length>1?displayChange(marketHistory.change_percent):"—"}{marketHistory?.change_percent&&marketHistory.points.length>1?"%":""})</span></div>
-                    <PriceChart history={marketHistory} loading={historyLoading} />
+                    <PriceChart history={activePublicHistory} loading={historyLoading} />
                     <div className="market-periods" role="group" aria-label="Price timeframe">{(["live","1d","1w","1m","1y","all"] as const).map(period => <button type="button" key={period} aria-pressed={historyRange===period} onClick={()=>setHistoryRange(period)}>{period.toUpperCase()}</button>)}</div>
                   </section>
                 <section className="swap-card" aria-label="Swap assets">
@@ -1445,7 +1462,7 @@ function FinanceShell({ page, auth, initialCategory }: { page: string; auth?: Au
                       const needsTrustline = isUsdc && balance?.trustline_required === true;
                       const canPrepare = canPrepareBlendAction() &&
                         (m.asset_id === XLM_ASSET || (isUsdc && balance?.trustline_required === false));
-                      const shown = (value: string | null | undefined) => earnBalancesLoading ? "Loading…" : formatTokenAmount(value);
+                      const shown = (value: string | null | undefined) => earnBalancesLoading&&value==null ? "Loading…" : formatTokenAmount(value);
                       return <div className="pool" key={m.market_id ?? m.id}>
                         <AssetLogo symbol={m.asset?.code??m.code??m.symbol??assetCode(m.asset_id)} name={m.asset?.name} assetId={m.asset_id} size={48} />
                         <h3>
@@ -1617,6 +1634,7 @@ function FinanceShell({ page, auth, initialCategory }: { page: string; auth?: Au
 
         </main>
       </div>
+      {preparingAction&&!active&&<ActionDialog title={preparingAction} transactionLabel="Wallet action" onClose={()=>setPreparingAction(null)}><ProgressIndicator label="Preparing transaction" spinning/></ActionDialog>}
       {active && (
         <div className="modal-backdrop" role="presentation">
           <section

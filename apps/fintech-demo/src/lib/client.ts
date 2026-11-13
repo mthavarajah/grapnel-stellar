@@ -26,7 +26,7 @@ export class ClientError extends Error {
     super(message);
   }
 }
-export async function api(
+async function requestApi(
   path: string,
   body?: unknown,
   method = body === undefined ? "GET" : "POST",
@@ -51,6 +51,16 @@ export async function api(
       result.error?.details && typeof result.error.details === "object" && !Array.isArray(result.error.details) ? result.error.details : {},
     );
   return result.data;
+}
+
+const reading=new Map<string,Promise<any>>();
+/** Coalesce simultaneous reads only. Never cache completed data or merge writes.
+ * Any mutation, including login/logout, invalidates previous read flights. */
+export function api(path:string,body?:unknown,method=body===undefined?'GET':'POST',idempotencyKey?:string):Promise<any>{
+ if(method!=='GET'||body!==undefined){reading.clear();return requestApi(path,body,method,idempotencyKey);}
+ const existing=reading.get(path);if(existing)return existing;
+ const result=requestApi(path,body,method,idempotencyKey);reading.set(path,result);
+ const clear=()=>{if(reading.get(path)===result)reading.delete(path);};void result.then(clear,clear);return result;
 }
 
 const pendingOperationKeys = new Map<string,string>();

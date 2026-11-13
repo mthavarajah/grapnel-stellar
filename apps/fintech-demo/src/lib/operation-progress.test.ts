@@ -28,3 +28,5 @@ describe('truthful operation progress',()=>{
   await expect(trackApproval(async()=>'signed',submit,phase=>phases.push(phase))).rejects.toThrow('Response timed out');expect(submit).toHaveBeenCalledTimes(1);expect(phases).toEqual(['approving','signed',null]);
  });
 });
+
+it('keeps watched transaction updates within 1.5 seconds during normal confirmation time',async()=>{const {operationPollDelay}=await import('./operation-progress');expect(Array.from({length:20},(_,i)=>operationPollDelay(i)).every(delay=>delay<=1500)).toBe(true);expect(operationPollDelay(0,false)).toBeGreaterThanOrEqual(10000);expect(operationPollDelay(80)).toBeGreaterThanOrEqual(10000);});

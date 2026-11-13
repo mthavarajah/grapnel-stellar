@@ -1,4 +1,3 @@
-import Finance from "@/components/finance";
 import { notFound, redirect } from "next/navigation";
 export default async function Page({
   params,
@@ -26,7 +25,6 @@ export default async function Page({
     ].includes(page)
   )
     notFound();
-  const requestedCategory=(await searchParams).category;
-  const initialCategory=typeof requestedCategory==="string"&&["crypto_spot","perps","stocks"].includes(requestedCategory)?requestedCategory:undefined;
-  return <Finance page={page} initialCategory={initialCategory} />;
+  // The root layout retains the client shell across these validated routes.
+  return null;
 }

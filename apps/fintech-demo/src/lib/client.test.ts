@@ -38,3 +38,8 @@ it('translates borrowing reasons into actionable customer messages without expos
  vi.stubGlobal('fetch',vi.fn().mockResolvedValue({ok:false,status:409,json:async()=>({error:{code:'EXECUTION_UNAVAILABLE',message:'Borrowing is unavailable',details:{reason:'MIN_COLLATERAL_REQUIRED'}}})}));
  await expect(api('grapnel/lending/borrow',{})).rejects.toMatchObject({message:expect.stringContaining('below the minimum'),details:{reason:'MIN_COLLATERAL_REQUIRED'}});
 });
+
+describe('responsive reads without stale session reuse',()=>{
+ it('shares simultaneous reads but fetches again after completion',async()=>{let release!:(v:any)=>void;const response=new Promise(resolve=>{release=resolve;});vi.stubGlobal('fetch',vi.fn().mockReturnValue(response));const a=api('smooth-read'),b=api('smooth-read');expect(fetch).toHaveBeenCalledTimes(1);release({ok:true,json:async()=>({data:{value:'observed'}})});expect(await a).toEqual(await b);await api('smooth-read');expect(fetch).toHaveBeenCalledTimes(2);});
+ it('never merges writes and never reuses an old read after a session mutation',async()=>{let release!:(v:any)=>void;vi.stubGlobal('fetch',vi.fn().mockImplementationOnce(()=>new Promise(resolve=>{release=resolve;})).mockResolvedValue({ok:true,json:async()=>({data:{current:true}})}));const old=api('scoped-read');await api('session',undefined,'DELETE');const fresh=await api('scoped-read');expect(fresh).toEqual({current:true});release({ok:true,json:async()=>({data:{previous:true}})});await old;await Promise.all([api('write',{},'POST'),api('write',{},'POST')]);expect(fetch).toHaveBeenCalledTimes(5);});
+});
