@@ -915,10 +915,16 @@ export default function Dashboard({ section }: { section: string }) {
                         <br />
                         One API key. Consistent operations.
                       </p>
-                      <Link href="/modules" className="hero-link">
-                        Configure your modules
-                        <Icon name="arrow" size={18} />
-                      </Link>
+                      <div style={{display:"flex",gap:12,flexWrap:"wrap"}}>
+                        <Link href="/modules" className="hero-link">
+                          Configure your modules
+                          <Icon name="arrow" size={18} />
+                        </Link>
+                        <a href={process.env.NEXT_PUBLIC_VELOCITY_DEMO_URL || "http://localhost:3002/home"} className="hero-link" target="_blank" rel="noopener noreferrer">
+                          View Velocity Trading demo
+                          <Icon name="arrow" size={18} />
+                        </a>
+                      </div>
                     </div>
                     <div className="hero-stack">
                       <div>
