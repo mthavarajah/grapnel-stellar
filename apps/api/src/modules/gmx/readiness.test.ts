@@ -1,0 +1,5 @@
+import{describe,it,expect,vi}from'vitest';import{createGmxReadiness}from'./readiness';
+describe('bounded canonical GMX readiness reads',()=>{
+ it('shares concurrent requests and serializes different markets without inferring success',async()=>{let active=0,peak=0;const check=vi.fn(async(s:string)=>{active++;peak=Math.max(peak,active);await Promise.resolve();active--;return s!=='XAG';}),ready=createGmxReadiness(check);expect(await Promise.all([ready('ETH'),ready('ETH'),ready('BTC'),ready('XAG')])).toEqual([true,true,true,false]);expect(check.mock.calls.map(([s])=>s)).toEqual(['ETH','BTC','XAG']);expect(peak).toBe(1);});
+ it('rechecks expired evidence and recovers transient failures promptly',async()=>{let now=0;const check=vi.fn(async()=>true),ready=createGmxReadiness(check,()=>now);expect(await ready('ETH')).toBe(true);now=29999;await ready('ETH');expect(check).toHaveBeenCalledTimes(1);now=30000;check.mockRejectedValueOnce(Error('RPC busy'));expect(await ready('ETH')).toBe(false);now=33000;expect(await ready('ETH')).toBe(true);expect(check).toHaveBeenCalledTimes(3);});
+});

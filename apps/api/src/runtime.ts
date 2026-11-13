@@ -275,7 +275,8 @@ export async function createRuntime(pool?:Pool,marginRoutes:RuntimeMarginBinding
  const readStockMarkets=async()=>Promise.all((await robinhoodStocks.markets()).map(readyStockMarket));
  const gmxRuntime=createGmxRuntime({pool:db,readWallets:readEthereumWallets});
  const gmxMarketData=new GmxMarketData(db,gmxRuntime.adapter);
- const readGmxMarkets=async()=>Promise.all((await gmxMarketData.markets()).map(async row=>{const ready=await gmxRuntime.acceptance(row.provider_symbol);return {...row,execution_status:ready?'testnet_verified' as const:'discovery_only' as const,executable:ready,execution_available:ready,preparation_available:ready,actions:ready?['prepare_order','close_position']:[],reason:ready?null:'GMX_OWN_EXECUTION_PROOF_REQUIRED'};}));
+ const readyGmxMarket=async(row:Awaited<ReturnType<typeof gmxMarketData.detail>>)=>{const ready=await gmxRuntime.acceptance(row.provider_symbol);return {...row,execution_status:ready?'testnet_verified' as const:'discovery_only' as const,executable:ready,execution_available:ready,preparation_available:ready,actions:ready?['prepare_order','close_position']:[],reason:ready?null:'GMX_OWN_EXECUTION_PROOF_REQUIRED'};};
+ const readGmxMarkets=async()=>Promise.all((await gmxMarketData.markets()).map(readyGmxMarket));
  const cctpRuntime=createCctpRuntime({pool:db,operations,chain,setup:circleSetup,verifyGate1:()=>hasGate1Proof(chain),accessApproved:async()=>process.env.HYPERLIQUID_TESTNET_ACCESS_CONFIRMED==='true'&&!!process.env.HYPERLIQUID_TESTNET_ACCESS_REFERENCE?.trim()});
  const perpetualService=new PerpetualCustomerService({store:new PgPerpetualWorkflowStore(db),transport:new HyperliquidTestnetHttpTransport(),
   market:readDetailedPerpetualMarket,fundingStatus:cctpRuntime.fundingStatus,
@@ -370,7 +371,7 @@ export async function createRuntime(pool?:Pool,marginRoutes:RuntimeMarginBinding
    await registerLendingRoutes(app,{adapter:blend,borrowing,operations,balanceReader:address=>chain.getClassicBalances(address)});
    await registerSpotRoutes(app,{service:new SpotService(spot,db,operations,createSpotReservation(operations,readSpotBalances)),refreshReadiness:()=>spotReadiness.refresh(),requireBusiness,requireCustomer,success,
     readDiscoveryMarkets:async category=>category==='perps'?readGmxMarkets():readStockMarkets(),
-    readDiscoveryMarket:async id=>id.startsWith('gmx-testnet:perps:')?(await readGmxMarkets()).find(row=>row.market_id===id):id.startsWith('robinhood-testnet:stocks:')?readyStockMarket(await robinhoodStocks.detail(id)):readDetailedPerpetualMarket(id),
+    readDiscoveryMarket:async id=>id.startsWith('gmx-testnet:perps:')?readyGmxMarket(await gmxMarketData.detail(id)):id.startsWith('robinhood-testnet:stocks:')?readyStockMarket(await robinhoodStocks.detail(id)):readDetailedPerpetualMarket(id),
     readPositions:async customer=>({wallet_holdings:await wallets.balances(customer.businessId,customer.walletId),venue_positions:[]})});
    await registerFundingRoutes(app,{service:new FundingService(funding,operations),requireBusiness,requireCustomer,success});
   }

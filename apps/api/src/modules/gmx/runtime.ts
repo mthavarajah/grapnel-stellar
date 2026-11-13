@@ -6,6 +6,7 @@ import {arbitrumSepolia} from 'viem/chains';
 import {createGmxTestnetAdapter,GMX_TESTNET} from '../../adapters/gmx/index.js';
 import {PgGmxRequestStore} from './persistence.js';
 import {GmxCustomerService} from './service.js';
+import {createGmxReadiness} from './readiness.js';
 import {GmxGasTreasury} from './gas.js';
 import type {GmxScope} from './contracts.js';
 import {verifyGmxEventRoundtrip} from './acceptance.js';
@@ -20,15 +21,11 @@ export function createGmxRuntime(d:{pool:Pool;readWallets:(c:CustomerContext)=>P
   verifyCreation:(r,p)=>adapter.confirmTransaction(r.prepared,'creationTxHash'in p?p.creationTxHash:p.txHash),
   verifySettlement:(r)=>{if(!r.creationProof||!('orderKey'in r.creationProof))return fail();return adapter.reconcileOrder(r.prepared,r.creationProof);},
  });
- const readiness=new Map<string,{at:number;value:boolean}>();
- const acceptance=async(symbol?:string)=>{
-  const selected=symbol??'ETH';if(!Object.hasOwn(GMX_TESTNET.markets,selected))return false;
-  const cached=readiness.get(selected);if(cached&&Date.now()-cached.at<30000)return cached.value;
-  try{const file=selected==='ETH'?'gmx-own-roundtrip.json':`gmx-${selected.toLowerCase()}-roundtrip.json`;const p=JSON.parse(fs.readFileSync(new URL('../../../../../evidence/'+file,import.meta.url),'utf8'));
-   if(p.steps?.open?.prepared?.intent?.symbol!==selected)return false;
-   const value=await verifyGmxEventRoundtrip(p);readiness.set(selected,{at:Date.now(),value});return value;
-  }catch{return false;}
- };
+ const verifyMarket=createGmxReadiness(async selected=>{
+  const file=selected==='ETH'?'gmx-own-roundtrip.json':`gmx-${selected.toLowerCase()}-roundtrip.json`,p=JSON.parse(fs.readFileSync(new URL('../../../../../evidence/'+file,import.meta.url),'utf8'));
+  return p.steps?.open?.prepared?.intent?.symbol===selected&&await verifyGmxEventRoundtrip(p);
+ });
+ const acceptance=(symbol?:string)=>{const selected=symbol??'ETH';return Object.hasOwn(GMX_TESTNET.markets,selected)?verifyMarket(selected):Promise.resolve(false);};
  const service=new GmxCustomerService({adapter,store,readWallets:d.readWallets,acceptance,gasStatus:gas?(c,a)=>gas.status(c,a):undefined,sendRaw:async raw=>{
   if(await read.getChainId()!==421614)throw new GrapnelError(409,'EXECUTION_UNAVAILABLE','Trading network mismatch');await adapter.verifyRegistry();return read.sendRawTransaction({serializedTransaction:raw});
  }});
