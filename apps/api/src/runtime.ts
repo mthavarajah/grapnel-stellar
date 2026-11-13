@@ -322,7 +322,7 @@ export async function createRuntime(pool?:Pool,marginRoutes:RuntimeMarginBinding
     spot:async(id,range)=>{const profile=await marketProfile(id);
      try{const history=await cryptoHistory.history(id,range);return {...history,base_asset_id:history.related_asset_id,base_symbol:history.reference_symbol};}
      catch(error){if(!(error instanceof GrapnelError)||!['CRYPTO_REFERENCE_UNAVAILABLE','PROVIDER_RATE_LIMITED'].includes(error.code))throw error;
-      return {...await marketData.history(profile.history_market_id??id,range),market_id:id,base_asset_id:profile.base_asset_id,base_symbol:profile.base_symbol,price_basis:'testnet_pool_observation'};}
+      const history=await marketData.history(profile.history_market_id??id,range);return {...history,market_id:id,base_asset_id:profile.base_asset_id,base_symbol:profile.base_symbol,requested_range:range,price_basis:'testnet_pool_observation',coverage:{kind:'observed_only',first_generated_at:history.points[0]?.timestamp??null,complete_requested_range:false}};}
     }
    });
    app.get('/v1/capital/lending/earnings',async request=>{

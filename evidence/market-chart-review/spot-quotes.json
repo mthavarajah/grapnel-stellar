@@ -1,0 +1,26 @@
+{
+  "observed_at": "2026-11-13T22:10:49.943Z",
+  "scope": "Actual Soroswap quote + independently simulated Testnet output, no signing or broadcast, no customer identity bypass",
+  "results": [
+    {
+      "amount_in": "1.0000000",
+      "expected_out": "0.1471105",
+      "min_receive": "0.1463750",
+      "market_id": "stellar-testnet:soroswap:CBR76WMT6J733CCVBP23M2EL5QGP5HXLPEFNFZGZ7IB6QHOJAHP7YM3V:XLM-USDC",
+      "asset_in_id": "stellar-testnet:native:XLM",
+      "asset_out_id": "stellar-testnet:classic:USDC:GATALTGTWIOT6BUDBCZM3Q4OQ4BO2COLOAZ7IYSKPLC2PMSOPPGF5V56",
+      "expires_at": "2026-11-13T22:11:18.319Z",
+      "display_validator_accepted": true
+    },
+    {
+      "amount_in": "2.0000000",
+      "expected_out": "0.2942168",
+      "min_receive": "0.2927458",
+      "market_id": "stellar-testnet:soroswap:CBR76WMT6J733CCVBP23M2EL5QGP5HXLPEFNFZGZ7IB6QHOJAHP7YM3V:XLM-USDC",
+      "asset_in_id": "stellar-testnet:native:XLM",
+      "asset_out_id": "stellar-testnet:classic:USDC:GATALTGTWIOT6BUDBCZM3Q4OQ4BO2COLOAZ7IYSKPLC2PMSOPPGF5V56",
+      "expires_at": "2026-11-13T22:11:19.943Z",
+      "display_validator_accepted": true
+    }
+  ]
+}

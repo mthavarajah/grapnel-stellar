@@ -1,4 +1,6 @@
 "use client";
+import {changeDirection,chartTimeDomain,chartSegments} from "../lib/chart-presentation";
+import {matchesSpotQuote,validSpotAmount,readSpotQuoteWithRetry,type SpotQuoteIntent} from "../lib/spot-quote";
 import {earnAmountMessage} from "../lib/earn-amount";
 import {currentCustomerOperation} from "../lib/prepared-operation";
 import {ZenexPerpetualExecution} from "./zenex-perpetual-execution";
@@ -188,6 +190,8 @@ type MarketHistory = {
   points:{timestamp:string;price:string}[];
   change_absolute:string|null; change_percent:string|null;
   price_basis?:string; reference_symbol?:string; source_url?:string; interval?:string;
+  requested_range?:HistoryRange;
+  coverage?:{kind?:string;first_generated_at?:string|null;complete_requested_range?:boolean};
   metrics?:{day_high?:string|null;day_low?:string|null;day_volume?:string|null;fifty_two_week_high?:string|null;fifty_two_week_low?:string|null;previous_close?:string|null;market_time?:string|null};
 };
 type OverviewSection = {id:"spot"|"perps"|"stocks"|"lending";label:string;items:{symbol:string;name:string;value:string;unit:"USD"|"percent";unit_detail?:string;as_of:string}[];available:boolean};
@@ -218,22 +222,23 @@ function displayChange(value:string|null|undefined):string {
   const amount=value.replace(/^[-+]/, ""), formatted=formatTokenAmount(amount);
   return formatted==="Unavailable"?"—":`${value.startsWith("-")?"-":"+"}${formatted}`;
 }
-function PriceChart({history,loading}:{history:MarketHistory|null;loading:boolean}) {
+function PriceChart({history,loading,range}:{history:MarketHistory|null;loading:boolean;range:HistoryRange}) {
   const [selectedIndex,setSelectedIndex]=useState<number|null>(null);
   const chartRef=useRef<SVGSVGElement|null>(null);
   useEffect(()=>{setSelectedIndex(null);},[history?.market_id,history?.as_of,history?.points]);
   const points=useMemo(()=>(history?.points??[]).flatMap(point=>{
     try {const timestamp=Date.parse(point.timestamp),price=toAtomic(point.price,38);return Number.isFinite(timestamp)?[{timestamp,price,originalPrice:point.price,originalTimestamp:point.timestamp}]:[];}catch{return [];}
   }).sort((a,b)=>a.timestamp-b.timestamp).filter((point,index,all)=>index===0||point.timestamp!==all[index-1]!.timestamp),[history?.points]);
+  const domain=useMemo(()=>chartTimeDomain(points.map(p=>p.timestamp),range,history?.as_of),[points,range,history?.as_of]);
   const coordinates=useMemo(()=>{
     if(!points.length)return [];
-    const min=points.reduce((current,p)=>p.price<current?p.price:current,points[0]!.price),max=points.reduce((current,p)=>p.price>current?p.price:current,points[0]!.price),first=points[0]!.timestamp,last=points[points.length-1]!.timestamp;
+    const min=points.reduce((current,p)=>p.price<current?p.price:current,points[0]!.price),max=points.reduce((current,p)=>p.price>current?p.price:current,points[0]!.price),[first,last]=domain;
     return points.map(point=>({x:last===first?300:20+(point.timestamp-first)*560/(last-first),y:max===min?140:260-Number((point.price-min)*240000n/(max-min))/1000}));
-  },[points]);
-  const linePoints=useMemo(()=>coordinates.map(p=>`${p.x},${p.y}`).join(" "),[coordinates]);
+  },[points,domain]);
+  const lineSegments=useMemo(()=>chartSegments(points.map(p=>p.timestamp),history?.interval).filter(segment=>segment.length>1).map(segment=>segment.map(index=>`${coordinates[index]!.x},${coordinates[index]!.y}`).join(" ")),[coordinates,points,history?.interval]);
   if(loading&&!points.length)return <div className="market-chart-empty" role="status">Loading price history…</div>;
   if(!points.length)return <div className="market-chart-empty" role="status">Price history is not available yet.</div>;
-  const first=points[0]!.timestamp,last=points[points.length-1]!.timestamp;
+  const [first,last]=domain;
   const index=selectedIndex==null?null:Math.max(0,Math.min(selectedIndex,points.length-1));
   const selected=index==null?null:points[index]!,coordinate=index==null?null:coordinates[index]!;
   const selectAtX=(clientX:number)=>{
@@ -242,7 +247,7 @@ function PriceChart({history,loading}:{history:MarketHistory|null;loading:boolea
     let closest=0;for(let i=1;i<points.length;i++)if(Math.abs(points[i]!.timestamp-timestamp)<Math.abs(points[closest]!.timestamp-timestamp))closest=i;
     setSelectedIndex(closest);
   };
-  return <div className="market-chart-wrap">
+  return <div className={`market-chart-wrap ${changeDirection(history?.change_absolute)}`}>
     <div className="interactive-price-chart">
       <svg ref={chartRef} viewBox="0 0 600 280" role="img" aria-label="Price history" aria-describedby="price-chart-help" tabIndex={0} data-testid="price-chart" className="market-chart"
         onPointerMove={event=>selectAtX(event.clientX)} onPointerDown={event=>{event.currentTarget.focus({preventScroll:true});selectAtX(event.clientX);}}
@@ -255,13 +260,15 @@ function PriceChart({history,loading}:{history:MarketHistory|null;loading:boolea
         }}>
         <title>{`${history!.base_symbol} price in ${history!.quote_symbol}`}</title>
         {[60,140,220].map(y=><line key={y} x1="20" x2="580" y1={y} y2={y} className="market-chart-grid" />)}
-        {coordinates.length>1&&<polyline points={linePoints} className="market-chart-line" />}
+        {lineSegments.map((line,index)=><polyline key={index} points={line} className="market-chart-line" />)}
         <circle cx={coordinates.at(-1)!.x} cy={coordinates.at(-1)!.y} r="4" className="market-chart-dot" />
         {coordinate&&<><line x1={coordinate.x} x2={coordinate.x} y1="15" y2="265" className="market-chart-crosshair" data-testid="price-chart-crosshair"/><circle cx={coordinate.x} cy={coordinate.y} r="5" className="market-chart-dot" data-testid="price-chart-selected-point"/></>}
       </svg>
       <span className="chart-assistive" id="price-chart-help">Use left and right arrow keys to inspect each recorded price. Home and End select the first and latest observations.</span>
       {selected&&<div className="market-chart-tooltip" role="tooltip" data-testid="price-chart-tooltip"><strong>{selected.originalPrice} {history!.quote_symbol}</strong><time dateTime={selected.originalTimestamp}>{marketDate(selected.originalTimestamp,true,true)}</time></div>}
     </div>
+    {history?.coverage?.kind==="observed_only"&&history.coverage.first_generated_at&&<p className="market-chart-caption">Recorded prices since {marketDate(history.coverage.first_generated_at,true)}</p>}
+    {history?.coverage?.kind==="provider_available"&&history.coverage.first_generated_at&&<p className="market-chart-caption">Available history since {marketDate(history.coverage.first_generated_at)}</p>}
     {points.length===1?<p className="market-chart-caption">One price observation. More history is not available yet.</p>:<div className="market-chart-dates"><span>{marketDate(first,true)}</span><span>{marketDate(last,true)}</span></div>}
   </div>;
 }
@@ -656,11 +663,12 @@ function FinanceShell({ page, auth, initialCategory }: { page: string; auth?: Au
     let alive=true,inFlight=false;setHistoryLoading(true);
     const expectedMarket=selectedSpotMarket.market_id??selectedSpotMarket.id;
     const refreshHistory=async()=>{if(inFlight)return;inFlight=true;await api(`grapnel/market-history?market_id=${encodeURIComponent(expectedMarket)}&range=${historyRange}`).then(result=>{
-      if(alive&&result?.market_id===expectedMarket&&typeof result.base_asset_id==="string"&&typeof result.base_symbol==="string"&&typeof result.quote_symbol==="string"&&Array.isArray(result.points)){setMarketHistory(result);setHistoryScope(`${expectedMarket}:${historyRange}`);}
+      if(alive&&result?.market_id===expectedMarket&&result.requested_range===historyRange&&typeof result.base_asset_id==="string"&&typeof result.base_symbol==="string"&&typeof result.quote_symbol==="string"&&Array.isArray(result.points)){setMarketHistory(result);setHistoryScope(`${expectedMarket}:${historyRange}`);}
     }).catch(()=>{}).finally(()=>{inFlight=false;if(alive)setHistoryLoading(false);});};
     void refreshHistory();
-    const timer=historyRange==='live'?setInterval(()=>{if(document.visibilityState==='visible')void refreshHistory();},15000):undefined;
-    return()=>{alive=false;if(timer)clearInterval(timer);};
+    const timer=setInterval(()=>{if(document.visibilityState==='visible')void refreshHistory();},historyRange==='live'?15000:60000);
+    const visible=()=>{if(document.visibilityState==='visible')void refreshHistory();};document.addEventListener('visibilitychange',visible);
+    return()=>{alive=false;clearInterval(timer);document.removeEventListener('visibilitychange',visible);};
   },[session?.customer_id,selectedSpotMarket?.market_id,selectedSpotMarket?.id,selectedSpotMarket?.history_available,category,page,historyRange,caps]);
   const swapAssetMap = new Map<string, SwapAsset>();
   for (const entry of markets) {
@@ -702,7 +710,32 @@ function FinanceShell({ page, auth, initialCategory }: { page: string; auth?: Au
   const pairUsesUsdc = selectedSpotMarket?.asset_in_id === USDC_ASSET || selectedSpotMarket?.asset_out_id === USDC_ASSET;
   const walletReadyForPair = !pairUsesUsdc || usdcStatus?.enabled === true;
   const quoteExpired = !quote || !Number.isFinite(Date.parse(quote.expires_at)) || Date.parse(quote.expires_at) <= quoteClock;
-  const quoteMatchesMarket = quote && quote.market_id === market && quote.asset_in_id === selectedSpotMarket?.asset_in_id && quote.asset_out_id === selectedSpotMarket?.asset_out_id;
+  const spotIntent:SpotQuoteIntent={market,input:selectedSpotMarket?.asset_in_id??"",output:selectedSpotMarket?.asset_out_id??"",amount:swapAmount,inputDecimals:swapAssetMap.get(selectedSpotMarket?.asset_in_id)?.decimals??7,outputDecimals:swapAssetMap.get(selectedSpotMarket?.asset_out_id)?.decimals??7,slippage:slippageBps};
+  const validSwapAmount=validSpotAmount(swapAmount,spotIntent.inputDecimals);
+  const quoteMatchesMarket=matchesSpotQuote(quote,spotIntent,quoteClock,false);
+  const quoteContextKey=JSON.stringify([session?.customer_id,session?.wallet_id,page,category,spotIntent]);
+  const quoteContext=useRef({key:quoteContextKey,intent:spotIntent});quoteContext.current={key:quoteContextKey,intent:spotIntent};
+  const [quoteRead,setQuoteRead]=useState({key:"",loading:false});
+  const quoteLoading=quoteRead.key===quoteContextKey&&quoteRead.loading;
+  const quoteFlight=useRef<{key:string;promise:Promise<void>}|null>(null);
+  const requestSwapQuote=useCallback(()=>{
+    const {key,intent}=quoteContext.current;
+    if(quoteFlight.current?.key===key)return quoteFlight.current.promise;
+    setQuoteRead({key,loading:true});setSwapError("");
+    const promise=(async()=>{
+      const next=await readSpotQuoteWithRetry(()=>api("grapnel/quote",{market_id:intent.market,asset_id:intent.input,amount:intent.amount,slippage_bps:intent.slippage}),()=>quoteContext.current.key===key);
+      if(quoteContext.current.key!==key)return;
+      if(!matchesSpotQuote(next,intent))throw Error("The returned quote does not match your selected amount and assets.");
+      setQuoteClock(Date.now());setQuote(next);
+    })().finally(()=>{if(quoteContext.current.key===key)setQuoteRead({key,loading:false});if(quoteFlight.current?.promise===promise)quoteFlight.current=null;});
+    quoteFlight.current={key,promise};return promise;
+  },[]);
+  useEffect(()=>{
+    if(!session||!['markets','trade'].includes(page)||category!=="crypto_spot"||!canPrepareSpot||!walletReadyForPair||!validSwapAmount||busy||active||preparingAction||quoteMatchesMarket&&!quoteExpired)return;
+    let alive=true;const load=()=>{if(document.visibilityState==='visible')void requestSwapQuote().catch(cause=>{if(alive)setSwapError(cause instanceof ClientError&&cause.status>=500?"The quote could not refresh. Try Get quote again.":cause instanceof Error?cause.message:"The quote could not be loaded. Try again.");});};
+    const timer=setTimeout(load,450);document.addEventListener('visibilitychange',load);
+    return()=>{alive=false;clearTimeout(timer);document.removeEventListener('visibilitychange',load);};
+  },[quoteContextKey,canPrepareSpot,walletReadyForPair,validSwapAmount,busy,active,preparingAction,quoteMatchesMarket,quoteExpired,requestSwapQuote]);
   const spotInputCode = swapCode(selectedSpotMarket?.asset_in_id);
   const spotOutputCode = swapCode(selectedSpotMarket?.asset_out_id);
   const reverseSpotMarket = markets.find(entry => entry.asset_in_id === selectedSpotMarket?.asset_out_id && entry.asset_out_id === selectedSpotMarket?.asset_in_id);
@@ -1081,15 +1114,6 @@ function FinanceShell({ page, auth, initialCategory }: { page: string; auth?: Au
               <h1>{(page==="markets"||page==="trade")&&category!=="crypto_spot"?"Markets":title[page]}</h1>
 
             </div>
-            <button
-              className={busy&&busyLocation==="page"?"refresh refreshing":"refresh"}
-              aria-label={busy&&busyLocation==="page"?"Refreshing data":"Refresh data"}
-              onClick={() => action(refresh)}
-              disabled={busy}
-              title="Refresh live data"
-            >
-              ↻
-            </button>
           </div>
           {pendingWalletAction && !active && (
             <div className="notice neutral" role="status">
@@ -1351,8 +1375,8 @@ function FinanceShell({ page, auth, initialCategory }: { page: string; auth?: Au
                       <div className="market-asset-heading"><AssetLogo symbol={selectedSpotMarket.underlying?.symbol??selectedSpotMarket.label} name={selectedSpotMarket.underlying?.name} assetId={selectedSpotMarket.market_id??selectedSpotMarket.id} providerSymbol={selectedSpotMarket.provider_symbol} size={48} /><div><h2>{selectedSpotMarket.underlying?.name??selectedSpotMarket.label}</h2><span>{selectedSpotMarket.underlying?.symbol} {(category==="perps"||selectedSpotMarket.instrument_type==="perpetual_futures")?(selectedSpotMarket.asset_category==="equity"?"stock perpetual":selectedSpotMarket.asset_category==="index"?"index perpetual":"perpetual"):"stock"}</span></div></div>
                       <div className="market-price-heading"><strong>{selectedSpotMarket.reference_price==null?"—":formatTokenAmount(selectedSpotMarket.reference_price)}</strong><span>{selectedSpotMarket.reference_quote_symbol??selectedSpotMarket.quote_symbol??activePublicHistory?.quote_symbol??"—"} per {selectedSpotMarket.underlying?.symbol}</span></div>
                       <div className={`public-market-freshness ${selectedSpotMarket.price_status==="stale"?"delayed":""}`} data-testid="market-price-freshness">{detailLoading&&selectedSpotMarket.reference_price==null?<ProgressIndicator label="Loading current price" spinning/>:selectedSpotMarket.price_status==="current"?"Current price":selectedSpotMarket.price_status==="stale"?"Price delayed":"—"}</div>
-                      <div className="market-price-change" aria-label="Price change"><strong>{activePublicHistory&&activePublicHistory.points.length>1?displayChange(activePublicHistory.change_absolute):"—"}</strong><span>{activePublicHistory&&activePublicHistory.points.length>1?`${selectedSpotMarket.reference_quote_symbol??selectedSpotMarket.quote_symbol??activePublicHistory.quote_symbol} (${displayChange(activePublicHistory.change_percent)}%)`: "(—)"}</span></div>
-                      <PriceChart history={activePublicHistory} loading={historyLoading} />
+                      <div className={`market-price-change ${changeDirection(activePublicHistory?.change_absolute)}`} aria-label="Price change"><strong>{activePublicHistory&&activePublicHistory.points.length>1?displayChange(activePublicHistory.change_absolute):"—"}</strong><span>{activePublicHistory&&activePublicHistory.points.length>1?`${selectedSpotMarket.reference_quote_symbol??selectedSpotMarket.quote_symbol??activePublicHistory.quote_symbol} (${displayChange(activePublicHistory.change_percent)}%)`: "(—)"}</span></div>
+                      <PriceChart history={activePublicHistory} loading={historyLoading} range={historyRange} />
                       <div className="market-periods" role="group" aria-label="Price timeframe">{(["live","1d","1w","1m","1y","all"] as const).map(period=><button type="button" key={period} aria-pressed={historyRange===period} onClick={()=>setHistoryRange(period)}>{period.toUpperCase()}</button>)}</div>
                       {category==="stocks"&&selectedSpotMarket.instrument_type!=="perpetual_futures"&&activePublicHistory?.metrics&&<dl className="public-market-stats" data-testid="stock-market-metrics">
                         {([["day_high","Day high"],["day_low","Day low"],["previous_close","Previous close"],["fifty_two_week_high","52-week high"],["fifty_two_week_low","52-week low"],["day_volume","Day volume"]] as const).map(([field,label])=><div key={field}><dt>{label}</dt><dd>{activePublicHistory.metrics?.[field]==null?"—":`${formatTokenAmount(activePublicHistory.metrics[field])} ${field==="day_volume"?"shares":activePublicHistory.quote_symbol}`}</dd></div>)}
@@ -1391,8 +1415,8 @@ function FinanceShell({ page, auth, initialCategory }: { page: string; auth?: Au
                       <div><h2>{activePublicHistory ? (swapAssetMap.get(activePublicHistory.base_asset_id)?.name ?? activePublicHistory.base_symbol) : "Asset price"}</h2><span>{activePublicHistory?.price_basis==="underlying_reference"?`${activePublicHistory.base_symbol} reference`:activePublicHistory?.base_symbol??""}</span></div>
                     </div>
                     <div className="market-price-heading"><strong>{activePublicHistory?.latest_price ? formatTokenAmount(activePublicHistory.latest_price) : "—"}</strong><span>{activePublicHistory?.latest_price ? `${activePublicHistory.quote_symbol} per ${activePublicHistory.base_symbol}` : historyLoading ? "Loading current price…" : "Price unavailable"}</span></div>
-                    <div className="market-price-change" aria-label="Price change"><strong>{activePublicHistory&&activePublicHistory.points.length>1?displayChange(activePublicHistory.change_absolute):"—"}</strong>{activePublicHistory?.change_absolute&&activePublicHistory.points.length>1&&<span>{activePublicHistory.quote_symbol}</span>}<span>({activePublicHistory&&activePublicHistory.points.length>1?displayChange(activePublicHistory.change_percent):"—"}{activePublicHistory?.change_percent&&activePublicHistory.points.length>1?"%":""})</span></div>
-                    <PriceChart history={activePublicHistory} loading={historyLoading} />
+                    <div className={`market-price-change ${changeDirection(activePublicHistory?.change_absolute)}`} aria-label="Price change"><strong>{activePublicHistory&&activePublicHistory.points.length>1?displayChange(activePublicHistory.change_absolute):"—"}</strong>{activePublicHistory?.change_absolute&&activePublicHistory.points.length>1&&<span>{activePublicHistory.quote_symbol}</span>}<span>({activePublicHistory&&activePublicHistory.points.length>1?displayChange(activePublicHistory.change_percent):"—"}{activePublicHistory?.change_percent&&activePublicHistory.points.length>1?"%":""})</span></div>
+                    <PriceChart history={activePublicHistory} loading={historyLoading} range={historyRange} />
                     <div className="market-periods" role="group" aria-label="Price timeframe">{(["live","1d","1w","1m","1y","all"] as const).map(period => <button type="button" key={period} aria-pressed={historyRange===period} onClick={()=>setHistoryRange(period)}>{period.toUpperCase()}</button>)}</div>
                   </section>
                 <section className="swap-card" aria-label="Swap assets">
@@ -1417,7 +1441,7 @@ function FinanceShell({ page, auth, initialCategory }: { page: string; auth?: Au
                   <div className="swap-token-panel">
                     <span className="swap-panel-label">Buy</span>
                     <div className="swap-panel-main">
-                      <output className="swap-output" aria-label="Estimated buy amount">{quoteMatchesMarket && !quoteExpired ? formatTokenAmount(quote.expected_out) : "—"}</output>
+                      <output className="swap-output" aria-label="Estimated buy amount" aria-live="polite" aria-busy={quoteLoading} data-loading={!quoteMatchesMarket&&validSwapAmount}>{quoteMatchesMarket ? formatTokenAmount(quote.expected_out) : !validSwapAmount ? "0.00" : swapError ? "Quote unavailable" : "Calculating…"}</output>
                       <div className="swap-token-pill">
                         <AssetLogo symbol={spotOutputCode} name={swapAssetMap.get(selectedSpotMarket.asset_out_id)?.name} assetId={selectedSpotMarket.asset_out_id} size={28} />
                         <select aria-label="Buy asset" title={swapIdentity(selectedSpotMarket.asset_out_id)} value={selectedSpotMarket.asset_out_id} disabled={busy} onChange={event => {
@@ -1444,22 +1468,17 @@ function FinanceShell({ page, auth, initialCategory }: { page: string; auth?: Au
                   </details>
                   <p className="small muted">Available to sell: {formatTokenAmount(swapBalance(selectedSpotMarket.asset_in_id))} {spotInputCode}</p>
                   {swapError && <p className="swap-action-error" role="alert" id="swap-action-error">{customerMessage(swapError)}</p>}
-                  {quote && quoteExpired && !swapError && <p className="inline-note" role="alert">This quote expired. Request a new quote before reviewing a swap.</p>}
                   {!canPrepareSpot && <p className="small muted">This pair is currently unavailable.</p>}
                   {quoteMatchesMarket && !quoteExpired ? <button className="button swap-submit" aria-label="Swap" aria-describedby={swapError ? "swap-action-error" : undefined} disabled={busy || !canPrepareSpot || !walletReadyForPair}
                     onClick={() => action(async () => {
                       if (!quoteMatchesMarket || Date.parse(quote.expires_at) <= Date.now()) {setQuoteClock(Date.now());throw Error("This quote expired. Request a new quote.");}
                       await start("order",{quote_id:quote.quote_id});setQuote(null);
                     }, "swap")}>{busy&&busyLocation==="swap" ? <ProgressIndicator label="Processing" spinning/> : "Swap"}</button>
-                    : <button className="button swap-submit" aria-describedby={swapError ? "swap-action-error" : undefined} disabled={busy || !canPrepareSpot || !walletReadyForPair || !swapAmount}
+                    : <button className="button swap-submit" aria-describedby={swapError ? "swap-action-error" : undefined} disabled={busy || quoteLoading || !canPrepareSpot || !walletReadyForPair || !validSwapAmount}
                       onClick={() => action(async () => {
                         setQuote(null);
-                        const customerId=session?.customer_id, expectedMarket=market, expectedInput=selectedSpotMarket.asset_in_id, expectedOutput=selectedSpotMarket.asset_out_id;
-                        const next=await api("grapnel/quote",{market_id:expectedMarket,asset_id:expectedInput,amount:swapAmount,slippage_bps:slippageBps});
-                        if(spotCustomer.current!==customerId)return;
-                        if(next.market_id!==expectedMarket||next.asset_in_id!==expectedInput||next.asset_out_id!==expectedOutput||!next.quote_id||!Number.isFinite(Date.parse(next.expires_at)))throw Error("The returned quote does not match your selected assets.");
-                        setQuoteClock(Date.now());setQuote(next);
-                      }, "swap")}>{busy&&busyLocation==="swap" ? <ProgressIndicator label="Getting quote" spinning/> : "Get quote"}</button>}
+                        await requestSwapQuote();
+                      }, "swap")}>{(quoteLoading||busy&&busyLocation==="swap") ? <ProgressIndicator label="Getting quote" spinning/> : "Get quote"}</button>}
                 </section>
                 </div>
                 </>

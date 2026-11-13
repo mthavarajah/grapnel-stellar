@@ -114,3 +114,10 @@ The owner selected GMX for customer Perpetuals. The live `https://arbitrum-sepol
 ### Zenex Stellar Testnet, November 13, 2026 UTC
 
 Official Testnet frontend and `/v1/config` served one XLM/USD market. `/v1/prices/tickers` returned current Chainlink origin timestamps; `/v1/prices/udf/history?symbol=XLMUSD` returned all six requested UI horizons. Live instance hashes and exact SAC issuer were checked, not copied from mainnet docs. SDK reviewed at commit `45f4d818af455528c850b16269ec5015440f3148`. See `docs/20_ZENEX_TESTNET.md` and `evidence/zenex-roundtrip.json` for four canonical controlled-QA keeper fills.
+
+
+### November 13 — chart denominations and historical coverage
+
+- Official Binance market-data-only endpoints: https://github.com/binance/binance-spot-api-docs/blob/master/faqs/market_data_only.md and https://github.com/binance/binance-spot-api-docs/blob/master/rest-api.md . Live `exchangeInfo` verified XLMUSDC/BTCUSDC/ETHUSDC/XRPUSDC as USDC-quoted trading pairs. Closed klines and timestamped 24-hour ticker observations supply the UI's USDC reference series. `evidence/market-chart-review/provider-history.json` preserves source URLs, intervals and actual first/latest points for every tested window.
+- Official Robinhood Stock Token APIs: https://docs.robinhood.com/chain/stock-token-apis/ . The published endpoints provide live underlying bid/ask, asset metadata and corporate actions; no historical candle endpoint is listed. The app retains actual recorded official quotes and discloses coverage rather than inventing older candles. Observed history for all five stocks and all six ranges is in `evidence/market-chart-review/stock-history.json`.
+- Zenex Testnet UDF history: https://api-testnet.zenex.trade/v1/prices/udf/history . One-year history succeeded; requests extending to two/five years or the epoch returned `upstream_unavailable` during this review. All therefore means the available verified one-year series, explicitly labeled with its coverage date. No execution capability or signing proof was changed.

@@ -1,0 +1,450 @@
+{
+  "observed_at": "2026-11-13T22:07:17.820Z",
+  "scope": "Actual readonly provider requests; no execution or customer identity bypass",
+  "results": [
+    {
+      "provider": "binance",
+      "symbol": "XLM",
+      "range": "live",
+      "quote_symbol": "USDC",
+      "interval": "1m",
+      "points": 60,
+      "first": {
+        "timestamp": "2026-11-13T21:08:59.999Z",
+        "price": "0.1473"
+      },
+      "last": {
+        "timestamp": "2026-11-13T22:07:05.391Z",
+        "price": "0.1462"
+      },
+      "source_url": "https://data-api.binance.vision/api/v3/klines?symbol=XLMUSDC&interval=1m&limit=1000&endTime=1794607626565&startTime=1794604026565",
+      "current_source_url": "https://data-api.binance.vision/api/v3/ticker/24hr?symbol=XLMUSDC",
+      "elapsed_ms": 1146
+    },
+    {
+      "provider": "binance",
+      "symbol": "XLM",
+      "range": "1d",
+      "quote_symbol": "USDC",
+      "interval": "5m",
+      "points": 288,
+      "first": {
+        "timestamp": "2026-11-12T22:14:59.999Z",
+        "price": "0.1482"
+      },
+      "last": {
+        "timestamp": "2026-11-13T22:07:05.391Z",
+        "price": "0.1462"
+      },
+      "source_url": "https://data-api.binance.vision/api/v3/klines?symbol=XLMUSDC&interval=5m&limit=1000&endTime=1794607626906&startTime=1794521226906",
+      "current_source_url": "https://data-api.binance.vision/api/v3/ticker/24hr?symbol=XLMUSDC",
+      "elapsed_ms": 341
+    },
+    {
+      "provider": "binance",
+      "symbol": "XLM",
+      "range": "1w",
+      "quote_symbol": "USDC",
+      "interval": "1h",
+      "points": 168,
+      "first": {
+        "timestamp": "2026-11-06T23:59:59.999Z",
+        "price": "0.1532"
+      },
+      "last": {
+        "timestamp": "2026-11-13T22:07:07.391Z",
+        "price": "0.1462"
+      },
+      "source_url": "https://data-api.binance.vision/api/v3/klines?symbol=XLMUSDC&interval=1h&limit=1000&endTime=1794607627247&startTime=1794002827247",
+      "current_source_url": "https://data-api.binance.vision/api/v3/ticker/24hr?symbol=XLMUSDC",
+      "elapsed_ms": 328
+    },
+    {
+      "provider": "binance",
+      "symbol": "XLM",
+      "range": "1m",
+      "quote_symbol": "USDC",
+      "interval": "4h",
+      "points": 180,
+      "first": {
+        "timestamp": "2026-10-15T03:59:59.999Z",
+        "price": "0.1789"
+      },
+      "last": {
+        "timestamp": "2026-11-13T22:07:07.391Z",
+        "price": "0.1462"
+      },
+      "source_url": "https://data-api.binance.vision/api/v3/klines?symbol=XLMUSDC&interval=4h&limit=1000&endTime=1794607627575&startTime=1792015627575",
+      "current_source_url": "https://data-api.binance.vision/api/v3/ticker/24hr?symbol=XLMUSDC",
+      "elapsed_ms": 331
+    },
+    {
+      "provider": "binance",
+      "symbol": "XLM",
+      "range": "1y",
+      "quote_symbol": "USDC",
+      "interval": "1d",
+      "points": 365,
+      "first": {
+        "timestamp": "2025-11-14T23:59:59.999Z",
+        "price": "0.2593"
+      },
+      "last": {
+        "timestamp": "2026-11-13T22:07:07.391Z",
+        "price": "0.1462"
+      },
+      "source_url": "https://data-api.binance.vision/api/v3/klines?symbol=XLMUSDC&interval=1d&limit=1000&endTime=1794607627906&startTime=1763071627906",
+      "current_source_url": "https://data-api.binance.vision/api/v3/ticker/24hr?symbol=XLMUSDC",
+      "elapsed_ms": 349
+    },
+    {
+      "provider": "binance",
+      "symbol": "XLM",
+      "range": "all",
+      "quote_symbol": "USDC",
+      "interval": "1w",
+      "points": 159,
+      "first": {
+        "timestamp": "2018-12-16T23:59:59.999Z",
+        "price": "0.09514"
+      },
+      "last": {
+        "timestamp": "2026-11-13T22:07:07.391Z",
+        "price": "0.1462"
+      },
+      "source_url": "https://data-api.binance.vision/api/v3/klines?symbol=XLMUSDC&interval=1w&limit=1000&endTime=1794607628255",
+      "current_source_url": "https://data-api.binance.vision/api/v3/ticker/24hr?symbol=XLMUSDC",
+      "elapsed_ms": 339
+    },
+    {
+      "provider": "binance",
+      "symbol": "BTC",
+      "range": "live",
+      "quote_symbol": "USDC",
+      "interval": "1m",
+      "points": 60,
+      "first": {
+        "timestamp": "2026-11-13T21:08:59.999Z",
+        "price": "68646.42"
+      },
+      "last": {
+        "timestamp": "2026-11-13T22:07:08.419Z",
+        "price": "68237.28"
+      },
+      "source_url": "https://data-api.binance.vision/api/v3/klines?symbol=BTCUSDC&interval=1m&limit=1000&endTime=1794607628796&startTime=1794604028796",
+      "current_source_url": "https://data-api.binance.vision/api/v3/ticker/24hr?symbol=BTCUSDC",
+      "elapsed_ms": 543
+    },
+    {
+      "provider": "binance",
+      "symbol": "BTC",
+      "range": "1d",
+      "quote_symbol": "USDC",
+      "interval": "5m",
+      "points": 288,
+      "first": {
+        "timestamp": "2026-11-12T22:14:59.999Z",
+        "price": "71374.81"
+      },
+      "last": {
+        "timestamp": "2026-11-13T22:07:09.421Z",
+        "price": "68232.57"
+      },
+      "source_url": "https://data-api.binance.vision/api/v3/klines?symbol=BTCUSDC&interval=5m&limit=1000&endTime=1794607629137&startTime=1794521229137",
+      "current_source_url": "https://data-api.binance.vision/api/v3/ticker/24hr?symbol=BTCUSDC",
+      "elapsed_ms": 339
+    },
+    {
+      "provider": "binance",
+      "symbol": "BTC",
+      "range": "1w",
+      "quote_symbol": "USDC",
+      "interval": "1h",
+      "points": 168,
+      "first": {
+        "timestamp": "2026-11-06T23:59:59.999Z",
+        "price": "75760.53"
+      },
+      "last": {
+        "timestamp": "2026-11-13T22:07:09.421Z",
+        "price": "68232.57"
+      },
+      "source_url": "https://data-api.binance.vision/api/v3/klines?symbol=BTCUSDC&interval=1h&limit=1000&endTime=1794607629477&startTime=1794002829477",
+      "current_source_url": "https://data-api.binance.vision/api/v3/ticker/24hr?symbol=BTCUSDC",
+      "elapsed_ms": 368
+    },
+    {
+      "provider": "binance",
+      "symbol": "BTC",
+      "range": "1m",
+      "quote_symbol": "USDC",
+      "interval": "4h",
+      "points": 180,
+      "first": {
+        "timestamp": "2026-10-15T03:59:59.999Z",
+        "price": "80831.4"
+      },
+      "last": {
+        "timestamp": "2026-11-13T22:07:09.421Z",
+        "price": "68232.57"
+      },
+      "source_url": "https://data-api.binance.vision/api/v3/klines?symbol=BTCUSDC&interval=4h&limit=1000&endTime=1794607629844&startTime=1792015629844",
+      "current_source_url": "https://data-api.binance.vision/api/v3/ticker/24hr?symbol=BTCUSDC",
+      "elapsed_ms": 336
+    },
+    {
+      "provider": "binance",
+      "symbol": "BTC",
+      "range": "1y",
+      "quote_symbol": "USDC",
+      "interval": "1d",
+      "points": 365,
+      "first": {
+        "timestamp": "2025-11-14T23:59:59.999Z",
+        "price": "94527.68"
+      },
+      "last": {
+        "timestamp": "2026-11-13T22:07:10.430Z",
+        "price": "68230.67"
+      },
+      "source_url": "https://data-api.binance.vision/api/v3/klines?symbol=BTCUSDC&interval=1d&limit=1000&endTime=1794607630180&startTime=1763071630180",
+      "current_source_url": "https://data-api.binance.vision/api/v3/ticker/24hr?symbol=BTCUSDC",
+      "elapsed_ms": 343
+    },
+    {
+      "provider": "binance",
+      "symbol": "BTC",
+      "range": "all",
+      "quote_symbol": "USDC",
+      "interval": "1w",
+      "points": 392,
+      "first": {
+        "timestamp": "2018-12-16T23:59:59.999Z",
+        "price": "3199.27"
+      },
+      "last": {
+        "timestamp": "2026-11-13T22:07:10.430Z",
+        "price": "68230.67"
+      },
+      "source_url": "https://data-api.binance.vision/api/v3/klines?symbol=BTCUSDC&interval=1w&limit=1000&endTime=1794607630523",
+      "current_source_url": "https://data-api.binance.vision/api/v3/ticker/24hr?symbol=BTCUSDC",
+      "elapsed_ms": 387
+    },
+    {
+      "provider": "binance",
+      "symbol": "XRP",
+      "range": "live",
+      "quote_symbol": "USDC",
+      "interval": "1m",
+      "points": 60,
+      "first": {
+        "timestamp": "2026-11-13T21:08:59.999Z",
+        "price": "1.0146"
+      },
+      "last": {
+        "timestamp": "2026-11-13T22:07:10.414Z",
+        "price": "1.0092"
+      },
+      "source_url": "https://data-api.binance.vision/api/v3/klines?symbol=XRPUSDC&interval=1m&limit=1000&endTime=1794607631082&startTime=1794604031082",
+      "current_source_url": "https://data-api.binance.vision/api/v3/ticker/24hr?symbol=XRPUSDC",
+      "elapsed_ms": 500
+    },
+    {
+      "provider": "binance",
+      "symbol": "XRP",
+      "range": "1d",
+      "quote_symbol": "USDC",
+      "interval": "5m",
+      "points": 288,
+      "first": {
+        "timestamp": "2026-11-12T22:14:59.999Z",
+        "price": "1.0357"
+      },
+      "last": {
+        "timestamp": "2026-11-13T22:07:11.143Z",
+        "price": "1.0092"
+      },
+      "source_url": "https://data-api.binance.vision/api/v3/klines?symbol=XRPUSDC&interval=5m&limit=1000&endTime=1794607631410&startTime=1794521231410",
+      "current_source_url": "https://data-api.binance.vision/api/v3/ticker/24hr?symbol=XRPUSDC",
+      "elapsed_ms": 348
+    },
+    {
+      "provider": "binance",
+      "symbol": "XRP",
+      "range": "1w",
+      "quote_symbol": "USDC",
+      "interval": "1h",
+      "points": 168,
+      "first": {
+        "timestamp": "2026-11-06T23:59:59.999Z",
+        "price": "1.1778"
+      },
+      "last": {
+        "timestamp": "2026-11-13T22:07:11.143Z",
+        "price": "1.0092"
+      },
+      "source_url": "https://data-api.binance.vision/api/v3/klines?symbol=XRPUSDC&interval=1h&limit=1000&endTime=1794607631758&startTime=1794002831758",
+      "current_source_url": "https://data-api.binance.vision/api/v3/ticker/24hr?symbol=XRPUSDC",
+      "elapsed_ms": 336
+    },
+    {
+      "provider": "binance",
+      "symbol": "XRP",
+      "range": "1m",
+      "quote_symbol": "USDC",
+      "interval": "4h",
+      "points": 180,
+      "first": {
+        "timestamp": "2026-10-15T03:59:59.999Z",
+        "price": "1.3023"
+      },
+      "last": {
+        "timestamp": "2026-11-13T22:07:11.143Z",
+        "price": "1.0092"
+      },
+      "source_url": "https://data-api.binance.vision/api/v3/klines?symbol=XRPUSDC&interval=4h&limit=1000&endTime=1794607632094&startTime=1792015632094",
+      "current_source_url": "https://data-api.binance.vision/api/v3/ticker/24hr?symbol=XRPUSDC",
+      "elapsed_ms": 335
+    },
+    {
+      "provider": "binance",
+      "symbol": "XRP",
+      "range": "1y",
+      "quote_symbol": "USDC",
+      "interval": "1d",
+      "points": 365,
+      "first": {
+        "timestamp": "2025-11-14T23:59:59.999Z",
+        "price": "2.2427"
+      },
+      "last": {
+        "timestamp": "2026-11-13T22:07:11.143Z",
+        "price": "1.0092"
+      },
+      "source_url": "https://data-api.binance.vision/api/v3/klines?symbol=XRPUSDC&interval=1d&limit=1000&endTime=1794607632429&startTime=1763071632429",
+      "current_source_url": "https://data-api.binance.vision/api/v3/ticker/24hr?symbol=XRPUSDC",
+      "elapsed_ms": 357
+    },
+    {
+      "provider": "binance",
+      "symbol": "XRP",
+      "range": "all",
+      "quote_symbol": "USDC",
+      "interval": "1w",
+      "points": 350,
+      "first": {
+        "timestamp": "2018-12-16T23:59:59.999Z",
+        "price": "0.28381"
+      },
+      "last": {
+        "timestamp": "2026-11-13T22:07:11.143Z",
+        "price": "1.0092"
+      },
+      "source_url": "https://data-api.binance.vision/api/v3/klines?symbol=XRPUSDC&interval=1w&limit=1000&endTime=1794607632786",
+      "current_source_url": "https://data-api.binance.vision/api/v3/ticker/24hr?symbol=XRPUSDC",
+      "elapsed_ms": 342
+    },
+    {
+      "provider": "zenex",
+      "symbol": "XLM",
+      "range": "live",
+      "quote_symbol": "USD",
+      "points": 59,
+      "first": {
+        "timestamp": "2026-11-13T21:08:00.000Z",
+        "price": "0.1473011401898745"
+      },
+      "last": {
+        "timestamp": "2026-11-13T22:07:11.000Z",
+        "price": "0.146033957126361600"
+      },
+      "source_url": "https://api-testnet.zenex.trade/v1/prices/udf/history",
+      "elapsed_ms": 1095
+    },
+    {
+      "provider": "zenex",
+      "symbol": "XLM",
+      "range": "1d",
+      "quote_symbol": "USD",
+      "points": 289,
+      "first": {
+        "timestamp": "2026-11-12T22:10:00.000Z",
+        "price": "0.1481336455072291"
+      },
+      "last": {
+        "timestamp": "2026-11-13T22:07:11.000Z",
+        "price": "0.146033957126361600"
+      },
+      "source_url": "https://api-testnet.zenex.trade/v1/prices/udf/history",
+      "elapsed_ms": 963
+    },
+    {
+      "provider": "zenex",
+      "symbol": "XLM",
+      "range": "1w",
+      "quote_symbol": "USD",
+      "points": 169,
+      "first": {
+        "timestamp": "2026-11-06T23:00:00.000Z",
+        "price": "0.1531683344750824"
+      },
+      "last": {
+        "timestamp": "2026-11-13T22:07:13.000Z",
+        "price": "0.146067849428094300"
+      },
+      "source_url": "https://api-testnet.zenex.trade/v1/prices/udf/history",
+      "elapsed_ms": 715
+    },
+    {
+      "provider": "zenex",
+      "symbol": "XLM",
+      "range": "1m",
+      "quote_symbol": "USD",
+      "points": 181,
+      "first": {
+        "timestamp": "2026-10-15T00:00:00.000Z",
+        "price": "0.1788933296503604"
+      },
+      "last": {
+        "timestamp": "2026-11-13T22:07:13.000Z",
+        "price": "0.146067849428094300"
+      },
+      "source_url": "https://api-testnet.zenex.trade/v1/prices/udf/history",
+      "elapsed_ms": 795
+    },
+    {
+      "provider": "zenex",
+      "symbol": "XLM",
+      "range": "1y",
+      "quote_symbol": "USD",
+      "points": 365,
+      "first": {
+        "timestamp": "2025-11-14T00:00:00.000Z",
+        "price": "0.25923793985533283"
+      },
+      "last": {
+        "timestamp": "2026-11-13T22:07:15.000Z",
+        "price": "0.146083721833771100"
+      },
+      "source_url": "https://api-testnet.zenex.trade/v1/prices/udf/history",
+      "elapsed_ms": 576
+    },
+    {
+      "provider": "zenex",
+      "symbol": "XLM",
+      "range": "all",
+      "quote_symbol": "USD",
+      "points": 365,
+      "first": {
+        "timestamp": "2025-11-14T00:00:00.000Z",
+        "price": "0.25923793985533283"
+      },
+      "last": {
+        "timestamp": "2026-11-13T22:07:15.000Z",
+        "price": "0.146083721833771100"
+      },
+      "source_url": "https://api-testnet.zenex.trade/v1/prices/udf/history",
+      "elapsed_ms": 547
+    }
+  ]
+}

@@ -1,0 +1,5 @@
+import{expect,it}from'vitest';import{changeDirection,chartTimeDomain,chartSegments}from'./chart-presentation';
+it('preserves the exact sign even for tiny changes and negative zero',()=>{expect(changeDirection('-0.000000000000000001')).toBe('negative');expect(changeDirection('0.000000000000000001')).toBe('positive');for(const n of ['0','-0.00','+0',null,'bad'])expect(changeDirection(n)).toBe('neutral');});
+it('does not stretch two hours of recorded stock prices across every selected range',()=>{const end=Date.parse('2026-11-13T20:00:00Z'),points=[end-7200000,end];expect(chartTimeDomain(points,'1d',new Date(end).toISOString())).toEqual([end-86400000,end]);expect(chartTimeDomain(points,'1y',new Date(end).toISOString())).toEqual([end-31536000000,end]);expect(chartTimeDomain(points,'all',new Date(end).toISOString())).toEqual([points[0],end]);});
+
+it('leaves actual exchange data gaps empty instead of connecting years without candles',()=>{expect(chartSegments([0,60000,120000,86400000,86460000],'1m')).toEqual([[0,1,2],[3,4]]);});

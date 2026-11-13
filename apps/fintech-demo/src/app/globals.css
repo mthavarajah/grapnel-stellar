@@ -1847,3 +1847,11 @@ footer strong {
 @media(prefers-reduced-motion: reduce) { .nav-link, .tabs button, .earn-action-toggle button { transition: none; } }
 .refresh.refreshing { animation: operation-rotate .8s linear infinite; }
 @media(prefers-reduced-motion: reduce) { .refresh.refreshing { animation: none; } }
+
+.market-price-change.positive, .market-price-change.positive strong { color: #15803d; }
+.market-price-change.negative, .market-price-change.negative strong { color: #b91c1c; }
+.market-chart-wrap.positive { --chart-trend: #15803d; }
+.market-chart-wrap.negative { --chart-trend: #b91c1c; }
+.market-chart-line { stroke: var(--chart-trend, var(--blue)); }
+.market-chart-dot { fill: var(--chart-trend, var(--blue)); }
+.swap-output[data-loading="true"] { font-size: 16px; color: var(--muted); }

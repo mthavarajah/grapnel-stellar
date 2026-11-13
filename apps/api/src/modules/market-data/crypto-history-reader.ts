@@ -7,7 +7,7 @@ export type CryptoReferenceSymbol=typeof CRYPTO_REFERENCE_SYMBOLS[number];
 export interface CryptoReferenceMarket {asset_id:string;reference_symbol:CryptoReferenceSymbol;}
 export interface CryptoReferenceHistory extends MarketHistory {
  price_basis:'underlying_reference';reference_symbol:CryptoReferenceSymbol;related_asset_id:string;
- source_url:string;interval:string;requested_range:HistoryRange;coverage_start:string;coverage_end:string;
+ source_url:string;current_source_url:string;interval:string;requested_range:HistoryRange;coverage_start:string;coverage_end:string;
 }
 const WINDOWS:Record<HistoryRange,{interval:string;ms:number;duration:number|null}>={
  live:{interval:'1m',ms:60000,duration:3600000},'1d':{interval:'5m',ms:300000,duration:86400000},
@@ -43,12 +43,13 @@ export class CryptoReferenceHistoryReader {
   try{return await response.json();}catch{return unavailable('SOURCE_INVALID_JSON');}
  }
  private async read(symbol:CryptoReferenceSymbol,range:HistoryRange):Promise<HistoryData>{
-  const pair=`${symbol}USDT`,now=this.now(),window=WINDOWS[range];
+  if(symbol==='USDC')return unavailable('SELF_QUOTED_REFERENCE_UNSUPPORTED');
+  const pair=`${symbol}USDC`,now=this.now(),window=WINDOWS[range];
   // Kline arrays do not echo a symbol. Check the exact exchange identity before interpreting them.
   if((this.identities.get(symbol)??0)<=now){
    const url=new URL('/api/v3/exchangeInfo',BASE);url.searchParams.set('symbol',pair);
    const body=await this.request(url) as {symbols?:{symbol?:unknown;baseAsset?:unknown;quoteAsset?:unknown;status?:unknown}[]};
-   if(!body||!Array.isArray(body.symbols)||body.symbols.length!==1||body.symbols[0]?.symbol!==pair||body.symbols[0].baseAsset!==symbol||body.symbols[0].quoteAsset!=='USDT'||body.symbols[0].status!=='TRADING')return unavailable('SOURCE_SYMBOL_MISMATCH');
+   if(!body||!Array.isArray(body.symbols)||body.symbols.length!==1||body.symbols[0]?.symbol!==pair||body.symbols[0].baseAsset!==symbol||body.symbols[0].quoteAsset!=='USDC'||body.symbols[0].status!=='TRADING')return unavailable('SOURCE_SYMBOL_MISMATCH');
    this.identities.set(symbol,this.now()+3600000);
   }
   const end=this.now(),url=new URL('/api/v3/klines',BASE);url.searchParams.set('symbol',pair);url.searchParams.set('interval',window.interval);url.searchParams.set('limit','1000');url.searchParams.set('endTime',String(end));
@@ -58,15 +59,21 @@ export class CryptoReferenceHistoryReader {
   for(const row of body){
    if(!Array.isArray(row)||row.length!==12||!Number.isSafeInteger(row[0])||!Number.isSafeInteger(row[6]))return unavailable('SOURCE_CANDLE_INVALID');
    const open=row[0] as number,close=row[6] as number;
-   if(open<0||open<=previous||open>end+5000||close!==open+window.ms-1||(since!==null&&open<since-window.ms))return unavailable('SOURCE_CANDLE_TIMESTAMP_INVALID');
+   if(open<0||open<=previous||open>end+5000||(close<open||close>open+window.ms-1)||(since!==null&&open<since-window.ms))return unavailable('SOURCE_CANDLE_TIMESTAMP_INVALID');
    previous=open;
    // A forming candle's close timestamp is in the future. Never attribute its latest price to that future time.
    if(close>end)continue;
    let price:string;try{price=normalizePrice(row[4]);}catch{return unavailable('SOURCE_CANDLE_PRICE_INVALID');}
    points.push({timestamp:new Date(close).toISOString(),price});
   }
-  const latest=points.at(-1);if(!latest||points.length<2)return unavailable('SOURCE_HISTORY_EMPTY');
-  if(end-Date.parse(latest.timestamp)>window.ms*2+5000)return unavailable('SOURCE_HISTORY_STALE');
-  return {quote_symbol:'USDT',latest_price:latest.price,as_of:latest.timestamp,points,...priceChange(points[0]!.price,latest.price),price_basis:'underlying_reference',reference_symbol:symbol,source_url:url.toString(),interval:window.interval,requested_range:range,coverage_start:points[0]!.timestamp,coverage_end:latest.timestamp};
+  const closed=points.at(-1);if(!closed||points.length<2)return unavailable('SOURCE_HISTORY_EMPTY');
+  if(end-Date.parse(closed.timestamp)>window.ms*2+5000)return unavailable('SOURCE_HISTORY_STALE');
+  const tickerUrl=new URL('/api/v3/ticker/24hr',BASE);tickerUrl.searchParams.set('symbol',pair);
+  const ticker=await this.request(tickerUrl) as {symbol?:unknown;lastPrice?:unknown;closeTime?:unknown};
+  if(ticker?.symbol!==pair||!Number.isSafeInteger(ticker.closeTime)||Number(ticker.closeTime)>this.now()+5000||this.now()-Number(ticker.closeTime)>60000)return unavailable('SOURCE_TICKER_INVALID');
+  let current:string;try{current=normalizePrice(ticker.lastPrice);}catch{return unavailable('SOURCE_TICKER_INVALID');}
+  if(Number(ticker.closeTime)>Date.parse(closed.timestamp))points.push({timestamp:new Date(Number(ticker.closeTime)).toISOString(),price:current});
+  const latest=points.at(-1)!;
+  return {quote_symbol:'USDC',latest_price:latest.price,as_of:latest.timestamp,points,...priceChange(points[0]!.price,latest.price),price_basis:'underlying_reference',reference_symbol:symbol,source_url:url.toString(),current_source_url:tickerUrl.toString(),interval:window.interval,requested_range:range,coverage_start:points[0]!.timestamp,coverage_end:latest.timestamp};
  }
 }

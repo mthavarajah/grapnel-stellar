@@ -1,0 +1,756 @@
+{
+  "observed_at": "2026-11-13T22:07:31.338Z",
+  "source": "Actual official Robinhood quotes recorded in the local price history; no synthetic backfill",
+  "results": [
+    {
+      "symbol": "TSLA",
+      "range": "live",
+      "quote_symbol": "USD",
+      "points": 1,
+      "first": {
+        "timestamp": "2026-11-13T22:07:29.303Z",
+        "price": "388.37"
+      },
+      "last": {
+        "timestamp": "2026-11-13T22:07:29.303Z",
+        "price": "388.37"
+      },
+      "source_url": "https://api.robinhood.com/rhj/prices/TSLA",
+      "coverage": {
+        "kind": "observed_only",
+        "historical_ohlc_available": false,
+        "complete_requested_range": false,
+        "observation_count": 1,
+        "first_generated_at": "2026-11-13T22:07:29.303Z",
+        "last_generated_at": "2026-11-13T22:07:29.303Z",
+        "persisted": true,
+        "truncated": false
+      }
+    },
+    {
+      "symbol": "TSLA",
+      "range": "1d",
+      "quote_symbol": "USD",
+      "points": 260,
+      "first": {
+        "timestamp": "2026-11-12T22:07:38.572Z",
+        "price": "396.38"
+      },
+      "last": {
+        "timestamp": "2026-11-13T22:07:29.303Z",
+        "price": "388.37"
+      },
+      "source_url": "https://api.robinhood.com/rhj/prices/TSLA",
+      "coverage": {
+        "kind": "observed_only",
+        "historical_ohlc_available": false,
+        "complete_requested_range": false,
+        "observation_count": 260,
+        "first_generated_at": "2026-11-12T22:07:38.572Z",
+        "last_generated_at": "2026-11-13T22:07:29.303Z",
+        "persisted": true,
+        "truncated": false
+      }
+    },
+    {
+      "symbol": "TSLA",
+      "range": "1w",
+      "quote_symbol": "USD",
+      "points": 373,
+      "first": {
+        "timestamp": "2026-11-12T18:56:52.999Z",
+        "price": "391.06"
+      },
+      "last": {
+        "timestamp": "2026-11-13T22:07:29.303Z",
+        "price": "388.37"
+      },
+      "source_url": "https://api.robinhood.com/rhj/prices/TSLA",
+      "coverage": {
+        "kind": "observed_only",
+        "historical_ohlc_available": false,
+        "complete_requested_range": false,
+        "observation_count": 373,
+        "first_generated_at": "2026-11-12T18:56:52.999Z",
+        "last_generated_at": "2026-11-13T22:07:29.303Z",
+        "persisted": true,
+        "truncated": false
+      }
+    },
+    {
+      "symbol": "TSLA",
+      "range": "1m",
+      "quote_symbol": "USD",
+      "points": 373,
+      "first": {
+        "timestamp": "2026-11-12T18:56:52.999Z",
+        "price": "391.06"
+      },
+      "last": {
+        "timestamp": "2026-11-13T22:07:29.303Z",
+        "price": "388.37"
+      },
+      "source_url": "https://api.robinhood.com/rhj/prices/TSLA",
+      "coverage": {
+        "kind": "observed_only",
+        "historical_ohlc_available": false,
+        "complete_requested_range": false,
+        "observation_count": 373,
+        "first_generated_at": "2026-11-12T18:56:52.999Z",
+        "last_generated_at": "2026-11-13T22:07:29.303Z",
+        "persisted": true,
+        "truncated": false
+      }
+    },
+    {
+      "symbol": "TSLA",
+      "range": "1y",
+      "quote_symbol": "USD",
+      "points": 373,
+      "first": {
+        "timestamp": "2026-11-12T18:56:52.999Z",
+        "price": "391.06"
+      },
+      "last": {
+        "timestamp": "2026-11-13T22:07:29.303Z",
+        "price": "388.37"
+      },
+      "source_url": "https://api.robinhood.com/rhj/prices/TSLA",
+      "coverage": {
+        "kind": "observed_only",
+        "historical_ohlc_available": false,
+        "complete_requested_range": false,
+        "observation_count": 373,
+        "first_generated_at": "2026-11-12T18:56:52.999Z",
+        "last_generated_at": "2026-11-13T22:07:29.303Z",
+        "persisted": true,
+        "truncated": false
+      }
+    },
+    {
+      "symbol": "TSLA",
+      "range": "all",
+      "quote_symbol": "USD",
+      "points": 373,
+      "first": {
+        "timestamp": "2026-11-12T18:56:52.999Z",
+        "price": "391.06"
+      },
+      "last": {
+        "timestamp": "2026-11-13T22:07:29.303Z",
+        "price": "388.37"
+      },
+      "source_url": "https://api.robinhood.com/rhj/prices/TSLA",
+      "coverage": {
+        "kind": "observed_only",
+        "historical_ohlc_available": false,
+        "complete_requested_range": false,
+        "observation_count": 373,
+        "first_generated_at": "2026-11-12T18:56:52.999Z",
+        "last_generated_at": "2026-11-13T22:07:29.303Z",
+        "persisted": true,
+        "truncated": false
+      }
+    },
+    {
+      "symbol": "AMZN",
+      "range": "live",
+      "quote_symbol": "USD",
+      "points": 1,
+      "first": {
+        "timestamp": "2026-11-13T22:07:26.338Z",
+        "price": "265.1"
+      },
+      "last": {
+        "timestamp": "2026-11-13T22:07:26.338Z",
+        "price": "265.1"
+      },
+      "source_url": "https://api.robinhood.com/rhj/prices/AMZN",
+      "coverage": {
+        "kind": "observed_only",
+        "historical_ohlc_available": false,
+        "complete_requested_range": false,
+        "observation_count": 1,
+        "first_generated_at": "2026-11-13T22:07:26.338Z",
+        "last_generated_at": "2026-11-13T22:07:26.338Z",
+        "persisted": true,
+        "truncated": false
+      }
+    },
+    {
+      "symbol": "AMZN",
+      "range": "1d",
+      "quote_symbol": "USD",
+      "points": 245,
+      "first": {
+        "timestamp": "2026-11-12T22:07:56.102Z",
+        "price": "267.33"
+      },
+      "last": {
+        "timestamp": "2026-11-13T22:07:26.338Z",
+        "price": "265.1"
+      },
+      "source_url": "https://api.robinhood.com/rhj/prices/AMZN",
+      "coverage": {
+        "kind": "observed_only",
+        "historical_ohlc_available": false,
+        "complete_requested_range": false,
+        "observation_count": 245,
+        "first_generated_at": "2026-11-12T22:07:56.102Z",
+        "last_generated_at": "2026-11-13T22:07:26.338Z",
+        "persisted": true,
+        "truncated": false
+      }
+    },
+    {
+      "symbol": "AMZN",
+      "range": "1w",
+      "quote_symbol": "USD",
+      "points": 353,
+      "first": {
+        "timestamp": "2026-11-12T18:56:57.385Z",
+        "price": "269.26"
+      },
+      "last": {
+        "timestamp": "2026-11-13T22:07:26.338Z",
+        "price": "265.1"
+      },
+      "source_url": "https://api.robinhood.com/rhj/prices/AMZN",
+      "coverage": {
+        "kind": "observed_only",
+        "historical_ohlc_available": false,
+        "complete_requested_range": false,
+        "observation_count": 353,
+        "first_generated_at": "2026-11-12T18:56:57.385Z",
+        "last_generated_at": "2026-11-13T22:07:26.338Z",
+        "persisted": true,
+        "truncated": false
+      }
+    },
+    {
+      "symbol": "AMZN",
+      "range": "1m",
+      "quote_symbol": "USD",
+      "points": 353,
+      "first": {
+        "timestamp": "2026-11-12T18:56:57.385Z",
+        "price": "269.26"
+      },
+      "last": {
+        "timestamp": "2026-11-13T22:07:26.338Z",
+        "price": "265.1"
+      },
+      "source_url": "https://api.robinhood.com/rhj/prices/AMZN",
+      "coverage": {
+        "kind": "observed_only",
+        "historical_ohlc_available": false,
+        "complete_requested_range": false,
+        "observation_count": 353,
+        "first_generated_at": "2026-11-12T18:56:57.385Z",
+        "last_generated_at": "2026-11-13T22:07:26.338Z",
+        "persisted": true,
+        "truncated": false
+      }
+    },
+    {
+      "symbol": "AMZN",
+      "range": "1y",
+      "quote_symbol": "USD",
+      "points": 353,
+      "first": {
+        "timestamp": "2026-11-12T18:56:57.385Z",
+        "price": "269.26"
+      },
+      "last": {
+        "timestamp": "2026-11-13T22:07:26.338Z",
+        "price": "265.1"
+      },
+      "source_url": "https://api.robinhood.com/rhj/prices/AMZN",
+      "coverage": {
+        "kind": "observed_only",
+        "historical_ohlc_available": false,
+        "complete_requested_range": false,
+        "observation_count": 353,
+        "first_generated_at": "2026-11-12T18:56:57.385Z",
+        "last_generated_at": "2026-11-13T22:07:26.338Z",
+        "persisted": true,
+        "truncated": false
+      }
+    },
+    {
+      "symbol": "AMZN",
+      "range": "all",
+      "quote_symbol": "USD",
+      "points": 353,
+      "first": {
+        "timestamp": "2026-11-12T18:56:57.385Z",
+        "price": "269.26"
+      },
+      "last": {
+        "timestamp": "2026-11-13T22:07:26.338Z",
+        "price": "265.1"
+      },
+      "source_url": "https://api.robinhood.com/rhj/prices/AMZN",
+      "coverage": {
+        "kind": "observed_only",
+        "historical_ohlc_available": false,
+        "complete_requested_range": false,
+        "observation_count": 353,
+        "first_generated_at": "2026-11-12T18:56:57.385Z",
+        "last_generated_at": "2026-11-13T22:07:26.338Z",
+        "persisted": true,
+        "truncated": false
+      }
+    },
+    {
+      "symbol": "PLTR",
+      "range": "live",
+      "quote_symbol": "USD",
+      "points": 1,
+      "first": {
+        "timestamp": "2026-11-13T22:07:26.222Z",
+        "price": "166.5"
+      },
+      "last": {
+        "timestamp": "2026-11-13T22:07:26.222Z",
+        "price": "166.5"
+      },
+      "source_url": "https://api.robinhood.com/rhj/prices/PLTR",
+      "coverage": {
+        "kind": "observed_only",
+        "historical_ohlc_available": false,
+        "complete_requested_range": false,
+        "observation_count": 1,
+        "first_generated_at": "2026-11-13T22:07:26.222Z",
+        "last_generated_at": "2026-11-13T22:07:26.222Z",
+        "persisted": true,
+        "truncated": false
+      }
+    },
+    {
+      "symbol": "PLTR",
+      "range": "1d",
+      "quote_symbol": "USD",
+      "points": 220,
+      "first": {
+        "timestamp": "2026-11-12T22:07:34.333Z",
+        "price": "171.27"
+      },
+      "last": {
+        "timestamp": "2026-11-13T22:07:26.222Z",
+        "price": "166.5"
+      },
+      "source_url": "https://api.robinhood.com/rhj/prices/PLTR",
+      "coverage": {
+        "kind": "observed_only",
+        "historical_ohlc_available": false,
+        "complete_requested_range": false,
+        "observation_count": 220,
+        "first_generated_at": "2026-11-12T22:07:34.333Z",
+        "last_generated_at": "2026-11-13T22:07:26.222Z",
+        "persisted": true,
+        "truncated": false
+      }
+    },
+    {
+      "symbol": "PLTR",
+      "range": "1w",
+      "quote_symbol": "USD",
+      "points": 325,
+      "first": {
+        "timestamp": "2026-11-12T18:56:57.293Z",
+        "price": "172.17"
+      },
+      "last": {
+        "timestamp": "2026-11-13T22:07:26.222Z",
+        "price": "166.5"
+      },
+      "source_url": "https://api.robinhood.com/rhj/prices/PLTR",
+      "coverage": {
+        "kind": "observed_only",
+        "historical_ohlc_available": false,
+        "complete_requested_range": false,
+        "observation_count": 325,
+        "first_generated_at": "2026-11-12T18:56:57.293Z",
+        "last_generated_at": "2026-11-13T22:07:26.222Z",
+        "persisted": true,
+        "truncated": false
+      }
+    },
+    {
+      "symbol": "PLTR",
+      "range": "1m",
+      "quote_symbol": "USD",
+      "points": 325,
+      "first": {
+        "timestamp": "2026-11-12T18:56:57.293Z",
+        "price": "172.17"
+      },
+      "last": {
+        "timestamp": "2026-11-13T22:07:26.222Z",
+        "price": "166.5"
+      },
+      "source_url": "https://api.robinhood.com/rhj/prices/PLTR",
+      "coverage": {
+        "kind": "observed_only",
+        "historical_ohlc_available": false,
+        "complete_requested_range": false,
+        "observation_count": 325,
+        "first_generated_at": "2026-11-12T18:56:57.293Z",
+        "last_generated_at": "2026-11-13T22:07:26.222Z",
+        "persisted": true,
+        "truncated": false
+      }
+    },
+    {
+      "symbol": "PLTR",
+      "range": "1y",
+      "quote_symbol": "USD",
+      "points": 325,
+      "first": {
+        "timestamp": "2026-11-12T18:56:57.293Z",
+        "price": "172.17"
+      },
+      "last": {
+        "timestamp": "2026-11-13T22:07:26.222Z",
+        "price": "166.5"
+      },
+      "source_url": "https://api.robinhood.com/rhj/prices/PLTR",
+      "coverage": {
+        "kind": "observed_only",
+        "historical_ohlc_available": false,
+        "complete_requested_range": false,
+        "observation_count": 325,
+        "first_generated_at": "2026-11-12T18:56:57.293Z",
+        "last_generated_at": "2026-11-13T22:07:26.222Z",
+        "persisted": true,
+        "truncated": false
+      }
+    },
+    {
+      "symbol": "PLTR",
+      "range": "all",
+      "quote_symbol": "USD",
+      "points": 325,
+      "first": {
+        "timestamp": "2026-11-12T18:56:57.293Z",
+        "price": "172.17"
+      },
+      "last": {
+        "timestamp": "2026-11-13T22:07:26.222Z",
+        "price": "166.5"
+      },
+      "source_url": "https://api.robinhood.com/rhj/prices/PLTR",
+      "coverage": {
+        "kind": "observed_only",
+        "historical_ohlc_available": false,
+        "complete_requested_range": false,
+        "observation_count": 325,
+        "first_generated_at": "2026-11-12T18:56:57.293Z",
+        "last_generated_at": "2026-11-13T22:07:26.222Z",
+        "persisted": true,
+        "truncated": false
+      }
+    },
+    {
+      "symbol": "NFLX",
+      "range": "live",
+      "quote_symbol": "USD",
+      "points": 1,
+      "first": {
+        "timestamp": "2026-11-13T22:07:21.267Z",
+        "price": "62.01"
+      },
+      "last": {
+        "timestamp": "2026-11-13T22:07:21.267Z",
+        "price": "62.01"
+      },
+      "source_url": "https://api.robinhood.com/rhj/prices/NFLX",
+      "coverage": {
+        "kind": "observed_only",
+        "historical_ohlc_available": false,
+        "complete_requested_range": false,
+        "observation_count": 1,
+        "first_generated_at": "2026-11-13T22:07:21.267Z",
+        "last_generated_at": "2026-11-13T22:07:21.267Z",
+        "persisted": true,
+        "truncated": false
+      }
+    },
+    {
+      "symbol": "NFLX",
+      "range": "1d",
+      "quote_symbol": "USD",
+      "points": 220,
+      "first": {
+        "timestamp": "2026-11-12T22:07:33.149Z",
+        "price": "62.84"
+      },
+      "last": {
+        "timestamp": "2026-11-13T22:07:21.267Z",
+        "price": "62.01"
+      },
+      "source_url": "https://api.robinhood.com/rhj/prices/NFLX",
+      "coverage": {
+        "kind": "observed_only",
+        "historical_ohlc_available": false,
+        "complete_requested_range": false,
+        "observation_count": 220,
+        "first_generated_at": "2026-11-12T22:07:33.149Z",
+        "last_generated_at": "2026-11-13T22:07:21.267Z",
+        "persisted": true,
+        "truncated": false
+      }
+    },
+    {
+      "symbol": "NFLX",
+      "range": "1w",
+      "quote_symbol": "USD",
+      "points": 325,
+      "first": {
+        "timestamp": "2026-11-12T18:56:57.188Z",
+        "price": "63.73"
+      },
+      "last": {
+        "timestamp": "2026-11-13T22:07:21.267Z",
+        "price": "62.01"
+      },
+      "source_url": "https://api.robinhood.com/rhj/prices/NFLX",
+      "coverage": {
+        "kind": "observed_only",
+        "historical_ohlc_available": false,
+        "complete_requested_range": false,
+        "observation_count": 325,
+        "first_generated_at": "2026-11-12T18:56:57.188Z",
+        "last_generated_at": "2026-11-13T22:07:21.267Z",
+        "persisted": true,
+        "truncated": false
+      }
+    },
+    {
+      "symbol": "NFLX",
+      "range": "1m",
+      "quote_symbol": "USD",
+      "points": 325,
+      "first": {
+        "timestamp": "2026-11-12T18:56:57.188Z",
+        "price": "63.73"
+      },
+      "last": {
+        "timestamp": "2026-11-13T22:07:21.267Z",
+        "price": "62.01"
+      },
+      "source_url": "https://api.robinhood.com/rhj/prices/NFLX",
+      "coverage": {
+        "kind": "observed_only",
+        "historical_ohlc_available": false,
+        "complete_requested_range": false,
+        "observation_count": 325,
+        "first_generated_at": "2026-11-12T18:56:57.188Z",
+        "last_generated_at": "2026-11-13T22:07:21.267Z",
+        "persisted": true,
+        "truncated": false
+      }
+    },
+    {
+      "symbol": "NFLX",
+      "range": "1y",
+      "quote_symbol": "USD",
+      "points": 325,
+      "first": {
+        "timestamp": "2026-11-12T18:56:57.188Z",
+        "price": "63.73"
+      },
+      "last": {
+        "timestamp": "2026-11-13T22:07:21.267Z",
+        "price": "62.01"
+      },
+      "source_url": "https://api.robinhood.com/rhj/prices/NFLX",
+      "coverage": {
+        "kind": "observed_only",
+        "historical_ohlc_available": false,
+        "complete_requested_range": false,
+        "observation_count": 325,
+        "first_generated_at": "2026-11-12T18:56:57.188Z",
+        "last_generated_at": "2026-11-13T22:07:21.267Z",
+        "persisted": true,
+        "truncated": false
+      }
+    },
+    {
+      "symbol": "NFLX",
+      "range": "all",
+      "quote_symbol": "USD",
+      "points": 325,
+      "first": {
+        "timestamp": "2026-11-12T18:56:57.188Z",
+        "price": "63.73"
+      },
+      "last": {
+        "timestamp": "2026-11-13T22:07:21.267Z",
+        "price": "62.01"
+      },
+      "source_url": "https://api.robinhood.com/rhj/prices/NFLX",
+      "coverage": {
+        "kind": "observed_only",
+        "historical_ohlc_available": false,
+        "complete_requested_range": false,
+        "observation_count": 325,
+        "first_generated_at": "2026-11-12T18:56:57.188Z",
+        "last_generated_at": "2026-11-13T22:07:21.267Z",
+        "persisted": true,
+        "truncated": false
+      }
+    },
+    {
+      "symbol": "AMD",
+      "range": "live",
+      "quote_symbol": "USD",
+      "points": 1,
+      "first": {
+        "timestamp": "2026-11-13T22:07:17.451Z",
+        "price": "527"
+      },
+      "last": {
+        "timestamp": "2026-11-13T22:07:17.451Z",
+        "price": "527"
+      },
+      "source_url": "https://api.robinhood.com/rhj/prices/AMD",
+      "coverage": {
+        "kind": "observed_only",
+        "historical_ohlc_available": false,
+        "complete_requested_range": false,
+        "observation_count": 1,
+        "first_generated_at": "2026-11-13T22:07:17.451Z",
+        "last_generated_at": "2026-11-13T22:07:17.451Z",
+        "persisted": true,
+        "truncated": false
+      }
+    },
+    {
+      "symbol": "AMD",
+      "range": "1d",
+      "quote_symbol": "USD",
+      "points": 244,
+      "first": {
+        "timestamp": "2026-11-12T22:07:31.936Z",
+        "price": "581.4"
+      },
+      "last": {
+        "timestamp": "2026-11-13T22:07:17.451Z",
+        "price": "527"
+      },
+      "source_url": "https://api.robinhood.com/rhj/prices/AMD",
+      "coverage": {
+        "kind": "observed_only",
+        "historical_ohlc_available": false,
+        "complete_requested_range": false,
+        "observation_count": 244,
+        "first_generated_at": "2026-11-12T22:07:31.936Z",
+        "last_generated_at": "2026-11-13T22:07:17.451Z",
+        "persisted": true,
+        "truncated": false
+      }
+    },
+    {
+      "symbol": "AMD",
+      "range": "1w",
+      "quote_symbol": "USD",
+      "points": 352,
+      "first": {
+        "timestamp": "2026-11-12T18:56:43.027Z",
+        "price": "577.9"
+      },
+      "last": {
+        "timestamp": "2026-11-13T22:07:17.451Z",
+        "price": "527"
+      },
+      "source_url": "https://api.robinhood.com/rhj/prices/AMD",
+      "coverage": {
+        "kind": "observed_only",
+        "historical_ohlc_available": false,
+        "complete_requested_range": false,
+        "observation_count": 352,
+        "first_generated_at": "2026-11-12T18:56:43.027Z",
+        "last_generated_at": "2026-11-13T22:07:17.451Z",
+        "persisted": true,
+        "truncated": false
+      }
+    },
+    {
+      "symbol": "AMD",
+      "range": "1m",
+      "quote_symbol": "USD",
+      "points": 352,
+      "first": {
+        "timestamp": "2026-11-12T18:56:43.027Z",
+        "price": "577.9"
+      },
+      "last": {
+        "timestamp": "2026-11-13T22:07:17.451Z",
+        "price": "527"
+      },
+      "source_url": "https://api.robinhood.com/rhj/prices/AMD",
+      "coverage": {
+        "kind": "observed_only",
+        "historical_ohlc_available": false,
+        "complete_requested_range": false,
+        "observation_count": 352,
+        "first_generated_at": "2026-11-12T18:56:43.027Z",
+        "last_generated_at": "2026-11-13T22:07:17.451Z",
+        "persisted": true,
+        "truncated": false
+      }
+    },
+    {
+      "symbol": "AMD",
+      "range": "1y",
+      "quote_symbol": "USD",
+      "points": 352,
+      "first": {
+        "timestamp": "2026-11-12T18:56:43.027Z",
+        "price": "577.9"
+      },
+      "last": {
+        "timestamp": "2026-11-13T22:07:17.451Z",
+        "price": "527"
+      },
+      "source_url": "https://api.robinhood.com/rhj/prices/AMD",
+      "coverage": {
+        "kind": "observed_only",
+        "historical_ohlc_available": false,
+        "complete_requested_range": false,
+        "observation_count": 352,
+        "first_generated_at": "2026-11-12T18:56:43.027Z",
+        "last_generated_at": "2026-11-13T22:07:17.451Z",
+        "persisted": true,
+        "truncated": false
+      }
+    },
+    {
+      "symbol": "AMD",
+      "range": "all",
+      "quote_symbol": "USD",
+      "points": 352,
+      "first": {
+        "timestamp": "2026-11-12T18:56:43.027Z",
+        "price": "577.9"
+      },
+      "last": {
+        "timestamp": "2026-11-13T22:07:17.451Z",
+        "price": "527"
+      },
+      "source_url": "https://api.robinhood.com/rhj/prices/AMD",
+      "coverage": {
+        "kind": "observed_only",
+        "historical_ohlc_available": false,
+        "complete_requested_range": false,
+        "observation_count": 352,
+        "first_generated_at": "2026-11-12T18:56:43.027Z",
+        "last_generated_at": "2026-11-13T22:07:17.451Z",
+        "persisted": true,
+        "truncated": false
+      }
+    }
+  ]
+}
