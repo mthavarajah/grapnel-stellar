@@ -476,9 +476,6 @@ export default function Dashboard({ section }: { section: string }) {
             >
               <Icon name={icon} />
               <span>{label}</span>
-              {id === "modules" && modules.length > 0 && (
-                <small>{modules.length}</small>
-              )}
             </Link>
           ))}
         </nav>

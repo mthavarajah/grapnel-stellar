@@ -39,8 +39,11 @@ export default function Activity({api}:{api:(path:string,init?:RequestInit)=>Pro
  useEffect(()=>{const controller=new AbortController();void load(controller.signal);return()=>controller.abort();},[load]);
  async function older(){if(!cursor||more)return;setMore(true);setError('');try{const page:Page=await api('activity?'+new URLSearchParams(cursor));setRows(current=>{const ids=new Set(current.map(r=>r.operation_id));return [...current,...page.activities.filter(r=>!ids.has(r.operation_id))];});setCursor(page.next_cursor);}catch(e){setError(e instanceof Error?e.message:'Transactions could not be loaded');}finally{setMore(false);}}
  return <section className="panel table-panel"><div className="panel-heading"><h2>Stellar transactions</h2><span className="count">{rows.length}</span></div>
- {error&&<div role="alert" className="customer-read-error">{error}<button className="button outline" onClick={()=>void load(new AbortController().signal)}>Try again</button></div>}
+ {error&&<div role="alert" className="customer-read-error">{error}<button className="secondary" onClick={()=>void load(new AbortController().signal)}>Try again</button></div>}
  {loading?<div className="loading">Loading transactions<span/></div>:rows.length?<ActivityTable activities={rows}/>:!error?<div className="customer-empty"><h3>No Stellar transactions yet</h3><p>Customer transactions submitted through Grapnel will appear here.</p></div>:null}
- {cursor&&<div className="panel-heading"><button className="button outline" disabled={more} onClick={()=>void older()}>{more?'Loading…':'Load more'}</button></div>}
+ {cursor&&<div className="activity-pagination"><button className="secondary activity-load-more" disabled={more} aria-busy={more} onClick={()=>void older()}>
+  <svg className={more?'activity-page-spinner':undefined} width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">{more?<path d="M21 12a9 9 0 1 1-9-9"/>:<path d="m6 9 6 6 6-6"/>}</svg>
+  {more?'Loading…':'Load more'}
+ </button></div>}
  </section>;
 }
