@@ -1678,8 +1678,8 @@ footer strong {
 .loan-context { padding: 12px; border-radius: 9px; background: var(--bg); color: var(--muted); font-size: 11px; line-height: 1.6; margin: 0 0 18px; }
 .loan-action { display: grid; grid-template-columns: minmax(0,1fr) auto; align-items: end; gap: 10px; margin-top: 18px; }
 .loan-action label { min-width: 0; font-size: 12px; color: var(--muted); }
-.loan-action input { margin-top: 8px; }
-.loan-action .button { margin-bottom: 0; white-space: nowrap; }
+.loan-action input { margin-top: 0; }
+.loan-action .button { min-height: 46px; margin-bottom: 0; white-space: nowrap; }
 @media(max-width: 900px) { .borrowing-grid { grid-template-columns: minmax(0,1fr); } }
 @media(max-width: 600px) { .borrowing-section { padding: 18px; } .borrowing-asset { padding: 18px; } .loan-action { grid-template-columns: minmax(0,1fr); } .loan-action .button { justify-content: center; } }
 
@@ -1751,7 +1751,12 @@ footer strong {
 .loan-amount-field { min-width: 0; }
 .loan-amount-heading { display: flex; align-items: center; justify-content: space-between; gap: 8px; min-height: 21px; }
 .loan-amount-heading label { margin: 0; }
-.loan-repay-max { border: 0; background: transparent; color: var(--ink); font: inherit; font-size: 10px; font-weight: 650; cursor: pointer; padding: 2px 0; }
+.loan-amount-input { display: flex; align-items: center; gap: 8px; min-height: 46px; margin-top: 8px; padding: 4px 8px 4px 13px; border: 1px solid var(--line); border-radius: 9px; background: var(--paper); }
+.loan-amount-input:focus-within { border-color: var(--blue); outline: 2px solid #8092c720; }
+.loan-amount-input input { flex: 1; width: 100%; min-width: 0; padding: 6px 0; border: 0; border-radius: 0; background: transparent; box-shadow: none; outline: none; }
+.loan-amount-input input:focus-visible { outline: none; }
+.loan-repay-max { flex: 0 0 auto; display: inline-flex; align-items: center; justify-content: center; min-width: 46px; min-height: 32px; border: 1px solid var(--line); border-radius: 6px; background: var(--bg); color: var(--ink); font: inherit; font-size: 11px; font-weight: 650; cursor: pointer; padding: 6px 10px; line-height: 1; }
+.loan-repay-max:hover:not(:disabled) { border-color: var(--ink); }
 .loan-repay-max:disabled { color: var(--muted); cursor: default; opacity: .55; }
 
 .operation-progress {
