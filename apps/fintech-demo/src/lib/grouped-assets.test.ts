@@ -23,3 +23,9 @@ it('uses only the exact verified USDG settlement-unit value and never guesses a 
  expect(buildGroupedAssets([source])[0]).toMatchObject({wallet_amount:'220.125',reserved:'0',spendable:'220.125',value_usd:'220.125'});
  for(const change of [{balance_verified:false},{value_usd:'221'},{valuation_basis:null},{asset_id:'other',asset:{...source.asset,id:'other'}}])expect(buildGroupedAssets([{...source,...change}])[0]!.value_usd).toBeNull();
 });
+
+it('displays only verified canonical stock sell-quote values independently of reference stock prices',()=>{
+ const id='robinhood-testnet:erc20:0xc9f9c86933092bbbfff3ccb4b105a4a94bf3bd4e',source={asset_id:id,asset:{id,code:'TSLA',verified:true,decimals:18},wallet_amount:'1.806220457383042130',reserved:'0',spendable:'1.806220457383042130',balance_verified:true,value_usd:'0.994009',valuation_basis:'testnet_pool_sell_quote'};
+ expect(buildGroupedAssets([source])[0]).toMatchObject({value_usd:'0.994009',reserved:'0',spendable:'1.80622045738304213'});
+ for(const change of [{balance_verified:false},{value_usd:null},{valuation_basis:'reference_price'},{asset_id:'unverified',asset:{...source.asset,id:'unverified'}}])expect(buildGroupedAssets([{...source,...change}])[0]!.value_usd).toBeNull();
+});

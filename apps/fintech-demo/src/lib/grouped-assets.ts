@@ -1,5 +1,6 @@
 /** Asset presentation aggregation only. No balance, price or dollar peg is inferred. */
 import {formatTokenAmount} from '@grapnel/contracts';
+import {ROBINHOOD_CUSTOMER} from './robinhood-customer';
 export type AssetBalanceRow={asset_id:string;asset?:{id:string;code:string;name?:string;verified?:boolean;kind?:string;network?:string;decimals?:number};wallet_amount:string|null;reserved?:string|null;spendable?:string|null;network_label?:string;feature_label?:string;balance_verified?:boolean;value_usd?:string|null;valuation_basis?:string|null};
 export type AssetBalanceValuation={assets?:{asset_id:string;wallet_amount:string;value_usd:string|null}[]}|null;
 export type GroupedAssetSource=AssetBalanceRow&{code:string;label:string;name?:string;wallet_amount:string|null;reserved:string|null;spendable:string|null;value_usd:string|null;conflicted:boolean};
@@ -22,6 +23,7 @@ function valuationFor(row:AssetBalanceRow,amount:string|null,valuation?:AssetBal
  if(amount===null)return null;
  // Explicit server accounting basis for the pinned Robinhood Testnet settlement token.
  if(row.balance_verified===true&&metadata(row)?.verified===true&&row.asset_id==='robinhood-testnet:erc20:0x7e955252e15c84f5768b83c41a71f9eba181802f'&&row.valuation_basis==='testnet_settlement_unit'&&normalize(row.value_usd,38)===amount)return amount;
+ if(row.balance_verified===true&&metadata(row)?.verified===true&&row.valuation_basis==='testnet_pool_sell_quote'&&Object.values(ROBINHOOD_CUSTOMER.stocks).some(stock=>row.asset_id===`robinhood-testnet:erc20:${stock.address}`))return normalize(row.value_usd,6);
  const matches=valuation?.assets?.filter(v=>v.asset_id===row.asset_id&&normalize(v.wallet_amount,precision(row))===amount)??[];if(!matches.length)return null;
  const values=matches.map(v=>normalize(v.value_usd,38));return values.every(value=>value!==null&&value===values[0])?values[0]!:null;
 }

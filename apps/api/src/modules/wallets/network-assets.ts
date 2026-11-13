@@ -26,7 +26,7 @@ export async function readNetworkAssets(c:CustomerContext,readWallets:NetworkAss
  if(addresses.some(a=>!/^0x[0-9a-f]{40}$/.test(a)))throw Error('Invalid wallet ownership response');
  const balances=await Promise.all(SOURCES.map(async source=>{
   const asset_id=`${source.id}:erc20:${source.token.toLowerCase()}`;
-  let amount:string|null=null,observed_at:string|null=null,verified=false;
+  let amount:string|null=null,observed_at:string|null=null,verified=false,value_usd:string|null=null,valuation_basis:string|null=null;
   if(addresses.length){try{
    const client=createPublicClient({transport:http(source.rpc,{timeout:10000,retryCount:0})});
    if(await client.getChainId()!==source.chain)throw Error('Network mismatch');
@@ -37,9 +37,18 @@ export async function readNetworkAssets(c:CustomerContext,readWallets:NetworkAss
    const decimals=await client.readContract({address:source.token as Hex,abi:ABI,functionName:'decimals',blockNumber:block.number});if(decimals!==source.decimals)throw Error('Asset decimals mismatch');
    const values=await Promise.all(addresses.map(address=>client.readContract({address:source.token as Hex,abi:ABI,functionName:'balanceOf',args:[address as Hex],blockNumber:block.number})));
    if(source.chain===46630&&source.code!=='USDG'){const multiplier=await createRobinhoodReader().readStockMultiplier(source.code as typeof STOCKS[number]['symbol']);if(multiplier.multiplierBaseUnits!=='1000000000000000000')throw Error('Stock multiplier changed');}
-   amount=fromAtomic(values.reduce((sum,v)=>sum+v,0n),source.decimals);observed_at=new Date(Number(block.timestamp)*1000).toISOString();verified=true;
+   const atomic=values.reduce((sum,v)=>sum+v,0n);
+   amount=fromAtomic(atomic,source.decimals);observed_at=new Date(Number(block.timestamp)*1000).toISOString();verified=true;
+   if(source.chain===46630){
+    if(source.code==='USDG'){value_usd=amount;valuation_basis='testnet_settlement_unit';}
+    else if(atomic===0n){value_usd='0';valuation_basis='testnet_pool_sell_quote';}
+    else try{
+     const quote=await createRobinhoodReader().quoteExactInput({symbol:source.code as typeof STOCKS[number]['symbol'],side:'sell',amountInBaseUnits:atomic.toString(),slippageBps:0});
+     value_usd=fromAtomic(BigInt(quote.amountOutBaseUnits),6);valuation_basis='testnet_pool_sell_quote';
+    }catch{/* Preserve verified holdings when a current sell valuation is unavailable. */}
+   }
   }catch{/* Missing observations remain unknown. */}}
-  return {asset_id,asset:{id:asset_id,code:source.code,name:source.code,kind:'erc20',network:source.id,decimals:source.decimals,verified:true},balance_verified:verified,wallet_amount:amount,reserved:verified&&source.chain===46630?'0':null,spendable:verified&&source.chain===46630?amount:null,value_usd:verified&&source.code==='USDG'?amount:null,valuation_basis:verified&&source.code==='USDG'?'testnet_settlement_unit':null,network_label:source.label,feature_label:'Wallet',observed_at};
+  return {asset_id,asset:{id:asset_id,code:source.code,name:source.code,kind:'erc20',network:source.id,decimals:source.decimals,verified:true},balance_verified:verified,wallet_amount:amount,reserved:verified&&source.chain===46630?'0':null,spendable:verified&&source.chain===46630?amount:null,value_usd,valuation_basis,network_label:source.label,feature_label:'Wallet',observed_at};
  }));
  return {scope:{business_id:c.businessId,customer_id:c.customerId,wallet_id:c.walletId},balances};
 }
