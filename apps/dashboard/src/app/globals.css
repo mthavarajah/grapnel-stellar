@@ -2766,3 +2766,7 @@ td strong {
 .module-reason details code { display: block; margin-top: 6px; font-size: 10px; overflow-wrap: anywhere; }
 @media (min-width: 901px) { .module-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 .module-availability .badge.verified { color: #fff; }
+
+.activity-status { display: inline-flex; text-transform: capitalize; font-size: 12px; font-weight: 600; border-radius: 999px; padding: 5px 10px; background: #f3f4f6; color: #475569; white-space: nowrap; }
+.activity-status.is-completed { color: #166534; background: #f0fdf4; }
+.activity-status.is-failed { color: #991b1b; background: #fef2f2; }

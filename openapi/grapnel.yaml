@@ -2,7 +2,7 @@
   "openapi": "3.1.0",
   "info": {
     "title": "Grapnel Testnet API",
-    "version": "0.4.4",
+    "version": "0.4.5",
     "description": "Testnet B2B API with independently authorized customer wallets. Stellar funding, Crypto and Blend; canonical Robinhood Testnet USDG stock execution. Financial writes require current tenant permissions, customer ownership and actual chain proof. See docs/20_STOCKS_CUSTOMER_EXECUTION.md. GMX Arbitrum Sepolia perpetuals use the same customer authorization model with exact signed EVM transactions and canonical keeper execution proof."
   },
   "servers": [
@@ -6176,6 +6176,45 @@
           },
           "409": {
             "description": "Execution unavailable, pending wallet action or insufficient available funds."
+          }
+        }
+      }
+    },
+    "/v1/dashboard/activity": {
+      "get": {
+        "summary": "List owner business Stellar transactions with customer references",
+        "security": [
+          {
+            "ownerSession": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "before",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "before_id",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Tenant-scoped activities and nullable next_cursor; both cursor fields required for older pages"
+          },
+          "401": {
+            "description": "Owner session required"
+          },
+          "422": {
+            "description": "Invalid or incomplete cursor"
           }
         }
       }

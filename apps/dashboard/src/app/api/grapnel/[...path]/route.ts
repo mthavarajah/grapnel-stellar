@@ -10,6 +10,7 @@ const routes: Record<string, string[]> = {
   "dashboard/modules": ["GET", "PATCH"],
   "dashboard/api-keys": ["GET", "POST"],
   "dashboard/requests": ["GET"],
+  "dashboard/activity": ["GET"],
 };
 async function proxy(
   request: NextRequest,
@@ -58,7 +59,7 @@ async function proxy(
   if (csrf) headers["X-CSRF-Token"] = csrf;
   try {
     const response = await fetch(
-      `${(process.env.GRAPNEL_API_URL ?? "http://localhost:3001").replace(/\/$/, "")}/v1/${route}`,
+      `${(process.env.GRAPNEL_API_URL ?? "http://localhost:3001").replace(/\/$/, "")}/v1/${route}${route === "dashboard/activity" ? request.nextUrl.search : ""}`,
       {
         method: request.method,
         headers,

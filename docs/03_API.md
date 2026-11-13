@@ -159,3 +159,7 @@ Version0.4.3 publishes the existing GMX status/request/prepare/authorize/gas sur
 ## Version 0.4.4 — Zenex XLM provider replacement
 
 Active Perpetuals catalog is `zenex-testnet:perps:XLM`. Additive status/prepare/fund routes reuse the existing customer-bound operations/signing lifecycle; exact order fields are bound in optional `summary.perpetual`, with `display_side` for activity. No new module IDs or DB tables. See [Zenex integration](20_ZENEX_TESTNET.md).
+
+### Additive owner Activity endpoint — November 13, 2026 (0.4.5)
+
+`GET /v1/dashboard/activity` uses the existing owner cookie and derives the tenant from that session. It returns `activities` (up to50 submitted Stellar transactions) and nullable `next_cursor: {before, before_id}`. Pass both cursor fields to read older rows. Each item contains operation/customer identifiers, external customer reference, wallet address, action, durable status, provider, transaction hash, timestamps and nullable requested amount/asset. Only existing operations with an exact Stellar hash are listed; no unsigned requests, EVM transactions, signing payloads or secrets. This is the business's Grapnel activity, not a global network explorer or an index of external wallet transfers. Pending submission is not chain success. Existing interfaces are unchanged.

@@ -1,3 +1,4 @@
+import { registerDashboardActivity } from './modules/dashboard-activity/routes.js';
 import Fastify, { type FastifyInstance } from 'fastify';
 import cookie from '@fastify/cookie';
 import cors from '@fastify/cors';
@@ -72,6 +73,7 @@ export async function buildApp(options:AppOptions={}):Promise<FastifyInstance>{
  app.get('/v1/dashboard/session',async request=>{const owner=await requireOwner(request);return success(request,{business_id:owner.businessId,csrf_token:owner.csrfToken});});
  app.post('/v1/dashboard/logout',async(request,reply)=>{const owner=await requireOwner(request,true);await pool.query('DELETE FROM owner_sessions WHERE token_hash=$1',[digest(owner.token)]);reply.clearCookie('grapnel_owner',{path:'/'});return success(request,{logged_out:true});});
  app.get('/v1/dashboard/business',async request=>{const owner=await requireOwner(request);return success(request,(await pool.query('SELECT id,name,environment,revision,created_at FROM businesses WHERE id=$1',[owner.businessId])).rows[0]);});
+ await registerDashboardActivity(app,pool);
  app.get('/v1/dashboard/customers',async request=>{
   const owner=await requireOwner(request);
   const rows=(await pool.query(`SELECT c.id AS customer_id,c.external_customer_id,c.created_at,

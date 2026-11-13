@@ -1,6 +1,7 @@
 "use client";
 import Link from "next/link";
 import Customers from "./customers";
+import Activity from "./activity";
 import { ModuleAvailability, type ModuleCapability } from "./module-availability";
 import {
   useCallback,
@@ -38,6 +39,7 @@ const nav = [
   ["customers", "Customers", "wallet"],
   ["modules", "API modules", "layers"],
   ["api-keys", "API keys", "key"],
+  ["activity", "Activity", "activity"],
   ["logs", "Request logs", "activity"],
   ["docs", "Documentation", "book"],
 ] as const;
@@ -46,6 +48,7 @@ const titles: Record<string, string> = {
   customers: "Customers",
   modules: "API modules",
   "api-keys": "API keys",
+  activity: "Activity",
   logs: "Request logs",
   docs: "Documentation",
   onboarding: "Create a workspace",
@@ -464,7 +467,6 @@ export default function Dashboard({ section }: { section: string }) {
     <div className="app-shell">
       <aside className="sidebar">
         <Brand />
-        <span className="nav-label">WORKSPACE</span>
         <nav>
           {nav.map(([id, label, icon]) => (
             <Link
@@ -496,7 +498,6 @@ export default function Dashboard({ section }: { section: string }) {
               <i />
               Testnet
             </span>
-            <span className="avatar">{business?.name.charAt(0) ?? "G"}</span>
             <button
               className="mobile-logout"
               onClick={logout}
@@ -518,6 +519,8 @@ export default function Dashboard({ section }: { section: string }) {
                     ? "Review live customer wallet balances and lending positions."
                     : section === "api-keys"
                       ? "Connect your backend with secure business credentials."
+                      : section === "activity"
+                        ? "Stellar transactions across your customers."
                       : section === "logs"
                         ? "Inspect real requests across your integration."
                         : section === "docs"
@@ -750,6 +753,8 @@ export default function Dashboard({ section }: { section: string }) {
                     )}
                   </section>
                 </>
+              ) : section === "activity" ? (
+                <Activity api={api} />
               ) : section === "logs" ? (
                 <section className="panel table-panel">
                   <div className="panel-heading">
