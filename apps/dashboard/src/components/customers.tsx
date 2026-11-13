@@ -18,6 +18,14 @@ export type LendingPosition = {
   collateral: string;
   borrowed: string;
 };
+// Match the exact lending asset identities offered by Velocity Trading.
+const velocityLendingAssets = new Set([
+  "stellar-testnet:native:XLM",
+  "stellar-testnet:classic:USDC:GATALTGTWIOT6BUDBCZM3Q4OQ4BO2COLOAZ7IYSKPLC2PMSOPPGF5V56",
+]);
+const velocityPositions = (positions: LendingPosition[]) =>
+  positions.filter((position) => velocityLendingAssets.has(position.asset_id));
+
 type OwnerApi = (path: string, init?: RequestInit) => Promise<any>;
 type ReadState<T> = {
   customerId: string;
@@ -143,7 +151,7 @@ export function PositionTable({ positions }: { positions: LendingPosition[] }) {
           </tr>
         </thead>
         <tbody>
-          {positions.map((position) => (
+          {velocityPositions(positions).map((position) => (
             <tr key={position.market_id}>
               <td>
                 <AssetLabel
@@ -281,7 +289,9 @@ export default function Customers({ api }: { api: OwnerApi }) {
   }, [api, selectedId, activeWallet, readRevision]);
   const currentBalances = balances.customerId === selectedId ? balances : null;
   const currentPositions =
-    positions.customerId === selectedId ? positions : null;
+    positions.customerId === selectedId
+      ? { ...positions, data: positions.data ? velocityPositions(positions.data) : null }
+      : null;
   return (
     <>
       {listError && (
@@ -448,9 +458,8 @@ export default function Customers({ api }: { api: OwnerApi }) {
                   ) : currentPositions.data?.length ? (
                     <PositionTable positions={currentPositions.data} />
                   ) : (
-                    <ReadMessage title="No current Blend position">
-                      The successful live read found no supplied or borrowed
-                      balance for this customer.
+                    <ReadMessage title="No current XLM or USDC position">
+                      No XLM or USDC lending positions were found for this customer.
                     </ReadMessage>
                   )}
                   {currentPositions?.data && (

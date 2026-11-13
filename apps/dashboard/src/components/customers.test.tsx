@@ -32,7 +32,7 @@ describe("customer holdings display", () => {
         positions: [
           {
             market_id: marketId,
-            asset_id: "stellar-testnet:soroban:opaque-reserve",
+            asset_id: "stellar-testnet:classic:USDC:GATALTGTWIOT6BUDBCZM3Q4OQ4BO2COLOAZ7IYSKPLC2PMSOPPGF5V56",
             asset: { code: "USDC" },
             supplied: "20.1234567",
             collateral: "10.0000000",
@@ -48,6 +48,17 @@ describe("customer holdings display", () => {
     expect(visibleText(html)).toContain("USDC");
     expect(html).not.toContain(marketId);
     expect(html).not.toContain("opaque-reserve");
+  });
+  it("limits lending rows to Velocity's exact XLM and USDC assets", () => {
+    const position = { supplied: "1", collateral: "0", borrowed: "0" };
+    const html = renderToStaticMarkup(createElement(PositionTable, { positions: [
+      { ...position, market_id: "xlm", asset_id: "stellar-testnet:native:XLM", asset: { code: "XLM" } },
+      { ...position, market_id: "other", asset_id: "stellar-testnet:soroban:other", asset: { code: "OTHER" } },
+      { ...position, market_id: "wrong-usdc", asset_id: "stellar-testnet:soroban:wrong-usdc", asset: { code: "USDC" } },
+    ] }));
+    expect(visibleText(html)).toContain("XLM");
+    expect(visibleText(html)).not.toContain("OTHER");
+    expect(visibleText(html)).not.toContain("USDC");
   });
   it("renders unknown observations as unavailable rather than a zero balance", () => {
     const html = renderToStaticMarkup(
