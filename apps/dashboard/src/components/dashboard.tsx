@@ -464,16 +464,6 @@ export default function Dashboard({ section }: { section: string }) {
     <div className="app-shell">
       <aside className="sidebar">
         <Brand />
-        <div className="workspace">
-          <span className="workspace-icon">
-            {business?.name.charAt(0) ?? "W"}
-          </span>
-          <div>
-            <strong>{business?.name ?? "Workspace"}</strong>
-            <small>Developer workspace</small>
-          </div>
-          <span className="chevron">⌄</span>
-        </div>
         <span className="nav-label">WORKSPACE</span>
         <nav>
           {nav.map(([id, label, icon]) => (
@@ -507,9 +497,7 @@ export default function Dashboard({ section }: { section: string }) {
       </aside>
       <div className="main-shell">
         <header className="topbar">
-          <span>
-            Workspace <b>/</b> {titles[section] ?? "Overview"}
-          </span>
+          <span>Developer Console</span>
           <div>
             <span className="testnet">
               <i />
@@ -529,7 +517,6 @@ export default function Dashboard({ section }: { section: string }) {
         <main className="content">
           <div className="page-heading">
             <div>
-              <span className="eyebrow">DEVELOPER CONSOLE</span>
               <h1>{titles[section] ?? "Overview"}</h1>
               <p>
                 {section === "modules"
@@ -933,7 +920,7 @@ export default function Dashboard({ section }: { section: string }) {
                       <p>
                         Activate the modules your business needs.
                         <br />
-                        One API key. Consistent operations. Stellar underneath.
+                        One API key. Consistent operations.
                       </p>
                       <Link href="/modules" className="hero-link">
                         Configure your modules
@@ -1030,11 +1017,6 @@ export default function Dashboard({ section }: { section: string }) {
                       </Link>
                     </section>
                   </div>
-                  <div className="bottom-note">
-                    <span className="info-symbol">i</span>Testnet prototype.
-                    Enabled modules do not imply verified execution. No fiat or
-                    real-value assets.
-                  </div>
                 </>
               )}
             </>
@@ -1042,9 +1024,6 @@ export default function Dashboard({ section }: { section: string }) {
         </main>
         <footer className="main-footer">
           <span>Grapnel · Financial infrastructure, assembled.</span>
-          <span>
-            Stellar Testnet only <i />
-          </span>
         </footer>
       </div>
     </div>
