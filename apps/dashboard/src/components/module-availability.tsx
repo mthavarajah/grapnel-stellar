@@ -27,23 +27,12 @@ export function readinessReason(reason: string | null): string | null {
     ? "Provider verification is still required before execution is available."
     : reason);
 }
-function ExecutionBadge({ status }: { status: string }) {
-  const label = status === "testnet_verified" ? "Testnet verified"
-    : status === "discovery_only" ? "Discovery only"
-    : status === "simulation" ? "Simulation only"
-    : status === "blocked" ? "Blocked" : "Not verified";
-  return <span className={`badge ${status === "testnet_verified" ? "verified" : status === "blocked" ? "blocked" : "discovery"}`}><i />{label}</span>;
-}
 export function ModuleAvailability({ capability, selected }: { capability: ModuleCapability; selected: boolean }) {
   const reason = readinessReason(capability.reason);
   const changed = capability.enabled !== selected;
-  // Only report read availability when explicitly advertised by the API; a discovery badge alone proves no reads.
-  const marketReads = capability.actions.some(action => ["markets", "read_markets", "market_data"].includes(action));
   return <div className="module-availability">
     <dl>
       <div><dt>Business access</dt><dd className={capability.enabled ? "access-enabled" : "access-disabled"}>{capability.enabled ? "Enabled" : "Disabled"}</dd></div>
-      <div><dt>Testnet execution</dt><dd><ExecutionBadge status={capability.execution_status} /></dd></div>
-      {marketReads && <div><dt>Market data</dt><dd>Read-only access{!capability.enabled ? " · module disabled" : ""}</dd></div>}
     </dl>
     {changed && <p className="module-pending">{selected ? "Access will be enabled on save." : "Access will be disabled on save."}</p>}
     {reason && <div className="module-reason"><p>{reason}</p>{/^[A-Z][A-Z0-9_]+$/.test(capability.reason ?? "") && <details><summary>API reason</summary><code>{capability.reason}</code></details>}</div>}

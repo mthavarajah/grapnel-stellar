@@ -8,12 +8,12 @@ describe("module access and provider readiness", () => {
   it("keeps a pending toggle separate from saved permission and blocked execution", () => {
     const html = render({}, true);
     expect(html).toContain('access-disabled'); expect(html).toContain('Disabled');
-    expect(html).toContain('Access will be enabled on save.'); expect(html).toContain('Blocked');
+    expect(html).toContain('Access will be enabled on save.');
     expect(html).toContain('stock assets are on mainnet'); expect(html).not.toContain('Testnet verified');
   });
   it("does not promote execution when permission is enabled", () => {
     const html = render({ enabled: true }, true);
-    expect(html).toContain('access-enabled'); expect(html).toContain('Blocked');
+    expect(html).toContain('access-enabled');
     expect(html).not.toContain('on save'); expect(html).not.toContain('Read-only access');
   });
   it("reports jurisdiction requirements in plain language", () => {
@@ -21,14 +21,14 @@ describe("module access and provider readiness", () => {
   });
   it("does not infer public read availability from a discovery status", () => {
     expect(render({ execution_status: 'discovery_only' })).not.toContain('Market data');
-    expect(render({ actions: ['read_markets'], execution_status: 'discovery_only' })).toContain('Read-only access · module disabled');
+    expect(render({ actions: ['read_markets'], execution_status: 'discovery_only' })).not.toContain('Read-only access');
   });
   it("preserves verified readiness when access is disabled and awaiting removal", () => {
     const html = render({ enabled: true, execution_status: 'testnet_verified', reason: null }, false);
-    expect(html).toContain('Testnet verified'); expect(html).toContain('Access will be disabled on save.');
+    expect(html).not.toContain('Testnet execution'); expect(html).toContain('Access will be disabled on save.');
   });
   it("never labels unknown status or reason as verified", () => {
-    expect(render({ execution_status: 'new_status', reason: 'NEW_PROVIDER_BLOCK' })).toContain('Not verified');
+    expect(render({ execution_status: 'new_status', reason: 'NEW_PROVIDER_BLOCK' })).not.toContain('Testnet execution');
     expect(readinessReason('NEW_PROVIDER_BLOCK')).toContain('verification is still required');
     expect(readinessReason('Provider is temporarily unavailable')).toBe('Provider is temporarily unavailable');
     expect(readinessReason(null)).toBeNull();
