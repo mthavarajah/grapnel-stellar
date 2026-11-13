@@ -1,0 +1,18 @@
+{
+  "selected": [
+    {
+      "file": "03-velocity-overview.jpg",
+      "captured_at": "2026-11-13T04:49:42.675272+00:00",
+      "sha256": "3a4a3962138564d83b034fb362652c417206ef09474d12553eb09d9ba6ef5ae9",
+      "local_only": true
+    },
+    {
+      "file": "09-velocity-perpetuals.jpg",
+      "captured_at": "2026-11-13T04:47:38.516482+00:00",
+      "sha256": "ec487ee33ecc7ee25e556bd6001d588e5962e15d35da1a3d92d93c52edd8cc32",
+      "local_only": true
+    }
+  ],
+  "source": "http://localhost:3002",
+  "edited": false
+}

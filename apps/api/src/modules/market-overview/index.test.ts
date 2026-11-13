@@ -152,3 +152,5 @@ describe("Yahoo fixed-allowlist reference reader", () => {
     expect(fetcher).toHaveBeenCalledTimes(5);
   });
 });
+
+it('keeps the exact 18-decimal Zenex XLM reference price in the overview',async()=>{const service=new MarketOverviewService({referencePrice:async()=>null,perps:async()=>[perps('XLM','0.142164359363880500')],lending:async()=>[],now:()=>now});const section=(await service.read(['trade.perps'])).sections[0];expect(section).toMatchObject({id:'perps',available:true,items:[{symbol:'XLM',value:'0.142164359363880500'}]});});

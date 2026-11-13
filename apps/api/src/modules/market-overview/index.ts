@@ -61,7 +61,7 @@ const referenceItems: Record<"spot" | "stocks", Array<{ symbol: YahooSymbol; nam
 };
 
 function validDecimal(value: unknown): value is string {
-  return typeof value === "string" && value.length <= 100 && /^(?:0|[1-9]\d{0,29})(?:\.\d{1,12})?$/.test(value) && /[1-9]/.test(value.replaceAll(".", ""));
+  return typeof value === "string" && value.length <= 100 && /^(?:0|[1-9]\d{0,29})(?:\.\d{1,38})?$/.test(value) && /[1-9]/.test(value.replaceAll(".", ""));
 }
 
 function sourceDate(value: unknown, now: number, maxAgeMs: number): string | null {
