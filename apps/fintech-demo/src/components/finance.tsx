@@ -1,6 +1,7 @@
 "use client";
 import {StockActivity} from "./stock-activity";
 import {RobinhoodExecution} from "./robinhood-execution";
+import {groupedUsd} from '../lib/grouped-assets';
 import {GroupedAssets} from "./grouped-assets";
 import {createIdentityTokenResolver} from '@/lib/identity-token';
 import Link from "next/link";
@@ -194,6 +195,11 @@ type HistoryRange = "live"|"1d"|"1w"|"1m"|"1y"|"all";
 function displayPublicNotional(value:unknown):string {
   if(typeof value!=="string"||!/^[-]?\d+$/.test(value))return "—";
   try{const amount=BigInt(value);return `${amount<0n?"-":""}${formatTokenAmount(fromAtomic(amount<0n?-amount:amount,7))} USDC`;}catch{return "—";}
+}
+function balanceTimestamp(value:string):string {
+  const date=new Date(value);if(!Number.isFinite(date.getTime()))return "—";
+  const parts=new Intl.DateTimeFormat("en-US",{month:"short",day:"numeric",year:"numeric",hour:"2-digit",minute:"2-digit",hour12:true}).formatToParts(date),part=(type:string)=>parts.find(p=>p.type===type)?.value??"";
+  return `${part("month")}. ${part("day")}, ${part("year")} ${part("hour")}:${part("minute")} ${part("dayPeriod")}`;
 }
 function marketDate(value:string|number,includeTime=false,includeSeconds=false):string {
   const date=new Date(value);if(!Number.isFinite(date.getTime()))return "Date unavailable";
@@ -1010,7 +1016,7 @@ function FinanceShell({ page, auth, initialCategory }: { page: string; auth?: Au
                 {profileOpen&&<section className="profile-panel" id="account-profile-menu" ref={profilePanel} tabIndex={-1} role="dialog" aria-label="Your account" data-testid="account-menu">
                   <div className="profile-panel-heading"><strong>Your account</strong><span className="profile-connected"><span aria-hidden="true"/>Wallet connected</span></div>
                   <div className="profile-valuation" aria-live="polite" aria-busy={valuationLoading}>
-                    <span>Wallet value (estimated)</span>
+                    <span>Wallet value</span>
                     {valuationLoading?<p className="small muted" role="status">Loading wallet value…</p>:valuationUnavailable||!walletValuation?<><strong>—</strong><p className="small muted" role="status">Value unavailable</p></>:<>
                       {walletValuation.unpriced_asset_count>0&&<small>Priced assets</small>}
                       <strong data-testid="profile-wallet-value">{profileValue==null?"—":formatTokenAmount(profileValue)}{profileValue!=null?" USD":""}</strong>
@@ -1039,7 +1045,7 @@ function FinanceShell({ page, auth, initialCategory }: { page: string; auth?: Au
         <main>
           <div className="page-heading">
             <div>
-              <p className="eyebrow">YOUR VELOCITY WORKSPACE</p>
+
               <h1>{(page==="markets"||page==="trade")&&category!=="crypto_spot"?"Markets":title[page]}</h1>
 
             </div>
@@ -1100,11 +1106,7 @@ function FinanceShell({ page, auth, initialCategory }: { page: string; auth?: Au
                       ? "Your wallet is connected."
                       : "Your next step starts here."}
                   </h2>
-                  <p>
-                    {session
-                      ? "Your wallet is ready."
-                      : "Sign in to connect your wallet."}
-                  </p>
+                  {!session&&<p>Sign in to connect your wallet.</p>}
                   <div className="wallet-address">
                     {session ? (
                       <>
@@ -1116,7 +1118,7 @@ function FinanceShell({ page, auth, initialCategory }: { page: string; auth?: Au
                           target="_blank"
                           rel="noreferrer"
                         >
-                          View account ↗
+                          View Account ↗
                         </a>
                       </>
                     ) : (
@@ -1149,16 +1151,14 @@ function FinanceShell({ page, auth, initialCategory }: { page: string; auth?: Au
                   </div><section className="account-assets-total" aria-label="Account assets" data-testid="account-assets-total" title={accountValuation?.as_of?`As of ${marketDate(accountValuation.as_of,true,true)}`:undefined}>
                     <span className="account-assets-label">{accountPartial?"Estimated priced assets":"Total Assets"}</span>
                     <strong className="account-assets-value" aria-live="polite">{accountValueLoading||accountValueUnavailable||!accountValuation?"—":accountTotal==null?"—":`$${formatTokenAmount(accountTotal)}`}</strong>
-                    <small>{accountValueLoading?"Loading value…":accountValueUnavailable||!accountValuation||accountTotal==null?"Value unavailable":(accountValuation.unknown_source_count??0)>0?"Some balances are updating":accountValuation.unpriced_asset_count>0?`${accountValuation.unpriced_asset_count} ${accountValuation.unpriced_asset_count===1?"asset":"assets"} not priced`:"Estimated account assets"}</small>
+                    {accountValuation?.as_of&&<small><time dateTime={accountValuation.as_of}>as of {balanceTimestamp(accountValuation.as_of)}</time></small>}
                   </section></div>
                 </div>
               </section>
               <section className="section">
                 <div className="section-heading">
                   <h2>Your assets</h2>
-                  <span className="muted small">
-                    Wallet balances
-                  </span>
+
                 </div>
                 <BalanceTable valuation={walletValuation} balances={[...balances.map(b=>({...b,network_label:"Stellar",feature_label:"Wallet"})),...networkAssets.filter(b=>!(["TSLA","AMZN","PLTR","NFLX","AMD"].includes(b.asset?.code)&&typeof b.wallet_amount==="string"&&/^0+(?:\.0+)?$/.test(b.wallet_amount)))]} connected={!!session} hideZeroBalances />
               </section>
@@ -1168,7 +1168,7 @@ function FinanceShell({ page, auth, initialCategory }: { page: string; auth?: Au
                   const items=(section?.available?section.items:[]).filter(item=>typeof item.value==="string"&&/^\d+(?:\.\d+)?$/.test(item.value)&&(item.unit==="USD"||item.unit==="percent")&&Number.isFinite(Date.parse(item.as_of))).slice(0,3);
                   return <section className="overview-market-group" key={group.id} aria-label={group.label} data-testid={`overview-${group.id}`}>
                     <Link className="overview-market-heading" href={group.href}><h3>{group.label}</h3><Icon name="arrow" size={15} /></Link>
-                    {items.length?<ul>{items.map(item=><li key={`${item.symbol}:${item.name}`}><div className="overview-asset-identity"><AssetLogo symbol={item.symbol} name={item.name} size={26} /><div><strong title={item.name}>{item.symbol}</strong></div></div><span className="overview-market-value">{formatTokenAmount(item.value)}{item.unit==="percent"?"%":" USD"}{item.unit_detail&&<small>{item.unit_detail}</small>}</span></li>)}</ul>:<p className="small muted" role="status">{overviewLoading?"Loading prices":"Prices updating"}</p>}
+                    {items.length?<ul>{items.map(item=><li key={`${item.symbol}:${item.name}`}><div className="overview-asset-identity"><AssetLogo symbol={item.symbol} name={item.name} size={26} /><div><strong title={item.name}>{item.symbol}</strong></div></div><span className="overview-market-value">{item.unit==="USD"?groupedUsd(item.value):formatTokenAmount(item.value)+"%"}{item.unit_detail&&<small>{item.unit_detail}</small>}</span></li>)}</ul>:<p className="small muted" role="status">{overviewLoading?"Loading prices":"Prices updating"}</p>}
                   </section>;
                 })}
               </section>
@@ -1193,7 +1193,7 @@ function FinanceShell({ page, auth, initialCategory }: { page: string; auth?: Au
               )}
             </>
           )}
-          {fundingPage === "fund" && <>
+          {(fundingPage === "fund"||fundingPage === "return") && <>
             <section className="section" aria-label="Current wallet balances">
               <div className="section-heading"><h2>Your wallet balances</h2></div>
               <BalanceTable valuation={walletValuation} balances={[...balances.map(b=>({...b,network_label:"Stellar",feature_label:"Wallet"})),...networkAssets.filter(b=>!(["TSLA","AMZN","PLTR","NFLX","AMD"].includes(b.asset?.code)&&typeof b.wallet_amount==="string"&&/^0+(?:\.0+)?$/.test(b.wallet_amount)))]} connected={!!session} hideZeroBalances />
@@ -1251,22 +1251,9 @@ function FinanceShell({ page, auth, initialCategory }: { page: string; auth?: Au
                   </span>
                 </div>
 
-                <div className="detail-row">
-                  <span>
-                    {fundingPage === "fund" ? "Treasury inventory" : "Authorization"}
-                  </span>
-                  <strong>
-                    {fundingPage === "fund"
-                      ? assets[0]?.treasury_available
-                        ? formatTokenAmount(assets[0].treasury_available) + " XLM"
-                        : "Not yet available"
-                      : "Your wallet signature"}
-                  </strong>
-                </div>
-                <div className="inline-note">
-                  {customerMessage(fundingError || (!fundingCanStart ? capability("capital.testnet_funding")?.reason : "") || "Your wallet keeps the XLM required for network fees and account reserve.")}
-                </div>
-                <p className="small muted">Available: {formatTokenAmount(swapBalance(asset))} {assets.find(entry=>entry.asset_id===asset)?.asset?.code??assetCode(asset)}</p>
+                {fundingPage==="fund"&&<div className="detail-row"><span>Treasury inventory</span><strong>{assets.find(entry=>entry.asset_id===asset)?.treasury_available?formatTokenAmount(assets.find(entry=>entry.asset_id===asset).treasury_available)+" "+(assets.find(entry=>entry.asset_id===asset)?.asset?.code??assetCode(asset)):"Not yet available"}</strong></div>}
+                <div className="inline-note funding-available">Available: <strong>{formatTokenAmount(swapBalance(asset))} {assets.find(entry=>entry.asset_id===asset)?.asset?.code??assetCode(asset)}</strong></div>
+                {(fundingError||!fundingCanStart&&capability("capital.testnet_funding")?.reason)&&<p className="swap-action-error" role="alert">{customerMessage(fundingError||capability("capital.testnet_funding")?.reason||"")}</p>}
                 {actionErrors.funds&&<p className="swap-action-error" role="alert">{customerMessage(actionErrors.funds)}</p>}
                 <button
                   className="button wide"
@@ -1447,13 +1434,7 @@ function FinanceShell({ page, auth, initialCategory }: { page: string; auth?: Au
           {page === "earn" && (
             <>
 
-              <section className="card">
-                <div className="section-heading">
-                  <h2>Earn</h2>
-                  <span className="status-pill">
-                    {canPrepareBlendAction() ? "Available" : "Unavailable"}
-                  </span>
-                </div>
+              <section className="card earn-section" aria-label="Earn assets">
                 {lending.length ? (
                   <div className="pool-grid">
                     {lending.map((m) => {
@@ -1533,7 +1514,7 @@ function FinanceShell({ page, auth, initialCategory }: { page: string; auth?: Au
             </>
           )}
           {page === "borrow" && <section className="card borrowing-section" aria-label="Borrowing" data-testid="borrowing">
-            <div className="section-heading"><button type="button" className="button outline small-button" disabled={borrowingLoading||busy||!capability("capital.lending")?.enabled} onClick={()=>void refreshBorrowing()}>{borrowingLoading?<ProgressIndicator label="Refreshing" spinning/>:"Refresh loans"}</button></div>
+
             {borrowingError&&<p className="inline-note" role="alert">{customerMessage(borrowingError)}</p>}
             {borrowingLoading&&!borrowing?<p className="small muted"><ProgressIndicator label="Loading loan information" spinning/></p>:borrowing?.assets.length?<div className="borrowing-grid">{borrowing.assets.map(row=>{
               const collateralNeeded=row.reason==="COLLATERAL_REQUIRED"||/^0(?:\.0+)?$/.test(row.collateral_value??"");
@@ -1555,7 +1536,7 @@ function FinanceShell({ page, auth, initialCategory }: { page: string; auth?: Au
                   <div><dt>Borrow limit</dt><dd>{loanAmount(row.borrow_limit)}{row.borrow_limit!=null?" USD":""}</dd></div>
                   <div><dt>Health factor</dt><dd>{loanAmount(row.health_factor)}</dd></div>
                 </dl>
-                {collateralNeeded&&<p className="loan-context">Add collateral to this borrowing pool to enable borrowing. Your other Earn balances are separate.</p>}
+
 
                 <div className="earn-action-toggle loan-action-toggle" role="group" aria-label={`${row.asset.code} loan action`}>{(["borrow","repay","collateral-supply","collateral-withdraw"] as const).map(action=><button key={action} type="button" disabled={busy} aria-pressed={direction===action} onClick={()=>setLoanActions(current=>({...current,[row.market_id]:action}))}>{action==="borrow"?"Borrow":action==="repay"?"Repay":action==="collateral-supply"?"Add collateral":"Remove collateral"}</button>)}</div>
                 <p className="small muted">Available in wallet: {formatTokenAmount(swapBalance(row.asset.id))} {row.asset.code}</p>

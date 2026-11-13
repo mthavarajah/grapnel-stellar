@@ -1821,3 +1821,20 @@ footer strong {
 .stock-request-result .operation-progress {font-size:15px;}
 @media(max-width:1100px){.sidebar-account {padding:16px 0 0;}.sidebar-account .avatar {width:36px;height:36px;}}
 @media(max-width:550px){.sidebar-account .profile-panel {left:calc(100% + 10px);max-width:calc(100vw - 76px);}.stock-action-modal .stock-review-summary .detail-row {gap:12px;}}
+
+/* Consumer page polish: shared alignment and a stable Funds section. */
+.wallet-address a { font-size: 13px; font-weight: 600; padding-block: 3px; }
+.operation-complete { width: .65em; height: .65em; flex-basis: .65em; border: 0; background: #278553; color: #278553; }
+.activity-arrow { flex: 0 0 16px; color: #111; }
+.funding-available { display: flex; align-items: center; gap: 5px; }
+.earn-section .pool { display: flex; flex-direction: column; min-width: 0; }
+.earn-section .earn-balances { margin-bottom: 0; }
+.earn-section .earn-actions, .earn-section .earn-setup { margin-top: auto; padding-top: 18px; }
+.earn-section .earn-action label { margin: 0; }
+.earn-section .earn-action input, .earn-section .earn-action .button { height: 42px; box-sizing: border-box; }
+.velocity-brand-lockup { display: flex; flex-direction: column; align-items: flex-start; gap: 5px; }
+.velocity-trading-label { color: #111; font-size: 10px; font-weight: 600; letter-spacing: .23em; line-height: 1.3; text-transform: uppercase; padding-left: 1px; }
+.velocity-wordmark { width: 140px; aspect-ratio: 679 / 213; overflow: visible; }
+.velocity-wordmark img { position: static; width: 100%; height: 100%; object-fit: contain; max-width: 100%; filter: none; }
+@media(max-width:1100px) { .sidebar .velocity-brand-lockup { display: none; } }
+.activity-item > svg:last-child { flex-shrink: 0; color: #111; }

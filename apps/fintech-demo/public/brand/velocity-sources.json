@@ -1,7 +1,7 @@
 {
-  "observed_at": "2026-11-12T04:37:11.505Z",
+  "observed_at": "2026-11-13T02:17:33.559131+00:00",
   "official_page": "https://www.velocityincubator.com/",
-  "presentation": "Original source bitmaps retained unchanged. CSS wordmark viewport exposes only the Velocity portion of the official compound header logo; no co-branding or institutional tagline is displayed.",
+  "presentation": "Original bitmaps retained unchanged. The larger official Velocity wordmark is displayed without co-branding; Trading is a separate text descriptor.",
   "sources": [
     {
       "file": "velocity-official-header.png",
@@ -14,6 +14,12 @@
       "source": "https://cdn.prod.website-files.com/66cf2b351f83db4be55cbc38/66f0dcbdf1293286c1aca6c6_Velocity-reportfav.png",
       "sha256": "1c842f848353f988842b0c3174a03087e79fe0da7879e1e301f9ce3941862a39",
       "license": "Official brand artwork; no open license or endorsement asserted"
+    },
+    {
+      "file": "velocity-official-wordmark-hd.png",
+      "source": "https://uwaterloo.ca/daily-bulletin/sites/default/files/uploads/images/0105velocity-1.png",
+      "sha256": "02f9cb92ad60ba88a200c8bca5c4ed67df350978b84c32c83897680202c51e9d",
+      "license": "Official University of Waterloo published artwork; no open license or endorsement asserted"
     }
   ]
 }
