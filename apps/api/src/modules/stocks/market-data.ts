@@ -1,3 +1,4 @@
+import {EquityHistoryReader} from './equity-history.js';
 import type {Pool} from 'pg';
 import {GrapnelError} from '@grapnel/contracts';
 import {STOCKS,RH_TESTNET,type StockSymbol} from '../../adapters/robinhood/registry.js';
@@ -6,11 +7,11 @@ import {HISTORY_RANGES,MarketDataService,priceChange,type HistoryRange,type Mark
 const NAMES:Record<StockSymbol,string>={TSLA:'Tesla',AMZN:'Amazon',PLTR:'Palantir Technologies',NFLX:'Netflix',AMD:'Advanced Micro Devices'};
 const PREFIX='robinhood-testnet:stocks:';
 const WINDOWS:Record<Exclude<HistoryRange,'all'>,number>={live:3600000,'1d':86400000,'1w':604800000,'1m':2592000000,'1y':31536000000};
-export interface RobinhoodStockMarketDependencies {reader?:Pick<RobinhoodMarketDataReader,'read'|'history'>;now?:()=>number;}
+export interface RobinhoodStockMarketDependencies {reader?:Pick<RobinhoodMarketDataReader,'read'|'history'>;now?:()=>number;equityHistory?:Pick<EquityHistoryReader,'read'>;}
 /** Genuine Robinhood Chain stock-token catalog. USD reference data never substitutes for a USDG pool quote. */
 export class RobinhoodStockMarkets {
- private reader:Pick<RobinhoodMarketDataReader,'read'|'history'>;private historyService:MarketDataService|null;private now:()=>number;
- constructor(pool?:Pool,deps:RobinhoodStockMarketDependencies={}){this.reader=deps.reader??new RobinhoodMarketDataReader();this.now=deps.now??Date.now;this.historyService=pool?new MarketDataService(pool,async id=>{const stock=this.resolve(id),q=await this.reference(stock.symbol);return{market_id:id,price:q.bid,quote_symbol:'USD',observed_at:new Date(q.generatedAt).toISOString(),source:q.sourceUrl+'#underlying-bid'};},{now:this.now}):null;}
+ private reader:Pick<RobinhoodMarketDataReader,'read'|'history'>;private historyService:MarketDataService|null;private now:()=>number;private equityHistory:Pick<EquityHistoryReader,'read'>|null;
+ constructor(pool?:Pool,deps:RobinhoodStockMarketDependencies={}){this.reader=deps.reader??new RobinhoodMarketDataReader();this.now=deps.now??Date.now;this.equityHistory=deps.equityHistory??(deps.reader?null:new EquityHistoryReader());this.historyService=pool?new MarketDataService(pool,async id=>{const stock=this.resolve(id),q=await this.reference(stock.symbol);return{market_id:id,price:q.bid,quote_symbol:'USD',observed_at:new Date(q.generatedAt).toISOString(),source:q.sourceUrl+'#underlying-bid'};},{now:this.now}):null;}
  private resolve(id:string){const stock=STOCKS.find(row=>id===PREFIX+row.symbol);if(!stock)throw new GrapnelError(404,'NOT_FOUND','Stock market not found');return stock;}
  private async reference(symbol:StockSymbol){const q=await this.reader.read(symbol,{basis:'underlying'});if(q.symbol!==symbol||q.currency!=='USD'||q.priceBasis!=='underlying'||q.source!=='robinhood_official_rest'||q.sourceUrl!==`https://api.robinhood.com/rhj/prices/${symbol}`||q.executable!==false||q.destinationChainId!==null||q.multiplier!==null)throw new GrapnelError(503,'MARKET_PRICE_UNAVAILABLE','A verified stock reference price is unavailable',true);return q;}
  private metadata(stock:typeof STOCKS[number]){const assetId=`robinhood-testnet:erc20:${stock.address.toLowerCase()}`,settlementId=`robinhood-testnet:erc20:${RH_TESTNET.settlement.address.toLowerCase()}`;return{
@@ -25,6 +26,7 @@ export class RobinhoodStockMarkets {
  async markets(){return Promise.all(STOCKS.map(async stock=>{try{const q=await this.reference(stock.symbol);if(this.historyService)await this.historyService.observe(PREFIX+stock.symbol);return this.priced(stock,q);}catch{return this.priced(stock,null);}}));}
  async detail(id:string){const stock=this.resolve(id),q=await this.reference(stock.symbol);if(this.historyService)await this.historyService.observe(id);return this.priced(stock,q);}
  async history(id:string,range:HistoryRange){const stock=this.resolve(id);if(!HISTORY_RANGES.includes(range))throw new GrapnelError(422,'INVALID_HISTORY_RANGE','Unsupported stock history range');
+  if(this.equityHistory){try{const history=await this.equityHistory.read(stock.symbol,range);return {...history,market_id:id,base_symbol:stock.symbol,base_asset_id:`robinhood-testnet:erc20:${stock.address.toLowerCase()}`,settlement_quote_symbol:'USDG',candles:[]};}catch{/* Preserve separately sourced recorded Robinhood quotes if equity history is unavailable. */}}
   let history:MarketHistory;let truncated=false;
   if(this.historyService)history=await this.historyService.history(id,range);
   else{await this.reference(stock.symbol);const observed=this.reader.history(stock.symbol,'underlying'),since=range==='all'?null:this.now()-WINDOWS[range],points=observed.observations.filter(row=>(since===null||Date.parse(row.generatedAt)>=since)&&Date.parse(row.generatedAt)<=this.now()+2000).map(row=>({timestamp:row.generatedAt,price:row.bid}));const first=points[0],last=points.at(-1);history={market_id:id,quote_symbol:'USD',latest_price:last?.price??null,as_of:last?.timestamp??null,points,...(first&&last&&points.length>1?priceChange(first.price,last.price):{change_absolute:null,change_percent:null})};truncated=observed.coverage.truncated;}

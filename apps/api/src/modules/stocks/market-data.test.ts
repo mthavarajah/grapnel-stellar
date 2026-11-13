@@ -15,3 +15,13 @@ describe('Robinhood real-stock market catalog',()=>{
  it('persists source-generated UTC bid observations with USD identity through shared DB history service',async()=>{const f=fixture(),db=poolFixture(),service=new RobinhoodStockMarkets(db.pool,f),id='robinhood-testnet:stocks:TSLA';await service.detail(id);f.advance(30000);const history=await service.history(id,'all');expect(db.rows).toHaveLength(2);expect(db.rows[0]).toMatchObject({market_id:id,price:'100.000000000000000001',quote_symbol:'USD',source:'https://api.robinhood.com/rhj/prices/TSLA#underlying-bid',observed_at:new Date(START).toISOString()});expect(history.points).toHaveLength(2);expect(history.coverage.persisted).toBe(true);expect(db.release).toHaveBeenCalledTimes(2);expect(db.query.mock.calls.some(([sql])=>sql==='COMMIT')).toBe(true);});
  it('rejects an injected source observation for another symbol or basis',async()=>{const f=fixture();const q=await f.reader.read('AMZN');const reader={read:async()=>q,history:f.reader.history.bind(f.reader)};await expect(new RobinhoodStockMarkets(undefined,{reader}).detail('robinhood-testnet:stocks:TSLA')).rejects.toMatchObject({code:'MARKET_PRICE_UNAVAILABLE'});});
 });
+
+it('binds validated public equity history to the exact Robinhood stock market while retaining USDG settlement identity',async()=>{
+ const f=fixture(),read=vi.fn().mockResolvedValue({source:'yahoo_finance',quote_symbol:'USD',latest_price:'390.22',as_of:new Date(START).toISOString(),points:[{timestamp:new Date(START).toISOString(),price:'390.22'}],requested_range:'1y',coverage:{kind:'provider_available'}});
+ const service=new RobinhoodStockMarkets(undefined,{...f,equityHistory:{read}}),history=await service.history('robinhood-testnet:stocks:TSLA','1y');
+ expect(read).toHaveBeenCalledWith('TSLA','1y');expect(history).toMatchObject({market_id:'robinhood-testnet:stocks:TSLA',base_symbol:'TSLA',quote_symbol:'USD',settlement_quote_symbol:'USDG',source:'yahoo_finance',latest_price:'390.22'});expect(f.fetcher).not.toHaveBeenCalled();
+});
+it('falls back to separately identified recorded Robinhood prices when the public history source fails',async()=>{
+ const f=fixture(),service=new RobinhoodStockMarkets(undefined,{...f,equityHistory:{read:async()=>{throw Error('source offline');}}});
+ const history=await service.history('robinhood-testnet:stocks:TSLA','1d');expect(history.source).toBe('robinhood_official_rest');expect(history.coverage.kind).toBe('observed_only');expect(history.requested_range).toBe('1d');
+});

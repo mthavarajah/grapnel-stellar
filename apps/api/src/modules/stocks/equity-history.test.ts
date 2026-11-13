@@ -1,0 +1,11 @@
+import {describe,it,expect,vi} from 'vitest';
+import {EquityHistoryReader} from './equity-history.js';
+const now=Date.parse('2026-11-13T22:00:00Z');
+function fixture(symbol='TSLA',currency='USD'){return {chart:{error:null,result:[{meta:{symbol,currency,instrumentType:'EQUITY',regularMarketPrice:390.22,regularMarketTime:now/1000-3600,regularMarketDayHigh:404.4,regularMarketDayLow:385.83,regularMarketVolume:32042843},timestamp:[now/1000-7200,now/1000-5400],indicators:{quote:[{close:[388.1,389.24]}]}}]}};}
+const source=(value:unknown)=>vi.fn(async()=>({ok:true,json:async()=>value})) as any;
+describe('display-only equity history',()=>{
+ it.each(['live','1d','1w','1m','1y','all'] as const)('validates symbol/USD and retains actual source prices and times for %s',async range=>{const fetch=source(fixture());const data=await new EquityHistoryReader({fetch,now:()=>now}).read('TSLA',range);expect(data.points.at(-1)).toEqual({price:'390.22',timestamp:'2026-11-13T21:00:00.000Z'});expect(data.quote_symbol).toBe('USD');expect(data.requested_range).toBe(range);expect(data.source).toBe('yahoo_finance');expect(data.metrics.day_high).toBe('404.4');expect(data).not.toHaveProperty('executable');});
+ it.each([fixture('AMD'),fixture('TSLA','EUR')])('rejects wrong identity rather than relabeling it',async body=>{await expect(new EquityHistoryReader({fetch:source(body),now:()=>now}).read('TSLA','1d')).rejects.toMatchObject({code:'MARKET_HISTORY_INVALID'});});
+ it('omits missing, invalid and future observations without fabricating prices',async()=>{const body=fixture();body.chart.result[0]!.timestamp=[now/1000-7200,now/1000+60];body.chart.result[0]!.indicators.quote[0]!.close=[null as any,999];body.chart.result[0]!.meta.regularMarketPrice=NaN;await expect(new EquityHistoryReader({fetch:source(body),now:()=>now}).read('TSLA','1d')).rejects.toMatchObject({code:'MARKET_HISTORY_UNAVAILABLE'});});
+ it('coalesces repeated reads and preserves source values against caller mutation',async()=>{const fetch=source(fixture()),reader=new EquityHistoryReader({fetch,now:()=>now});const [a,b]=await Promise.all([reader.read('TSLA','1m'),reader.read('TSLA','1m')]);a.points[0]!.price='1';expect(b.points[0]!.price).toBe('388.1');expect(fetch).toHaveBeenCalledTimes(1);});
+});

@@ -1835,7 +1835,7 @@ footer strong {
 .earn-section .pool { display: flex; flex-direction: column; min-width: 0; }
 .earn-section .earn-balances { margin-bottom: 0; }
 .earn-section .earn-actions, .earn-section .earn-setup { margin-top: auto; padding-top: 18px; }
-.earn-section .earn-action label { margin: 0; }
+.earn-section .earn-action label { display: flex; flex-direction: column; gap: 10px; margin: 0; }
 .earn-section .earn-action input, .earn-section .earn-action .button { height: 42px; box-sizing: border-box; }
 .velocity-brand-lockup { display: flex; flex-direction: column; align-items: flex-start; gap: 5px; }
 .velocity-trading-label { color: #111; font-size: 10px; font-weight: 600; letter-spacing: .23em; line-height: 1.3; text-transform: uppercase; padding-left: 1px; }
@@ -1855,8 +1855,8 @@ footer strong {
 
 .market-price-change.positive, .market-price-change.positive strong { color: #15803d; }
 .market-price-change.negative, .market-price-change.negative strong { color: #b91c1c; }
-.market-chart-wrap.positive { --chart-trend: #15803d; }
-.market-chart-wrap.negative { --chart-trend: #b91c1c; }
-.market-chart-line { stroke: var(--chart-trend, var(--blue)); }
-.market-chart-dot { fill: var(--chart-trend, var(--blue)); }
+.market-chart-line { stroke: var(--blue); }
+.market-chart-dot { fill: var(--blue); }
 .swap-output[data-loading="true"] { font-size: 16px; color: var(--muted); }
+
+.activity-network-tabs { margin: 0 0 22px; }

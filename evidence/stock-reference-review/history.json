@@ -1,0 +1,485 @@
+{
+  "checked_at": "2026-11-13T23:15:08.885Z",
+  "rows": [
+    {
+      "symbol": "TSLA",
+      "range": "live",
+      "count": 61,
+      "first": {
+        "timestamp": "2026-11-13T20:00:00.000Z",
+        "price": "391.7799987792969"
+      },
+      "last": {
+        "timestamp": "2026-11-13T21:00:00.000Z",
+        "price": "390.2200012207031"
+      },
+      "latest_price": "390.2200012207031",
+      "as_of": "2026-11-13T21:00:00.000Z",
+      "source_url": "https://query1.finance.yahoo.com/v8/finance/chart/TSLA?range=1d&interval=1m&includePrePost=false"
+    },
+    {
+      "symbol": "TSLA",
+      "range": "1d",
+      "count": 79,
+      "first": {
+        "timestamp": "2026-11-13T14:30:00.000Z",
+        "price": "397.5437927246094"
+      },
+      "last": {
+        "timestamp": "2026-11-13T21:00:00.000Z",
+        "price": "390.2200012207031"
+      },
+      "latest_price": "390.2200012207031",
+      "as_of": "2026-11-13T21:00:00.000Z",
+      "source_url": "https://query1.finance.yahoo.com/v8/finance/chart/TSLA?range=1d&interval=5m&includePrePost=false"
+    },
+    {
+      "symbol": "TSLA",
+      "range": "1w",
+      "count": 66,
+      "first": {
+        "timestamp": "2026-11-09T14:30:00.000Z",
+        "price": "377.510009765625"
+      },
+      "last": {
+        "timestamp": "2026-11-13T21:00:00.000Z",
+        "price": "390.2200012207031"
+      },
+      "latest_price": "390.2200012207031",
+      "as_of": "2026-11-13T21:00:00.000Z",
+      "source_url": "https://query1.finance.yahoo.com/v8/finance/chart/TSLA?range=5d&interval=30m&includePrePost=false"
+    },
+    {
+      "symbol": "TSLA",
+      "range": "1m",
+      "count": 162,
+      "first": {
+        "timestamp": "2026-10-14T13:30:00.000Z",
+        "price": "367.7250061035156"
+      },
+      "last": {
+        "timestamp": "2026-11-13T21:00:00.000Z",
+        "price": "390.2200012207031"
+      },
+      "latest_price": "390.2200012207031",
+      "as_of": "2026-11-13T21:00:00.000Z",
+      "source_url": "https://query1.finance.yahoo.com/v8/finance/chart/TSLA?range=1mo&interval=1h&includePrePost=false"
+    },
+    {
+      "symbol": "TSLA",
+      "range": "1y",
+      "count": 252,
+      "first": {
+        "timestamp": "2025-11-14T14:30:00.000Z",
+        "price": "404.3500061035156"
+      },
+      "last": {
+        "timestamp": "2026-11-13T21:00:00.000Z",
+        "price": "390.22"
+      },
+      "latest_price": "390.22",
+      "as_of": "2026-11-13T21:00:00.000Z",
+      "source_url": "https://query1.finance.yahoo.com/v8/finance/chart/TSLA?range=1y&interval=1d&includePrePost=false"
+    },
+    {
+      "symbol": "TSLA",
+      "range": "all",
+      "count": 198,
+      "first": {
+        "timestamp": "2010-07-01T04:00:00.000Z",
+        "price": "1.329332947731018"
+      },
+      "last": {
+        "timestamp": "2026-11-13T21:00:00.000Z",
+        "price": "390.2200012207031"
+      },
+      "latest_price": "390.2200012207031",
+      "as_of": "2026-11-13T21:00:00.000Z",
+      "source_url": "https://query1.finance.yahoo.com/v8/finance/chart/TSLA?range=max&interval=1mo&includePrePost=false"
+    },
+    {
+      "symbol": "AMZN",
+      "range": "live",
+      "count": 61,
+      "first": {
+        "timestamp": "2026-11-13T20:00:00.000Z",
+        "price": "265.3450012207031"
+      },
+      "last": {
+        "timestamp": "2026-11-13T21:00:00.000Z",
+        "price": "266.6600036621094"
+      },
+      "latest_price": "266.6600036621094",
+      "as_of": "2026-11-13T21:00:00.000Z",
+      "source_url": "https://query1.finance.yahoo.com/v8/finance/chart/AMZN?range=1d&interval=1m&includePrePost=false"
+    },
+    {
+      "symbol": "AMZN",
+      "range": "1d",
+      "count": 79,
+      "first": {
+        "timestamp": "2026-11-13T14:30:00.000Z",
+        "price": "267.5050048828125"
+      },
+      "last": {
+        "timestamp": "2026-11-13T21:00:00.000Z",
+        "price": "266.6600036621094"
+      },
+      "latest_price": "266.6600036621094",
+      "as_of": "2026-11-13T21:00:00.000Z",
+      "source_url": "https://query1.finance.yahoo.com/v8/finance/chart/AMZN?range=1d&interval=5m&includePrePost=false"
+    },
+    {
+      "symbol": "AMZN",
+      "range": "1w",
+      "count": 66,
+      "first": {
+        "timestamp": "2026-11-09T14:30:00.000Z",
+        "price": "272.0849914550781"
+      },
+      "last": {
+        "timestamp": "2026-11-13T21:00:00.000Z",
+        "price": "266.6600036621094"
+      },
+      "latest_price": "266.6600036621094",
+      "as_of": "2026-11-13T21:00:00.000Z",
+      "source_url": "https://query1.finance.yahoo.com/v8/finance/chart/AMZN?range=5d&interval=30m&includePrePost=false"
+    },
+    {
+      "symbol": "AMZN",
+      "range": "1m",
+      "count": 162,
+      "first": {
+        "timestamp": "2026-10-14T13:30:00.000Z",
+        "price": "256.4200134277344"
+      },
+      "last": {
+        "timestamp": "2026-11-13T21:00:00.000Z",
+        "price": "266.6600036621094"
+      },
+      "latest_price": "266.6600036621094",
+      "as_of": "2026-11-13T21:00:00.000Z",
+      "source_url": "https://query1.finance.yahoo.com/v8/finance/chart/AMZN?range=1mo&interval=1h&includePrePost=false"
+    },
+    {
+      "symbol": "AMZN",
+      "range": "1y",
+      "count": 252,
+      "first": {
+        "timestamp": "2025-11-14T14:30:00.000Z",
+        "price": "234.69000244140625"
+      },
+      "last": {
+        "timestamp": "2026-11-13T21:00:00.000Z",
+        "price": "266.66"
+      },
+      "latest_price": "266.66",
+      "as_of": "2026-11-13T21:00:00.000Z",
+      "source_url": "https://query1.finance.yahoo.com/v8/finance/chart/AMZN?range=1y&interval=1d&includePrePost=false"
+    },
+    {
+      "symbol": "AMZN",
+      "range": "all",
+      "count": 355,
+      "first": {
+        "timestamp": "1997-06-01T04:00:00.000Z",
+        "price": "0.07708299905061722"
+      },
+      "last": {
+        "timestamp": "2026-11-13T21:00:00.000Z",
+        "price": "266.6600036621094"
+      },
+      "latest_price": "266.6600036621094",
+      "as_of": "2026-11-13T21:00:00.000Z",
+      "source_url": "https://query1.finance.yahoo.com/v8/finance/chart/AMZN?range=max&interval=1mo&includePrePost=false"
+    },
+    {
+      "symbol": "PLTR",
+      "range": "live",
+      "count": 61,
+      "first": {
+        "timestamp": "2026-11-13T20:00:00.000Z",
+        "price": "169.14999389648438"
+      },
+      "last": {
+        "timestamp": "2026-11-13T21:00:00.000Z",
+        "price": "167.99000549316406"
+      },
+      "latest_price": "167.99000549316406",
+      "as_of": "2026-11-13T21:00:00.000Z",
+      "source_url": "https://query1.finance.yahoo.com/v8/finance/chart/PLTR?range=1d&interval=1m&includePrePost=false"
+    },
+    {
+      "symbol": "PLTR",
+      "range": "1d",
+      "count": 79,
+      "first": {
+        "timestamp": "2026-11-13T14:30:00.000Z",
+        "price": "169.95799255371094"
+      },
+      "last": {
+        "timestamp": "2026-11-13T21:00:00.000Z",
+        "price": "167.99000549316406"
+      },
+      "latest_price": "167.99000549316406",
+      "as_of": "2026-11-13T21:00:00.000Z",
+      "source_url": "https://query1.finance.yahoo.com/v8/finance/chart/PLTR?range=1d&interval=5m&includePrePost=false"
+    },
+    {
+      "symbol": "PLTR",
+      "range": "1w",
+      "count": 66,
+      "first": {
+        "timestamp": "2026-11-09T14:30:00.000Z",
+        "price": "167.69000244140625"
+      },
+      "last": {
+        "timestamp": "2026-11-13T21:00:00.000Z",
+        "price": "167.99000549316406"
+      },
+      "latest_price": "167.99000549316406",
+      "as_of": "2026-11-13T21:00:00.000Z",
+      "source_url": "https://query1.finance.yahoo.com/v8/finance/chart/PLTR?range=5d&interval=30m&includePrePost=false"
+    },
+    {
+      "symbol": "PLTR",
+      "range": "1m",
+      "count": 162,
+      "first": {
+        "timestamp": "2026-10-14T13:30:00.000Z",
+        "price": "207.25999450683594"
+      },
+      "last": {
+        "timestamp": "2026-11-13T21:00:00.000Z",
+        "price": "167.99000549316406"
+      },
+      "latest_price": "167.99000549316406",
+      "as_of": "2026-11-13T21:00:00.000Z",
+      "source_url": "https://query1.finance.yahoo.com/v8/finance/chart/PLTR?range=1mo&interval=1h&includePrePost=false"
+    },
+    {
+      "symbol": "PLTR",
+      "range": "1y",
+      "count": 252,
+      "first": {
+        "timestamp": "2025-11-14T14:30:00.000Z",
+        "price": "174.00999450683594"
+      },
+      "last": {
+        "timestamp": "2026-11-13T21:00:00.000Z",
+        "price": "167.99"
+      },
+      "latest_price": "167.99",
+      "as_of": "2026-11-13T21:00:00.000Z",
+      "source_url": "https://query1.finance.yahoo.com/v8/finance/chart/PLTR?range=1y&interval=1d&includePrePost=false"
+    },
+    {
+      "symbol": "PLTR",
+      "range": "all",
+      "count": 321,
+      "first": {
+        "timestamp": "2020-09-28T04:00:00.000Z",
+        "price": "9.199999809265137"
+      },
+      "last": {
+        "timestamp": "2026-11-13T21:00:00.000Z",
+        "price": "167.99000549316406"
+      },
+      "latest_price": "167.99000549316406",
+      "as_of": "2026-11-13T21:00:00.000Z",
+      "source_url": "https://query1.finance.yahoo.com/v8/finance/chart/PLTR?range=max&interval=1mo&includePrePost=false"
+    },
+    {
+      "symbol": "NFLX",
+      "range": "live",
+      "count": 61,
+      "first": {
+        "timestamp": "2026-11-13T20:00:00.000Z",
+        "price": "62.314998626708984"
+      },
+      "last": {
+        "timestamp": "2026-11-13T21:00:00.000Z",
+        "price": "62.150001525878906"
+      },
+      "latest_price": "62.150001525878906",
+      "as_of": "2026-11-13T21:00:00.000Z",
+      "source_url": "https://query1.finance.yahoo.com/v8/finance/chart/NFLX?range=1d&interval=1m&includePrePost=false"
+    },
+    {
+      "symbol": "NFLX",
+      "range": "1d",
+      "count": 79,
+      "first": {
+        "timestamp": "2026-11-13T14:30:00.000Z",
+        "price": "62.94459915161133"
+      },
+      "last": {
+        "timestamp": "2026-11-13T21:00:00.000Z",
+        "price": "62.150001525878906"
+      },
+      "latest_price": "62.150001525878906",
+      "as_of": "2026-11-13T21:00:00.000Z",
+      "source_url": "https://query1.finance.yahoo.com/v8/finance/chart/NFLX?range=1d&interval=5m&includePrePost=false"
+    },
+    {
+      "symbol": "NFLX",
+      "range": "1w",
+      "count": 66,
+      "first": {
+        "timestamp": "2026-11-09T14:30:00.000Z",
+        "price": "63.650001525878906"
+      },
+      "last": {
+        "timestamp": "2026-11-13T21:00:00.000Z",
+        "price": "62.150001525878906"
+      },
+      "latest_price": "62.150001525878906",
+      "as_of": "2026-11-13T21:00:00.000Z",
+      "source_url": "https://query1.finance.yahoo.com/v8/finance/chart/NFLX?range=5d&interval=30m&includePrePost=false"
+    },
+    {
+      "symbol": "NFLX",
+      "range": "1m",
+      "count": 162,
+      "first": {
+        "timestamp": "2026-10-14T13:30:00.000Z",
+        "price": "70.0999984741211"
+      },
+      "last": {
+        "timestamp": "2026-11-13T21:00:00.000Z",
+        "price": "62.150001525878906"
+      },
+      "latest_price": "62.150001525878906",
+      "as_of": "2026-11-13T21:00:00.000Z",
+      "source_url": "https://query1.finance.yahoo.com/v8/finance/chart/NFLX?range=1mo&interval=1h&includePrePost=false"
+    },
+    {
+      "symbol": "NFLX",
+      "range": "1y",
+      "count": 252,
+      "first": {
+        "timestamp": "2025-11-14T14:30:00.000Z",
+        "price": "111.21700286865234"
+      },
+      "last": {
+        "timestamp": "2026-11-13T21:00:00.000Z",
+        "price": "62.15"
+      },
+      "latest_price": "62.15",
+      "as_of": "2026-11-13T21:00:00.000Z",
+      "source_url": "https://query1.finance.yahoo.com/v8/finance/chart/NFLX?range=1y&interval=1d&includePrePost=false"
+    },
+    {
+      "symbol": "NFLX",
+      "range": "all",
+      "count": 295,
+      "first": {
+        "timestamp": "2002-06-01T04:00:00.000Z",
+        "price": "0.09992899745702744"
+      },
+      "last": {
+        "timestamp": "2026-11-13T21:00:00.000Z",
+        "price": "62.150001525878906"
+      },
+      "latest_price": "62.150001525878906",
+      "as_of": "2026-11-13T21:00:00.000Z",
+      "source_url": "https://query1.finance.yahoo.com/v8/finance/chart/NFLX?range=max&interval=1mo&includePrePost=false"
+    },
+    {
+      "symbol": "AMD",
+      "range": "live",
+      "count": 61,
+      "first": {
+        "timestamp": "2026-11-13T20:01:00.000Z",
+        "price": "532.5261840820312"
+      },
+      "last": {
+        "timestamp": "2026-11-13T21:00:01.000Z",
+        "price": "534.06"
+      },
+      "latest_price": "534.06",
+      "as_of": "2026-11-13T21:00:01.000Z",
+      "source_url": "https://query1.finance.yahoo.com/v8/finance/chart/AMD?range=1d&interval=1m&includePrePost=false"
+    },
+    {
+      "symbol": "AMD",
+      "range": "1d",
+      "count": 80,
+      "first": {
+        "timestamp": "2026-11-13T14:30:00.000Z",
+        "price": "563.5349731445312"
+      },
+      "last": {
+        "timestamp": "2026-11-13T21:00:01.000Z",
+        "price": "534.06"
+      },
+      "latest_price": "534.06",
+      "as_of": "2026-11-13T21:00:01.000Z",
+      "source_url": "https://query1.finance.yahoo.com/v8/finance/chart/AMD?range=1d&interval=5m&includePrePost=false"
+    },
+    {
+      "symbol": "AMD",
+      "range": "1w",
+      "count": 67,
+      "first": {
+        "timestamp": "2026-11-09T14:30:00.000Z",
+        "price": "489.0199890136719"
+      },
+      "last": {
+        "timestamp": "2026-11-13T21:00:01.000Z",
+        "price": "534.06"
+      },
+      "latest_price": "534.06",
+      "as_of": "2026-11-13T21:00:01.000Z",
+      "source_url": "https://query1.finance.yahoo.com/v8/finance/chart/AMD?range=5d&interval=30m&includePrePost=false"
+    },
+    {
+      "symbol": "AMD",
+      "range": "1m",
+      "count": 163,
+      "first": {
+        "timestamp": "2026-10-14T13:30:00.000Z",
+        "price": "582.8200073242188"
+      },
+      "last": {
+        "timestamp": "2026-11-13T21:00:01.000Z",
+        "price": "534.06"
+      },
+      "latest_price": "534.06",
+      "as_of": "2026-11-13T21:00:01.000Z",
+      "source_url": "https://query1.finance.yahoo.com/v8/finance/chart/AMD?range=1mo&interval=1h&includePrePost=false"
+    },
+    {
+      "symbol": "AMD",
+      "range": "1y",
+      "count": 252,
+      "first": {
+        "timestamp": "2025-11-14T14:30:00.000Z",
+        "price": "246.80999755859375"
+      },
+      "last": {
+        "timestamp": "2026-11-13T21:00:01.000Z",
+        "price": "534.06"
+      },
+      "latest_price": "534.06",
+      "as_of": "2026-11-13T21:00:01.000Z",
+      "source_url": "https://query1.finance.yahoo.com/v8/finance/chart/AMD?range=1y&interval=1d&includePrePost=false"
+    },
+    {
+      "symbol": "AMD",
+      "range": "all",
+      "count": 169,
+      "first": {
+        "timestamp": "1984-12-01T05:00:00.000Z",
+        "price": "16.625"
+      },
+      "last": {
+        "timestamp": "2026-11-13T21:00:01.000Z",
+        "price": "534.0599975585938"
+      },
+      "latest_price": "534.0599975585938",
+      "as_of": "2026-11-13T21:00:01.000Z",
+      "source_url": "https://query1.finance.yahoo.com/v8/finance/chart/AMD?range=max&interval=1mo&includePrePost=false"
+    }
+  ]
+}

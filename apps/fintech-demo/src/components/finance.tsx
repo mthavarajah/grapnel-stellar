@@ -1,11 +1,10 @@
 "use client";
-import {changeDirection,chartTimeDomain,chartSegments} from "../lib/chart-presentation";
+import {changeDirection,chartTimeDomain,chartSegments,chartPrice} from "../lib/chart-presentation";
 import {matchesSpotQuote,validSpotAmount,readSpotQuoteWithRetry,type SpotQuoteIntent} from "../lib/spot-quote";
 import {earnAmountMessage} from "../lib/earn-amount";
 import {currentCustomerOperation} from "../lib/prepared-operation";
 import {ZenexPerpetualExecution} from "./zenex-perpetual-execution";
 import {ActionDialog} from './action-dialog';
-import {PerpetualActivity} from './perpetual-activity';
 import {StockActivity} from "./stock-activity";
 import {RobinhoodExecution} from "./robinhood-execution";
 import {groupedUsd} from '../lib/grouped-assets';
@@ -219,8 +218,8 @@ function marketDate(value:string|number,includeTime=false,includeSeconds=false):
 }
 function displayChange(value:string|null|undefined):string {
   if(typeof value!=="string"||!/^[-+]?\d+(?:\.\d+)?$/.test(value))return "—";
-  const amount=value.replace(/^[-+]/, ""), formatted=formatTokenAmount(amount);
-  return formatted==="Unavailable"?"—":`${value.startsWith("-")?"-":"+"}${formatted}`;
+  const amount=value.replace(/^[-+]/, ""), formatted=chartPrice(amount);
+  return formatted==="—"?"—":`${value.startsWith("-")?"-":"+"}${formatted}`;
 }
 function PriceChart({history,loading,range}:{history:MarketHistory|null;loading:boolean;range:HistoryRange}) {
   const [selectedIndex,setSelectedIndex]=useState<number|null>(null);
@@ -235,7 +234,7 @@ function PriceChart({history,loading,range}:{history:MarketHistory|null;loading:
     const min=points.reduce((current,p)=>p.price<current?p.price:current,points[0]!.price),max=points.reduce((current,p)=>p.price>current?p.price:current,points[0]!.price),[first,last]=domain;
     return points.map(point=>({x:last===first?300:20+(point.timestamp-first)*560/(last-first),y:max===min?140:260-Number((point.price-min)*240000n/(max-min))/1000}));
   },[points,domain]);
-  const lineSegments=useMemo(()=>chartSegments(points.map(p=>p.timestamp),history?.interval).filter(segment=>segment.length>1).map(segment=>segment.map(index=>`${coordinates[index]!.x},${coordinates[index]!.y}`).join(" ")),[coordinates,points,history?.interval]);
+  const lineSegments=useMemo(()=>chartSegments(points.map(p=>p.timestamp),history?.interval,history?.market_id.startsWith("robinhood-testnet:stocks:")).filter(segment=>segment.length>1).map(segment=>segment.map(index=>`${coordinates[index]!.x},${coordinates[index]!.y}`).join(" ")),[coordinates,points,history?.interval,history?.market_id]);
   if(loading&&!points.length)return <div className="market-chart-empty" role="status">Loading price history…</div>;
   if(!points.length)return <div className="market-chart-empty" role="status">Price history is not available yet.</div>;
   const [first,last]=domain;
@@ -265,7 +264,7 @@ function PriceChart({history,loading,range}:{history:MarketHistory|null;loading:
         {coordinate&&<><line x1={coordinate.x} x2={coordinate.x} y1="15" y2="265" className="market-chart-crosshair" data-testid="price-chart-crosshair"/><circle cx={coordinate.x} cy={coordinate.y} r="5" className="market-chart-dot" data-testid="price-chart-selected-point"/></>}
       </svg>
       <span className="chart-assistive" id="price-chart-help">Use left and right arrow keys to inspect each recorded price. Home and End select the first and latest observations.</span>
-      {selected&&<div className="market-chart-tooltip" role="tooltip" data-testid="price-chart-tooltip"><strong>{selected.originalPrice} {history!.quote_symbol}</strong><time dateTime={selected.originalTimestamp}>{marketDate(selected.originalTimestamp,true,true)}</time></div>}
+      {selected&&<div className="market-chart-tooltip" role="tooltip" data-testid="price-chart-tooltip"><strong>{chartPrice(selected.originalPrice)} {history!.quote_symbol}</strong><time dateTime={selected.originalTimestamp}>{marketDate(selected.originalTimestamp,true,true)}</time></div>}
     </div>
     {history?.coverage?.kind==="observed_only"&&history.coverage.first_generated_at&&<p className="market-chart-caption">Recorded prices since {marketDate(history.coverage.first_generated_at,true)}</p>}
     {history?.coverage?.kind==="provider_available"&&history.coverage.first_generated_at&&<p className="market-chart-caption">Available history since {marketDate(history.coverage.first_generated_at)}</p>}
@@ -451,6 +450,7 @@ function FinanceShell({ page, auth, initialCategory }: { page: string; auth?: Au
   const [borrowing,setBorrowing] = useState<Borrowing|null>(null);
   const [borrowingLoading,setBorrowingLoading] = useState(false);
   const [borrowingError,setBorrowingError] = useState("");
+  const [activityNetwork,setActivityNetwork] = useState<"stellar"|"robinhood">("stellar");
   const [loanActions,setLoanActions] = useState<Record<string,"borrow"|"repay"|"collateral-supply"|"collateral-withdraw">>({});
   const [loanAmounts,setLoanAmounts] = useState<Record<string,string>>({});
   const [repayAllAmounts,setRepayAllAmounts] = useState<Record<string,string>>({});
@@ -1373,13 +1373,13 @@ function FinanceShell({ page, auth, initialCategory }: { page: string; auth?: Au
                   <div className="market-detail-layout">
                     <section className="market-price-card" aria-label="Asset price" data-testid={category==="perps"?"perps-market-detail":"stocks-market-detail"}>
                       <div className="market-asset-heading"><AssetLogo symbol={selectedSpotMarket.underlying?.symbol??selectedSpotMarket.label} name={selectedSpotMarket.underlying?.name} assetId={selectedSpotMarket.market_id??selectedSpotMarket.id} providerSymbol={selectedSpotMarket.provider_symbol} size={48} /><div><h2>{selectedSpotMarket.underlying?.name??selectedSpotMarket.label}</h2><span>{selectedSpotMarket.underlying?.symbol} {(category==="perps"||selectedSpotMarket.instrument_type==="perpetual_futures")?(selectedSpotMarket.asset_category==="equity"?"stock perpetual":selectedSpotMarket.asset_category==="index"?"index perpetual":"perpetual"):"stock"}</span></div></div>
-                      <div className="market-price-heading"><strong>{selectedSpotMarket.reference_price==null?"—":formatTokenAmount(selectedSpotMarket.reference_price)}</strong><span>{selectedSpotMarket.reference_quote_symbol??selectedSpotMarket.quote_symbol??activePublicHistory?.quote_symbol??"—"} per {selectedSpotMarket.underlying?.symbol}</span></div>
-                      <div className={`public-market-freshness ${selectedSpotMarket.price_status==="stale"?"delayed":""}`} data-testid="market-price-freshness">{detailLoading&&selectedSpotMarket.reference_price==null?<ProgressIndicator label="Loading current price" spinning/>:selectedSpotMarket.price_status==="current"?"Current price":selectedSpotMarket.price_status==="stale"?"Price delayed":"—"}</div>
+                      <div className="market-price-heading"><strong>{category==="stocks"&&activePublicHistory?.latest_price?chartPrice(activePublicHistory.latest_price):selectedSpotMarket.reference_price==null?"—":chartPrice(selectedSpotMarket.reference_price)}</strong><span>{selectedSpotMarket.reference_quote_symbol??selectedSpotMarket.quote_symbol??activePublicHistory?.quote_symbol??"—"} per {selectedSpotMarket.underlying?.symbol}</span></div>
+                      <div className={`public-market-freshness ${selectedSpotMarket.price_status==="stale"?"delayed":""}`} data-testid="market-price-freshness">{category==="stocks"&&activePublicHistory?.as_of?`Market reference · ${marketDate(activePublicHistory.as_of,true)}`:detailLoading&&selectedSpotMarket.reference_price==null?<ProgressIndicator label="Loading current price" spinning/>:selectedSpotMarket.price_status==="current"?"Current price":selectedSpotMarket.price_status==="stale"?"Price delayed":"—"}</div>
                       <div className={`market-price-change ${changeDirection(activePublicHistory?.change_absolute)}`} aria-label="Price change"><strong>{activePublicHistory&&activePublicHistory.points.length>1?displayChange(activePublicHistory.change_absolute):"—"}</strong><span>{activePublicHistory&&activePublicHistory.points.length>1?`${selectedSpotMarket.reference_quote_symbol??selectedSpotMarket.quote_symbol??activePublicHistory.quote_symbol} (${displayChange(activePublicHistory.change_percent)}%)`: "(—)"}</span></div>
                       <PriceChart history={activePublicHistory} loading={historyLoading} range={historyRange} />
                       <div className="market-periods" role="group" aria-label="Price timeframe">{(["live","1d","1w","1m","1y","all"] as const).map(period=><button type="button" key={period} aria-pressed={historyRange===period} onClick={()=>setHistoryRange(period)}>{period.toUpperCase()}</button>)}</div>
                       {category==="stocks"&&selectedSpotMarket.instrument_type!=="perpetual_futures"&&activePublicHistory?.metrics&&<dl className="public-market-stats" data-testid="stock-market-metrics">
-                        {([["day_high","Day high"],["day_low","Day low"],["previous_close","Previous close"],["fifty_two_week_high","52-week high"],["fifty_two_week_low","52-week low"],["day_volume","Day volume"]] as const).map(([field,label])=><div key={field}><dt>{label}</dt><dd>{activePublicHistory.metrics?.[field]==null?"—":`${formatTokenAmount(activePublicHistory.metrics[field])} ${field==="day_volume"?"shares":activePublicHistory.quote_symbol}`}</dd></div>)}
+                        {([["day_high","Day high"],["day_low","Day low"],["previous_close","Previous close"],["fifty_two_week_high","52-week high"],["fifty_two_week_low","52-week low"],["day_volume","Day volume"]] as const).filter(([field])=>activePublicHistory.metrics?.[field]!=null).map(([field,label])=><div key={field}><dt>{label}</dt><dd>{activePublicHistory.metrics?.[field]==null?"—":`${field==="day_volume"?formatTokenAmount(activePublicHistory.metrics[field]):chartPrice(activePublicHistory.metrics[field])} ${field==="day_volume"?"shares":activePublicHistory.quote_symbol}`}</dd></div>)}
                       </dl>}
                       {(category==="perps"||selectedSpotMarket.instrument_type==="perpetual_futures")&&<PerpetualMarketMetrics stats={selectedSpotMarket.perpetuals_stats} symbol={selectedSpotMarket.underlying?.symbol??selectedSpotMarket.label} maxLeverage={selectedSpotMarket.max_leverage} quoteSymbol={selectedSpotMarket.quote_symbol} settlementAsset={selectedSpotMarket.settlement_asset}/>}
                       {category==="stocks"&&selectedSpotMarket.instrument_type!=="perpetual_futures"&&selectedSpotMarket.stats&&<>
@@ -1621,9 +1621,11 @@ function FinanceShell({ page, auth, initialCategory }: { page: string; auth?: Au
                     : "Sign in to view your activity"}
                 </span>
               </div>
-              {session&&capability("trade.stocks")?.enabled&&<StockActivity api={api} customerId={session.customer_id} walletId={session.wallet_id}/>}
-              {session&&capability("trade.perps")?.enabled&&<PerpetualActivity api={api} customerId={session.customer_id} walletId={session.wallet_id}/>}
-              {operations.length ? (
+              <div className="tabs activity-network-tabs" role="group" aria-label="Activity network">
+                <button type="button" aria-pressed={activityNetwork==="stellar"} className={activityNetwork==="stellar"?"active":""} onClick={()=>setActivityNetwork("stellar")}>Stellar</button>
+                <button type="button" aria-pressed={activityNetwork==="robinhood"} className={activityNetwork==="robinhood"?"active":""} onClick={()=>setActivityNetwork("robinhood")}>Robinhood Chain</button>
+              </div>
+              {activityNetwork==="robinhood" ? session&&capability("trade.stocks")?.enabled?<StockActivity api={api} customerId={session.customer_id} walletId={session.wallet_id}/>:<Empty icon="activity" title="No stock activity yet." text="Your stock transactions appear here."/> : operations.length ? (
                 <div className="activity-list">
                   {operations.map((op) => (
                     <button
@@ -1662,13 +1664,13 @@ function FinanceShell({ page, auth, initialCategory }: { page: string; auth?: Au
                     </button>
                   ))}
                 </div>
-              ) : !capability("trade.stocks")?.enabled&&!capability("trade.perps")?.enabled ? (
+              ) : (
                 <Empty
                   icon="activity"
                   title="No activity yet."
-                  text="Your confirmed transfers and trades appear here."
+                  text="Your Stellar transfers and trades appear here."
                 />
-              ) : null}
+              )}
             </section>
           )}
 

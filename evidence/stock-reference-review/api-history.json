@@ -1,0 +1,365 @@
+{
+  "checked_at": "2026-11-13T23:20:31.891Z",
+  "rows": [
+    {
+      "symbol": "TSLA",
+      "range": "live",
+      "status": 200,
+      "correct_identity": true,
+      "source": "yahoo_finance",
+      "count": 61,
+      "last": {
+        "timestamp": "2026-11-13T21:00:00.000Z",
+        "price": "390.2200012207031"
+      }
+    },
+    {
+      "symbol": "TSLA",
+      "range": "1d",
+      "status": 200,
+      "correct_identity": true,
+      "source": "yahoo_finance",
+      "count": 79,
+      "last": {
+        "timestamp": "2026-11-13T21:00:00.000Z",
+        "price": "390.2200012207031"
+      }
+    },
+    {
+      "symbol": "TSLA",
+      "range": "1w",
+      "status": 200,
+      "correct_identity": true,
+      "source": "yahoo_finance",
+      "count": 66,
+      "last": {
+        "timestamp": "2026-11-13T21:00:00.000Z",
+        "price": "390.2200012207031"
+      }
+    },
+    {
+      "symbol": "TSLA",
+      "range": "1m",
+      "status": 200,
+      "correct_identity": true,
+      "source": "yahoo_finance",
+      "count": 162,
+      "last": {
+        "timestamp": "2026-11-13T21:00:00.000Z",
+        "price": "390.2200012207031"
+      }
+    },
+    {
+      "symbol": "TSLA",
+      "range": "1y",
+      "status": 200,
+      "correct_identity": true,
+      "source": "yahoo_finance",
+      "count": 252,
+      "last": {
+        "timestamp": "2026-11-13T21:00:00.000Z",
+        "price": "390.22"
+      }
+    },
+    {
+      "symbol": "TSLA",
+      "range": "all",
+      "status": 200,
+      "correct_identity": true,
+      "source": "yahoo_finance",
+      "count": 198,
+      "last": {
+        "timestamp": "2026-11-13T21:00:00.000Z",
+        "price": "390.2200012207031"
+      }
+    },
+    {
+      "symbol": "AMZN",
+      "range": "live",
+      "status": 200,
+      "correct_identity": true,
+      "source": "yahoo_finance",
+      "count": 61,
+      "last": {
+        "timestamp": "2026-11-13T21:00:00.000Z",
+        "price": "266.6600036621094"
+      }
+    },
+    {
+      "symbol": "AMZN",
+      "range": "1d",
+      "status": 200,
+      "correct_identity": true,
+      "source": "yahoo_finance",
+      "count": 79,
+      "last": {
+        "timestamp": "2026-11-13T21:00:00.000Z",
+        "price": "266.6600036621094"
+      }
+    },
+    {
+      "symbol": "AMZN",
+      "range": "1w",
+      "status": 200,
+      "correct_identity": true,
+      "source": "yahoo_finance",
+      "count": 66,
+      "last": {
+        "timestamp": "2026-11-13T21:00:00.000Z",
+        "price": "266.6600036621094"
+      }
+    },
+    {
+      "symbol": "AMZN",
+      "range": "1m",
+      "status": 200,
+      "correct_identity": true,
+      "source": "yahoo_finance",
+      "count": 162,
+      "last": {
+        "timestamp": "2026-11-13T21:00:00.000Z",
+        "price": "266.6600036621094"
+      }
+    },
+    {
+      "symbol": "AMZN",
+      "range": "1y",
+      "status": 200,
+      "correct_identity": true,
+      "source": "yahoo_finance",
+      "count": 252,
+      "last": {
+        "timestamp": "2026-11-13T21:00:00.000Z",
+        "price": "266.66"
+      }
+    },
+    {
+      "symbol": "AMZN",
+      "range": "all",
+      "status": 200,
+      "correct_identity": true,
+      "source": "yahoo_finance",
+      "count": 355,
+      "last": {
+        "timestamp": "2026-11-13T21:00:00.000Z",
+        "price": "266.6600036621094"
+      }
+    },
+    {
+      "symbol": "PLTR",
+      "range": "live",
+      "status": 200,
+      "correct_identity": true,
+      "source": "yahoo_finance",
+      "count": 61,
+      "last": {
+        "timestamp": "2026-11-13T21:00:00.000Z",
+        "price": "167.99000549316406"
+      }
+    },
+    {
+      "symbol": "PLTR",
+      "range": "1d",
+      "status": 200,
+      "correct_identity": true,
+      "source": "yahoo_finance",
+      "count": 79,
+      "last": {
+        "timestamp": "2026-11-13T21:00:00.000Z",
+        "price": "167.99000549316406"
+      }
+    },
+    {
+      "symbol": "PLTR",
+      "range": "1w",
+      "status": 200,
+      "correct_identity": true,
+      "source": "yahoo_finance",
+      "count": 66,
+      "last": {
+        "timestamp": "2026-11-13T21:00:00.000Z",
+        "price": "167.99000549316406"
+      }
+    },
+    {
+      "symbol": "PLTR",
+      "range": "1m",
+      "status": 200,
+      "correct_identity": true,
+      "source": "yahoo_finance",
+      "count": 162,
+      "last": {
+        "timestamp": "2026-11-13T21:00:00.000Z",
+        "price": "167.99000549316406"
+      }
+    },
+    {
+      "symbol": "PLTR",
+      "range": "1y",
+      "status": 200,
+      "correct_identity": true,
+      "source": "yahoo_finance",
+      "count": 252,
+      "last": {
+        "timestamp": "2026-11-13T21:00:00.000Z",
+        "price": "167.99"
+      }
+    },
+    {
+      "symbol": "PLTR",
+      "range": "all",
+      "status": 200,
+      "correct_identity": true,
+      "source": "yahoo_finance",
+      "count": 321,
+      "last": {
+        "timestamp": "2026-11-13T21:00:00.000Z",
+        "price": "167.99000549316406"
+      }
+    },
+    {
+      "symbol": "NFLX",
+      "range": "live",
+      "status": 200,
+      "correct_identity": true,
+      "source": "yahoo_finance",
+      "count": 61,
+      "last": {
+        "timestamp": "2026-11-13T21:00:00.000Z",
+        "price": "62.150001525878906"
+      }
+    },
+    {
+      "symbol": "NFLX",
+      "range": "1d",
+      "status": 200,
+      "correct_identity": true,
+      "source": "yahoo_finance",
+      "count": 79,
+      "last": {
+        "timestamp": "2026-11-13T21:00:00.000Z",
+        "price": "62.150001525878906"
+      }
+    },
+    {
+      "symbol": "NFLX",
+      "range": "1w",
+      "status": 200,
+      "correct_identity": true,
+      "source": "yahoo_finance",
+      "count": 66,
+      "last": {
+        "timestamp": "2026-11-13T21:00:00.000Z",
+        "price": "62.150001525878906"
+      }
+    },
+    {
+      "symbol": "NFLX",
+      "range": "1m",
+      "status": 200,
+      "correct_identity": true,
+      "source": "yahoo_finance",
+      "count": 162,
+      "last": {
+        "timestamp": "2026-11-13T21:00:00.000Z",
+        "price": "62.150001525878906"
+      }
+    },
+    {
+      "symbol": "NFLX",
+      "range": "1y",
+      "status": 200,
+      "correct_identity": true,
+      "source": "yahoo_finance",
+      "count": 252,
+      "last": {
+        "timestamp": "2026-11-13T21:00:00.000Z",
+        "price": "62.15"
+      }
+    },
+    {
+      "symbol": "NFLX",
+      "range": "all",
+      "status": 200,
+      "correct_identity": true,
+      "source": "yahoo_finance",
+      "count": 295,
+      "last": {
+        "timestamp": "2026-11-13T21:00:00.000Z",
+        "price": "62.150001525878906"
+      }
+    },
+    {
+      "symbol": "AMD",
+      "range": "live",
+      "status": 200,
+      "correct_identity": true,
+      "source": "yahoo_finance",
+      "count": 61,
+      "last": {
+        "timestamp": "2026-11-13T21:00:01.000Z",
+        "price": "534.06"
+      }
+    },
+    {
+      "symbol": "AMD",
+      "range": "1d",
+      "status": 200,
+      "correct_identity": true,
+      "source": "yahoo_finance",
+      "count": 80,
+      "last": {
+        "timestamp": "2026-11-13T21:00:01.000Z",
+        "price": "534.06"
+      }
+    },
+    {
+      "symbol": "AMD",
+      "range": "1w",
+      "status": 200,
+      "correct_identity": true,
+      "source": "yahoo_finance",
+      "count": 67,
+      "last": {
+        "timestamp": "2026-11-13T21:00:01.000Z",
+        "price": "534.06"
+      }
+    },
+    {
+      "symbol": "AMD",
+      "range": "1m",
+      "status": 200,
+      "correct_identity": true,
+      "source": "yahoo_finance",
+      "count": 163,
+      "last": {
+        "timestamp": "2026-11-13T21:00:01.000Z",
+        "price": "534.06"
+      }
+    },
+    {
+      "symbol": "AMD",
+      "range": "1y",
+      "status": 200,
+      "correct_identity": true,
+      "source": "yahoo_finance",
+      "count": 252,
+      "last": {
+        "timestamp": "2026-11-13T21:00:01.000Z",
+        "price": "534.06"
+      }
+    },
+    {
+      "symbol": "AMD",
+      "range": "all",
+      "status": 200,
+      "correct_identity": true,
+      "source": "yahoo_finance",
+      "count": 169,
+      "last": {
+        "timestamp": "2026-11-13T21:00:01.000Z",
+        "price": "534.0599975585938"
+      }
+    }
+  ]
+}
