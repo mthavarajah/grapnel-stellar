@@ -52,3 +52,19 @@ it('accepts a genuinely shorter closed candle, including a historical delisting 
 it.each([{symbol:'XLMUSDT',lastPrice:'1',closeTime:NOW},{symbol:'XLMUSDC',lastPrice:'1',closeTime:NOW-61000},{symbol:'XLMUSDC',lastPrice:'1',closeTime:NOW+6000},{symbol:'XLMUSDC',lastPrice:'0',closeTime:NOW}])('rejects an incorrect, stale or future current-price observation %j',async ticker=>{
  await expect(setup({ticker}).reader.history('registered-pool','live')).rejects.toMatchObject({details:{reason:'SOURCE_TICKER_INVALID'}});
 });
+
+
+it('uses the current continuous All listing without joining unobserved years or changing source values',async()=>{
+ const {reader}=setup({body:(_url,rows)=>{
+  const old=candle(Number(rows[0]![0])-200*604800000,604800000,'0.1');
+  return [old,...rows];
+ }});
+ const h=await reader.history('registered-pool','all');
+ expect(h.points).toHaveLength(3);expect(h.points.some(p=>p.price==='0.1')).toBe(false);
+ expect(h.points[0]!.price).toBe('1.000000000000000001');
+ expect(h.coverage).toMatchObject({kind:'continuous_source',first_generated_at:h.points[0]!.timestamp,omitted_observations:1});
+ expect(h.change_absolute).toBe('0.000000000000000002');
+});
+it('retains intact All history without claiming filtered coverage',async()=>{
+ const h=await setup().reader.history('registered-pool','all');expect(h.points).toHaveLength(3);expect(h.coverage).toBeUndefined();
+});

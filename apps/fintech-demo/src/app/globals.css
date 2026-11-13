@@ -1606,7 +1606,7 @@ footer strong {
 
 .swap-action-error { margin: 0 0 14px; padding: 12px 14px; border: 1px solid #f3cccc; border-radius: 10px; background: #fff3f1; color: #a4362f; font-size: 12px; line-height: 1.6; overflow-wrap: anywhere; }
 
-.public-market-browser { margin-top: 24px; }
+.public-market-browser { margin: 24px 0; }
 .market-search-label { display: block; max-width: 420px; font-size: 12px; color: var(--muted); margin-bottom: 20px; }
 .market-search-label input { margin-top: 8px; }
 .public-market-options { display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap: 9px; max-height: 290px; overflow-y: auto; }

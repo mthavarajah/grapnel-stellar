@@ -1,0 +1,85 @@
+{
+  "checked_at": "2026-11-13T23:40:35.446Z",
+  "rows": [
+    {
+      "symbol": "XLM",
+      "quote_symbol": "USDC",
+      "count": 102,
+      "first": {
+        "timestamp": "2024-12-08T23:59:59.999Z",
+        "price": "0.4947"
+      },
+      "last": {
+        "timestamp": "2026-11-13T23:40:33.203Z",
+        "price": "0.1455"
+      },
+      "coverage": {
+        "kind": "continuous_source",
+        "first_generated_at": "2024-12-08T23:59:59.999Z",
+        "omitted_observations": 57
+      },
+      "max_gap_ms": 604800000,
+      "source_url": "https://data-api.binance.vision/api/v3/klines?symbol=XLMUSDC&interval=1w&limit=1000&endTime=1794613234910"
+    },
+    {
+      "symbol": "BTC",
+      "quote_symbol": "USDC",
+      "count": 193,
+      "first": {
+        "timestamp": "2023-03-12T23:59:59.999Z",
+        "price": "22333.49"
+      },
+      "last": {
+        "timestamp": "2026-11-13T23:40:34.422Z",
+        "price": "68136.1"
+      },
+      "coverage": {
+        "kind": "continuous_source",
+        "first_generated_at": "2023-03-12T23:59:59.999Z",
+        "omitted_observations": 199
+      },
+      "max_gap_ms": 604800000,
+      "source_url": "https://data-api.binance.vision/api/v3/klines?symbol=BTCUSDC&interval=1w&limit=1000&endTime=1794613234912"
+    },
+    {
+      "symbol": "ETH",
+      "quote_symbol": "USDC",
+      "count": 193,
+      "first": {
+        "timestamp": "2023-03-12T23:59:59.999Z",
+        "price": "1601.6"
+      },
+      "last": {
+        "timestamp": "2026-11-13T23:40:34.431Z",
+        "price": "1923.27"
+      },
+      "coverage": {
+        "kind": "continuous_source",
+        "first_generated_at": "2023-03-12T23:59:59.999Z",
+        "omitted_observations": 199
+      },
+      "max_gap_ms": 604800000,
+      "source_url": "https://data-api.binance.vision/api/v3/klines?symbol=ETHUSDC&interval=1w&limit=1000&endTime=1794613234911"
+    },
+    {
+      "symbol": "XRP",
+      "quote_symbol": "USDC",
+      "count": 151,
+      "first": {
+        "timestamp": "2023-12-31T23:59:59.999Z",
+        "price": "0.6129"
+      },
+      "last": {
+        "timestamp": "2026-11-13T23:40:34.175Z",
+        "price": "1.0073"
+      },
+      "coverage": {
+        "kind": "continuous_source",
+        "first_generated_at": "2023-12-31T23:59:59.999Z",
+        "omitted_observations": 199
+      },
+      "max_gap_ms": 604800000,
+      "source_url": "https://data-api.binance.vision/api/v3/klines?symbol=XRPUSDC&interval=1w&limit=1000&endTime=1794613234912"
+    }
+  ]
+}

@@ -8,6 +8,7 @@ export interface CryptoReferenceMarket {asset_id:string;reference_symbol:CryptoR
 export interface CryptoReferenceHistory extends MarketHistory {
  price_basis:'underlying_reference';reference_symbol:CryptoReferenceSymbol;related_asset_id:string;
  source_url:string;current_source_url:string;interval:string;requested_range:HistoryRange;coverage_start:string;coverage_end:string;
+ coverage?:{kind:'continuous_source';first_generated_at:string;omitted_observations:number};
 }
 const WINDOWS:Record<HistoryRange,{interval:string;ms:number;duration:number|null}>={
  live:{interval:'1m',ms:60000,duration:3600000},'1d':{interval:'5m',ms:300000,duration:86400000},
@@ -68,12 +69,18 @@ export class CryptoReferenceHistoryReader {
   }
   const closed=points.at(-1);if(!closed||points.length<2)return unavailable('SOURCE_HISTORY_EMPTY');
   if(end-Date.parse(closed.timestamp)>window.ms*2+5000)return unavailable('SOURCE_HISTORY_STALE');
+  // All covers the current continuous listing; do not stretch the chart over years without observations.
+  let omitted=0;
+  if(range==='all'){
+   for(let i=1;i<points.length;i++)if(Date.parse(points[i]!.timestamp)-Date.parse(points[i-1]!.timestamp)>window.ms*2)omitted=i;
+   if(omitted)points.splice(0,omitted);
+  }
   const tickerUrl=new URL('/api/v3/ticker/24hr',BASE);tickerUrl.searchParams.set('symbol',pair);
   const ticker=await this.request(tickerUrl) as {symbol?:unknown;lastPrice?:unknown;closeTime?:unknown};
   if(ticker?.symbol!==pair||!Number.isSafeInteger(ticker.closeTime)||Number(ticker.closeTime)>this.now()+5000||this.now()-Number(ticker.closeTime)>60000)return unavailable('SOURCE_TICKER_INVALID');
   let current:string;try{current=normalizePrice(ticker.lastPrice);}catch{return unavailable('SOURCE_TICKER_INVALID');}
   if(Number(ticker.closeTime)>Date.parse(closed.timestamp))points.push({timestamp:new Date(Number(ticker.closeTime)).toISOString(),price:current});
   const latest=points.at(-1)!;
-  return {quote_symbol:'USDC',latest_price:latest.price,as_of:latest.timestamp,points,...priceChange(points[0]!.price,latest.price),price_basis:'underlying_reference',reference_symbol:symbol,source_url:url.toString(),current_source_url:tickerUrl.toString(),interval:window.interval,requested_range:range,coverage_start:points[0]!.timestamp,coverage_end:latest.timestamp};
+  return {quote_symbol:'USDC',latest_price:latest.price,as_of:latest.timestamp,points,...priceChange(points[0]!.price,latest.price),price_basis:'underlying_reference',reference_symbol:symbol,source_url:url.toString(),current_source_url:tickerUrl.toString(),interval:window.interval,requested_range:range,coverage_start:points[0]!.timestamp,coverage_end:latest.timestamp,...(omitted?{coverage:{kind:'continuous_source' as const,first_generated_at:points[0]!.timestamp,omitted_observations:omitted}}:{})};
  }
 }

@@ -267,6 +267,7 @@ function PriceChart({history,loading,range}:{history:MarketHistory|null;loading:
       {selected&&<div className="market-chart-tooltip" role="tooltip" data-testid="price-chart-tooltip"><strong>{chartPrice(selected.originalPrice)} {history!.quote_symbol}</strong><time dateTime={selected.originalTimestamp}>{marketDate(selected.originalTimestamp,true,true)}</time></div>}
     </div>
     {history?.coverage?.kind==="observed_only"&&history.coverage.first_generated_at&&<p className="market-chart-caption">Recorded prices since {marketDate(history.coverage.first_generated_at,true)}</p>}
+    {history?.coverage?.kind==="continuous_source"&&history.coverage.first_generated_at&&<p className="market-chart-caption">Continuous history since {marketDate(history.coverage.first_generated_at)}</p>}
     {history?.coverage?.kind==="provider_available"&&history.coverage.first_generated_at&&<p className="market-chart-caption">Available history since {marketDate(history.coverage.first_generated_at)}</p>}
     {points.length===1?<p className="market-chart-caption">One price observation. More history is not available yet.</p>:<div className="market-chart-dates"><span>{marketDate(first,true)}</span><span>{marketDate(last,true)}</span></div>}
   </div>;
@@ -1359,8 +1360,7 @@ function FinanceShell({ page, auth, initialCategory }: { page: string; auth?: Au
                 ))}
               </div>
               {category !== "crypto_spot" && category !== "unavailable" && (
-                <section className="card public-market-browser" aria-label="Available markets" data-testid="market-list">
-                  <div className="section-heading"><h2>Find a market</h2><span className="small muted">{markets.length} markets</span></div>
+                <section className="public-market-browser" aria-label="Available markets" data-testid="market-list">
                   <div className="public-market-search-row"><label className="market-search-label">Search markets<input type="search" aria-label="Search markets" data-testid="market-search" value={marketSearch} onFocus={()=>setMarketResultsOpen(true)} onChange={event=>{setMarketSearch(event.target.value);setMarketResultsOpen(true);}} placeholder="Search by name or symbol" /></label><button type="button" className="button outline" data-testid="market-browse-toggle" aria-expanded={marketResultsOpen} aria-controls="public-market-options" onClick={()=>setMarketResultsOpen(current=>!current)}>Browse markets</button></div>
                   {marketsLoading ? <p className="small muted" role="status">Loading markets…</p> : marketResultsOpen && visiblePublicMarkets.length ? <div className="public-market-options" id="public-market-options">
                     {visiblePublicMarkets.map(entry=><button type="button" key={entry.market_id??entry.id} data-testid={`market-option-${entry.underlying?.symbol??entry.market_id}`} aria-label={`${entry.underlying?.symbol??entry.label} ${(category==="perps"||entry.instrument_type==="perpetual_futures")?(entry.asset_category==="equity"?"stock perpetual":entry.asset_category==="index"?"index perpetual":"perpetual"):"stock"}`} aria-pressed={(entry.market_id??entry.id)===market}
