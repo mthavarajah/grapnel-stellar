@@ -211,6 +211,7 @@ input[type="checkbox"] {
   color: #7e7e7e;
 }
 .sidebar nav {
+  margin-top: 28px;
   display: flex;
   flex-direction: column;
   gap: 5px;
