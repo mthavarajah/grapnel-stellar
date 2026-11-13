@@ -18,7 +18,8 @@ export async function registerMarketHistoryRoutes(app:FastifyInstance,deps:Marke
   const {id}=z.object({id:z.string().min(1).max(200)}).parse(request.params);
   const category=/^robinhood-testnet:stocks:(?:TSLA|AMZN|PLTR|NFLX|AMD)$/.test(id)?'stocks'
    :/^hyperliquid-testnet:stocks:(?:0|[1-9]\d{0,8})$/.test(id)?'stocks'
-   :/^gmx-testnet:perps:(?:ETH|BTC)$/.test(id)?'perps'
+   :id==='zenex-testnet:perps:XLM'?'perps'
+   :/^gmx-testnet:perps:(?:ETH|BTC|CRV|XAU|XAG|XPT)$/.test(id)?'perps'
    :/^hyperliquid-testnet:perps:(?:0|[1-9]\d{0,8})$/.test(id)?'perps'
    :/^sodax:catalog:(?:mainnet|testnet):C[A-Z2-7]{55}$/.test(id)?'stocks'
    :id.startsWith('stellar-testnet:soroswap:')?'spot':null;

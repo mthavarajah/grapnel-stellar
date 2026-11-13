@@ -2,7 +2,7 @@
   "openapi": "3.1.0",
   "info": {
     "title": "Grapnel Testnet API",
-    "version": "0.4.3",
+    "version": "0.4.4",
     "description": "Testnet B2B API with independently authorized customer wallets. Stellar funding, Crypto and Blend; canonical Robinhood Testnet USDG stock execution. Financial writes require current tenant permissions, customer ownership and actual chain proof. See docs/20_STOCKS_CUSTOMER_EXECUTION.md. GMX Arbitrum Sepolia perpetuals use the same customer authorization model with exact signed EVM transactions and canonical keeper execution proof."
   },
   "servers": [
@@ -5873,6 +5873,312 @@
           }
         }
       }
+    },
+    "/v1/trade/zenex/status": {
+      "get": {
+        "tags": [
+          "Perpetuals"
+        ],
+        "security": [
+          {
+            "businessKey": []
+          }
+        ],
+        "parameters": [
+          {
+            "required": true,
+            "in": "header",
+            "name": "X-Customer-Identity",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Verified Privy customer identity token; business key alone cannot authorize wallet spend."
+          },
+          {
+            "in": "query",
+            "name": "customer_id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "in": "query",
+            "name": "wallet_id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "summary": "Read customer XLM Testnet positions, collateral and pending orders",
+        "responses": {
+          "200": {
+            "description": "Private customer-bound onchain snapshot.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/trade/zenex/prepare": {
+      "post": {
+        "tags": [
+          "Perpetuals"
+        ],
+        "security": [
+          {
+            "businessKey": []
+          }
+        ],
+        "parameters": [
+          {
+            "required": true,
+            "in": "header",
+            "name": "X-Customer-Identity",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Verified Privy customer identity token; business key alone cannot authorize wallet spend."
+          },
+          {
+            "required": true,
+            "in": "header",
+            "name": "Idempotency-Key",
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 200
+            }
+          }
+        ],
+        "summary": "Prepare one exact customer-authorized XLM open, close, cancel or USDC trustline",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "oneOf": [
+                  {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": [
+                      "customer_id",
+                      "wallet_id",
+                      "kind",
+                      "is_long",
+                      "collateral",
+                      "leverage"
+                    ],
+                    "properties": {
+                      "customer_id": {
+                        "type": "string",
+                        "format": "uuid"
+                      },
+                      "wallet_id": {
+                        "type": "string",
+                        "format": "uuid"
+                      },
+                      "kind": {
+                        "const": "open"
+                      },
+                      "is_long": {
+                        "type": "boolean"
+                      },
+                      "collateral": {
+                        "type": "string",
+                        "pattern": "^(0|[1-9]\\d*)(\\.\\d{1,7})?$"
+                      },
+                      "leverage": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 10
+                      }
+                    }
+                  },
+                  {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": [
+                      "customer_id",
+                      "wallet_id",
+                      "kind",
+                      "is_long"
+                    ],
+                    "properties": {
+                      "customer_id": {
+                        "type": "string",
+                        "format": "uuid"
+                      },
+                      "wallet_id": {
+                        "type": "string",
+                        "format": "uuid"
+                      },
+                      "kind": {
+                        "const": "close"
+                      },
+                      "is_long": {
+                        "type": "boolean"
+                      }
+                    }
+                  },
+                  {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": [
+                      "customer_id",
+                      "wallet_id",
+                      "kind",
+                      "order_id"
+                    ],
+                    "properties": {
+                      "customer_id": {
+                        "type": "string",
+                        "format": "uuid"
+                      },
+                      "wallet_id": {
+                        "type": "string",
+                        "format": "uuid"
+                      },
+                      "kind": {
+                        "const": "cancel"
+                      },
+                      "order_id": {
+                        "type": "integer",
+                        "minimum": 1
+                      }
+                    }
+                  },
+                  {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": [
+                      "customer_id",
+                      "wallet_id",
+                      "kind"
+                    ],
+                    "properties": {
+                      "customer_id": {
+                        "type": "string",
+                        "format": "uuid"
+                      },
+                      "wallet_id": {
+                        "type": "string",
+                        "format": "uuid"
+                      },
+                      "kind": {
+                        "const": "trustline"
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "202": {
+            "description": "Durable operation accepted; completion requires canonical chain effects.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Current entitlements and customer ownership are required."
+          },
+          "409": {
+            "description": "Execution unavailable, pending wallet action or insufficient available funds."
+          }
+        }
+      }
+    },
+    "/v1/trade/zenex/fund": {
+      "post": {
+        "tags": [
+          "Perpetuals"
+        ],
+        "security": [
+          {
+            "businessKey": []
+          }
+        ],
+        "parameters": [
+          {
+            "required": true,
+            "in": "header",
+            "name": "X-Customer-Identity",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Verified Privy customer identity token; business key alone cannot authorize wallet spend."
+          },
+          {
+            "required": true,
+            "in": "header",
+            "name": "Idempotency-Key",
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 200
+            }
+          }
+        ],
+        "summary": "Request actual provider Testnet USDC for the verified session wallet",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "customer_id",
+                  "wallet_id"
+                ],
+                "properties": {
+                  "customer_id": {
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  "wallet_id": {
+                    "type": "string",
+                    "format": "uuid"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "202": {
+            "description": "Durable operation accepted; completion requires canonical chain effects.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Current entitlements and customer ownership are required."
+          },
+          "409": {
+            "description": "Execution unavailable, pending wallet action or insufficient available funds."
+          }
+        }
+      }
     }
   },
   "components": {
@@ -6248,7 +6554,17 @@
             ]
           },
           "prepared_action": {
-            "type": "object"
+            "type": "object",
+            "properties": {
+              "summary": {
+                "type": "object",
+                "properties": {
+                  "perpetual": {
+                    "$ref": "#/components/schemas/ZenexPerpetualSummary"
+                  }
+                }
+              }
+            }
           },
           "customer_action_token": {
             "type": "string"
@@ -6259,6 +6575,13 @@
           },
           "display_asset_id": {
             "type": "string"
+          },
+          "display_side": {
+            "type": "string",
+            "enum": [
+              "long",
+              "short"
+            ]
           }
         },
         "required": [
@@ -6607,6 +6930,40 @@
           "gmx-testnet:perps:XAG",
           "gmx-testnet:perps:XPT"
         ]
+      },
+      "ZenexPerpetualSummary": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "market_id",
+          "is_long",
+          "size_usd",
+          "collateral",
+          "price_bound18",
+          "expiration_ledger"
+        ],
+        "properties": {
+          "market_id": {
+            "const": "zenex-testnet:perps:XLM"
+          },
+          "is_long": {
+            "type": "boolean"
+          },
+          "size_usd": {
+            "type": "string"
+          },
+          "collateral": {
+            "type": "string"
+          },
+          "price_bound18": {
+            "type": "string",
+            "pattern": "^[1-9]\\d{0,38}$"
+          },
+          "expiration_ledger": {
+            "type": "integer",
+            "minimum": 1
+          }
+        }
       }
     }
   }

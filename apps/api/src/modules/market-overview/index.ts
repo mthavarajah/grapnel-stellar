@@ -149,7 +149,7 @@ export class MarketOverviewService {
         unit: "USD",
         as_of: new Date(market.oracle_timestamp!).toISOString(),
       }));
-      return { id: "perps", label: "Margin prices", items, available: items.length > 0 };
+      return { id: "perps", label: "Perpetual prices", items, available: items.length > 0 };
     })();
     if (enabled.has("trade.stocks")) sections.stocks = referenceSection("stocks", "Stock prices", this.deps.stockReferenceItems??referenceItems.stocks, this.deps, this.now());
     if (enabled.has("capital.lending")) sections.lending = (async () => {

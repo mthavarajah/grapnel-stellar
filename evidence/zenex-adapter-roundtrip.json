@@ -1,0 +1,875 @@
+{
+  "network": "stellar-testnet",
+  "signer": "controlled_qa_keypair",
+  "account": "GCDRDEN2IOS3NNI3HCYOWU7XLHGC4VNIGY6PS2X7TFYA6BKOBJREHU6T",
+  "checked_at": "2026-11-13T04:14:20.975Z",
+  "complete": true,
+  "steps": [
+    {
+      "kind": "open",
+      "is_long": true,
+      "creation_hash": "1f0e2ce8febf8ff2f46f02a28776dec3767b1a738ee8328fe062e673535e6301",
+      "action": {
+        "operationId": "5155d542-9e06-4fb0-a512-171b23569209",
+        "customerId": "00000000-0000-4000-8000-000000000002",
+        "network": "stellar-testnet",
+        "walletAddress": "GCDRDEN2IOS3NNI3HCYOWU7XLHGC4VNIGY6PS2X7TFYA6BKOBJREHU6T",
+        "unsignedXdr": "AAAAAgAAAACHEZG6Q6W2tRs4sOtT91nMLlWoNjz5av+ZcA8FTgpiQwAasnwAVwbYAAAABgAAAAEAAAAAAAAAAAAAAABq9o6xAAAAAAAAAAEAAAAAAAAAGAAAAAAAAAABnIG7ngcOcLoQkdWNxF4LPHJuv6Mw1AjfeD4Ay5rVvf0AAAAMY3JlYXRlX29yZGVyAAAACAAAABIAAAAAAAAAAIcRkbpDpba1Gziw61P3WcwuVag2PPlq/5lwDwVOCmJDAAAAAAAAAAEAAAADAAAAAAAAAAoAAAAAAAAAAAAAAAABMS0AAAAACgAAAAAAAAAAAAAAAACYloAAAAAKAAAAAAAAAAAAAAAAAAAAAAAAAAoAAAAAAAAAAAH7gYqL+HjaAAAAAwBXCRsAAAABAAAAAAAAAAAAAAABnIG7ngcOcLoQkdWNxF4LPHJuv6Mw1AjfeD4Ay5rVvf0AAAAMY3JlYXRlX29yZGVyAAAACAAAABIAAAAAAAAAAIcRkbpDpba1Gziw61P3WcwuVag2PPlq/5lwDwVOCmJDAAAAAAAAAAEAAAADAAAAAAAAAAoAAAAAAAAAAAAAAAABMS0AAAAACgAAAAAAAAAAAAAAAACYloAAAAAKAAAAAAAAAAAAAAAAAAAAAAAAAAoAAAAAAAAAAAH7gYqL+HjaAAAAAwBXCRsAAAABAAAAAAAAAAH4x+oV4sAS065fsdigQlwRf87T9Pye88QeK0uc/oy1XgAAAAh0cmFuc2ZlcgAAAAMAAAASAAAAAAAAAACHEZG6Q6W2tRs4sOtT91nMLlWoNjz5av+ZcA8FTgpiQwAAABIAAAABnIG7ngcOcLoQkdWNxF4LPHJuv6Mw1AjfeD4Ay5rVvf0AAAAKAAAAAAAAAAAAAAAAAJodIAAAAAAAAAABAAAAAAAAAAQAAAAGAAAAAZyBu54HDnC6EJHVjcReCzxybr+jMNQI33g+AMua1b39AAAAEAAAAAEAAAADAAAADwAAAAhQb3NpdGlvbgAAABIAAAAAAAAAAIcRkbpDpba1Gziw61P3WcwuVag2PPlq/5lwDwVOCmJDAAAAAAAAAAEAAAABAAAABgAAAAGcgbueBw5wuhCR1Y3EXgs8cm6/ozDUCN94PgDLmtW9/QAAABQAAAABAAAABgAAAAH4x+oV4sAS065fsdigQlwRf87T9Pye88QeK0uc/oy1XgAAABQAAAABAAAABwKqNC9ebghMjlcot0rud4ZPd+pyCJbmGmidqCUvlZQ8AAAABAAAAAEAAAAAhxGRukOltrUbOLDrU/dZzC5VqDY8+Wr/mXAPBU4KYkMAAAABVVNEQwAAAACXKFO9oYOYIm4fElMRiCgBTMj59XQVfDBudF/6vVNutwAAAAYAAAABnIG7ngcOcLoQkdWNxF4LPHJuv6Mw1AjfeD4Ay5rVvf0AAAAQAAAAAQAAAAMAAAAPAAAABU9yZGVyAAAAAAAAEgAAAAAAAAAAhxGRukOltrUbOLDrU/dZzC5VqDY8+Wr/mXAPBU4KYkMAAAADAAAABQAAAAEAAAAGAAAAAZyBu54HDnC6EJHVjcReCzxybr+jMNQI33g+AMua1b39AAAAEAAAAAEAAAACAAAADwAAAAxPcmRlckNvdW50ZXIAAAASAAAAAAAAAACHEZG6Q6W2tRs4sOtT91nMLlWoNjz5av+ZcA8FTgpiQwAAAAEAAAAGAAAAAfjH6hXiwBLTrl+x2KBCXBF/ztP0/J7zxB4rS5z+jLVeAAAAEAAAAAEAAAACAAAADwAAAAdCYWxhbmNlAAAAABIAAAABnIG7ngcOcLoQkdWNxF4LPHJuv6Mw1AjfeD4Ay5rVvf0AAAABABnJ2gAAAHQAAAOcAAAAAAANRbYAAAAA",
+        "signingHashHex": "1f0e2ce8febf8ff2f46f02a28776dec3767b1a738ee8328fe062e673535e6301",
+        "summary": {
+          "action": "zenex.open",
+          "fromAssetId": "stellar-testnet:classic:USDC:GCLSQU55UGBZQITOD4JFGEMIFAAUZSHZ6V2BK7BQNZ2F76V5KNXLOUGC",
+          "amount": "1.0000000",
+          "recipient": "GCDRDEN2IOS3NNI3HCYOWU7XLHGC4VNIGY6PS2X7TFYA6BKOBJREHU6T",
+          "contractId": "CCOIDO46A4HHBOQQSHKY3RC6BM6HE3V7UMYNICG7PA7ABS422W672F6U",
+          "perpetual": {
+            "market_id": "zenex-testnet:perps:XLM",
+            "is_long": true,
+            "size_usd": "2.0000000",
+            "collateral": "1.0000000",
+            "price_bound18": "142850245246089434",
+            "expiration_ledger": 5703963
+          },
+          "maxFeeStroops": "10000000",
+          "expiresAt": "2026-11-13T04:14:41.000Z"
+        },
+        "authorization": {
+          "method": "privy_stellar",
+          "expiresAt": "2026-11-13T04:14:41.000Z"
+        }
+      },
+      "baseline": {
+        "network": "stellar-testnet",
+        "market_id": "zenex-testnet:perps:XLM",
+        "wallet_address": "GCDRDEN2IOS3NNI3HCYOWU7XLHGC4VNIGY6PS2X7TFYA6BKOBJREHU6T",
+        "collateral_asset_id": "stellar-testnet:classic:USDC:GCLSQU55UGBZQITOD4JFGEMIFAAUZSHZ6V2BK7BQNZ2F76V5KNXLOUGC",
+        "balance": "999.9692475",
+        "has_trustline": true,
+        "positions": [],
+        "config": {
+          "adl_clear_target": "400000000000000000",
+          "adl_max_pnl": "550000000000000000",
+          "borrow_rate": "15854895992",
+          "deposit_fee": "1000000000000000",
+          "exec_fee": "100000",
+          "fee_dom": "600000000000000",
+          "fee_non_dom": "400000000000000",
+          "funding_decrease": "36885",
+          "funding_increase": "885267",
+          "funding_max": "6373921868",
+          "funding_min": "317097920",
+          "impact_scalar": "100000000000000",
+          "increased_borrow_rate": "15854895992",
+          "init_margin": "50000000000000000",
+          "keeper_rate": "100000000000000000",
+          "liq_fee": "5000000000000000",
+          "maintenance_margin": "20000000000000000",
+          "max_open_interest": "500000000000",
+          "max_pnl_trader": "900000000000000000",
+          "max_pnl_withdraw": "150000000000000000",
+          "max_position_notional": "250000000000",
+          "max_util_open": "800000000000000000",
+          "max_util_withdraw": "900000000000000000",
+          "max_vault_balance": "1000000000000",
+          "min_deposit": "100000000",
+          "min_order_margin": "10000000",
+          "min_order_notional": "10000000",
+          "min_position_notional": "10000000",
+          "notional_lock": "30",
+          "redeem_fee": "2500000000000000",
+          "redeem_lock": "3600",
+          "target_util": "800000000000000000",
+          "threshold_decrease_funding": "0",
+          "threshold_stable_funding": "40000000000000000"
+        },
+        "market_data": {
+          "accrued_at": "1794542704",
+          "borrowing_idx": {
+            "long": "22818259827153112",
+            "short": "144176035774270"
+          },
+          "credit_owed": "487905",
+          "credit_pool": "118076142",
+          "funding_idx": {
+            "long": "24335110227583081",
+            "short": "-1938692301052301"
+          },
+          "funding_rate": "6373921868",
+          "margin": {
+            "long": "1198913685",
+            "short": "0"
+          },
+          "notional": {
+            "long": "3000000000",
+            "short": "0"
+          },
+          "tokens": {
+            "long": "16247840388",
+            "short": "0"
+          }
+        },
+        "quote": {
+          "marketId": "xlm-usd",
+          "feedID": "0x000358cb12b1f5bbeca8b5b4666025a40b15520af1f82516ee2fb9a335055e9a",
+          "price": "142111920000000000",
+          "bid": "142076042299641900",
+          "ask": "142139547508546700",
+          "observationsTimestamp": 1794543159,
+          "validFromTimestamp": 1794543159
+        },
+        "rates": {
+          "data": {
+            "current": {
+              "observedAt": "2026-11-13T04:05:05.046Z",
+              "long": {
+                "fundingPerSec": "6373921868",
+                "borrowingPerSec": "2153261448"
+              },
+              "short": {
+                "fundingPerSec": "0",
+                "borrowingPerSec": "0"
+              }
+            },
+            "averages": {
+              "8h": {
+                "long": {
+                  "fundingPerSec": "6373921868",
+                  "borrowingPerSec": "2219875612"
+                },
+                "short": {
+                  "fundingPerSec": "-2731680801",
+                  "borrowingPerSec": "0"
+                }
+              },
+              "24h": {
+                "long": {
+                  "fundingPerSec": "6373921868",
+                  "borrowingPerSec": "2069561034"
+                },
+                "short": {
+                  "fundingPerSec": "-965745738",
+                  "borrowingPerSec": "0"
+                }
+              }
+            }
+          },
+          "meta": {
+            "apiVersion": "v1",
+            "asOf": "2026-11-13T04:12:40.477Z",
+            "indexedFromLedger": "4937285",
+            "throughLedger": "5703903"
+          }
+        },
+        "as_of": "2026-11-13T04:12:41.468Z"
+      },
+      "verification": {
+        "verified": true,
+        "result": {
+          "zenex": {
+            "kind": "zenex.open",
+            "order_id": 5,
+            "creation_hash": "1f0e2ce8febf8ff2f46f02a28776dec3767b1a738ee8328fe062e673535e6301",
+            "execution_hash": "305586ab00c55395606da2b7d9df3e889c42601eec568885508e713be890fd63",
+            "event": {
+              "id": "0024498085434531840-0000000001",
+              "txHash": "305586ab00c55395606da2b7d9df3e889c42601eec568885508e713be890fd63",
+              "ledger": 5703905,
+              "topic": [
+                "open_fill",
+                "GCDRDEN2IOS3NNI3HCYOWU7XLHGC4VNIGY6PS2X7TFYA6BKOBJREHU6T",
+                5,
+                true
+              ],
+              "value": {
+                "base_fee": "12000",
+                "impact_fee": "4",
+                "keeper": "GDDHPJCKJY6RYUNFXX552A542S75JF64Y46MDCJZETVOYSFZ2DZ44REN",
+                "margin": "10000000",
+                "notional": "20000000",
+                "price": "142153312394593025",
+                "tokens": "140693168"
+              }
+            },
+            "position_before": null,
+            "position_after": {
+              "borrowing_idx": "22819255193161942",
+              "decrease_orders": [],
+              "funding_idx": "24338074101251701",
+              "locked_notional": "20000000",
+              "margin": "9987996",
+              "notional": "20000000",
+              "priced_at": "1794543164",
+              "tokens": "140693168",
+              "unlocks_at": "1794543199"
+            },
+            "verified": true
+          }
+        }
+      }
+    },
+    {
+      "kind": "close",
+      "is_long": true,
+      "creation_hash": "7b830d646c7db5bbef50775338f3fab245383b02a96e699653000b9e1ea1252b",
+      "action": {
+        "operationId": "b68f1983-ce97-4fce-b809-1e3257371722",
+        "customerId": "00000000-0000-4000-8000-000000000002",
+        "network": "stellar-testnet",
+        "walletAddress": "GCDRDEN2IOS3NNI3HCYOWU7XLHGC4VNIGY6PS2X7TFYA6BKOBJREHU6T",
+        "unsignedXdr": "AAAAAgAAAACHEZG6Q6W2tRs4sOtT91nMLlWoNjz5av+ZcA8FTgpiQwAbNeoAVwbYAAAABwAAAAEAAAAAAAAAAAAAAABq9o7ZAAAAAAAAAAEAAAAAAAAAGAAAAAAAAAABnIG7ngcOcLoQkdWNxF4LPHJuv6Mw1AjfeD4Ay5rVvf0AAAAMY3JlYXRlX29yZGVyAAAACAAAABIAAAAAAAAAAIcRkbpDpba1Gziw61P3WcwuVag2PPlq/5lwDwVOCmJDAAAAAAAAAAEAAAADAAAAAwAAAAp/////////////////////AAAACgAAAAAAAAAAAAAAAAAAAAAAAAAKAAAAAAAAAAAAAAAAAAAAAAAAAAoAAAAAAAAAAAH2TcdpkE//AAAAAwBXCSMAAAABAAAAAAAAAAAAAAABnIG7ngcOcLoQkdWNxF4LPHJuv6Mw1AjfeD4Ay5rVvf0AAAAMY3JlYXRlX29yZGVyAAAACAAAABIAAAAAAAAAAIcRkbpDpba1Gziw61P3WcwuVag2PPlq/5lwDwVOCmJDAAAAAAAAAAEAAAADAAAAAwAAAAp/////////////////////AAAACgAAAAAAAAAAAAAAAAAAAAAAAAAKAAAAAAAAAAAAAAAAAAAAAAAAAAoAAAAAAAAAAAH2TcdpkE//AAAAAwBXCSMAAAABAAAAAAAAAAH4x+oV4sAS065fsdigQlwRf87T9Pye88QeK0uc/oy1XgAAAAh0cmFuc2ZlcgAAAAMAAAASAAAAAAAAAACHEZG6Q6W2tRs4sOtT91nMLlWoNjz5av+ZcA8FTgpiQwAAABIAAAABnIG7ngcOcLoQkdWNxF4LPHJuv6Mw1AjfeD4Ay5rVvf0AAAAKAAAAAAAAAAAAAAAAAAGGoAAAAAAAAAABAAAAAAAAAAMAAAAGAAAAAZyBu54HDnC6EJHVjcReCzxybr+jMNQI33g+AMua1b39AAAAFAAAAAEAAAAGAAAAAfjH6hXiwBLTrl+x2KBCXBF/ztP0/J7zxB4rS5z+jLVeAAAAFAAAAAEAAAAHAqo0L15uCEyOVyi3Su53hk936nIIluYaaJ2oJS+VlDwAAAAFAAAAAQAAAACHEZG6Q6W2tRs4sOtT91nMLlWoNjz5av+ZcA8FTgpiQwAAAAFVU0RDAAAAAJcoU72hg5gibh8SUxGIKAFMyPn1dBV8MG50X/q9U263AAAABgAAAAGcgbueBw5wuhCR1Y3EXgs8cm6/ozDUCN94PgDLmtW9/QAAABAAAAABAAAAAwAAAA8AAAAFT3JkZXIAAAAAAAASAAAAAAAAAACHEZG6Q6W2tRs4sOtT91nMLlWoNjz5av+ZcA8FTgpiQwAAAAMAAAAGAAAAAQAAAAYAAAABnIG7ngcOcLoQkdWNxF4LPHJuv6Mw1AjfeD4Ay5rVvf0AAAAQAAAAAQAAAAIAAAAPAAAADE9yZGVyQ291bnRlcgAAABIAAAAAAAAAAIcRkbpDpba1Gziw61P3WcwuVag2PPlq/5lwDwVOCmJDAAAAAQAAAAYAAAABnIG7ngcOcLoQkdWNxF4LPHJuv6Mw1AjfeD4Ay5rVvf0AAAAQAAAAAQAAAAMAAAAPAAAACFBvc2l0aW9uAAAAEgAAAAAAAAAAhxGRukOltrUbOLDrU/dZzC5VqDY8+Wr/mXAPBU4KYkMAAAAAAAAAAQAAAAEAAAAGAAAAAfjH6hXiwBLTrl+x2KBCXBF/ztP0/J7zxB4rS5z+jLVeAAAAEAAAAAEAAAACAAAADwAAAAdCYWxhbmNlAAAAABIAAAABnIG7ngcOcLoQkdWNxF4LPHJuv6Mw1AjfeD4Ay5rVvf0AAAABABtxagAAAHQAAAWIAAAAAAANh20AAAAA",
+        "signingHashHex": "7b830d646c7db5bbef50775338f3fab245383b02a96e699653000b9e1ea1252b",
+        "summary": {
+          "action": "zenex.close",
+          "fromAssetId": "stellar-testnet:classic:USDC:GCLSQU55UGBZQITOD4JFGEMIFAAUZSHZ6V2BK7BQNZ2F76V5KNXLOUGC",
+          "amount": "0.0000000",
+          "recipient": "GCDRDEN2IOS3NNI3HCYOWU7XLHGC4VNIGY6PS2X7TFYA6BKOBJREHU6T",
+          "contractId": "CCOIDO46A4HHBOQQSHKY3RC6BM6HE3V7UMYNICG7PA7ABS422W672F6U",
+          "perpetual": {
+            "market_id": "zenex-testnet:perps:XLM",
+            "is_long": true,
+            "size_usd": "2.0000000",
+            "collateral": "0.0000000",
+            "price_bound18": "141385957173645311",
+            "expiration_ledger": 5703971
+          },
+          "maxFeeStroops": "10000000",
+          "expiresAt": "2026-11-13T04:15:21.000Z"
+        },
+        "authorization": {
+          "method": "privy_stellar",
+          "expiresAt": "2026-11-13T04:15:21.000Z"
+        }
+      },
+      "baseline": {
+        "network": "stellar-testnet",
+        "market_id": "zenex-testnet:perps:XLM",
+        "wallet_address": "GCDRDEN2IOS3NNI3HCYOWU7XLHGC4VNIGY6PS2X7TFYA6BKOBJREHU6T",
+        "collateral_asset_id": "stellar-testnet:classic:USDC:GCLSQU55UGBZQITOD4JFGEMIFAAUZSHZ6V2BK7BQNZ2F76V5KNXLOUGC",
+        "balance": "998.9592475",
+        "has_trustline": true,
+        "positions": [
+          {
+            "is_long": true,
+            "borrowing_idx": "22819255193161942",
+            "decrease_orders": [],
+            "funding_idx": "24338074101251701",
+            "locked_notional": "20000000",
+            "margin": "9987996",
+            "notional": "20000000",
+            "priced_at": "1794543164",
+            "tokens": "140693168",
+            "unlocks_at": "1794543199"
+          }
+        ],
+        "config": {
+          "adl_clear_target": "400000000000000000",
+          "adl_max_pnl": "550000000000000000",
+          "borrow_rate": "15854895992",
+          "deposit_fee": "1000000000000000",
+          "exec_fee": "100000",
+          "fee_dom": "600000000000000",
+          "fee_non_dom": "400000000000000",
+          "funding_decrease": "36885",
+          "funding_increase": "885267",
+          "funding_max": "6373921868",
+          "funding_min": "317097920",
+          "impact_scalar": "100000000000000",
+          "increased_borrow_rate": "15854895992",
+          "init_margin": "50000000000000000",
+          "keeper_rate": "100000000000000000",
+          "liq_fee": "5000000000000000",
+          "maintenance_margin": "20000000000000000",
+          "max_open_interest": "500000000000",
+          "max_pnl_trader": "900000000000000000",
+          "max_pnl_withdraw": "150000000000000000",
+          "max_position_notional": "250000000000",
+          "max_util_open": "800000000000000000",
+          "max_util_withdraw": "900000000000000000",
+          "max_vault_balance": "1000000000000",
+          "min_deposit": "100000000",
+          "min_order_margin": "10000000",
+          "min_order_notional": "10000000",
+          "min_position_notional": "10000000",
+          "notional_lock": "30",
+          "redeem_fee": "2500000000000000",
+          "redeem_lock": "3600",
+          "target_util": "800000000000000000",
+          "threshold_decrease_funding": "0",
+          "threshold_stable_funding": "40000000000000000"
+        },
+        "market_data": {
+          "accrued_at": "1794543169",
+          "borrowing_idx": {
+            "long": "22819255193161942",
+            "short": "144176035774270"
+          },
+          "credit_owed": "487905",
+          "credit_pool": "118076142",
+          "funding_idx": {
+            "long": "24338074101251701",
+            "short": "-1938692301052301"
+          },
+          "funding_rate": "6373921868",
+          "margin": {
+            "long": "1208901681",
+            "short": "0"
+          },
+          "notional": {
+            "long": "3020000000",
+            "short": "0"
+          },
+          "tokens": {
+            "long": "16388533556",
+            "short": "0"
+          }
+        },
+        "quote": {
+          "marketId": "xlm-usd",
+          "feedID": "0x000358cb12b1f5bbeca8b5b4666025a40b15520af1f82516ee2fb9a335055e9a",
+          "price": "142142220106441000",
+          "bid": "142096439370497800",
+          "ask": "142175097373141400",
+          "observationsTimestamp": 1794543199,
+          "validFromTimestamp": 1794543199
+        },
+        "rates": {
+          "data": {
+            "current": {
+              "observedAt": "2026-11-13T04:12:50.142Z",
+              "long": {
+                "fundingPerSec": "6373921868",
+                "borrowingPerSec": "2159107323"
+              },
+              "short": {
+                "fundingPerSec": "0",
+                "borrowingPerSec": "0"
+              }
+            },
+            "averages": {
+              "8h": {
+                "long": {
+                  "fundingPerSec": "6373921868",
+                  "borrowingPerSec": "2218187604"
+                },
+                "short": {
+                  "fundingPerSec": "-2655800778",
+                  "borrowingPerSec": "0"
+                }
+              },
+              "24h": {
+                "long": {
+                  "fundingPerSec": "6373921868",
+                  "borrowingPerSec": "2070456497"
+                },
+                "short": {
+                  "fundingPerSec": "-956088280",
+                  "borrowingPerSec": "0"
+                }
+              }
+            }
+          },
+          "meta": {
+            "apiVersion": "v1",
+            "asOf": "2026-11-13T04:13:20.412Z",
+            "indexedFromLedger": "4937285",
+            "throughLedger": "5703903"
+          }
+        },
+        "as_of": "2026-11-13T04:13:21.236Z"
+      },
+      "verification": {
+        "verified": true,
+        "result": {
+          "zenex": {
+            "kind": "zenex.close",
+            "order_id": 6,
+            "creation_hash": "7b830d646c7db5bbef50775338f3fab245383b02a96e699653000b9e1ea1252b",
+            "execution_hash": "1cb14af088cc6af9f3398b65d810221a3fcbb70ac1cb26e229cc3a1392711f4f",
+            "event": {
+              "id": "0024498119794257920-0000000001",
+              "txHash": "1cb14af088cc6af9f3398b65d810221a3fcbb70ac1cb26e229cc3a1392711f4f",
+              "ledger": 5703913,
+              "topic": [
+                "close_fill",
+                "GCDRDEN2IOS3NNI3HCYOWU7XLHGC4VNIGY6PS2X7TFYA6BKOBJREHU6T",
+                6,
+                true
+              ],
+              "value": {
+                "bad_debt": "0",
+                "base_fee": "8000",
+                "borrowing": "2",
+                "funding": "6",
+                "impact_fee": "4",
+                "keeper": "GDDHPJCKJY6RYUNFXX552A542S75JF64Y46MDCJZETVOYSFZ2DZ44REN",
+                "margin": "9987996",
+                "notional": "20000000",
+                "pnl": "-8369",
+                "price": "142093834344625125",
+                "returned": "9971615",
+                "tokens": "140693168"
+              }
+            },
+            "position_before": {
+              "is_long": true,
+              "borrowing_idx": "22819255193161942",
+              "decrease_orders": [],
+              "funding_idx": "24338074101251701",
+              "locked_notional": "20000000",
+              "margin": "9987996",
+              "notional": "20000000",
+              "priced_at": "1794543164",
+              "tokens": "140693168",
+              "unlocks_at": "1794543199"
+            },
+            "position_after": {
+              "borrowing_idx": "0",
+              "decrease_orders": [],
+              "funding_idx": "0",
+              "locked_notional": "0",
+              "margin": "0",
+              "notional": "0",
+              "priced_at": "0",
+              "tokens": "0",
+              "unlocks_at": "0"
+            },
+            "verified": true
+          }
+        }
+      }
+    },
+    {
+      "kind": "open",
+      "is_long": false,
+      "creation_hash": "10b60fbd05934c07a150293c1a861d285a78029baee00c27261a9d15d259d036",
+      "action": {
+        "operationId": "8d645bc9-3d0f-41ba-ac73-b71bdea278ec",
+        "customerId": "00000000-0000-4000-8000-000000000002",
+        "network": "stellar-testnet",
+        "walletAddress": "GCDRDEN2IOS3NNI3HCYOWU7XLHGC4VNIGY6PS2X7TFYA6BKOBJREHU6T",
+        "unsignedXdr": "AAAAAgAAAACHEZG6Q6W2tRs4sOtT91nMLlWoNjz5av+ZcA8FTgpiQwAasnwAVwbYAAAACAAAAAEAAAAAAAAAAAAAAABq9o7kAAAAAAAAAAEAAAAAAAAAGAAAAAAAAAABnIG7ngcOcLoQkdWNxF4LPHJuv6Mw1AjfeD4Ay5rVvf0AAAAMY3JlYXRlX29yZGVyAAAACAAAABIAAAAAAAAAAIcRkbpDpba1Gziw61P3WcwuVag2PPlq/5lwDwVOCmJDAAAAAAAAAAAAAAADAAAAAAAAAAoAAAAAAAAAAAAAAAABMS0AAAAACgAAAAAAAAAAAAAAAACYloAAAAAKAAAAAAAAAAAAAAAAAAAAAAAAAAoAAAAAAAAAAAH2ENtaK6EgAAAAAwBXCSUAAAABAAAAAAAAAAAAAAABnIG7ngcOcLoQkdWNxF4LPHJuv6Mw1AjfeD4Ay5rVvf0AAAAMY3JlYXRlX29yZGVyAAAACAAAABIAAAAAAAAAAIcRkbpDpba1Gziw61P3WcwuVag2PPlq/5lwDwVOCmJDAAAAAAAAAAAAAAADAAAAAAAAAAoAAAAAAAAAAAAAAAABMS0AAAAACgAAAAAAAAAAAAAAAACYloAAAAAKAAAAAAAAAAAAAAAAAAAAAAAAAAoAAAAAAAAAAAH2ENtaK6EgAAAAAwBXCSUAAAABAAAAAAAAAAH4x+oV4sAS065fsdigQlwRf87T9Pye88QeK0uc/oy1XgAAAAh0cmFuc2ZlcgAAAAMAAAASAAAAAAAAAACHEZG6Q6W2tRs4sOtT91nMLlWoNjz5av+ZcA8FTgpiQwAAABIAAAABnIG7ngcOcLoQkdWNxF4LPHJuv6Mw1AjfeD4Ay5rVvf0AAAAKAAAAAAAAAAAAAAAAAJodIAAAAAAAAAABAAAAAAAAAAQAAAAGAAAAAZyBu54HDnC6EJHVjcReCzxybr+jMNQI33g+AMua1b39AAAAEAAAAAEAAAADAAAADwAAAAhQb3NpdGlvbgAAABIAAAAAAAAAAIcRkbpDpba1Gziw61P3WcwuVag2PPlq/5lwDwVOCmJDAAAAAAAAAAAAAAABAAAABgAAAAGcgbueBw5wuhCR1Y3EXgs8cm6/ozDUCN94PgDLmtW9/QAAABQAAAABAAAABgAAAAH4x+oV4sAS065fsdigQlwRf87T9Pye88QeK0uc/oy1XgAAABQAAAABAAAABwKqNC9ebghMjlcot0rud4ZPd+pyCJbmGmidqCUvlZQ8AAAABAAAAAEAAAAAhxGRukOltrUbOLDrU/dZzC5VqDY8+Wr/mXAPBU4KYkMAAAABVVNEQwAAAACXKFO9oYOYIm4fElMRiCgBTMj59XQVfDBudF/6vVNutwAAAAYAAAABnIG7ngcOcLoQkdWNxF4LPHJuv6Mw1AjfeD4Ay5rVvf0AAAAQAAAAAQAAAAMAAAAPAAAABU9yZGVyAAAAAAAAEgAAAAAAAAAAhxGRukOltrUbOLDrU/dZzC5VqDY8+Wr/mXAPBU4KYkMAAAADAAAABwAAAAEAAAAGAAAAAZyBu54HDnC6EJHVjcReCzxybr+jMNQI33g+AMua1b39AAAAEAAAAAEAAAACAAAADwAAAAxPcmRlckNvdW50ZXIAAAASAAAAAAAAAACHEZG6Q6W2tRs4sOtT91nMLlWoNjz5av+ZcA8FTgpiQwAAAAEAAAAGAAAAAfjH6hXiwBLTrl+x2KBCXBF/ztP0/J7zxB4rS5z+jLVeAAAAEAAAAAEAAAACAAAADwAAAAdCYWxhbmNlAAAAABIAAAABnIG7ngcOcLoQkdWNxF4LPHJuv6Mw1AjfeD4Ay5rVvf0AAAABABnJ2gAAAHQAAAOcAAAAAAANRbYAAAAA",
+        "signingHashHex": "10b60fbd05934c07a150293c1a861d285a78029baee00c27261a9d15d259d036",
+        "summary": {
+          "action": "zenex.open",
+          "fromAssetId": "stellar-testnet:classic:USDC:GCLSQU55UGBZQITOD4JFGEMIFAAUZSHZ6V2BK7BQNZ2F76V5KNXLOUGC",
+          "amount": "1.0000000",
+          "recipient": "GCDRDEN2IOS3NNI3HCYOWU7XLHGC4VNIGY6PS2X7TFYA6BKOBJREHU6T",
+          "contractId": "CCOIDO46A4HHBOQQSHKY3RC6BM6HE3V7UMYNICG7PA7ABS422W672F6U",
+          "perpetual": {
+            "market_id": "zenex-testnet:perps:XLM",
+            "is_long": false,
+            "size_usd": "2.0000000",
+            "collateral": "1.0000000",
+            "price_bound18": "141318972605440288",
+            "expiration_ledger": 5703973
+          },
+          "maxFeeStroops": "10000000",
+          "expiresAt": "2026-11-13T04:15:32.000Z"
+        },
+        "authorization": {
+          "method": "privy_stellar",
+          "expiresAt": "2026-11-13T04:15:32.000Z"
+        }
+      },
+      "baseline": {
+        "network": "stellar-testnet",
+        "market_id": "zenex-testnet:perps:XLM",
+        "wallet_address": "GCDRDEN2IOS3NNI3HCYOWU7XLHGC4VNIGY6PS2X7TFYA6BKOBJREHU6T",
+        "collateral_asset_id": "stellar-testnet:classic:USDC:GCLSQU55UGBZQITOD4JFGEMIFAAUZSHZ6V2BK7BQNZ2F76V5KNXLOUGC",
+        "balance": "999.9464090",
+        "has_trustline": true,
+        "positions": [],
+        "config": {
+          "adl_clear_target": "400000000000000000",
+          "adl_max_pnl": "550000000000000000",
+          "borrow_rate": "15854895992",
+          "deposit_fee": "1000000000000000",
+          "exec_fee": "100000",
+          "fee_dom": "600000000000000",
+          "fee_non_dom": "400000000000000",
+          "funding_decrease": "36885",
+          "funding_increase": "885267",
+          "funding_max": "6373921868",
+          "funding_min": "317097920",
+          "impact_scalar": "100000000000000",
+          "increased_borrow_rate": "15854895992",
+          "init_margin": "50000000000000000",
+          "keeper_rate": "100000000000000000",
+          "liq_fee": "5000000000000000",
+          "maintenance_margin": "20000000000000000",
+          "max_open_interest": "500000000000",
+          "max_pnl_trader": "900000000000000000",
+          "max_pnl_withdraw": "150000000000000000",
+          "max_position_notional": "250000000000",
+          "max_util_open": "800000000000000000",
+          "max_util_withdraw": "900000000000000000",
+          "max_vault_balance": "1000000000000",
+          "min_deposit": "100000000",
+          "min_order_margin": "10000000",
+          "min_order_notional": "10000000",
+          "min_position_notional": "10000000",
+          "notional_lock": "30",
+          "redeem_fee": "2500000000000000",
+          "redeem_lock": "3600",
+          "target_util": "800000000000000000",
+          "threshold_decrease_funding": "0",
+          "threshold_stable_funding": "40000000000000000"
+        },
+        "market_data": {
+          "accrued_at": "1794543209",
+          "borrowing_idx": {
+            "long": "22819341541550422",
+            "short": "144176035774270"
+          },
+          "credit_owed": "487905",
+          "credit_pool": "118076148",
+          "funding_idx": {
+            "long": "24338329058126421",
+            "short": "-1938692301052301"
+          },
+          "funding_rate": "6373921868",
+          "margin": {
+            "long": "1198913685",
+            "short": "0"
+          },
+          "notional": {
+            "long": "3000000000",
+            "short": "0"
+          },
+          "tokens": {
+            "long": "16247840388",
+            "short": "0"
+          }
+        },
+        "quote": {
+          "marketId": "xlm-usd",
+          "feedID": "0x000358cb12b1f5bbeca8b5b4666025a40b15520af1f82516ee2fb9a335055e9a",
+          "price": "142077652973610100",
+          "bid": "142029118196422400",
+          "ask": "142121378119058600",
+          "observationsTimestamp": 1794543210,
+          "validFromTimestamp": 1794543210
+        },
+        "rates": {
+          "data": {
+            "current": {
+              "observedAt": "2026-11-13T04:13:30.386Z",
+              "long": {
+                "fundingPerSec": "6373921868",
+                "borrowingPerSec": "2140176846"
+              },
+              "short": {
+                "fundingPerSec": "0",
+                "borrowingPerSec": "0"
+              }
+            },
+            "averages": {
+              "8h": {
+                "long": {
+                  "fundingPerSec": "6373921868",
+                  "borrowingPerSec": "2216079205"
+                },
+                "short": {
+                  "fundingPerSec": "-2584022379",
+                  "borrowingPerSec": "0"
+                }
+              },
+              "24h": {
+                "long": {
+                  "fundingPerSec": "6373921868",
+                  "borrowingPerSec": "2071146798"
+                },
+                "short": {
+                  "fundingPerSec": "-946622060",
+                  "borrowingPerSec": "0"
+                }
+              }
+            }
+          },
+          "meta": {
+            "apiVersion": "v1",
+            "asOf": "2026-11-13T04:13:31.312Z",
+            "indexedFromLedger": "4937285",
+            "throughLedger": "5703903"
+          }
+        },
+        "as_of": "2026-11-13T04:13:31.952Z"
+      },
+      "verification": {
+        "verified": true,
+        "result": {
+          "zenex": {
+            "kind": "zenex.open",
+            "order_id": 7,
+            "creation_hash": "10b60fbd05934c07a150293c1a861d285a78029baee00c27261a9d15d259d036",
+            "execution_hash": "dcd7b6359bf10f83d7f31fc8ff6c3059afb4895ac9f10168b443b3cf6bab2b4f",
+            "event": {
+              "id": "0024498128384212992-0000000001",
+              "txHash": "dcd7b6359bf10f83d7f31fc8ff6c3059afb4895ac9f10168b443b3cf6bab2b4f",
+              "ledger": 5703915,
+              "topic": [
+                "open_fill",
+                "GCDRDEN2IOS3NNI3HCYOWU7XLHGC4VNIGY6PS2X7TFYA6BKOBJREHU6T",
+                7,
+                false
+              ],
+              "value": {
+                "base_fee": "8000",
+                "impact_fee": "4",
+                "keeper": "GDDHPJCKJY6RYUNFXX552A542S75JF64Y46MDCJZETVOYSFZ2DZ44REN",
+                "margin": "10000000",
+                "notional": "20000000",
+                "price": "142057442670527875",
+                "tokens": "140788118"
+              }
+            },
+            "position_before": null,
+            "position_after": {
+              "borrowing_idx": "144176035774270",
+              "decrease_orders": [],
+              "funding_idx": "-1938692301052301",
+              "locked_notional": "20000000",
+              "margin": "9991996",
+              "notional": "20000000",
+              "priced_at": "1794543214",
+              "tokens": "140788118",
+              "unlocks_at": "1794543249"
+            },
+            "verified": true
+          }
+        }
+      }
+    },
+    {
+      "kind": "close",
+      "is_long": false,
+      "creation_hash": "352360d955cc0ba3583cd61f0353a207fa57cc45eac8aa97974b0dc8bed6cb3a",
+      "action": {
+        "operationId": "7d7c0527-31e7-4c46-b31c-5ff4daa752cd",
+        "customerId": "00000000-0000-4000-8000-000000000002",
+        "network": "stellar-testnet",
+        "walletAddress": "GCDRDEN2IOS3NNI3HCYOWU7XLHGC4VNIGY6PS2X7TFYA6BKOBJREHU6T",
+        "unsignedXdr": "AAAAAgAAAACHEZG6Q6W2tRs4sOtT91nMLlWoNjz5av+ZcA8FTgpiQwAbNeoAVwbYAAAACQAAAAEAAAAAAAAAAAAAAABq9o8LAAAAAAAAAAEAAAAAAAAAGAAAAAAAAAABnIG7ngcOcLoQkdWNxF4LPHJuv6Mw1AjfeD4Ay5rVvf0AAAAMY3JlYXRlX29yZGVyAAAACAAAABIAAAAAAAAAAIcRkbpDpba1Gziw61P3WcwuVag2PPlq/5lwDwVOCmJDAAAAAAAAAAAAAAADAAAAAwAAAAp/////////////////////AAAACgAAAAAAAAAAAAAAAAAAAAAAAAAKAAAAAAAAAAAAAAAAAAAAAAAAAAoAAAAAAAAAAAH7yPxx1wxUAAAAAwBXCS0AAAABAAAAAAAAAAAAAAABnIG7ngcOcLoQkdWNxF4LPHJuv6Mw1AjfeD4Ay5rVvf0AAAAMY3JlYXRlX29yZGVyAAAACAAAABIAAAAAAAAAAIcRkbpDpba1Gziw61P3WcwuVag2PPlq/5lwDwVOCmJDAAAAAAAAAAAAAAADAAAAAwAAAAp/////////////////////AAAACgAAAAAAAAAAAAAAAAAAAAAAAAAKAAAAAAAAAAAAAAAAAAAAAAAAAAoAAAAAAAAAAAH7yPxx1wxUAAAAAwBXCS0AAAABAAAAAAAAAAH4x+oV4sAS065fsdigQlwRf87T9Pye88QeK0uc/oy1XgAAAAh0cmFuc2ZlcgAAAAMAAAASAAAAAAAAAACHEZG6Q6W2tRs4sOtT91nMLlWoNjz5av+ZcA8FTgpiQwAAABIAAAABnIG7ngcOcLoQkdWNxF4LPHJuv6Mw1AjfeD4Ay5rVvf0AAAAKAAAAAAAAAAAAAAAAAAGGoAAAAAAAAAABAAAAAAAAAAMAAAAGAAAAAZyBu54HDnC6EJHVjcReCzxybr+jMNQI33g+AMua1b39AAAAFAAAAAEAAAAGAAAAAfjH6hXiwBLTrl+x2KBCXBF/ztP0/J7zxB4rS5z+jLVeAAAAFAAAAAEAAAAHAqo0L15uCEyOVyi3Su53hk936nIIluYaaJ2oJS+VlDwAAAAFAAAAAQAAAACHEZG6Q6W2tRs4sOtT91nMLlWoNjz5av+ZcA8FTgpiQwAAAAFVU0RDAAAAAJcoU72hg5gibh8SUxGIKAFMyPn1dBV8MG50X/q9U263AAAABgAAAAGcgbueBw5wuhCR1Y3EXgs8cm6/ozDUCN94PgDLmtW9/QAAABAAAAABAAAAAwAAAA8AAAAFT3JkZXIAAAAAAAASAAAAAAAAAACHEZG6Q6W2tRs4sOtT91nMLlWoNjz5av+ZcA8FTgpiQwAAAAMAAAAIAAAAAQAAAAYAAAABnIG7ngcOcLoQkdWNxF4LPHJuv6Mw1AjfeD4Ay5rVvf0AAAAQAAAAAQAAAAIAAAAPAAAADE9yZGVyQ291bnRlcgAAABIAAAAAAAAAAIcRkbpDpba1Gziw61P3WcwuVag2PPlq/5lwDwVOCmJDAAAAAQAAAAYAAAABnIG7ngcOcLoQkdWNxF4LPHJuv6Mw1AjfeD4Ay5rVvf0AAAAQAAAAAQAAAAMAAAAPAAAACFBvc2l0aW9uAAAAEgAAAAAAAAAAhxGRukOltrUbOLDrU/dZzC5VqDY8+Wr/mXAPBU4KYkMAAAAAAAAAAAAAAAEAAAAGAAAAAfjH6hXiwBLTrl+x2KBCXBF/ztP0/J7zxB4rS5z+jLVeAAAAEAAAAAEAAAACAAAADwAAAAdCYWxhbmNlAAAAABIAAAABnIG7ngcOcLoQkdWNxF4LPHJuv6Mw1AjfeD4Ay5rVvf0AAAABABtxagAAAHQAAAWIAAAAAAANh20AAAAA",
+        "signingHashHex": "352360d955cc0ba3583cd61f0353a207fa57cc45eac8aa97974b0dc8bed6cb3a",
+        "summary": {
+          "action": "zenex.close",
+          "fromAssetId": "stellar-testnet:classic:USDC:GCLSQU55UGBZQITOD4JFGEMIFAAUZSHZ6V2BK7BQNZ2F76V5KNXLOUGC",
+          "amount": "0.0000000",
+          "recipient": "GCDRDEN2IOS3NNI3HCYOWU7XLHGC4VNIGY6PS2X7TFYA6BKOBJREHU6T",
+          "contractId": "CCOIDO46A4HHBOQQSHKY3RC6BM6HE3V7UMYNICG7PA7ABS422W672F6U",
+          "perpetual": {
+            "market_id": "zenex-testnet:perps:XLM",
+            "is_long": false,
+            "size_usd": "2.0000000",
+            "collateral": "0.0000000",
+            "price_bound18": "142928799759535188",
+            "expiration_ledger": 5703981
+          },
+          "maxFeeStroops": "10000000",
+          "expiresAt": "2026-11-13T04:16:11.000Z"
+        },
+        "authorization": {
+          "method": "privy_stellar",
+          "expiresAt": "2026-11-13T04:16:11.000Z"
+        }
+      },
+      "baseline": {
+        "network": "stellar-testnet",
+        "market_id": "zenex-testnet:perps:XLM",
+        "wallet_address": "GCDRDEN2IOS3NNI3HCYOWU7XLHGC4VNIGY6PS2X7TFYA6BKOBJREHU6T",
+        "collateral_asset_id": "stellar-testnet:classic:USDC:GCLSQU55UGBZQITOD4JFGEMIFAAUZSHZ6V2BK7BQNZ2F76V5KNXLOUGC",
+        "balance": "998.9364090",
+        "has_trustline": true,
+        "positions": [
+          {
+            "is_long": false,
+            "borrowing_idx": "144176035774270",
+            "decrease_orders": [],
+            "funding_idx": "-1938692301052301",
+            "locked_notional": "20000000",
+            "margin": "9991996",
+            "notional": "20000000",
+            "priced_at": "1794543214",
+            "tokens": "140788118",
+            "unlocks_at": "1794543249"
+          }
+        ],
+        "config": {
+          "adl_clear_target": "400000000000000000",
+          "adl_max_pnl": "550000000000000000",
+          "borrow_rate": "15854895992",
+          "deposit_fee": "1000000000000000",
+          "exec_fee": "100000",
+          "fee_dom": "600000000000000",
+          "fee_non_dom": "400000000000000",
+          "funding_decrease": "36885",
+          "funding_increase": "885267",
+          "funding_max": "6373921868",
+          "funding_min": "317097920",
+          "impact_scalar": "100000000000000",
+          "increased_borrow_rate": "15854895992",
+          "init_margin": "50000000000000000",
+          "keeper_rate": "100000000000000000",
+          "liq_fee": "5000000000000000",
+          "maintenance_margin": "20000000000000000",
+          "max_open_interest": "500000000000",
+          "max_pnl_trader": "900000000000000000",
+          "max_pnl_withdraw": "150000000000000000",
+          "max_position_notional": "250000000000",
+          "max_util_open": "800000000000000000",
+          "max_util_withdraw": "900000000000000000",
+          "max_vault_balance": "1000000000000",
+          "min_deposit": "100000000",
+          "min_order_margin": "10000000",
+          "min_order_notional": "10000000",
+          "min_position_notional": "10000000",
+          "notional_lock": "30",
+          "redeem_fee": "2500000000000000",
+          "redeem_lock": "3600",
+          "target_util": "800000000000000000",
+          "threshold_decrease_funding": "0",
+          "threshold_stable_funding": "40000000000000000"
+        },
+        "market_data": {
+          "accrued_at": "1794543219",
+          "borrowing_idx": {
+            "long": "22819362940156952",
+            "short": "144176035774270"
+          },
+          "credit_owed": "487905",
+          "credit_pool": "118076148",
+          "funding_idx": {
+            "long": "24338392797345101",
+            "short": "-1938692301052301"
+          },
+          "funding_rate": "6373921868",
+          "margin": {
+            "long": "1198913685",
+            "short": "9991996"
+          },
+          "notional": {
+            "long": "3000000000",
+            "short": "20000000"
+          },
+          "tokens": {
+            "long": "16247840388",
+            "short": "140788118"
+          }
+        },
+        "quote": {
+          "marketId": "xlm-usd",
+          "feedID": "0x000358cb12b1f5bbeca8b5b4666025a40b15520af1f82516ee2fb9a335055e9a",
+          "price": "142173135386136500",
+          "bid": "142124609767236900",
+          "ask": "142217711203517600",
+          "observationsTimestamp": 1794543248,
+          "validFromTimestamp": 1794543248
+        },
+        "rates": {
+          "data": {
+            "current": {
+              "observedAt": "2026-11-13T04:13:39.452Z",
+              "long": {
+                "fundingPerSec": "6373921868",
+                "borrowingPerSec": "2139860413"
+              },
+              "short": {
+                "fundingPerSec": "-956088280200",
+                "borrowingPerSec": "0"
+              }
+            },
+            "averages": {
+              "8h": {
+                "long": {
+                  "fundingPerSec": "6373921868",
+                  "borrowingPerSec": "2214073447"
+                },
+                "short": {
+                  "fundingPerSec": "-27676239690",
+                  "borrowingPerSec": "0"
+                }
+              },
+              "24h": {
+                "long": {
+                  "fundingPerSec": "6373921868",
+                  "borrowingPerSec": "2071820461"
+                },
+                "short": {
+                  "fundingPerSec": "-10310755963",
+                  "borrowingPerSec": "0"
+                }
+              }
+            }
+          },
+          "meta": {
+            "apiVersion": "v1",
+            "asOf": "2026-11-13T04:14:10.534Z",
+            "indexedFromLedger": "4937285",
+            "throughLedger": "5703921"
+          }
+        },
+        "as_of": "2026-11-13T04:14:11.610Z"
+      },
+      "verification": {
+        "verified": true,
+        "result": {
+          "zenex": {
+            "kind": "zenex.close",
+            "order_id": 8,
+            "creation_hash": "352360d955cc0ba3583cd61f0353a207fa57cc45eac8aa97974b0dc8bed6cb3a",
+            "execution_hash": "37e765298ce317f8288c0ae9f685942cacecc9ab24628f4a2420d0fa53178906",
+            "event": {
+              "id": "0024498162743967744-0000000001",
+              "txHash": "37e765298ce317f8288c0ae9f685942cacecc9ab24628f4a2420d0fa53178906",
+              "ledger": 5703923,
+              "topic": [
+                "close_fill",
+                "GCDRDEN2IOS3NNI3HCYOWU7XLHGC4VNIGY6PS2X7TFYA6BKOBJREHU6T",
+                8,
+                false
+              ],
+              "value": {
+                "bad_debt": "0",
+                "base_fee": "12000",
+                "borrowing": "0",
+                "funding": "-764",
+                "impact_fee": "4",
+                "keeper": "GDDHPJCKJY6RYUNFXX552A542S75JF64Y46MDCJZETVOYSFZ2DZ44REN",
+                "margin": "9991996",
+                "notional": "20000000",
+                "pnl": "-11209",
+                "price": "142137053195408025",
+                "returned": "9968783",
+                "tokens": "140788118"
+              }
+            },
+            "position_before": {
+              "is_long": false,
+              "borrowing_idx": "144176035774270",
+              "decrease_orders": [],
+              "funding_idx": "-1938692301052301",
+              "locked_notional": "20000000",
+              "margin": "9991996",
+              "notional": "20000000",
+              "priced_at": "1794543214",
+              "tokens": "140788118",
+              "unlocks_at": "1794543249"
+            },
+            "position_after": {
+              "borrowing_idx": "0",
+              "decrease_orders": [],
+              "funding_idx": "0",
+              "locked_notional": "0",
+              "margin": "0",
+              "notional": "0",
+              "priced_at": "0",
+              "tokens": "0",
+              "unlocks_at": "0"
+            },
+            "verified": true
+          }
+        }
+      }
+    }
+  ]
+}

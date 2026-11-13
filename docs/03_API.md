@@ -155,3 +155,7 @@ Responses follow `modules/perpetuals/cctp-contract.ts` and include exact scope, 
 `GET /v1/trade/gmx/activity?customer_id=<uuid>&wallet_id=<uuid>` requires current business `trade.perps` and `capital.wallets`, verified customer identity and current EVM wallet ownership. Response is `{scope:{business_id,customer_id,wallet_id},items:[{id,kind,state,symbol,side,size_usd,amount,collateral,tx_hash,created_at}]}`. Kinds are `mint|approve|open|close|gas`; side is `long|short|null`; token amounts and USD notional are decimal strings or null. Actual completed open/close events link to the keeper transaction; accepted order creation does not establish a fill. All records are tenant/customer/wallet/account scoped. The fintech BFF injects identity at `gmx-activity` and never exposes the business key.
 
 Version0.4.3 publishes the existing GMX status/request/prepare/authorize/gas surfaces and the new activity read in OpenAPI, with the six exact market IDs, customer identity header, idempotency headers and conditional preparation bodies. This is an additive lead-approved extension; existing module identifiers and Stellar/Stocks contracts remain unchanged.
+
+## Version 0.4.4 — Zenex XLM provider replacement
+
+Active Perpetuals catalog is `zenex-testnet:perps:XLM`. Additive status/prepare/fund routes reuse the existing customer-bound operations/signing lifecycle; exact order fields are bound in optional `summary.perpetual`, with `display_side` for activity. No new module IDs or DB tables. See [Zenex integration](20_ZENEX_TESTNET.md).

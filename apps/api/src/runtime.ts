@@ -1,3 +1,7 @@
+import {ZenexTestnetAdapter} from './adapters/zenex/index.js';
+import {ZenexMarketData} from './modules/zenex/market-data.js';
+import {zenexReadiness} from './modules/zenex/readiness.js';
+import {registerZenexRoutes} from './modules/zenex/routes.js';
 import {registerGmxActivityRoute} from './modules/gmx/activity.js';
 import {registerStockActivityRoute} from './modules/stocks/activity.js';
 import {RobinhoodTreasury} from './modules/stocks/treasury.js';
@@ -97,6 +101,7 @@ export function financialRouteModule(path:string):'capital.testnet_funding'|'cap
  if(pathname.startsWith('/v1/trade/margin/'))return 'trade.perps';
  // The customer-signed perpetual routes resolve stocks/perps from the exact order
  // and enforce current signing proof themselves, without requiring Spot.
+ if(pathname.startsWith('/v1/trade/zenex/'))return 'trade.perps';
  if(pathname.startsWith('/v1/trade/gmx/'))return 'trade.perps';
  if(pathname.startsWith('/v1/trade/stocks/'))return 'trade.stocks';
  if(pathname.startsWith('/v1/trade/perpetuals/'))return null;
@@ -135,6 +140,7 @@ export async function createRuntime(pool?:Pool,marginRoutes:RuntimeMarginBinding
  const readSpotBalances=async(address:string)=>{const [classic,tokens]=await Promise.all([chain.getClassicBalances(address),readStandaloneBalances(address)]);return [...classic,...tokens];};
  const wallets=new WalletService(db,identity,chain,signer,readStandaloneBalances);
  const operations=new OperationService(db);
+ const zenex=new ZenexTestnetAdapter(chain.server),zenexReady=zenexReadiness(zenex),zenexMarkets=new ZenexMarketData(zenex,zenexReady);
  const circleSetup=new CctpUsdcSetupPreparer({server:chain.server,readSpendableXlm:async(customer,operationId)=>{
   const row=(await chain.getClassicBalances(customer.walletAddress)).find(balance=>balance.asset_id===XLM.id);
   if(!row)throw new GrapnelError(503,'BALANCE_UNAVAILABLE','Current available XLM could not be verified');
@@ -212,7 +218,7 @@ export async function createRuntime(pool?:Pool,marginRoutes:RuntimeMarginBinding
  const borrowing=new BlendBorrowAdapter({network:config.network,passphrase:NETWORK_PASSPHRASE,rpcUrl:process.env.STELLAR_RPC_URL,gate1Passed},{prepareAndSimulate:input=>borrowPreparer.prepare(input),readSpendableBalance:readBorrowSpendable});
  const earningsReader=new LendingEarningsReader({pool:db,positions:customer=>blend.positions(customer)});
  const referencePrices=createYahooReferencePriceReader();
- const marketOverview=new MarketOverviewService({referencePrice:async symbol=>{if(['TSLA','AMZN','PLTR','NFLX','AMD'].includes(symbol)){try{const row=await robinhoodStocks.detail('robinhood-testnet:stocks:'+symbol);return row.reference_price&&row.source_generated_at?{value:row.reference_price,as_of:row.source_generated_at}:null;}catch{return null;}}return referencePrices(symbol);},stockReferenceItems:[{symbol:'TSLA',name:'Tesla',maxAgeMs:60000},{symbol:'AMZN',name:'Amazon',maxAgeMs:60000},{symbol:'AMD',name:'Advanced Micro Devices',maxAgeMs:60000}],perps:()=>gmxMarketData.markets(),lending:()=>blend.markets()});
+ const marketOverview=new MarketOverviewService({referencePrice:async symbol=>{if(['TSLA','AMZN','PLTR','NFLX','AMD'].includes(symbol)){try{const row=await robinhoodStocks.detail('robinhood-testnet:stocks:'+symbol);return row.reference_price&&row.source_generated_at?{value:row.reference_price,as_of:row.source_generated_at}:null;}catch{return null;}}return referencePrices(symbol);},stockReferenceItems:[{symbol:'TSLA',name:'Tesla',maxAgeMs:60000},{symbol:'AMZN',name:'Amazon',maxAgeMs:60000},{symbol:'AMD',name:'Advanced Micro Devices',maxAgeMs:60000}],perps:()=>zenexMarkets.markets(),lending:()=>blend.markets()});
  const marketProfile=async(id:string)=>{
   const market=spot.market(id),base=market.asset_in.kind==='native'?market.asset_out:market.asset_in;
   const canonical=spot.markets().find(entry=>entry.asset_in_id===XLM.id&&entry.asset_out_id===base.id);
@@ -285,7 +291,7 @@ export async function createRuntime(pool?:Pool,marginRoutes:RuntimeMarginBinding
 
  });
  const app=await buildApp({pool:db,config,identityVerifier:identity,
-  verifySignedAction:async(action,signed)=>{if(action.summary.action==='perps.fund_cctp')await cctpRuntime.execution.verifyForSubmission(action,signed);else if(['perps.usdc_trustline','perps.usdc_allowance'].includes(action.summary.action))await circleExecution.verifyForSubmission(action,signed);else if(action.summary.action.startsWith('margin.'))await verifyRuntimeMarginAction(action,signed,marginBindings);else if(action.summary.action==='wallet.usdc_trustline')verifyPreparedUsdcTrustline(action,signed);else if(action.summary.action==='spot.swap')await spotInspector.verifyForSubmission(action,signed);else if(borrowingAction(action.summary.action))await borrowPreparer.verifyForSubmission(action,signed);else if(action.summary.action==='blend.supply'||action.summary.action==='blend.withdraw')await soroban.verifyForSubmission(action,signed);else verifySignedAction(action,signed);return {txHash:parseTestnetTransaction(signed).hash().toString('hex')};},
+  verifySignedAction:async(action,signed)=>{if(action.summary.action.startsWith('zenex.'))await zenex.verifyForSubmission(action,signed);else if(action.summary.action==='perps.fund_cctp')await cctpRuntime.execution.verifyForSubmission(action,signed);else if(['perps.usdc_trustline','perps.usdc_allowance'].includes(action.summary.action))await circleExecution.verifyForSubmission(action,signed);else if(action.summary.action.startsWith('margin.'))await verifyRuntimeMarginAction(action,signed,marginBindings);else if(action.summary.action==='wallet.usdc_trustline')verifyPreparedUsdcTrustline(action,signed);else if(action.summary.action==='spot.swap')await spotInspector.verifyForSubmission(action,signed);else if(borrowingAction(action.summary.action))await borrowPreparer.verifyForSubmission(action,signed);else if(action.summary.action==='blend.supply'||action.summary.action==='blend.withdraw')await soroban.verifyForSubmission(action,signed);else verifySignedAction(action,signed);return {txHash:parseTestnetTransaction(signed).hash().toString('hex')};},
   balanceReader:address=>chain.getClassicBalances(address),
   dashboardCustomerBalances:(businessId,walletId)=>wallets.balances(businessId,walletId),
   dashboardCustomerPositions:async customer=>{
@@ -296,7 +302,7 @@ export async function createRuntime(pool?:Pool,marginRoutes:RuntimeMarginBinding
    'capital.lending':readBlendReadiness,
    'trade.spot':()=>spotReadiness.capability(),
    'trade.stocks':async()=>{const ready=await stockAcceptance('TSLA');return{execution_status:ready?'testnet_verified' as const:'discovery_only' as const,reason:ready?null:'ROBINHOOD_STOCK_EXECUTION_PROOF_REQUIRED',actions:ready?['read_markets','funding_status','prepare_order']:['read_markets','funding_status']};},
-   'trade.perps':async()=>{const ready=await gmxRuntime.acceptance();return {execution_status:ready?'testnet_verified' as const:'discovery_only' as const,reason:ready?null:'GMX_OWN_EXECUTION_PROOF_REQUIRED',actions:ready?['read_markets','fund','prepare_order','close_position']:['read_markets']};},
+   'trade.perps':async()=>{const ready=await zenexReady();return {execution_status:ready?'testnet_verified' as const:'discovery_only' as const,reason:ready?null:'ZENEX_EXECUTION_PROOF_REQUIRED',actions:ready?['read_markets','fund','prepare_order','close_position']:['read_markets']};},
    'capital.wallets':async()=>{const current=await hasGate1Proof(chain);return {execution_status:current?'testnet_verified':'blocked',reason:current?null:privy?'Privy-signed Testnet payment proof is pending':'PRIVY_APP_ID and PRIVY_APP_SECRET are required',actions:current?['provision','balances','test_payment']:[]};},
    'capital.testnet_funding':readFundingReadiness
   },
@@ -311,7 +317,7 @@ export async function createRuntime(pool?:Pool,marginRoutes:RuntimeMarginBinding
     return success(request,await marketOverview.read(modules));
    });
    await registerMarketHistoryRoutes(app,{requireBusiness,success,
-    perps:(id,range)=>id.startsWith('gmx-testnet:perps:')?gmxMarketData.history(id,range):perpetualHistory(hyperliquid,readPerpetualMarkets,id,range),
+    perps:(id,range)=>id.startsWith('zenex-testnet:perps:')?zenexMarkets.history(id,range):id.startsWith('gmx-testnet:perps:')?gmxMarketData.history(id,range):perpetualHistory(hyperliquid,readPerpetualMarkets,id,range),
     stocks:(id,range)=>robinhoodStocks.history(id,range),
     spot:async(id,range)=>{const profile=await marketProfile(id);
      try{const history=await cryptoHistory.history(id,range);return {...history,base_asset_id:history.related_asset_id,base_symbol:history.reference_symbol};}
@@ -329,6 +335,7 @@ export async function createRuntime(pool?:Pool,marginRoutes:RuntimeMarginBinding
    await registerPerpetualFundingRoutes(app,{operations,setup:circleSetup,verifyGate1:()=>hasGate1Proof(chain)});
    await registerCctpCustomerRoutes(app,cctpRuntime.coordinator,cctpRuntime.execution);
    let stockSettling=false;const settleStocks=async()=>{if(stockSettling)return;stockSettling=true;try{await stockExecution.reconcilePending();}finally{stockSettling=false;}};const stockTimer=setInterval(()=>{void settleStocks().catch(()=>{});},3000);stockTimer.unref();app.addHook('onClose',async()=>{clearInterval(stockTimer);});
+   await registerZenexRoutes(app,{adapter:zenex,operations,chain,ready:zenexReady,gate:()=>hasGate1Proof(chain)});
    await registerGmxActivityRoute(app,{pool:db,readWallets:readEthereumWallets});
    await registerStockActivityRoute(app,{pool:db,readWallets:readEthereumWallets});
    await registerRobinhoodFundingRoutes(app,{readEthereumWallets});
@@ -342,6 +349,7 @@ export async function createRuntime(pool?:Pool,marginRoutes:RuntimeMarginBinding
    app.addHook('preHandler',async request=>{
     if(request.method!=='POST')return;
     const path=request.url.split('?')[0]!;
+    if(['/v1/trade/gmx/prepare','/v1/trade/gmx/gas'].includes(path))throw new GrapnelError(409,'EXECUTION_UNAVAILABLE','Use the current XLM perpetual market.');
     const module=financialRouteModule(path);
     if(!module)return;
     await requireBusiness(request,module);
@@ -372,14 +380,14 @@ export async function createRuntime(pool?:Pool,marginRoutes:RuntimeMarginBinding
    await registerMarginFundingRoutes(app,{operations,...marginBindings.collateralFunding});
    await registerLendingRoutes(app,{adapter:blend,borrowing,operations,balanceReader:address=>chain.getClassicBalances(address)});
    await registerSpotRoutes(app,{service:new SpotService(spot,db,operations,createSpotReservation(operations,readSpotBalances)),refreshReadiness:()=>spotReadiness.refresh(),requireBusiness,requireCustomer,success,
-    readDiscoveryMarkets:async category=>category==='perps'?readGmxMarkets():readStockMarkets(),
-    readDiscoveryMarket:async id=>id.startsWith('gmx-testnet:perps:')?readyGmxMarket(await gmxMarketData.detail(id)):id.startsWith('robinhood-testnet:stocks:')?readyStockMarket(await robinhoodStocks.detail(id)):readDetailedPerpetualMarket(id),
+    readDiscoveryMarkets:async category=>category==='perps'?zenexMarkets.markets():readStockMarkets(),
+    readDiscoveryMarket:async id=>id.startsWith('zenex-testnet:perps:')?zenexMarkets.detail(id):id.startsWith('gmx-testnet:perps:')?readyGmxMarket(await gmxMarketData.detail(id)):id.startsWith('robinhood-testnet:stocks:')?readyStockMarket(await robinhoodStocks.detail(id)):readDetailedPerpetualMarket(id),
     readPositions:async customer=>({wallet_holdings:await wallets.balances(customer.businessId,customer.walletId),venue_positions:[]})});
    await registerFundingRoutes(app,{service:new FundingService(funding,operations),requireBusiness,requireCustomer,success});
   }
  });
  app.addHook('onClose',async()=>{if(!pool)await db.end();});
- const workerChain=createRuntimeWorkerChain({pool:db,chain,blend,soroban,borrowing,borrowPreparer,gate1Passed,verifyGate1:()=>hasGate1Proof(chain),spot:spotInspector,readSpotBalances,margin:marginBindings.execution,marginFunding:marginBindings.fundingExecution,circleSetup:circleExecution,cctpFunding:cctpRuntime.execution});
+ const workerChain=createRuntimeWorkerChain({pool:db,zenex,chain,blend,soroban,borrowing,borrowPreparer,gate1Passed,verifyGate1:()=>hasGate1Proof(chain),spot:spotInspector,readSpotBalances,margin:marginBindings.execution,marginFunding:marginBindings.fundingExecution,circleSetup:circleExecution,cctpFunding:cctpRuntime.execution});
  const tickPerpetuals=async()=>{
   const rows=(await db.query("WITH picked AS (SELECT o.id FROM perpetual_orders o JOIN wallets w ON w.business_id=o.business_id AND w.customer_id=o.customer_id AND w.id=o.wallet_id AND w.stellar_address=o.stellar_address WHERE o.state IN ('approved','sending','unknown') AND o.signed_action IS NOT NULL AND o.updated_at<now()-interval '5 seconds' ORDER BY o.updated_at FOR UPDATE OF o SKIP LOCKED LIMIT 3) UPDATE perpetual_orders o SET updated_at=now() FROM picked WHERE o.id=picked.id RETURNING o.*")).rows;
   for(const row of rows){
@@ -451,7 +459,7 @@ function storedBorrowingAction(operation:Record<string,any>,hash:string):Prepare
   throw new GrapnelError(403,'INTENT_MISMATCH','Durable borrowing request, customer approval and position baseline differ');
  return action;
 }
-export interface RuntimeWorkerDependencies {cctpFunding?:CctpBurnExecutionBridge;circleSetup?:CircleSetupExecutionBridge;margin?:MarginExecutionBridge;marginFunding?:MarginFundingExecutionBridge;borrowing?:Pick<BorrowingAdapter,'positions'>;borrowPreparer?:Pick<BlendBorrowSorobanPreparer,'verifyForSubmission'>;pool:Pool;chain:StellarTestnetExecutor;blend:Pick<BlendAdapter,'positions'>;soroban:Pick<BlendSorobanPreparer,'verifyForSubmission'>;gate1Passed:boolean;verifyGate1?:()=>Promise<boolean>;spot?:Pick<SoroswapDirectInspector,'verifyForSubmission'>;readSpotBalances?:(address:string)=>Promise<WalletBalance[]>;}
+export interface RuntimeWorkerDependencies {zenex?:ZenexTestnetAdapter;cctpFunding?:CctpBurnExecutionBridge;circleSetup?:CircleSetupExecutionBridge;margin?:MarginExecutionBridge;marginFunding?:MarginFundingExecutionBridge;borrowing?:Pick<BorrowingAdapter,'positions'>;borrowPreparer?:Pick<BlendBorrowSorobanPreparer,'verifyForSubmission'>;pool:Pool;chain:StellarTestnetExecutor;blend:Pick<BlendAdapter,'positions'>;soroban:Pick<BlendSorobanPreparer,'verifyForSubmission'>;gate1Passed:boolean;verifyGate1?:()=>Promise<boolean>;spot?:Pick<SoroswapDirectInspector,'verifyForSubmission'>;readSpotBalances?:(address:string)=>Promise<WalletBalance[]>;}
 /** No network send exists outside the durable worker's recorded hash/envelope path. */
 export function createRuntimeWorkerChain(deps:RuntimeWorkerDependencies):WorkerChain {
  const {pool,chain,blend,soroban,gate1Passed}=deps;
@@ -461,6 +469,7 @@ export function createRuntimeWorkerChain(deps:RuntimeWorkerDependencies):WorkerC
    const parsed=parseTestnetTransaction(envelope);const hash=parsed.hash().toString('hex');
    const operation=(await pool.query('SELECT o.*,w.stellar_address,c.privy_user_id FROM operations o JOIN wallets w ON w.business_id=o.business_id AND w.customer_id=o.customer_id AND w.id=o.wallet_id JOIN customers c ON c.business_id=o.business_id AND c.id=o.customer_id WHERE o.tx_hash=$1 AND o.signed_xdr=$2',[hash,envelope])).rows[0];
    if(!operation || (operation.type!=='wallet.test_payment' && (!gate1Passed || !await (deps.verifyGate1?.()??Promise.resolve(false)))))throw new GrapnelError(409,'EXECUTION_UNAVAILABLE','Gate 1 proof is required before financial provider execution');
+   if(operation.type.startsWith('zenex.')){if(!deps.zenex||operation.provider!=='zenex'||operation.module_code!=='trade.perps'||operation.type==='zenex.faucet'||operation.state!=='submitted')throw new GrapnelError(403,'INTENT_MISMATCH','Recorded customer Perpetual authorization required');const action=PreparedActionSchema.parse(operation.prepared_action);if(action.operationId!==operation.id||action.customerId!==operation.customer_id||action.walletAddress!==operation.stellar_address||action.summary.action!==operation.type||action.signingHashHex!==hash)throw new GrapnelError(403,'INTENT_MISMATCH','Stored customer and transaction differ');await deps.zenex.verifyForSubmission(action,envelope);const sent=await chain.server.sendTransaction(parsed);if(sent.hash!==hash||sent.status==='ERROR')throw new GrapnelError(409,'CHAIN_REJECTED','The inspected order was rejected');return{txHash:hash};}
    if(operation.type==='perps.fund_cctp'){if(!deps.cctpFunding)throw new GrapnelError(409,'EXECUTION_UNAVAILABLE','CCTP funding is unavailable');return deps.cctpFunding.broadcast(PreparedActionSchema.parse(operation.prepared_action),envelope);}
    if(['perps.usdc_trustline','perps.usdc_allowance'].includes(operation.type)){if(!deps.circleSetup)throw new GrapnelError(409,'EXECUTION_UNAVAILABLE','Trading USDC setup is unavailable');return deps.circleSetup.broadcast(PreparedActionSchema.parse(operation.prepared_action),envelope);}
    if(operation.type.startsWith('margin.')){
@@ -526,6 +535,7 @@ export function createRuntimeWorkerChain(deps:RuntimeWorkerDependencies):WorkerC
   async verifyDeltas(id,hash){
    const op=(await pool.query('SELECT o.*,w.stellar_address,c.privy_user_id FROM operations o JOIN wallets w ON w.business_id=o.business_id AND w.customer_id=o.customer_id AND w.id=o.wallet_id JOIN customers c ON c.business_id=o.business_id AND c.id=o.customer_id WHERE o.id=$1 AND o.tx_hash=$2',[id,hash])).rows[0];
    if(!op)return false;
+   if(op.type.startsWith('zenex.')){if(!deps.zenex||op.provider!=='zenex'||op.module_code!=='trade.perps'||!op.result_json?.zenex_baseline||op.result_json.zenex_baseline.wallet_address!==op.stellar_address)return false;if(op.type==='zenex.faucet')return deps.zenex.verifyFaucet(op.stellar_address,hash,op.result_json.zenex_baseline.balance);const action=PreparedActionSchema.parse(op.prepared_action);if(action.operationId!==op.id||action.customerId!==op.customer_id||action.walletAddress!==op.stellar_address||action.summary.action!==op.type||action.signingHashHex!==hash)return false;return deps.zenex.reconcile(action,hash,op.result_json.zenex_baseline);}
    if(op.type==='perps.fund_cctp'){if(!deps.cctpFunding)return false;return deps.cctpFunding.verifyDeltas(id,hash);}
    if(['perps.usdc_trustline','perps.usdc_allowance'].includes(op.type)){if(!deps.circleSetup)return false;return deps.circleSetup.verifyDeltas(id,hash);}
    if(op.type.startsWith('margin.')){

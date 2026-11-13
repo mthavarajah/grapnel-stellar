@@ -97,3 +97,7 @@ The existing customer Privy wallet received a real20USDG transfer (`0x3b4f614593
 GMX Arbitrum Sepolia replaces the historical Noether/Peridot/Hyperliquid attempts for the active Perpetuals tab. Six currently listed markets have independently verified controlled-QA open/close execution: ETH, BTC, CRV, Gold, Silver and Platinum. Silver and Platinum Short execution is proven; their low Long reserve is enforced and shown per side. Migration0013 enables the matching durable customer paths and retains strict market allowlisting.
 
 The actual customer's Privy ETH funding, approval, open and full-close are verified, including canonical keeper transactions and current position absence (`evidence/gmx-customer-roundtrip.json`). Perpetual activity, cross-market position selection and confirmed-failure recovery are integrated. This does not claim customer execution of every direction on every market, unlimited fee grants, a bridge, public deployment, or complete historical candle coverage. Gate3 remains deferred by the owner while localhost is finalized.
+
+### Owner replacement: Zenex XLM-only Perpetuals
+
+Active Perpetuals now targets Zenex on Stellar Testnet. Real controlled-QA Long/open-close and Short/open-close prove keeper fills and zero final positions (`evidence/zenex-roundtrip.json`). Reuse existing Privy customer signing and operation infrastructure; no customer Privy Zenex execution is claimed yet. Gate 0 contract amendment 0.4.4; core Gate 1/2 evidence retained. Gate 3 remains deferred. See `docs/20_ZENEX_TESTNET.md`.

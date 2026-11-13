@@ -22,7 +22,7 @@ export async function registerSpotRoutes(app:FastifyInstance,deps:SpotRouteDepen
   return deps.success(request,query.asset_class==='crypto_spot'?deps.service.adapter.markets():await deps.readDiscoveryMarkets?.(query.asset_class)??[]);
  });
  app.get<{Params:{id:string}}>('/v1/trade/markets/:id',async request=>{
-  if(/^gmx-testnet:perps:(?:ETH|BTC)$/.test(request.params.id)||/^hyperliquid-testnet:(?:perps|stocks):(?:0|[1-9]\d{0,8})$/.test(request.params.id)||/^robinhood-testnet:stocks:(?:TSLA|AMZN|PLTR|NFLX|AMD)$/.test(request.params.id)){
+  if(request.params.id==='zenex-testnet:perps:XLM'||/^gmx-testnet:perps:(?:ETH|BTC|CRV|XAU|XAG|XPT)$/.test(request.params.id)||/^hyperliquid-testnet:(?:perps|stocks):(?:0|[1-9]\d{0,8})$/.test(request.params.id)||/^robinhood-testnet:stocks:(?:TSLA|AMZN|PLTR|NFLX|AMD)$/.test(request.params.id)){
    await deps.requireBusiness(request,request.params.id.includes(':stocks:')?'trade.stocks':'trade.perps');
    if(!deps.readDiscoveryMarket)throw new GrapnelError(404,'NOT_FOUND','Market not found');
    return deps.success(request,await deps.readDiscoveryMarket(request.params.id));

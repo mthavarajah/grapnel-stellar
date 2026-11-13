@@ -1,4 +1,5 @@
 "use client";
+import {inspectZenex} from './zenex-approval';
 import { Buffer } from "buffer";
 import {inspectCircleSetupPrepared} from './cctp-setup-approval';
 import {inspectBorrowApproval,isBorrowApprovalAction} from './borrow-approval';
@@ -132,7 +133,8 @@ export async function signPreparedAction(
       "Prepared transaction differs from the approved fee or source intent",
     );
   }
-  if(['perps.usdc_trustline','perps.usdc_allowance'].includes(action.summary.action)){
+  if(action.summary.action.startsWith('zenex.')){inspectZenex(action,tx);
+  } else if(['perps.usdc_trustline','perps.usdc_allowance'].includes(action.summary.action)){
     inspectCircleSetupPrepared(action,tx,{customerId:action.customerId,walletAddress:expectedAddress,expectedSequence:BigInt(tx.sequence)});
   } else if(operation.type==='changeTrust'){
     const issuer='GATALTGTWIOT6BUDBCZM3Q4OQ4BO2COLOAZ7IYSKPLC2PMSOPPGF5V56';

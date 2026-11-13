@@ -1,0 +1,30 @@
+{
+  "network": "stellar-testnet",
+  "signer": "controlled_qa_keypair",
+  "account": "GCDRDEN2IOS3NNI3HCYOWU7XLHGC4VNIGY6PS2X7TFYA6BKOBJREHU6T",
+  "creation_hash": "6f12f49c1affa49a709150e9d10b20d1e3f3dc629af7a4dfbc08e7f383d155b4",
+  "cancellation_hash": "b03c3b579f82483306d8c51036fd86a0e62becb1c30ee63b4395fd49ab65cfbf",
+  "verification": {
+    "verified": true,
+    "result": {
+      "zenex": {
+        "kind": "cancel",
+        "tx_hash": "b03c3b579f82483306d8c51036fd86a0e62becb1c30ee63b4395fd49ab65cfbf",
+        "event": {
+          "id": "0024498261528178688-0000000001",
+          "txHash": "b03c3b579f82483306d8c51036fd86a0e62becb1c30ee63b4395fd49ab65cfbf",
+          "ledger": 5703946,
+          "topic": [
+            "cancel_order",
+            "GCDRDEN2IOS3NNI3HCYOWU7XLHGC4VNIGY6PS2X7TFYA6BKOBJREHU6T",
+            9
+          ],
+          "value": {
+            "refund": "10100000"
+          }
+        }
+      }
+    }
+  },
+  "checked_at": "2026-11-13T04:16:14.895Z"
+}

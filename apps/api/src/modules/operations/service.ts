@@ -23,6 +23,11 @@ export function serializeOperation(row:QueryResultRow,withPrepared=false):Operat
    }}catch{/* A completed repayment without exact settlement evidence has no invented amount. */}
   }
  }
+ if(row.provider==='zenex'){
+  const p=row.prepared_action?.summary?.perpetual;
+  if(['zenex.open','zenex.close'].includes(row.type)&&p?.market_id==='zenex-testnet:perps:XLM'&&typeof p.is_long==='boolean'&&typeof p.size_usd==='string'&&/^(0|[1-9]\d*)(\.\d+)?$/.test(p.size_usd)){result.display_side=p.is_long?'long':'short';result.display_amount=p.size_usd;result.display_asset_id=row.prepared_action.summary.fromAssetId;}
+  if(row.type==='zenex.faucet'&&row.state==='completed'&&row.result_json?.zenex?.verified===true){result.display_amount=row.result_json.zenex.amount;result.display_asset_id=row.result_json.zenex.asset_id;}
+ }
  if(withPrepared && row.prepared_action)result.prepared_action=PreparedActionSchema.parse(row.prepared_action);
  return result;
 }
@@ -61,8 +66,8 @@ export class OperationService {
    const wallet=(await client.query('SELECT id FROM wallets WHERE business_id=$1 AND customer_id=$2 AND id=$3',[input.businessId,input.customerId,input.walletId])).rows[0];
    if(!wallet)throw new GrapnelError(404,'NOT_FOUND','Customer wallet not found');
    await lock(client,`wallet:${input.businessId}:${input.walletId}`);
-   const pending=(await client.query("SELECT id FROM operations WHERE business_id=$1 AND wallet_id=$2 AND state NOT IN ('completed','failed','rejected','expired') LIMIT 1",[input.businessId,input.walletId])).rows[0];
-   if(pending)throw new GrapnelError(409,'WALLET_OPERATION_PENDING','Finish the pending wallet action before preparing another',false,{operation_id:pending.id});
+   const pending=(await client.query("SELECT id,provider,type FROM operations WHERE business_id=$1 AND wallet_id=$2 AND state NOT IN ('completed','failed','rejected','expired') LIMIT 1",[input.businessId,input.walletId])).rows[0];
+   if(pending&&!(input.type==='zenex.cancel'&&input.provider==='zenex'&&pending.provider==='zenex'&&['zenex.open','zenex.close'].includes(pending.type)))throw new GrapnelError(409,'WALLET_OPERATION_PENDING','Finish the pending wallet action before preparing another',false,{operation_id:pending.id});
    const operationId=randomUUID();
    await client.query("INSERT INTO operations(id,business_id,customer_id,wallet_id,module_code,type,state,request_json,provider) VALUES($1,$2,$3,$4,$5,$6,'accepted',$7,$8)",[operationId,input.businessId,input.customerId,input.walletId,input.module,input.type,JSON.stringify(input.request),input.provider]);
    await client.query('INSERT INTO idempotency_records(business_id,route,idempotency_key,request_hash,operation_id) VALUES($1,$2,$3,$4,$5)',[input.businessId,input.route,input.idempotencyKey,requestHash,operationId]);

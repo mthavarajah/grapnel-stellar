@@ -1,0 +1,19 @@
+{
+  "network": "stellar-testnet",
+  "account": "GCDRDEN2IOS3NNI3HCYOWU7XLHGC4VNIGY6PS2X7TFYA6BKOBJREHU6T",
+  "signer": "provider_testnet_faucet",
+  "checked_at": "2026-11-13T04:19:35.675Z",
+  "proof": {
+    "verified": true,
+    "result": {
+      "zenex": {
+        "kind": "fund",
+        "verified": true,
+        "tx_hash": "3580e7fd13994792d2b911b33101540354e9105efeadaf705cd764c1ce6726e5",
+        "ledger": 5703386,
+        "amount": "1000.0000000",
+        "asset_id": "stellar-testnet:classic:USDC:GCLSQU55UGBZQITOD4JFGEMIFAAUZSHZ6V2BK7BQNZ2F76V5KNXLOUGC"
+      }
+    }
+  }
+}

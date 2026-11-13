@@ -1,0 +1,243 @@
+{
+  "network": "stellar-testnet",
+  "market": "CCOIDO46A4HHBOQQSHKY3RC6BM6HE3V7UMYNICG7PA7ABS422W672F6U",
+  "collateral": "CD4MP2QV4LABFU5OL6Y5RICCLQIX7TWT6T6J546EDYVUXHH6RS2V5S2O",
+  "issuer": "GCLSQU55UGBZQITOD4JFGEMIFAAUZSHZ6V2BK7BQNZ2F76V5KNXLOUGC",
+  "account": "GCDRDEN2IOS3NNI3HCYOWU7XLHGC4VNIGY6PS2X7TFYA6BKOBJREHU6T",
+  "checked_at": "2026-11-13T03:37:24.968Z",
+  "signer": "controlled_qa_keypair",
+  "steps": [
+    {
+      "kind": "open",
+      "is_long": true,
+      "creation_hash": "49575ecc436c5342a52568046988ae9048616567e53b54025b4d283899066a4a",
+      "execution_hash": "83292067d91ebed40ccc26d57b71ba834e0689fbfc0721f4cb25f946d2ff3c52",
+      "creation_event": {
+        "id": "0024495907886125056-0000000001",
+        "txHash": "49575ecc436c5342a52568046988ae9048616567e53b54025b4d283899066a4a",
+        "ledger": 5703398,
+        "topic": [
+          "create_order",
+          "GCDRDEN2IOS3NNI3HCYOWU7XLHGC4VNIGY6PS2X7TFYA6BKOBJREHU6T",
+          1
+        ],
+        "value": {
+          "order": {
+            "created_at": "1794540634",
+            "exec_fee": "100000",
+            "expiration": 5703457,
+            "is_long": true,
+            "kind": 0,
+            "margin": "100000000",
+            "notional": "200000000",
+            "price_bound": "144885749568830115",
+            "trigger_price": "0"
+          }
+        }
+      },
+      "fill_event": {
+        "id": "0024495912181067776-0000000001",
+        "txHash": "83292067d91ebed40ccc26d57b71ba834e0689fbfc0721f4cb25f946d2ff3c52",
+        "ledger": 5703399,
+        "topic": [
+          "open_fill",
+          "GCDRDEN2IOS3NNI3HCYOWU7XLHGC4VNIGY6PS2X7TFYA6BKOBJREHU6T",
+          1,
+          true
+        ],
+        "value": {
+          "base_fee": "120000",
+          "impact_fee": "400",
+          "keeper": "GDDHPJCKJY6RYUNFXX552A542S75JF64Y46MDCJZETVOYSFZ2DZ44REN",
+          "margin": "100000000",
+          "notional": "200000000",
+          "price": "143289811325117050",
+          "tokens": "1395772652"
+        }
+      }
+    },
+    {
+      "kind": "close",
+      "is_long": true,
+      "creation_hash": "b355ece55b723a298e41bbcfff0ef601b3f94f33915482aea15e90c063244239",
+      "execution_hash": "81263b22d4c074e3de84bcacb536a21c3205d2eaf00be40e65acc0f57804acf6",
+      "creation_event": {
+        "id": "0024495955130736640-0000000001",
+        "txHash": "b355ece55b723a298e41bbcfff0ef601b3f94f33915482aea15e90c063244239",
+        "ledger": 5703409,
+        "topic": [
+          "create_order",
+          "GCDRDEN2IOS3NNI3HCYOWU7XLHGC4VNIGY6PS2X7TFYA6BKOBJREHU6T",
+          2
+        ],
+        "value": {
+          "order": {
+            "created_at": "1794540689",
+            "exec_fee": "100000",
+            "expiration": 5703468,
+            "is_long": true,
+            "kind": 3,
+            "margin": "0",
+            "notional": "170141183460469231731687303715884105727",
+            "price_bound": "142010662184712783",
+            "trigger_price": "0"
+          }
+        }
+      },
+      "fill_event": {
+        "id": "0024495959425740800-0000000001",
+        "txHash": "81263b22d4c074e3de84bcacb536a21c3205d2eaf00be40e65acc0f57804acf6",
+        "ledger": 5703410,
+        "topic": [
+          "close_fill",
+          "GCDRDEN2IOS3NNI3HCYOWU7XLHGC4VNIGY6PS2X7TFYA6BKOBJREHU6T",
+          2,
+          true
+        ],
+        "value": {
+          "bad_debt": "0",
+          "base_fee": "80000",
+          "borrowing": "26",
+          "funding": "71",
+          "impact_fee": "400",
+          "keeper": "GDDHPJCKJY6RYUNFXX552A542S75JF64Y46MDCJZETVOYSFZ2DZ44REN",
+          "margin": "99879600",
+          "notional": "200000000",
+          "pnl": "273723",
+          "price": "143485920041983755",
+          "returned": "100072826",
+          "tokens": "1395772652"
+        }
+      }
+    },
+    {
+      "kind": "open",
+      "is_long": false,
+      "creation_hash": "fc65827ab3ce6700e215d99d3dcf18b04cb6dee9e6e4b983f553cd7f1cf0e434",
+      "execution_hash": "33262c30c3247f4c45bde813e908bf989ab080d2d2b0b2924b27ff7fcb19970d",
+      "creation_event": {
+        "id": "0024496015260278784-0000000001",
+        "txHash": "fc65827ab3ce6700e215d99d3dcf18b04cb6dee9e6e4b983f553cd7f1cf0e434",
+        "ledger": 5703423,
+        "topic": [
+          "create_order",
+          "GCDRDEN2IOS3NNI3HCYOWU7XLHGC4VNIGY6PS2X7TFYA6BKOBJREHU6T",
+          3
+        ],
+        "value": {
+          "order": {
+            "created_at": "1794540759",
+            "exec_fee": "100000",
+            "expiration": 5703482,
+            "is_long": false,
+            "kind": 0,
+            "margin": "100000000",
+            "notional": "200000000",
+            "price_bound": "142004220841713780",
+            "trigger_price": "0"
+          }
+        }
+      },
+      "fill_event": {
+        "id": "0024496019555336192-0000000001",
+        "txHash": "33262c30c3247f4c45bde813e908bf989ab080d2d2b0b2924b27ff7fcb19970d",
+        "ledger": 5703424,
+        "topic": [
+          "open_fill",
+          "GCDRDEN2IOS3NNI3HCYOWU7XLHGC4VNIGY6PS2X7TFYA6BKOBJREHU6T",
+          3,
+          false
+        ],
+        "value": {
+          "base_fee": "80000",
+          "impact_fee": "400",
+          "keeper": "GDDHPJCKJY6RYUNFXX552A542S75JF64Y46MDCJZETVOYSFZ2DZ44REN",
+          "margin": "100000000",
+          "notional": "200000000",
+          "price": "143388550877197322",
+          "tokens": "1394811502"
+        }
+      }
+    },
+    {
+      "kind": "close",
+      "is_long": false,
+      "creation_hash": "abf34201bcb33a913d09582c1b53892e6a6ef7685b26e47f64f392e0b084ccc9",
+      "execution_hash": "65a6cf898f55f047c141c2a65064fd035c4c459cc3a759ca3ec833d8354dcb95",
+      "creation_event": {
+        "id": "0024496126929428480-0000000001",
+        "txHash": "abf34201bcb33a913d09582c1b53892e6a6ef7685b26e47f64f392e0b084ccc9",
+        "ledger": 5703449,
+        "topic": [
+          "create_order",
+          "GCDRDEN2IOS3NNI3HCYOWU7XLHGC4VNIGY6PS2X7TFYA6BKOBJREHU6T",
+          4
+        ],
+        "value": {
+          "order": {
+            "created_at": "1794540889",
+            "exec_fee": "100000",
+            "expiration": 5703507,
+            "is_long": false,
+            "kind": 3,
+            "margin": "0",
+            "notional": "170141183460469231731687303715884105727",
+            "price_bound": "144792476743811095",
+            "trigger_price": "0"
+          }
+        }
+      },
+      "fill_event": {
+        "id": "0024496131224408064-0000000001",
+        "txHash": "65a6cf898f55f047c141c2a65064fd035c4c459cc3a759ca3ec833d8354dcb95",
+        "ledger": 5703450,
+        "topic": [
+          "close_fill",
+          "GCDRDEN2IOS3NNI3HCYOWU7XLHGC4VNIGY6PS2X7TFYA6BKOBJREHU6T",
+          4,
+          false
+        ],
+        "value": {
+          "bad_debt": "0",
+          "base_fee": "120000",
+          "borrowing": "0",
+          "funding": "-2485",
+          "impact_fee": "400",
+          "keeper": "GDDHPJCKJY6RYUNFXX552A542S75JF64Y46MDCJZETVOYSFZ2DZ44REN",
+          "margin": "99919600",
+          "notional": "200000000",
+          "pnl": "220449",
+          "price": "143230501004492900",
+          "returned": "100019649",
+          "tokens": "1394811502"
+        }
+      }
+    }
+  ],
+  "final_positions": [
+    {
+      "is_long": true,
+      "borrowing_idx": "0",
+      "decrease_orders": [],
+      "funding_idx": "0",
+      "locked_notional": "0",
+      "margin": "0",
+      "notional": "0",
+      "priced_at": "0",
+      "tokens": "0",
+      "unlocks_at": "0"
+    },
+    {
+      "is_long": false,
+      "borrowing_idx": "0",
+      "decrease_orders": [],
+      "funding_idx": "0",
+      "locked_notional": "0",
+      "margin": "0",
+      "notional": "0",
+      "priced_at": "0",
+      "tokens": "0",
+      "unlocks_at": "0"
+    }
+  ]
+}

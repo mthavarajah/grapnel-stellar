@@ -1,5 +1,5 @@
 import { z } from 'zod';
-export const CONTRACT_VERSION = '0.4.3' as const;
+export const CONTRACT_VERSION = '0.4.4' as const;
 export const NETWORK = 'stellar-testnet' as const;
 export const NETWORK_PASSPHRASE = 'Test SDF Network ; September 2015' as const;
 export const MODULE_IDS = ['capital.wallets','capital.testnet_funding','capital.lending','trade.spot','trade.stocks','trade.perps'] as const;
@@ -40,9 +40,9 @@ export const CapabilitySchema = z.object({module:ModuleIdSchema,enabled:z.boolea
 export type Capability = z.infer<typeof CapabilitySchema>;
 export const OperationStatusSchema = z.enum(['accepted','validating','preparing','awaiting_customer_authorization','submitted','confirming','completed','rejected','expired','failed','recovery_required']);
 export type OperationStatus = z.infer<typeof OperationStatusSchema>;
-export const PreparedActionSchema = z.object({operationId:z.string(),customerId:z.string(),network:z.literal(NETWORK),walletAddress:z.string(),unsignedXdr:z.string(),signingHashHex:z.string().regex(/^[a-f0-9]{64}$/),summary:z.object({action:z.string(),positionId:z.string().regex(/^[1-9]\d{0,19}$/).optional(),fromAssetId:z.string().optional(),toAssetId:z.string().optional(),amount:z.string().optional(),recipient:z.string().optional(),contractId:z.string().optional(),maxFeeStroops:z.string().optional(),allowanceExpirationLedger:z.string().regex(/^[1-9]\d{0,9}$/).optional(),minReceive:z.string().optional(),expiresAt:z.string().datetime()}),authorization:z.object({method:z.literal('privy_stellar'),expiresAt:z.string().datetime()})});
+export const PreparedActionSchema = z.object({operationId:z.string(),customerId:z.string(),network:z.literal(NETWORK),walletAddress:z.string(),unsignedXdr:z.string(),signingHashHex:z.string().regex(/^[a-f0-9]{64}$/),summary:z.object({action:z.string(),perpetual:z.object({market_id:z.literal('zenex-testnet:perps:XLM'),is_long:z.boolean(),size_usd:z.string(),collateral:z.string(),price_bound18:z.string().regex(/^[1-9]\d{0,38}$/),expiration_ledger:z.number().int().positive()}).optional(),positionId:z.string().regex(/^[1-9]\d{0,19}$/).optional(),fromAssetId:z.string().optional(),toAssetId:z.string().optional(),amount:z.string().optional(),recipient:z.string().optional(),contractId:z.string().optional(),maxFeeStroops:z.string().optional(),allowanceExpirationLedger:z.string().regex(/^[1-9]\d{0,9}$/).optional(),minReceive:z.string().optional(),expiresAt:z.string().datetime()}),authorization:z.object({method:z.literal('privy_stellar'),expiresAt:z.string().datetime()})});
 export type PreparedAction = z.infer<typeof PreparedActionSchema>;
-export const OperationSchema = z.object({operation_id:z.string(),customer_id:z.string(),wallet_id:z.string(),module:ModuleIdSchema,type:z.string(),status:OperationStatusSchema,network:z.literal(NETWORK),tx_hash:z.string().nullable(),provider:z.string(),created_at:z.string(),updated_at:z.string(),error:z.object({code:z.string(),message:z.string()}).nullable(),prepared_action:PreparedActionSchema.optional(),customer_action_token:z.string().optional(),display_amount:AmountSchema.optional(),display_asset_id:z.string().optional()});
+export const OperationSchema = z.object({operation_id:z.string(),customer_id:z.string(),wallet_id:z.string(),module:ModuleIdSchema,type:z.string(),status:OperationStatusSchema,network:z.literal(NETWORK),tx_hash:z.string().nullable(),provider:z.string(),created_at:z.string(),updated_at:z.string(),error:z.object({code:z.string(),message:z.string()}).nullable(),prepared_action:PreparedActionSchema.optional(),customer_action_token:z.string().optional(),display_side:z.enum(['long','short']).optional(),display_amount:AmountSchema.optional(),display_asset_id:z.string().optional()});
 export type Operation = z.infer<typeof OperationSchema>;
 export const CustomerInputSchema = z.object({external_customer_id:z.string().min(1).max(200)}).strict();
 export const ModulesInputSchema = z.object({modules:z.array(ModuleIdSchema).max(7)}).strict();
@@ -98,3 +98,18 @@ export class GrapnelError extends Error {
 export interface VerifiedIdentity {userId:string;wallets:{id:string;address:string;publicKey:string}[];}
 export interface IdentityVerifier {verify(token:string):Promise<VerifiedIdentity>;}
 export interface WalletBalance {asset_id:string;wallet_amount:string;reserved:string;spendable:string;as_of:string;source:string;asset?:AssetIdentity;}
+
+/** Official Zenex Testnet deployment verified against /v1/config and live ledger instances. */
+export const ZENEX_TESTNET={marketId:'zenex-testnet:perps:XLM',api:'https://api-testnet.zenex.trade',market:'CCOIDO46A4HHBOQQSHKY3RC6BM6HE3V7UMYNICG7PA7ABS422W672F6U',vault:'CCKXT53FROOVQOMFWTOM5F3UHRXBX7CYAZKLPZ4GZ3WOD7XZBFQ2VNF4',token:'CD4MP2QV4LABFU5OL6Y5RICCLQIX7TWT6T6J546EDYVUXHH6RS2V5S2O',issuer:'GCLSQU55UGBZQITOD4JFGEMIFAAUZSHZ6V2BK7BQNZ2F76V5KNXLOUGC',oracle:'CB7AHBUDG5DRGCCOG3ZSKYUK2JSHUOLPEAAUMJF6QIAYOBVI7VTFKIGF',treasury:'CAEJMPYGB7W77QZRKPA33A3Y6XO35JISSONZEED2FGZJHBBJF2B47IEC',feed:'0x000358cb12b1f5bbeca8b5b4666025a40b15520af1f82516ee2fb9a335055e9a',decimals:7}as const;
+export const ZENEX_USDC_ID=`stellar-testnet:classic:USDC:${ZENEX_TESTNET.issuer}`;
+export const ZENEX_FULL_CLOSE=2n**127n-1n;
+export const isZenexAction=(action:string)=>['zenex.open','zenex.close','zenex.cancel','zenex.trustline'].includes(action);
+
+
+const ZenexCustomerFields={customer_id:z.string().uuid(),wallet_id:z.string().uuid()};
+export const ZenexPrepareInputSchema=z.discriminatedUnion('kind',[
+ z.object({...ZenexCustomerFields,kind:z.literal('open'),is_long:z.boolean(),collateral:z.string().regex(/^(0|[1-9]\d*)(\.\d{1,7})?$/).max(30),leverage:z.number().int().min(1).max(10)}).strict(),
+ z.object({...ZenexCustomerFields,kind:z.literal('close'),is_long:z.boolean()}).strict(),
+ z.object({...ZenexCustomerFields,kind:z.literal('cancel'),order_id:z.number().int().positive()}).strict(),
+ z.object({...ZenexCustomerFields,kind:z.literal('trustline')}).strict(),
+]);

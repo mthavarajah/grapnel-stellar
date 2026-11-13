@@ -2,7 +2,7 @@ import type { Pool } from 'pg';
 import { randomUUID } from 'node:crypto';
 import { transaction } from '../../db/index.js';
 import { OperationService, type ReconciliationResult } from './service.js';
-export interface DeltaVerification {verified:boolean;result:Record<string,unknown>;}
+export interface DeltaVerification {failed?:boolean;verified:boolean;result:Record<string,unknown>;}
 export interface WorkerChain {
  lookup(txHash:string):Promise<ReconciliationResult&{found:boolean}>;
  broadcast(signedXdr:string):Promise<{txHash:string}>;
@@ -28,6 +28,7 @@ export class OperationWorker {
     if(observed.state==='completed'){
      const verification=await this.chain.verifyDeltas(op.id,op.tx_hash);
      observed.deltaVerified=typeof verification==='boolean'?verification:verification.verified;
+     if(typeof verification!=='boolean'&&verification.failed===true)observed.state='failed';
      if(typeof verification!=='boolean')observed.result={...observed.result,...verification.result};
     }
     await this.operations.recordReconciliation(op.business_id,op.id,observed);

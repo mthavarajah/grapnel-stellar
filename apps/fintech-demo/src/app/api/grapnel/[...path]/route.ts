@@ -68,6 +68,7 @@ export async function GET(
       await requireModule('capital.wallets',s);
       return json(await grapnel(`/capital/wallets/${s.walletId}/network-assets?customer_id=${s.customerId}`,s));
     }
+    if(key==='zenex-status'){await requireModule('trade.perps',s);await requireModule('capital.wallets',s);return json(await grapnel(`/trade/zenex/status?customer_id=${s.customerId}&wallet_id=${s.walletId}`,s));}
     if(key==='gmx-activity'){await requireModule('trade.perps',s);await requireModule('capital.wallets',s);return json(await grapnel(`/trade/gmx/activity?customer_id=${s.customerId}&wallet_id=${s.walletId}`,s));}
     if(key==='stocks-activity'){await requireModule('trade.stocks',s);await requireModule('capital.wallets',s);return json(await grapnel(`/trade/stocks/activity?customer_id=${s.customerId}&wallet_id=${s.walletId}`,s));}
     if(key==='stocks-grants'){
@@ -246,6 +247,7 @@ export async function POST(
       const body=schema.parse(raw);
       return json(await grapnel('/trade/stocks/'+route.slice(7),s,{method:'POST',body:{...body,...binding},idempotencyKey:key}));
     }
+    if(route==='zenex-prepare'||route==='zenex-fund'){await requireModule('trade.perps',s);await requireModule('capital.wallets',s);const input=route==='zenex-fund'?z.object({}).strict().parse(raw):z.object({kind:z.enum(['open','close','cancel','trustline']),is_long:z.boolean().optional(),collateral:money.optional(),leverage:z.number().int().min(1).max(10).optional(),order_id:z.number().int().positive().optional()}).strict().parse(raw);return json(await grapnel('/trade/zenex/'+(route==='zenex-fund'?'fund':'prepare'),s,{method:'POST',body:JSON.stringify({...input,customer_id:s.customerId,wallet_id:s.walletId}),idempotencyKey:key}));}
     if(route==='gmx-prepare'||route==='gmx-authorize'||route==='gmx-gas'){
       await requireModule('trade.perps',s);await requireModule('capital.wallets',s);
       const address=z.string().regex(/^0x[0-9a-fA-F]{40}$/);
