@@ -1403,10 +1403,22 @@ td code {
   justify-content: space-between;
   color: #d7d7d7;
 }
-.stack-mid > b {
-  font-family: "Manrope", sans-serif;
-  font-size: 22px;
-  letter-spacing: -1px;
+.stack-logo {
+  position: relative;
+  width: 122px;
+  height: 31px;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+.stack-logo img {
+  position: absolute;
+  width: 160px;
+  height: auto;
+  max-width: none;
+  left: -21px;
+  top: -25px;
+  filter: grayscale(1) brightness(0.843137);
+  mix-blend-mode: screen;
 }
 .stack-mid > span {
   font-size: 10px;

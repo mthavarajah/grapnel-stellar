@@ -388,8 +388,8 @@ export default function Dashboard({ section }: { section: string }) {
               <em>Your building blocks.</em>
             </h1>
             <p>
-              One REST API for customer wallets, Testnet funding, spot markets,
-              and lending. Activate only what your business needs.
+              One API for on-chain trading. Crypto, stocks, perpetuals, earn,
+              borrow. Activate only what your business needs.
             </p>
             <div className="stack-art">
               <div className="stack-top">
@@ -398,7 +398,14 @@ export default function Dashboard({ section }: { section: string }) {
               </div>
               <div className="stack-line" />
               <div className="stack-mid">
-                <b>grapnel.</b>
+                <div className="stack-logo">
+                  <img
+                    src="/brand/logo-name-black.png"
+                    alt="Grapnel"
+                    width={884}
+                    height={444}
+                  />
+                </div>
                 <span>
                   Capital <i /> Trade
                 </span>
@@ -408,12 +415,10 @@ export default function Dashboard({ section }: { section: string }) {
                 <span>Stellar</span>
                 <span>Soroswap</span>
                 <span>Blend</span>
+                <span>Zenex</span>
               </div>
             </div>
           </div>
-          <span className="story-footer">
-            Modular by design. Testnet by default.
-          </span>
         </section>
         <section className="login-form">
           <div className="testnet">
@@ -424,8 +429,7 @@ export default function Dashboard({ section }: { section: string }) {
             <span className="eyebrow">DEVELOPER CONSOLE</span>
             <h2>Your workspace starts here.</h2>
             <p>
-              Sign in with the owner access secret configured for this demo
-              deployment.
+              Sign in with the owner access secret configured for deployment
             </p>
             {error && (
               <div role="alert" className="message error">
@@ -453,12 +457,8 @@ export default function Dashboard({ section }: { section: string }) {
               </button>
             </form>
             <p className="form-foot">
-              Owner sessions manage modules and API keys. Customer wallets
-              require separate authorization.
+              Owner sessions manage modules and API keys.
             </p>
-          </div>
-          <div className="login-bottom">
-            Hackathon prototype · Testnet tokens have no real value
           </div>
         </section>
       </main>
