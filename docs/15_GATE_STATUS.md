@@ -1,6 +1,6 @@
 # Integration gates — 2026-11-11
 
-Provider credentials and customer signing are integrated. **Onchain Gate 2 is passed; public deployment remains incomplete and is deferred at the user's request.** Actual payment, funding/return, both classic-USDC Soroswap directions, XLM Blend supply/withdraw, and USDC supply/withdraw are verified. Execution of additional standalone token routes remains unverified.
+Provider credentials and customer signing are integrated. **Onchain Gate 2 is passed; API, worker, database and both frontends are now hosted. Gate 3 customer acceptance remains incomplete.** Actual payment, funding/return, both classic-USDC Soroswap directions, XLM Blend supply/withdraw, and USDC supply/withdraw are verified. Execution of additional standalone token routes remains unverified.
 
 ## Gate 0 — passed
 Foundation committed before delegation as `6ed12fd`. Monorepo, original module IDs, auth boundaries, Zod/TypeScript interfaces, OpenAPI and Postgres baseline frozen. Current API contract is 0.2.5 with six selectable modules; see docs/14_GATE0_FREEZE.md. Agents worked in isolated scoped worktrees; lead integrated commits.
@@ -101,3 +101,12 @@ The actual customer's Privy ETH funding, approval, open and full-close are verif
 ### Owner replacement: Zenex XLM-only Perpetuals
 
 Active Perpetuals now targets Zenex on Stellar Testnet. Real controlled-QA Long/open-close and Short/open-close prove keeper fills and zero final positions (`evidence/zenex-roundtrip.json`). Reuse existing Privy customer signing and operation infrastructure; no customer Privy Zenex execution is claimed yet. Gate 0 contract amendment 0.4.4; core Gate 1/2 evidence retained. Gate 3 remains deferred. See `docs/20_ZENEX_TESTNET.md`.
+
+
+## Public hosting checkpoint — November 13, 2026
+
+The owner authorized deployment and selected Vercel for Grapnel dashboard and Velocity frontend/server routes, with Railway for the API, continuous worker and PostgreSQL. All services deployed from source commit `95230a6`. Public HTTPS returns200 at `https://grapnel-developer.vercel.app`, `https://velocity-trade.vercel.app`, API `/health`, `/docs` and `/openapi.json`. Health independently reports Testnet and database OK. Hosted authenticated catalog reads return12 API Crypto directions (the customer catalog still applies its exact hidden-asset filter), five Robinhood Stocks and one Zenex Perpetuals market. No new chain transaction was broadcast for this hosting check.
+
+The existing database was privately backed up/restored into an empty Railway database; six core table row counts match. API keys and customer history were preserved. The temporary public database TCP proxy was removed after verification; services use the private database URL. The local worker was stopped before hosted worker takeover.
+
+Developer owner sign-in, module counts and the Velocity link were verified visually at the requested dashboard hostname. Velocity reports configured API/Privy/session server settings. Its public HTTP page responds, but browser automation could not complete the customer-session observation because the browser URL policy blocked that tab. Fresh customer login after adding the final Privy origin, and a signed transaction from the public app, remain unverified. No hosted financial success is inferred from API reads. Recording remains canceled. Evidence: `evidence/deployment/`.

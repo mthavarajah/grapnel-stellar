@@ -1,0 +1,28 @@
+{
+  "observed_at": "2026-11-14T02:52:05.324Z",
+  "report": [
+    {
+      "path": "/v1/capabilities",
+      "status": 200,
+      "error_code": null
+    },
+    {
+      "path": "/v1/trade/markets?asset_class=crypto_spot",
+      "status": 200,
+      "count": 12,
+      "error_code": null
+    },
+    {
+      "path": "/v1/trade/markets?asset_class=stocks",
+      "status": 200,
+      "count": 5,
+      "error_code": null
+    },
+    {
+      "path": "/v1/trade/markets?asset_class=perps",
+      "status": 200,
+      "count": 1,
+      "error_code": null
+    }
+  ]
+}

@@ -1,0 +1,49 @@
+{
+  "observed_at": "2026-11-14T02:56:50.947Z",
+  "checks": [
+    {
+      "url": "https://grapnel-developer.vercel.app",
+      "status": 200,
+      "data": null
+    },
+    {
+      "url": "https://velocity-trade.vercel.app",
+      "status": 200,
+      "data": null
+    },
+    {
+      "url": "https://velocity-trade.vercel.app/api/status",
+      "status": 200,
+      "data": {
+        "data": {
+          "network": "stellar-testnet",
+          "grapnel_configured": true,
+          "privy_configured": true,
+          "session_configured": true
+        }
+      }
+    },
+    {
+      "url": "https://grapnel-stellar-production.up.railway.app/health",
+      "status": 200,
+      "data": {
+        "status": "ok",
+        "network": "stellar-testnet",
+        "db": "ok"
+      }
+    },
+    {
+      "url": "https://grapnel-stellar-production.up.railway.app/openapi.json",
+      "status": 200,
+      "data": {
+        "openapi": "3.1.0",
+        "version": "0.4.5"
+      }
+    },
+    {
+      "url": "https://grapnel-stellar-production.up.railway.app/docs",
+      "status": 200,
+      "data": null
+    }
+  ]
+}

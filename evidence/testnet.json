@@ -189,9 +189,9 @@
     "independent_horizon_effects_verified": true
   },
   "deployments": {
-    "api": null,
-    "dashboard": null,
-    "fintech": null,
+    "api": "https://grapnel-stellar-production.up.railway.app",
+    "dashboard": "https://grapnel-developer.vercel.app",
+    "fintech": "https://velocity-trade.vercel.app",
     "github": "https://github.com/mthavarajah/grapnel-stellar",
     "video": null
   },

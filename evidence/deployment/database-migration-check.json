@@ -1,0 +1,22 @@
+{
+  "observed_at": "2026-11-14T02:55:09.414Z",
+  "databases": {
+    "local": {
+      "businesses": 1,
+      "business_modules": 6,
+      "api_keys": 7,
+      "customers": 4,
+      "wallets": 4,
+      "operations": 67
+    },
+    "railway": {
+      "businesses": 1,
+      "business_modules": 6,
+      "api_keys": 7,
+      "customers": 4,
+      "wallets": 4,
+      "operations": 67
+    }
+  },
+  "row_counts_match": true
+}

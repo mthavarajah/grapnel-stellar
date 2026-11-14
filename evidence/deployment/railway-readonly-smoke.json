@@ -1,0 +1,85 @@
+{
+  "observed_at": "2026-11-14T02:51:35.756Z",
+  "mode": "read_only_no_signing_no_broadcast",
+  "network": "stellar-testnet",
+  "api": {
+    "url": "https://grapnel-stellar-production.up.railway.app",
+    "health": {
+      "status": "ok",
+      "network": "stellar-testnet",
+      "db": "ok"
+    },
+    "openapi_version": "0.4.5"
+  },
+  "account": {
+    "address": "GCY4DPMIBYCQ352UDKVWDJFKRXOIB2YCOLF2PQFUZHZPYU4WD4PW3LBE",
+    "balances": [
+      {
+        "balance": "9979.3999400",
+        "buying_liabilities": "0.0000000",
+        "selling_liabilities": "0.0000000",
+        "asset_type": "native"
+      }
+    ]
+  },
+  "transactions": {
+    "treasury_activation": {
+      "chain_status": "confirmed_success",
+      "tx_hash": "f89109f4379358f0e11771eef6e3aa7e9797dd9b99bf5c576ad3a61d37f76a36",
+      "ledger": 5659589,
+      "source": "GCVT4IHY3JVECGVT3X6RANXCGA3DWT6P42W5RQW5OIGMRCFOD7S366T3",
+      "explorer_url": "https://stellar.expert/explorer/testnet/tx/f89109f4379358f0e11771eef6e3aa7e9797dd9b99bf5c576ad3a61d37f76a36",
+      "delta_status": "not_independently_rechecked"
+    },
+    "gate1": {
+      "chain_status": "confirmed_success",
+      "tx_hash": "c1fd6b62b43b062ec88b4bdeddf86e45ea329ac1b9e5969a199289b536208ab2",
+      "ledger": 5669076,
+      "source": "GB4PC65ZHBPVEZMAHY2K2KYMS3RFBIN2FQIE3LGTLEHT2DEWVMTD7JYQ",
+      "explorer_url": "https://stellar.expert/explorer/testnet/tx/c1fd6b62b43b062ec88b4bdeddf86e45ea329ac1b9e5969a199289b536208ab2",
+      "delta_status": "not_independently_rechecked"
+    },
+    "funding": {
+      "chain_status": "confirmed_success",
+      "tx_hash": "70d688bc1a5e1a852a2d19ff0d2c9d9c3215b5458e2e2a2700bf24064be06b1c",
+      "ledger": 5669361,
+      "source": "GCY4DPMIBYCQ352UDKVWDJFKRXOIB2YCOLF2PQFUZHZPYU4WD4PW3LBE",
+      "explorer_url": "https://stellar.expert/explorer/testnet/tx/70d688bc1a5e1a852a2d19ff0d2c9d9c3215b5458e2e2a2700bf24064be06b1c",
+      "delta_status": "not_independently_rechecked"
+    },
+    "return": {
+      "chain_status": "confirmed_success",
+      "tx_hash": "4f1dcf32382fa783e9efafbcdf6eacee64fa926ece108bd3277165e6e86acece",
+      "ledger": 5669372,
+      "source": "GB4PC65ZHBPVEZMAHY2K2KYMS3RFBIN2FQIE3LGTLEHT2DEWVMTD7JYQ",
+      "explorer_url": "https://stellar.expert/explorer/testnet/tx/4f1dcf32382fa783e9efafbcdf6eacee64fa926ece108bd3277165e6e86acece",
+      "delta_status": "not_independently_rechecked"
+    },
+    "soroswap": {
+      "chain_status": "confirmed_success",
+      "tx_hash": "eb4e7f22eac0b36195047ac231074ede70d7f1930e43d9f897557d43438b7e9a",
+      "ledger": 5678121,
+      "source": "GB4PC65ZHBPVEZMAHY2K2KYMS3RFBIN2FQIE3LGTLEHT2DEWVMTD7JYQ",
+      "explorer_url": "https://stellar.expert/explorer/testnet/tx/eb4e7f22eac0b36195047ac231074ede70d7f1930e43d9f897557d43438b7e9a",
+      "delta_status": "not_independently_rechecked"
+    },
+    "blend_supply": {
+      "chain_status": "confirmed_success",
+      "tx_hash": "eed88945a8c1327f260a1808136d3c3e8c2dd2f62607628fe8ce95d04d54af35",
+      "ledger": 5669556,
+      "source": "GB4PC65ZHBPVEZMAHY2K2KYMS3RFBIN2FQIE3LGTLEHT2DEWVMTD7JYQ",
+      "explorer_url": "https://stellar.expert/explorer/testnet/tx/eed88945a8c1327f260a1808136d3c3e8c2dd2f62607628fe8ce95d04d54af35",
+      "delta_status": "not_independently_rechecked"
+    },
+    "blend_withdraw": {
+      "chain_status": "confirmed_success",
+      "tx_hash": "c5483ff9c241eb8f9449c32f1cb5556f6d4071df82474e754bc9bd298ba0c268",
+      "ledger": 5677438,
+      "source": "GB4PC65ZHBPVEZMAHY2K2KYMS3RFBIN2FQIE3LGTLEHT2DEWVMTD7JYQ",
+      "explorer_url": "https://stellar.expert/explorer/testnet/tx/c5483ff9c241eb8f9449c32f1cb5556f6d4071df82474e754bc9bd298ba0c268",
+      "delta_status": "not_independently_rechecked"
+    }
+  },
+  "acceptance_gate_passed": false,
+  "reason": "Transaction inclusion is rechecked independently; customer signer attribution and historical balance/position deltas still require specific acceptance evidence."
+}

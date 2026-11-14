@@ -8,18 +8,11 @@ Render: create a Blueprint using `deploy/render.yaml`. Both services share one e
 
 Railway alternative: create Postgres and two services from the repository, root directory `/`. Select config paths `deploy/railway-api.json` and `deploy/railway-worker.json` respectively, or set `RAILWAY_DOCKERFILE_PATH=deploy/Dockerfile.api`. Inject `DATABASE_URL` from the Postgres service into both. Supply the same server variables as the Render environment group. No API port is hardcoded in hosting; API honors `PORT`.
 
-### All services on Railway
+### Active hosting split
 
-The owner authorized public Railway deployment on November 13. Use a single Railway project with PostgreSQL and four application services. Each application uses the repository root as its build context:
+The owner selected Vercel for the two Next.js frontends and Railway for the API, continuous worker and PostgreSQL. Railway uses the repository root as its build context and `deploy/Dockerfile.api` for both processes. Configure the API start command as `pnpm --filter @grapnel/api start`, migration command as `pnpm --filter @grapnel/api db:migrate`, and `/health` as its health check. Configure the worker start command as `pnpm --filter @grapnel/api worker`, with no HTTP health check or public domain. Set `RAILWAY_DOCKERFILE_PATH=deploy/Dockerfile.api` on both. The API image includes the public Stocks and Zenex readiness evidence.
 
-| Service | Config file | Public endpoint |
-| --- | --- | --- |
-| API | `/deploy/railway-api.json` | HTTPS `/health`, `/docs` |
-| Worker | `/deploy/railway-worker.json` | None |
-| Grapnel dashboard | `/deploy/railway-dashboard.json` | HTTPS `/` |
-| Velocity Trading | `/deploy/railway-fintech.json` | HTTPS `/` |
-
-Do not enable an HTTP health check or public domain on the worker. Both Next.js containers bind to Railway's injected `PORT` on `0.0.0.0`. The Docker context excludes environment files, private QA keys and generated build output; explicit COPY paths limit each image to its own application and shared contracts. The API image includes the existing public transaction evidence required by Stocks and Zenex readiness checks.
+Railway's live API now rejects the legacy `railwayConfigFile` setting as deprecated. The checked-in Railway JSON files are historical reference inputs; this deployment uses explicit service settings through the official API. The optional frontend Dockerfiles were verified locally but are not the active Vercel deployment path.
 
 Generate public domains first, then configure exact API `DASHBOARD_ORIGIN` and `FINTECH_ORIGIN`. Both frontends need server-only `GRAPNEL_API_URL` pointing to the public HTTPS API. The dashboard needs its own exact `DASHBOARD_ORIGIN` and build-time `NEXT_PUBLIC_VELOCITY_DEMO_URL` pointing to Velocity's `/home`. Velocity needs its server credentials from its environment template and build-time `NEXT_PUBLIC_PRIVY_APP_ID` plus `NEXT_PUBLIC_GRAPNEL_NETWORK=stellar-testnet`. These public values must be present before building; changing them requires rebuilding. Add the Velocity HTTPS origin to the existing Privy application's allowed origins. Never pass secrets as Docker build arguments.
 
