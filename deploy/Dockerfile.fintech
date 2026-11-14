@@ -1,0 +1,18 @@
+FROM node:22-bookworm-slim
+RUN corepack enable && corepack prepare pnpm@10.11.0 --activate
+WORKDIR /app
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml tsconfig.base.json ./
+COPY packages/contracts/package.json packages/contracts/package.json
+COPY apps/fintech-demo/package.json apps/fintech-demo/package.json
+RUN pnpm install --frozen-lockfile --filter @grapnel/fintech-demo... --ignore-scripts
+COPY packages/contracts packages/contracts
+COPY apps/fintech-demo apps/fintech-demo
+ARG NEXT_PUBLIC_PRIVY_APP_ID
+ARG NEXT_PUBLIC_GRAPNEL_NETWORK=stellar-testnet
+ENV NEXT_PUBLIC_PRIVY_APP_ID=$NEXT_PUBLIC_PRIVY_APP_ID NEXT_PUBLIC_GRAPNEL_NETWORK=$NEXT_PUBLIC_GRAPNEL_NETWORK
+RUN pnpm --filter @grapnel/fintech-demo build
+ENV NODE_ENV=production PORT=3002 HOSTNAME=0.0.0.0
+RUN chown -R node:node /app/apps/fintech-demo/.next
+USER node
+EXPOSE 3002
+CMD ["sh", "-c", "exec pnpm --filter @grapnel/fintech-demo exec next start --hostname 0.0.0.0 --port \"$PORT\""]

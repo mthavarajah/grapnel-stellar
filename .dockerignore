@@ -10,11 +10,11 @@ dist
 .env.*
 **/.env
 **/.env.*
-apps/dashboard
-apps/fintech-demo
 coverage
 playwright-report
 test-results
+**/*.test.ts
+**/*.test.tsx
 evidence/screenshots
 *.log
 .DS_Store

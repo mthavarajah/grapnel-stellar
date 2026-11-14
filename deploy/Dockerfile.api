@@ -12,6 +12,8 @@ COPY apps/api/src apps/api/src
 COPY apps/api/tsconfig.json apps/api/tsconfig.json
 COPY openapi openapi
 COPY evidence/testnet.json evidence/testnet.json
+COPY evidence/robinhood-own-roundtrip.json evidence/robinhood-amd-roundtrip.json evidence/robinhood-amzn-roundtrip.json evidence/robinhood-nflx-roundtrip.json evidence/robinhood-pltr-roundtrip.json evidence/
+COPY evidence/zenex-roundtrip.json evidence/zenex-roundtrip.json
 ENV NODE_ENV=production PORT=3001
 USER node
 EXPOSE 3001
