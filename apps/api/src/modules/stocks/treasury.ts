@@ -6,17 +6,18 @@ import {GrapnelError,type CustomerContext} from '@grapnel/contracts';
 import {transaction,lock} from '../../db/index.js';
 import {RH_TESTNET as P} from '../../adapters/robinhood/registry.js';
 import {createRobinhoodReader} from '../../adapters/robinhood/index.js';
+import {stockFundingMaxWallets} from './funding-limit.js';
 const ABI=parseAbi(['function transfer(address,uint256) returns(bool)','function balanceOf(address) view returns(uint256)','function decimals() view returns(uint8)','event Transfer(address indexed from,address indexed to,uint256 value)']);
 const chain=defineChain({id:46630,name:'Robinhood Testnet',nativeCurrency:{name:'Ether',symbol:'ETH',decimals:18},rpcUrls:{default:{http:[P.rpc]}},testnet:true});
 const fail=(reason:string):never=>{throw new GrapnelError(409,'EXECUTION_UNAVAILABLE','Stock funding is unavailable right now',false,{reason});};
 export class RobinhoodTreasury {
- private account;private client;private signer;private reader=createRobinhoodReader();
- constructor(private d:{pool:Pool;secret:Hex;readWallets:(c:CustomerContext)=>Promise<{address:string}[]>}){this.account=privateKeyToAccount(d.secret);this.client=createPublicClient({chain,transport:http(P.rpc,{timeout:15000,retryCount:0})});this.signer=createWalletClient({account:this.account,chain,transport:http(P.rpc,{timeout:15000,retryCount:0})});}
+ private account;private client;private signer;private reader=createRobinhoodReader();private maxWallets:bigint;
+ constructor(private d:{pool:Pool;secret:Hex;readWallets:(c:CustomerContext)=>Promise<{address:string}[]>;maxWallets?:number|string}){this.maxWallets=stockFundingMaxWallets(d.maxWallets);this.account=privateKeyToAccount(d.secret);this.client=createPublicClient({chain,transport:http(P.rpc,{timeout:15000,retryCount:0})});this.signer=createWalletClient({account:this.account,chain,transport:http(P.rpc,{timeout:15000,retryCount:0})});}
  private async owner(c:CustomerContext,a:string){if(!/^0x[a-f0-9]{40}$/i.test(a)||/^0x0{40}$/i.test(a)||!(await this.d.readWallets(c)).some(w=>w.address.toLowerCase()===a.toLowerCase()))throw new GrapnelError(403,'WALLET_OWNERSHIP_INVALID','Your funding account could not be verified');return a.toLowerCase() as Hex;}
  private scope(c:CustomerContext){return{business_id:c.businessId,customer_id:c.customerId,wallet_id:c.walletId};}
  private async rows(c:CustomerContext,a:Hex){return(await this.d.pool.query('SELECT * FROM robinhood_funding_grants WHERE business_id=$1 AND customer_id=$2 AND wallet_id=$3 AND account_address=$4',[c.businessId,c.customerId,c.walletId,a])).rows[0];}
  private async network(){if(await this.client.getChainId()!==46630)return fail('STOCK_FUNDING_NETWORK');await this.reader.verifyDeployment();const code=await this.client.getCode({address:P.settlement.address});if(!code||keccak256(code)!==P.settlement.codeHash||await this.client.readContract({address:P.settlement.address,abi:ABI,functionName:'decimals'})!==6)return fail('STOCK_FUNDING_ASSET');}
- async status(c:CustomerContext,address:string){const a=await this.owner(c,address),grant=await this.rows(c,a);if(!grant){const count=(await this.d.pool.query('SELECT count(*)::text AS count FROM robinhood_funding_grants')).rows[0].count;return{scope:this.scope(c),account_address:a,state:null,stages:[],funding_available:BigInt(count)<2n};}
+ async status(c:CustomerContext,address:string){const a=await this.owner(c,address),grant=await this.rows(c,a);if(!grant){const count=(await this.d.pool.query('SELECT count(*)::text AS count FROM robinhood_funding_grants')).rows[0].count;return{scope:this.scope(c),account_address:a,state:null,stages:[],funding_available:BigInt(count)<this.maxWallets};}
   const stages=(await this.d.pool.query('SELECT * FROM robinhood_funding_stages WHERE grant_id=$1 ORDER BY nonce',[grant.id])).rows;
   for(const s of stages){if(s.state==='completed'||s.state==='reverted')continue;try{
    await this.network();const [receipt,tx,head]=await Promise.all([this.client.getTransactionReceipt({hash:s.tx_hash}),this.client.getTransaction({hash:s.tx_hash}),this.client.getBlockNumber()]);const canonical=await this.client.getBlock({blockNumber:receipt.blockNumber}),t=s.transaction;
@@ -31,7 +32,7 @@ export class RobinhoodTreasury {
  async grant(c:CustomerContext,address:string,key:string){const a=await this.owner(c,address);if(!key||key.length>200)return fail('STOCK_FUNDING_IDEMPOTENCY');await this.network();
   const id=await transaction(this.d.pool,async db=>{await lock(db,'robinhood:funding:global');const existing=(await db.query('SELECT * FROM robinhood_funding_grants WHERE account_address=$1',[a])).rows[0];if(existing){if(existing.business_id!==c.businessId||existing.customer_id!==c.customerId||existing.wallet_id!==c.walletId)return fail('STOCK_FUNDING_ALREADY_ALLOCATED');return existing.id as string;}
    if((await db.query("SELECT id FROM wallets WHERE business_id=$1 AND customer_id=$2 AND id=$3 AND stellar_address=$4 AND status='active' AND network='stellar-testnet' FOR UPDATE",[c.businessId,c.customerId,c.walletId,c.walletAddress])).rowCount!==1)return fail('STOCK_FUNDING_SCOPE');
-   if(BigInt((await db.query('SELECT count(*)::text AS count FROM robinhood_funding_grants')).rows[0].count)>=2n)return fail('STOCK_FUNDING_CAP');
+   if(BigInt((await db.query('SELECT count(*)::text AS count FROM robinhood_funding_grants')).rows[0].count)>=this.maxWallets)return fail('STOCK_FUNDING_CAP');
    if((await db.query("SELECT 1 FROM robinhood_funding_stages WHERE state IN('prepared','sending','unknown') LIMIT 1")).rowCount)return fail('STOCK_FUNDING_TREASURY_PENDING');
    const [native,usd,latest,pending,fees]=await Promise.all([this.client.getBalance({address:this.account.address}),this.client.readContract({address:P.settlement.address,abi:ABI,functionName:'balanceOf',args:[this.account.address]}),this.client.getTransactionCount({address:this.account.address,blockTag:'latest'}),this.client.getTransactionCount({address:this.account.address,blockTag:'pending'}),this.client.estimateFeesPerGas()]);
    if(latest!==pending||fees.maxFeePerGas>1000000000n||usd<20000000n)return fail('STOCK_FUNDING_TREASURY_LOW');

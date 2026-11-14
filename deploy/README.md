@@ -18,6 +18,8 @@ Generate public domains first, then configure exact API `DASHBOARD_ORIGIN` and `
 
 API and worker must share the same database, session/authorization configuration, exact Testnet credentials and funding limits. Preserve the existing database through a private backup/restore when retaining customer history and grants; do not commit backups. On a fresh database, run migrations and the seed once, then issue a new business key through the owner dashboard and configure it only on Velocity's server. A key from a different database will not authenticate. Start the worker only after the database and matching configuration are ready. Public URLs remain unverified until external health, login and operation reconciliation checks pass.
 
+Stocks grants have a default lifetime budget of100 wallets, configurable with `ROBINHOOD_TESTNET_FUNDING_MAX_WALLETS` (integer1–10000). Each wallet remains eligible for one grant of20USDG and0.001ETH; existing grants count against the budget. The treasury must actually hold the tokens and enough bounded gas before any transaction is signed. Raising the budget does not replenish treasury assets. Changing this server setting requires an API restart/redeployment.
+
 The Dockerfile copies explicit source paths and cannot copy a developer's `.env`, `.git`, frontend private config or generated private keys. It runs source TypeScript via the pinned `tsx` runtime because shared package exports point to source. Do not switch to a nonexistent dist entry point. Build locally with `docker build -f deploy/Dockerfile.api -t grapnel-testnet-api .`; Docker verification requires an active daemon.
 
 ## Two Vercel frontend projects
