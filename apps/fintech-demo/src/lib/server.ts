@@ -1,4 +1,5 @@
 import "server-only";
+import {stockFundingRejectionReason} from './stock-funding-feedback';
 import {
   createCipheriv,
   createDecipheriv,
@@ -13,7 +14,7 @@ export class BffError extends Error {
     public status: number,
     public code: string,
     message: string,
-    public details?: {operation_id:string},
+    public details?: {operation_id?:string;reason?:string},
   ) {
     super(message);
   }
@@ -295,7 +296,7 @@ export async function grapnel(
       response.status,
       body.error?.code ?? "GRAPNEL_ERROR",
       body.error?.message ?? "The request could not be completed",
-      body.error?.code==='WALLET_OPERATION_PENDING' && typeof body.error?.details?.operation_id==='string' && /^[0-9a-f-]{36}$/i.test(body.error.details.operation_id) ? {operation_id:body.error.details.operation_id} : undefined,
+      body.error?.code==='WALLET_OPERATION_PENDING' && typeof body.error?.details?.operation_id==='string' && /^[0-9a-f-]{36}$/i.test(body.error.details.operation_id) ? {operation_id:body.error.details.operation_id} : body.error?.code==='EXECUTION_UNAVAILABLE' && stockFundingRejectionReason(body.error?.details?.reason) ? {reason:stockFundingRejectionReason(body.error.details.reason)} : undefined,
     );
   return body.data;
 }
