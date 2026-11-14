@@ -1,4 +1,4 @@
-import {STANDALONE_NATIVE_ROUTES,isApprovedStandaloneAssetId,standaloneAssetId} from '../../adapters/soroswap/direct-assets.js';
+import {STANDALONE_SPOT_ASSETS,isApprovedStandaloneAssetId,standaloneAssetId} from '../../adapters/soroswap/direct-assets.js';
 import type {Pool} from 'pg';
 import {Address,Keypair,Transaction,TransactionBuilder,rpc,scValToNative,StrKey,xdr} from '@stellar/stellar-sdk';
 import {NETWORK_PASSPHRASE,PreparedActionSchema,XLM,toAtomic} from '@grapnel/contracts';
@@ -18,7 +18,7 @@ export function confirmedSpotObservation(result:rpc.Api.GetTransactionResponse):
   const tx=TransactionBuilder.fromXDR(result.envelopeXdr.toXDR('base64'),NETWORK_PASSPHRASE);if(!(tx instanceof Transaction)||tx.hash().toString('hex')!==result.txHash)return null;
   const meta=result.resultMetaXdr,events:xdr.ContractEvent[]=meta.switch()===4?meta.v4().operations().flatMap(o=>o.events()):meta.switch()===3?(meta.v3().sorobanMeta()?.events()??[]):[];
   const transfers:SpotTransfer[]=[];
-  for(const e of events){if(e.type().name!=='contract'||!e.contractId()||e.body().switch()!==0)continue;const id=StrKey.encodeContract(e.contractId()! as unknown as Buffer),body=e.body().v0(),topics=body.topics().map(scValToNative);if(topics[0]!=='transfer'||![NATIVE_SAC,USDC_SAC,...STANDALONE_NATIVE_ROUTES.map(r=>r.contract)].includes(id))continue;const value=scValToNative(body.data());const standalone=STANDALONE_NATIVE_ROUTES.some(r=>r.contract===id);if(topics.length!==(standalone?3:4)||typeof topics[1]!=='string'||typeof topics[2]!=='string'||(!standalone&&typeof topics[3]!=='string')||typeof value!=='bigint'||value<=0n)return null;transfers.push({contract:id,from:topics[1],to:topics[2],asset:standalone?`soroban:${id}`:String(topics[3]),amount:value.toString()});}
+  for(const e of events){if(e.type().name!=='contract'||!e.contractId()||e.body().switch()!==0)continue;const id=StrKey.encodeContract(e.contractId()! as unknown as Buffer),body=e.body().v0(),topics=body.topics().map(scValToNative);if(topics[0]!=='transfer'||![NATIVE_SAC,USDC_SAC,...STANDALONE_SPOT_ASSETS.map(r=>r.contract)].includes(id))continue;const value=scValToNative(body.data());const standalone=STANDALONE_SPOT_ASSETS.some(r=>r.contract===id);if(topics.length!==(standalone?3:4)||typeof topics[1]!=='string'||typeof topics[2]!=='string'||(!standalone&&typeof topics[3]!=='string')||typeof value!=='bigint'||value<=0n)return null;transfers.push({contract:id,from:topics[1],to:topics[2],asset:standalone?`soroban:${id}`:String(topics[3]),amount:value.toString()});}
   return {hash:result.txHash,ledger:result.ledger,created_at:Number(result.createdAt)*1000,fee_stroops:result.resultXdr.feeCharged().toString(),envelope_xdr:tx.toXDR(),transfers};
  }catch{return null;}
 }
@@ -36,10 +36,11 @@ export function verifyStoredSpotProof(record:StoredSpotProof,chain:SpotChainObse
   inspectApprovedSwapTransaction(action,tx,registry,chain.created_at);
   if(toAtomic(action.summary.amount??'',7)!==BigInt(record.amount_in_atomic)||toAtomic(action.summary.minReceive??'',7)!==BigInt(record.min_out_atomic)||BigInt(chain.fee_stroops)>BigInt(baseline.max_fee_stroops))return null;
   const walletTransfers=chain.transfers.filter(t=>t.from===record.wallet_address||t.to===record.wallet_address);if(walletTransfers.length!==2)return null;
-  const reverse=baseline.asset_in_id!==XLM.id;const tokenAssetId=reverse?baseline.asset_in_id:baseline.asset_out_id;const standalone=STANDALONE_NATIVE_ROUTES.find(r=>standaloneAssetId(r.contract)===tokenAssetId);const token=standalone?.contract??USDC_SAC,tokenMarker=standalone?`soroban:${token}`:`USDC:${USDC_ISSUER}`;
-  const debit=walletTransfers.find(t=>t.contract===(reverse?token:NATIVE_SAC)&&t.asset===(reverse?tokenMarker:'native')&&t.from===record.wallet_address&&t.to===registry.pair),credit=walletTransfers.find(t=>t.contract===(reverse?NATIVE_SAC:token)&&t.asset===(reverse?'native':tokenMarker)&&t.from===registry.pair&&t.to===record.wallet_address);
+  const identity=(id:string)=>{if(id===XLM.id)return{contract:NATIVE_SAC,marker:'native'};const token=STANDALONE_SPOT_ASSETS.find(r=>standaloneAssetId(r.contract)===id);return token?{contract:token.contract,marker:`soroban:${token.contract}`}:{contract:USDC_SAC,marker:`USDC:${USDC_ISSUER}`};};
+  const from=identity(baseline.asset_in_id),to=identity(baseline.asset_out_id);
+  const debit=walletTransfers.find(t=>t.contract===from.contract&&t.asset===from.marker&&t.from===record.wallet_address&&t.to===registry.pair),credit=walletTransfers.find(t=>t.contract===to.contract&&t.asset===to.marker&&t.from===registry.pair&&t.to===record.wallet_address);
   if(!debit||!credit||debit.amount!==record.actual_in_atomic||credit.amount!==record.actual_out_atomic||BigInt(credit.amount)<BigInt(record.min_out_atomic))return null;
-  if(atomic(observed.wallet_in_before)-atomic(observed.wallet_in_after)!==BigInt(debit.amount)+(reverse?0n:BigInt(chain.fee_stroops))||atomic(observed.wallet_out_after)-atomic(observed.wallet_out_before)+(reverse?BigInt(chain.fee_stroops):0n)!==BigInt(credit.amount))return null;
+  if(atomic(observed.wallet_in_before)-atomic(observed.wallet_in_after)!==BigInt(debit.amount)+(baseline.asset_in_id===XLM.id?BigInt(chain.fee_stroops):0n)||atomic(observed.wallet_out_after)-atomic(observed.wallet_out_before)+(baseline.asset_out_id===XLM.id?BigInt(chain.fee_stroops):0n)!==BigInt(credit.amount))return null;
   return {market_id:record.market_id,asset_in_id:baseline.asset_in_id,asset_out_id:baseline.asset_out_id,tx_hash:chain.hash,ledger:chain.ledger,verified_at:new Date(now).toISOString(),valid_until:now+30000,[VERIFIED]:true};
  }catch{return null;}
 }

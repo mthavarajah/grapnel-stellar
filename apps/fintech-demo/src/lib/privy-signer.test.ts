@@ -1,4 +1,5 @@
-import { describe, expect, it } from "vitest";
+import{SPOT_TOKEN_PAIR_PINS}from'@grapnel/contracts';
+import { describe, expect, it, vi } from "vitest";
 import {
   Account,
   xdr,
@@ -194,4 +195,17 @@ it('signs only the exact USDC trustline limit and refuses a substituted issuer b
  await signPreparedAction(approved,sign,wallet.publicKey());expect(calls).toBe(1);
  const changed=build(new Asset('USDC',Keypair.random().publicKey()));
  await expect(signPreparedAction({...approved,unsignedXdr:changed.toXDR(),signingHashHex:changed.hash().toString('hex')},sign,wallet.publicKey())).rejects.toThrow('USDC setup');expect(calls).toBe(1);
+});
+
+it.each(SPOT_TOKEN_PAIR_PINS.flatMap(pin=>[false,true].map(reverse=>({pin,reverse}))))('signs only the pinned two-token pair $pin.a.code/$pin.b.code reverse=$reverse (offline key only)',async({pin,reverse})=>{
+ const{wallet,action}=fixture(),router='CCJUD55AG6W5HAI5LRVNKAE5WDP5XGZBUDS5WNTIVDU7O264UZZE7BRD',from=reverse?pin.b:pin.a,to=reverse?pin.a:pin.b;
+ const op=new Contract(router).call('swap_exact_tokens_for_tokens',nativeToScVal(10000000n,{type:'i128'}),nativeToScVal(1000000n,{type:'i128'}),xdr.ScVal.scvVec([nativeToScVal(from.contract,{type:'address'}),nativeToScVal(to.contract,{type:'address'})]),nativeToScVal(wallet.publicKey(),{type:'address'}),nativeToScVal(BigInt(Math.floor(Date.now()/1000)+120),{type:'u64'}));
+ const fn=op.body().invokeHostFunctionOp().hostFunction().invokeContract(),transfer=new Contract(from.contract).call('transfer',nativeToScVal(wallet.publicKey(),{type:'address'}),nativeToScVal(pin.pair,{type:'address'}),nativeToScVal(10000000n,{type:'i128'})).body().invokeHostFunctionOp().hostFunction().invokeContract();
+ op.body().invokeHostFunctionOp().auth([new xdr.SorobanAuthorizationEntry({credentials:xdr.SorobanCredentials.sorobanCredentialsSourceAccount(),rootInvocation:new xdr.SorobanAuthorizedInvocation({function:xdr.SorobanAuthorizedFunction.sorobanAuthorizedFunctionTypeContractFn(fn),subInvocations:[new xdr.SorobanAuthorizedInvocation({function:xdr.SorobanAuthorizedFunction.sorobanAuthorizedFunctionTypeContractFn(transfer),subInvocations:[]})]})})]);
+ const tx=new TransactionBuilder(new Account(wallet.publicKey(),'1'),{fee:'1000',networkPassphrase:Networks.TESTNET}).addOperation(op).setTimeout(60).build();
+ action.unsignedXdr=tx.toXDR();action.signingHashHex=tx.hash().toString('hex');action.summary={action:'spot.swap',fromAssetId:'stellar-testnet:soroban:'+from.contract,toAssetId:'stellar-testnet:soroban:'+to.contract,amount:'1',minReceive:'0.1',recipient:wallet.publicKey(),contractId:router,maxFeeStroops:'1000',expiresAt:new Date(Number(tx.timeBounds!.maxTime)*1000).toISOString()};
+ await expect(signPreparedAction(action,async()=>({signature:`0x${wallet.sign(tx.hash()).toString('hex')}`}),wallet.publicKey())).resolves.toBeTruthy();
+ const altered={...action,summary:{...action.summary,toAssetId:'stellar-testnet:soroban:'+pin.a.contract}},sign=vi.fn();
+ if(altered.summary.toAssetId===action.summary.toAssetId)altered.summary.toAssetId='stellar-testnet:soroban:'+pin.b.contract;
+ await expect(signPreparedAction(altered,sign,wallet.publicKey())).rejects.toThrow('Swap differs');expect(sign).not.toHaveBeenCalled();
 });

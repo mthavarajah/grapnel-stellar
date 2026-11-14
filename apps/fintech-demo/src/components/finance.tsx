@@ -1,4 +1,5 @@
 "use client";
+import {isCustomerSpotMarket} from "../lib/spot-catalog";
 import {changeDirection,chartTimeDomain,chartSegments,chartPrice} from "../lib/chart-presentation";
 import {matchesSpotQuote,validSpotAmount,readSpotQuoteWithRetry,type SpotQuoteIntent} from "../lib/spot-quote";
 import {earnAmountMessage} from "../lib/earn-amount";
@@ -806,7 +807,7 @@ function FinanceShell({ page, auth, initialCategory }: { page: string; auth?: Au
               const m = await api("grapnel/markets?asset_class=" + category);
               const rows=Array.isArray(m)?m:(m.markets??[]);
               if (alive) setMarkets(rows.filter((entry:any) => category === "crypto_spot"
-                ? typeof entry.asset_in_id === "string" && typeof entry.asset_out_id === "string" && entry.asset_in_id !== entry.asset_out_id
+                ? isCustomerSpotMarket(entry)
                 : typeof (entry.market_id??entry.id) === "string" && (!entry.asset_class || entry.asset_class===category)));
               if (alive && category === "crypto_spot") void refreshUsdcStatus();
             } finally { if (alive) setMarketsLoading(false); }

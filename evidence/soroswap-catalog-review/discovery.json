@@ -1,0 +1,388 @@
+{
+  "checked_at": "2026-11-13T23:44:54.687Z",
+  "network": "stellar-testnet",
+  "broadcast": false,
+  "registry": [
+    {
+      "network": "testnet",
+      "assets": [
+        {
+          "name": "Stellar Lumens",
+          "contract": "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC",
+          "code": "XLM",
+          "icon": "https://assets.coingecko.com/coins/images/100/standard/Stellar_symbol_black_RGB.png",
+          "decimals": 7
+        },
+        {
+          "name": "Dogstar",
+          "contract": "CCZGLAUBDKJSQK72QOZHVU7CUWKW45OZWYWCLL27AEK74U2OIBK6LXF2",
+          "code": "XTAR",
+          "icon": "https://www.dogstarcoin.com/assets/img/dogstarcoin-logo.png",
+          "decimals": 7
+        },
+        {
+          "name": "USDCoin",
+          "contract": "CB3TLW74NBIOT3BUWOZ3TUM6RFDF6A4GVIRUQRQZABG5KPOUL4JJOV2F",
+          "code": "USDC",
+          "icon": "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48/logo.png",
+          "decimals": 7
+        },
+        {
+          "name": "Ripple",
+          "contract": "CDDIA6HYANLPMDKBVQRIIXY3NA6S3TMHZFJUNPMBEJGZ5JSHN3E2TAUI",
+          "code": "XRP",
+          "icon": "https://static.ultrastellar.com/media/assets/img/4ab58d77-b70f-4a6c-9944-6f273d549cd5.png",
+          "decimals": 7
+        },
+        {
+          "name": "ArgentinePeso",
+          "contract": "CBRQHWJDLPYVR4BSVUUWJCZGG4N4FF3CUZKDGRVTE36FAWNEJZEMQRME",
+          "code": "ARST",
+          "icon": "https://static.ultrastellar.com/media/assets/img/648754b5-f91d-46c4-97f9-557642976a75.png",
+          "decimals": 7
+        },
+        {
+          "name": "Aquarius",
+          "contract": "CDBCM2JWK2ERIE6EAVAZJJW3P25U5S3FLNHJDY72AVSVAVTU4E6NAQ43",
+          "code": "AQUA",
+          "icon": "https://static.ultrastellar.com/media/assets/img/1878ee2d-2fd1-4e31-89a7-5a430f1596f8.png",
+          "decimals": 7
+        },
+        {
+          "name": "EURoCoin",
+          "contract": "CBQDUWBOHS7P4TZIJ3KUPUZQOWMKJC6CQPPFEONSV3BH4X27YVEXWNOT",
+          "code": "EURC",
+          "icon": "https://static.ultrastellar.com/media/assets/img/f8b00dbf-64b3-488f-bcd2-354f29e2cdc8.png",
+          "decimals": 7
+        },
+        {
+          "name": "Bitcoin",
+          "contract": "CB7ICEHVRIRMF3CF6SIP2C2R3Z4E7WRPATT552QSVLIXZ5RSN6KLUDAE",
+          "code": "BTC",
+          "icon": "https://static.ultrastellar.com/media/assets/img/c3380651-52e5-4054-9121-a438c60a1ec4.png",
+          "decimals": 7
+        },
+        {
+          "name": "BrazilianReal",
+          "contract": "CAFLDVK2REIV6AWNCSTW4HVAGHJNCAROPLTXQYG23VSKL3PSUXEBHYAX",
+          "code": "BRL",
+          "icon": "https://static.ultrastellar.com/media/assets/img/03e2b3a2-f310-4426-8ff1-ec960b033195.png",
+          "decimals": 7
+        },
+        {
+          "name": "uxivax",
+          "contract": "CADHV5C672FOGEUMCGYO2D6VQME3Y3NAP2FZRYJGA3VMDNOL5NAWQI7R",
+          "code": "UXIV",
+          "issuer": "GCPJFNZAARY3Z2AM7RVXDZDLPOEBT4QHTQXFOFKMZHLV7PPDKE2M67Q6",
+          "icon": "",
+          "decimals": 7
+        },
+        {
+          "name": "cyonef",
+          "contract": "CBSWSTWY2OR7322PIIRU6Q6CY3VMMBBL6GX7TO5JV2M6OS2CG5ZHN7FX",
+          "code": "CYON",
+          "issuer": "GCPJFNZAARY3Z2AM7RVXDZDLPOEBT4QHTQXFOFKMZHLV7PPDKE2M67Q6",
+          "icon": "",
+          "decimals": 7
+        },
+        {
+          "name": "jamnov",
+          "contract": "CBGFKYQJYMZC7HNW7RGQQOUR2LP5HAAQ3MPHDENMBNKBKOEDIWXJADAT",
+          "code": "JAMN",
+          "issuer": "GCPJFNZAARY3Z2AM7RVXDZDLPOEBT4QHTQXFOFKMZHLV7PPDKE2M67Q6",
+          "icon": "",
+          "decimals": 7
+        },
+        {
+          "name": "veofiz",
+          "contract": "CBV3JJ7CJK2J2YEJRM2HPFXT4GKBO574XEEVX6YL725R6CRARXITLDCH",
+          "code": "VEOF",
+          "issuer": "GCPJFNZAARY3Z2AM7RVXDZDLPOEBT4QHTQXFOFKMZHLV7PPDKE2M67Q6",
+          "icon": "",
+          "decimals": 7
+        }
+      ]
+    }
+  ],
+  "verified": [
+    {
+      "asset": {
+        "id": "stellar-testnet:classic:CYON:GCPJFNZAARY3Z2AM7RVXDZDLPOEBT4QHTQXFOFKMZHLV7PPDKE2M67Q6",
+        "network": "stellar-testnet",
+        "kind": "classic",
+        "code": "CYON",
+        "name": "CYON:GCPJFNZAARY3Z2AM7RVXDZDLPOEBT4QHTQXFOFKMZHLV7PPDKE2M67Q6",
+        "issuer": "GCPJFNZAARY3Z2AM7RVXDZDLPOEBT4QHTQXFOFKMZHLV7PPDKE2M67Q6",
+        "contractId": "CBSWSTWY2OR7322PIIRU6Q6CY3VMMBBL6GX7TO5JV2M6OS2CG5ZHN7FX",
+        "decimals": 7,
+        "verified": true,
+        "sourceUrl": "https://raw.githubusercontent.com/soroswap/core/main/public/tokens.json"
+      }
+    },
+    {
+      "asset": {
+        "id": "stellar-testnet:classic:JAMN:GCPJFNZAARY3Z2AM7RVXDZDLPOEBT4QHTQXFOFKMZHLV7PPDKE2M67Q6",
+        "network": "stellar-testnet",
+        "kind": "classic",
+        "code": "JAMN",
+        "name": "JAMN:GCPJFNZAARY3Z2AM7RVXDZDLPOEBT4QHTQXFOFKMZHLV7PPDKE2M67Q6",
+        "issuer": "GCPJFNZAARY3Z2AM7RVXDZDLPOEBT4QHTQXFOFKMZHLV7PPDKE2M67Q6",
+        "contractId": "CBGFKYQJYMZC7HNW7RGQQOUR2LP5HAAQ3MPHDENMBNKBKOEDIWXJADAT",
+        "decimals": 7,
+        "verified": true,
+        "sourceUrl": "https://raw.githubusercontent.com/soroswap/core/main/public/tokens.json"
+      }
+    },
+    {
+      "asset": {
+        "id": "stellar-testnet:classic:UXIV:GCPJFNZAARY3Z2AM7RVXDZDLPOEBT4QHTQXFOFKMZHLV7PPDKE2M67Q6",
+        "network": "stellar-testnet",
+        "kind": "classic",
+        "code": "UXIV",
+        "name": "UXIV:GCPJFNZAARY3Z2AM7RVXDZDLPOEBT4QHTQXFOFKMZHLV7PPDKE2M67Q6",
+        "issuer": "GCPJFNZAARY3Z2AM7RVXDZDLPOEBT4QHTQXFOFKMZHLV7PPDKE2M67Q6",
+        "contractId": "CADHV5C672FOGEUMCGYO2D6VQME3Y3NAP2FZRYJGA3VMDNOL5NAWQI7R",
+        "decimals": 7,
+        "verified": true,
+        "sourceUrl": "https://raw.githubusercontent.com/soroswap/core/main/public/tokens.json"
+      }
+    },
+    {
+      "asset": {
+        "id": "stellar-testnet:classic:VEOF:GCPJFNZAARY3Z2AM7RVXDZDLPOEBT4QHTQXFOFKMZHLV7PPDKE2M67Q6",
+        "network": "stellar-testnet",
+        "kind": "classic",
+        "code": "VEOF",
+        "name": "VEOF:GCPJFNZAARY3Z2AM7RVXDZDLPOEBT4QHTQXFOFKMZHLV7PPDKE2M67Q6",
+        "issuer": "GCPJFNZAARY3Z2AM7RVXDZDLPOEBT4QHTQXFOFKMZHLV7PPDKE2M67Q6",
+        "contractId": "CBV3JJ7CJK2J2YEJRM2HPFXT4GKBO574XEEVX6YL725R6CRARXITLDCH",
+        "decimals": 7,
+        "verified": true,
+        "sourceUrl": "https://raw.githubusercontent.com/soroswap/core/main/public/tokens.json"
+      }
+    },
+    {
+      "asset": {
+        "id": "stellar-testnet:native:XLM",
+        "network": "stellar-testnet",
+        "kind": "native",
+        "code": "XLM",
+        "decimals": 7,
+        "verified": true,
+        "sourceUrl": "https://developers.stellar.org/docs/tokens/stellar-asset-contract",
+        "name": "Stellar Lumens",
+        "contractId": "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC"
+      }
+    },
+    {
+      "asset": {
+        "id": "stellar-testnet:soroban:CAFLDVK2REIV6AWNCSTW4HVAGHJNCAROPLTXQYG23VSKL3PSUXEBHYAX",
+        "network": "stellar-testnet",
+        "kind": "soroban",
+        "code": "BRL",
+        "name": "BrazilianReal",
+        "contractId": "CAFLDVK2REIV6AWNCSTW4HVAGHJNCAROPLTXQYG23VSKL3PSUXEBHYAX",
+        "decimals": 7,
+        "verified": true,
+        "sourceUrl": "https://raw.githubusercontent.com/soroswap/core/main/public/tokens.json"
+      },
+      "wasmHash": "263d165c1a1bf5a0dddbd0f21744a55cd8cacedf96ade78f53c570df11490e46"
+    },
+    {
+      "asset": {
+        "id": "stellar-testnet:soroban:CB3TLW74NBIOT3BUWOZ3TUM6RFDF6A4GVIRUQRQZABG5KPOUL4JJOV2F",
+        "network": "stellar-testnet",
+        "kind": "soroban",
+        "code": "USDC",
+        "name": "USDCoin",
+        "contractId": "CB3TLW74NBIOT3BUWOZ3TUM6RFDF6A4GVIRUQRQZABG5KPOUL4JJOV2F",
+        "decimals": 7,
+        "verified": true,
+        "sourceUrl": "https://raw.githubusercontent.com/soroswap/core/main/public/tokens.json"
+      },
+      "wasmHash": "263d165c1a1bf5a0dddbd0f21744a55cd8cacedf96ade78f53c570df11490e46"
+    },
+    {
+      "asset": {
+        "id": "stellar-testnet:soroban:CB7ICEHVRIRMF3CF6SIP2C2R3Z4E7WRPATT552QSVLIXZ5RSN6KLUDAE",
+        "network": "stellar-testnet",
+        "kind": "soroban",
+        "code": "BTC",
+        "name": "Bitcoin",
+        "contractId": "CB7ICEHVRIRMF3CF6SIP2C2R3Z4E7WRPATT552QSVLIXZ5RSN6KLUDAE",
+        "decimals": 7,
+        "verified": true,
+        "sourceUrl": "https://raw.githubusercontent.com/soroswap/core/main/public/tokens.json"
+      },
+      "wasmHash": "263d165c1a1bf5a0dddbd0f21744a55cd8cacedf96ade78f53c570df11490e46"
+    },
+    {
+      "asset": {
+        "id": "stellar-testnet:soroban:CBQDUWBOHS7P4TZIJ3KUPUZQOWMKJC6CQPPFEONSV3BH4X27YVEXWNOT",
+        "network": "stellar-testnet",
+        "kind": "soroban",
+        "code": "EURC",
+        "name": "EURoCoin",
+        "contractId": "CBQDUWBOHS7P4TZIJ3KUPUZQOWMKJC6CQPPFEONSV3BH4X27YVEXWNOT",
+        "decimals": 7,
+        "verified": true,
+        "sourceUrl": "https://raw.githubusercontent.com/soroswap/core/main/public/tokens.json"
+      },
+      "wasmHash": "263d165c1a1bf5a0dddbd0f21744a55cd8cacedf96ade78f53c570df11490e46"
+    },
+    {
+      "asset": {
+        "id": "stellar-testnet:soroban:CBRQHWJDLPYVR4BSVUUWJCZGG4N4FF3CUZKDGRVTE36FAWNEJZEMQRME",
+        "network": "stellar-testnet",
+        "kind": "soroban",
+        "code": "ARST",
+        "name": "ArgentinePeso",
+        "contractId": "CBRQHWJDLPYVR4BSVUUWJCZGG4N4FF3CUZKDGRVTE36FAWNEJZEMQRME",
+        "decimals": 7,
+        "verified": true,
+        "sourceUrl": "https://raw.githubusercontent.com/soroswap/core/main/public/tokens.json"
+      },
+      "wasmHash": "263d165c1a1bf5a0dddbd0f21744a55cd8cacedf96ade78f53c570df11490e46"
+    },
+    {
+      "asset": {
+        "id": "stellar-testnet:soroban:CCZGLAUBDKJSQK72QOZHVU7CUWKW45OZWYWCLL27AEK74U2OIBK6LXF2",
+        "network": "stellar-testnet",
+        "kind": "soroban",
+        "code": "XTAR",
+        "name": "Dogstar",
+        "contractId": "CCZGLAUBDKJSQK72QOZHVU7CUWKW45OZWYWCLL27AEK74U2OIBK6LXF2",
+        "decimals": 7,
+        "verified": true,
+        "sourceUrl": "https://raw.githubusercontent.com/soroswap/core/main/public/tokens.json"
+      },
+      "wasmHash": "263d165c1a1bf5a0dddbd0f21744a55cd8cacedf96ade78f53c570df11490e46"
+    },
+    {
+      "asset": {
+        "id": "stellar-testnet:soroban:CDBCM2JWK2ERIE6EAVAZJJW3P25U5S3FLNHJDY72AVSVAVTU4E6NAQ43",
+        "network": "stellar-testnet",
+        "kind": "soroban",
+        "code": "AQUA",
+        "name": "Aquarius",
+        "contractId": "CDBCM2JWK2ERIE6EAVAZJJW3P25U5S3FLNHJDY72AVSVAVTU4E6NAQ43",
+        "decimals": 7,
+        "verified": true,
+        "sourceUrl": "https://raw.githubusercontent.com/soroswap/core/main/public/tokens.json"
+      },
+      "wasmHash": "263d165c1a1bf5a0dddbd0f21744a55cd8cacedf96ade78f53c570df11490e46"
+    },
+    {
+      "asset": {
+        "id": "stellar-testnet:soroban:CDDIA6HYANLPMDKBVQRIIXY3NA6S3TMHZFJUNPMBEJGZ5JSHN3E2TAUI",
+        "network": "stellar-testnet",
+        "kind": "soroban",
+        "code": "XRP",
+        "name": "Ripple",
+        "contractId": "CDDIA6HYANLPMDKBVQRIIXY3NA6S3TMHZFJUNPMBEJGZ5JSHN3E2TAUI",
+        "decimals": 7,
+        "verified": true,
+        "sourceUrl": "https://raw.githubusercontent.com/soroswap/core/main/public/tokens.json"
+      },
+      "wasmHash": "263d165c1a1bf5a0dddbd0f21744a55cd8cacedf96ade78f53c570df11490e46"
+    }
+  ],
+  "rows": [
+    {
+      "code": "XTAR",
+      "name": "Dogstar",
+      "contract": "CCZGLAUBDKJSQK72QOZHVU7CUWKW45OZWYWCLL27AEK74U2OIBK6LXF2",
+      "verified_identity": true,
+      "native_pair": "CDH4NEG6TAII2AXGJY52WSMMOGCPMFIQBBH245ATW2TIZ7MBYM23YOAR",
+      "reason": null
+    },
+    {
+      "code": "USDC",
+      "name": "USDCoin",
+      "contract": "CB3TLW74NBIOT3BUWOZ3TUM6RFDF6A4GVIRUQRQZABG5KPOUL4JJOV2F",
+      "verified_identity": true,
+      "native_pair": "CDVAIOYHCD4RUSLQNVFI7RIZBFT2JZMJWM4RTOLQZQXL4QAVXU5RFKDB",
+      "reason": null
+    },
+    {
+      "code": "XRP",
+      "name": "Ripple",
+      "contract": "CDDIA6HYANLPMDKBVQRIIXY3NA6S3TMHZFJUNPMBEJGZ5JSHN3E2TAUI",
+      "verified_identity": true,
+      "native_pair": "CBCRYX4VG5GCKQ5KUIHV3AUOIEKEJKXDOXO5DWFYNRPK547N6MNVGEOZ",
+      "reason": null
+    },
+    {
+      "code": "ARST",
+      "name": "ArgentinePeso",
+      "contract": "CBRQHWJDLPYVR4BSVUUWJCZGG4N4FF3CUZKDGRVTE36FAWNEJZEMQRME",
+      "verified_identity": true,
+      "native_pair": null,
+      "reason": "HostError: Error(Contract, #205)"
+    },
+    {
+      "code": "AQUA",
+      "name": "Aquarius",
+      "contract": "CDBCM2JWK2ERIE6EAVAZJJW3P25U5S3FLNHJDY72AVSVAVTU4E6NAQ43",
+      "verified_identity": true,
+      "native_pair": null,
+      "reason": "HostError: Error(Contract, #205)"
+    },
+    {
+      "code": "EURC",
+      "name": "EURoCoin",
+      "contract": "CBQDUWBOHS7P4TZIJ3KUPUZQOWMKJC6CQPPFEONSV3BH4X27YVEXWNOT",
+      "verified_identity": true,
+      "native_pair": "CDRKRVJLWZNKB4W5GCJU27R6LVT2GD2WNYVUPBB2J3MXBEOHMB74WOX5",
+      "reason": null
+    },
+    {
+      "code": "BTC",
+      "name": "Bitcoin",
+      "contract": "CB7ICEHVRIRMF3CF6SIP2C2R3Z4E7WRPATT552QSVLIXZ5RSN6KLUDAE",
+      "verified_identity": true,
+      "native_pair": "CDZL65OIXMVK63DCIWKJ7ULKVHZ7V4B4OM3XQHRNHR4OCFADIUV4FL64",
+      "reason": null
+    },
+    {
+      "code": "BRL",
+      "name": "BrazilianReal",
+      "contract": "CAFLDVK2REIV6AWNCSTW4HVAGHJNCAROPLTXQYG23VSKL3PSUXEBHYAX",
+      "verified_identity": true,
+      "native_pair": null,
+      "reason": "HostError: Error(Contract, #205)"
+    },
+    {
+      "code": "UXIV",
+      "name": "uxivax",
+      "contract": "CADHV5C672FOGEUMCGYO2D6VQME3Y3NAP2FZRYJGA3VMDNOL5NAWQI7R",
+      "verified_identity": true,
+      "native_pair": null,
+      "reason": "HostError: Error(Contract, #205)"
+    },
+    {
+      "code": "CYON",
+      "name": "cyonef",
+      "contract": "CBSWSTWY2OR7322PIIRU6Q6CY3VMMBBL6GX7TO5JV2M6OS2CG5ZHN7FX",
+      "verified_identity": true,
+      "native_pair": null,
+      "reason": "HostError: Error(Contract, #205)"
+    },
+    {
+      "code": "JAMN",
+      "name": "jamnov",
+      "contract": "CBGFKYQJYMZC7HNW7RGQQOUR2LP5HAAQ3MPHDENMBNKBKOEDIWXJADAT",
+      "verified_identity": true,
+      "native_pair": null,
+      "reason": "HostError: Error(Contract, #205)"
+    },
+    {
+      "code": "VEOF",
+      "name": "veofiz",
+      "contract": "CBV3JJ7CJK2J2YEJRM2HPFXT4GKBO574XEEVX6YL725R6CRARXITLDCH",
+      "verified_identity": true,
+      "native_pair": null,
+      "reason": "HostError: Error(Contract, #205)"
+    }
+  ]
+}

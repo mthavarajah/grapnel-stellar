@@ -113,3 +113,15 @@ export const ZenexPrepareInputSchema=z.discriminatedUnion('kind',[
  z.object({...ZenexCustomerFields,kind:z.literal('cancel'),order_id:z.number().int().positive()}).strict(),
  z.object({...ZenexCustomerFields,kind:z.literal('trustline')}).strict(),
 ]);
+/** Recovery/QA pins for existing Soroswap Testnet contracts. ARST/AQUA are retired from the active catalog. */
+export const SPOT_TOKEN_PAIR_ASSETS = {
+ ARST:{code:'ARST',name:'ArgentinePeso',contract:'CBRQHWJDLPYVR4BSVUUWJCZGG4N4FF3CUZKDGRVTE36FAWNEJZEMQRME'},
+ AQUA:{code:'AQUA',name:'Aquarius',contract:'CDBCM2JWK2ERIE6EAVAZJJW3P25U5S3FLNHJDY72AVSVAVTU4E6NAQ43'},
+ XTAR:{code:'XTAR',name:'Dogstar',contract:'CCZGLAUBDKJSQK72QOZHVU7CUWKW45OZWYWCLL27AEK74U2OIBK6LXF2'},
+ EURC:{code:'EURC',name:'EURoCoin',contract:'CBQDUWBOHS7P4TZIJ3KUPUZQOWMKJC6CQPPFEONSV3BH4X27YVEXWNOT'},
+} as const;
+export const SPOT_TOKEN_PAIR_PINS = [
+ {a:SPOT_TOKEN_PAIR_ASSETS.ARST,b:SPOT_TOKEN_PAIR_ASSETS.XTAR,pair:'CAAZMNZDUPXEPLLJOGVQYQOJPXFYDZRYX2AMSXFYNP7Q5IKY7WCH2ZV4'},
+ {a:SPOT_TOKEN_PAIR_ASSETS.AQUA,b:SPOT_TOKEN_PAIR_ASSETS.XTAR,pair:'CDATAQWTAN6TVSXQKVYFHVW7KYWT75LKPQCC76KQBNPTWR3YQ4LIISWN'},
+ {a:SPOT_TOKEN_PAIR_ASSETS.AQUA,b:SPOT_TOKEN_PAIR_ASSETS.EURC,pair:'CBBJN24GDFMVAHNUT3PCNWQOOODLAVAWRHJGYWVTECNYIOQEL3N4I7D5'},
+] as const;

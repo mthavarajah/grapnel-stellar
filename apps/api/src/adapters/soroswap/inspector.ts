@@ -1,3 +1,4 @@
+import {inspectTokenPairTransaction} from './token-pair-policy.js';
 import {STANDALONE_NATIVE_ROUTES,APPROVED_TOKEN_WASM,standaloneAsset,standaloneAssetId,CORE_TESTNET_TOKENS} from './direct-assets.js';
 import { verifySignedAction } from '../stellar/index.js';
 import {Address, Asset, Transaction, TransactionBuilder, SorobanDataBuilder, StrKey, Contract, nativeToScVal, rpc, scValToNative, xdr} from '@stellar/stellar-sdk';
@@ -7,7 +8,7 @@ export const SOROSWAP_TESTNET_REGISTRY='https://raw.githubusercontent.com/sorosw
 export const USDC_ISSUER='GATALTGTWIOT6BUDBCZM3Q4OQ4BO2COLOAZ7IYSKPLC2PMSOPPGF5V56';
 export const NATIVE_SAC=Asset.native().contractId(NETWORK_PASSPHRASE);
 export const USDC_SAC=new Asset('USDC',USDC_ISSUER).contractId(NETWORK_PASSPHRASE);
-export interface SwapRegistry {router:string;factory:string;pair:string;routerHash:string;pairHash:string;tokenId?:string;tokenWasmHash?:string;tokenAsset?:AssetIdentity;protocolVersion?:number;}
+export interface SwapRegistry {router:string;factory:string;pair:string;routerHash:string;pairHash:string;tokenId?:string;tokenWasmHash?:string;tokenAsset?:AssetIdentity;protocolVersion?:number;tokenPair?:{tokenA:string;tokenB:string};}
 export interface SwapIntent {wallet:string;amount:bigint;minimum:bigint;expiresAt:string;assetIn?:string;assetOut?:string;}
 const fail=(message:string):never=>{throw new GrapnelError(403,'SOROSWAP_INTENT_MISMATCH',message);};
 const addr=(a:xdr.ScAddress)=>Address.fromScAddress(a).toString();
@@ -27,6 +28,7 @@ export function inspectSwapArchiveExtension(data:xdr.SorobanTransactionData,stan
 }
 /** Source-only exact-in native XLM -> issuer-pinned USDC. No aggregators, hops or fees. */
 export function inspectSwapTransaction(tx:Transaction,intent:SwapIntent,reg:SwapRegistry,original=false,observedNow=Date.now()):void {
+ if(reg.tokenPair)return inspectTokenPairTransaction(tx,intent,reg,original,observedNow);
  try {
   const expires=Date.parse(intent.expiresAt),now=observedNow;
   const token=reg.tokenId??USDC_SAC,standalone=!!reg.tokenWasmHash;
@@ -96,7 +98,7 @@ export function assertCanonicalSwapTransformation(originalXdr:string,action:Prep
   if(rebuild(raw,action.summary.expiresAt,canonicalData,final.fee).toXDR()!==action.unsignedXdr)throw Error();
  }catch{throw new GrapnelError(403,'PREPARED_ACTION_MISMATCH','Inspector changed fields beyond narrowed expiry and bounded numeric resource/fee reconstruction');}
 }
-function requireSimulation(tx:Transaction,sim:rpc.Api.SimulateTransactionResponse,coverage:boolean):asserts sim is rpc.Api.SimulateTransactionSuccessResponse {
+export function requireSimulation(tx:Transaction,sim:rpc.Api.SimulateTransactionResponse,coverage:boolean):asserts sim is rpc.Api.SimulateTransactionSuccessResponse {
  if(!rpc.Api.isSimulationSuccess(sim)||rpc.Api.isSimulationRestore(sim)||!sim.result)return fail('Exact narrowed transaction failed enforce simulation');
  const declared=tx.toEnvelope().v1().tx().ext().sorobanData(),observed=sim.transactionData.build(),a=declared.resources(),b=observed.resources();
  if(encoded(declared.ext())!==encoded(observed.ext())||sim.result.auth.length!==1||encoded(sim.result.auth[0]!)!==encoded((tx.operations[0] as {auth:xdr.SorobanAuthorizationEntry[]}).auth[0]!)||encoded(a.footprint())!==encoded(b.footprint())||b.instructions()>10000000||b.diskReadBytes()>1048576||b.writeBytes()>131072||BigInt(sim.minResourceFee)+100n>MAX_FEE)fail('Fresh simulation changed auth, footprint or exceeded bounded resources');
@@ -113,6 +115,12 @@ export function reconstructSwapResources(tx:Transaction,sim:rpc.Api.SimulateTran
 /** Callback for the common exact-envelope signature verifier; never verifies a signature itself. */
 export function inspectApprovedSwapTransaction(action:PreparedAction,tx:Transaction,reg:SwapRegistry,observedNow=Date.now()):void {
  PreparedActionSchema.parse(action);
+ if(reg.tokenPair){
+  const from=action.summary.fromAssetId,to=action.summary.toAssetId,ids=[reg.tokenPair.tokenA,reg.tokenPair.tokenB].map(c=>`stellar-testnet:soroban:${c}`);
+  if(action.network!==NETWORK||action.authorization.method!=='privy_stellar'||action.summary.action!=='spot.swap'||!from||!to||from===to||!ids.includes(from)||!ids.includes(to)||action.summary.recipient!==action.walletAddress||action.summary.contractId!==reg.router||action.summary.maxFeeStroops!==tx.fee||action.summary.expiresAt!==action.authorization.expiresAt||action.signingHashHex!==tx.hash().toString('hex'))fail('Approved token-pair summary differs from signed swap');
+  const envelope=tx.toEnvelope();envelope.v1().signatures([]);
+  inspectTokenPairTransaction(new Transaction(envelope,NETWORK_PASSPHRASE),{wallet:action.walletAddress,amount:toAtomic(action.summary.amount??'',7),minimum:toAtomic(action.summary.minReceive??'',7),expiresAt:action.summary.expiresAt,assetIn:from!.slice('stellar-testnet:soroban:'.length),assetOut:to!.slice('stellar-testnet:soroban:'.length)},reg,false,observedNow);return;
+ }
  if(action.network!==NETWORK||action.authorization.method!=='privy_stellar'||action.summary.action!=='spot.swap'||!((action.summary.fromAssetId===XLM.id&&action.summary.toAssetId===(reg.tokenAsset?.id??`stellar-testnet:classic:USDC:${USDC_ISSUER}`))||(action.summary.toAssetId===XLM.id&&action.summary.fromAssetId===(reg.tokenAsset?.id??`stellar-testnet:classic:USDC:${USDC_ISSUER}`)))||action.summary.recipient!==action.walletAddress||action.summary.contractId!==reg.router||action.summary.maxFeeStroops!==tx.fee||action.summary.expiresAt!==action.authorization.expiresAt||action.signingHashHex!==tx.hash().toString('hex'))fail('Approved summary differs from exact reviewed swap');
  const envelope=tx.toEnvelope();envelope.v1().signatures([]);
  inspectSwapTransaction(new Transaction(envelope,NETWORK_PASSPHRASE),{wallet:action.walletAddress,amount:toAtomic(action.summary.amount??'',7),minimum:toAtomic(action.summary.minReceive??'',7),expiresAt:action.summary.expiresAt,assetIn:action.summary.fromAssetId===XLM.id?NATIVE_SAC:(reg.tokenId??USDC_SAC),assetOut:action.summary.toAssetId===XLM.id?NATIVE_SAC:(reg.tokenId??USDC_SAC)},reg,false,observedNow);

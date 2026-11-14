@@ -1,0 +1,9 @@
+{
+  "checked_at": "2026-11-13T23:46:37.326Z",
+  "path": "/protocols?network=testnet",
+  "status": 200,
+  "body": [
+    "soroswap",
+    "sdex"
+  ]
+}

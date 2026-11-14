@@ -1,3 +1,4 @@
+import {SPOT_TOKEN_PAIR_PINS} from '@grapnel/contracts';
 import {ZenexTestnetAdapter} from './adapters/zenex/index.js';
 import {ZenexMarketData} from './modules/zenex/market-data.js';
 import {zenexReadiness} from './modules/zenex/readiness.js';
@@ -54,7 +55,7 @@ import {LendingEarningsReader} from './modules/lending/earnings.js';
 import { SoroswapSpotAdapter } from './adapters/soroswap/index.js';
 import {SoroswapDirectInspector,NATIVE_SAC} from './adapters/soroswap/inspector.js';
 import {SoroswapConfiguredInspector} from './adapters/soroswap/configured-inspector.js';
-import {STANDALONE_NATIVE_ROUTES,APPROVED_TOKEN_WASM} from './adapters/soroswap/direct-assets.js';
+import {STANDALONE_NATIVE_ROUTES,STANDALONE_SPOT_ASSETS,APPROVED_TOKEN_WASM} from './adapters/soroswap/direct-assets.js';
 import {SorobanTokenBalanceReader} from './adapters/stellar/token-balances.js';
 import {MarketDataService,CryptoReferenceHistoryReader} from './modules/market-data/index.js';
 import {registerMarketHistoryRoutes} from './modules/market-data/routes.js';
@@ -134,7 +135,7 @@ export async function createRuntime(pool?:Pool,marginRoutes:RuntimeMarginBinding
  };
  const signer=new PrivyWalletSigner(privy,async(customerId,userId)=>!!(await db.query('SELECT 1 FROM customers WHERE id=$1 AND privy_user_id=$2',[customerId,userId])).rowCount);
  let standaloneMarketAssets:()=>AssetIdentity[]=()=>[];
- const tokenBalances=new SorobanTokenBalanceReader('https://soroban-testnet.stellar.org',{...Object.fromEntries(STANDALONE_NATIVE_ROUTES.map(route=>[route.contract,APPROVED_TOKEN_WASM])),[PERIDOT_TESTNET_PINS.mock_usdt.address]:PERIDOT_TESTNET_PINS.mock_usdt.wasmHash});
+ const tokenBalances=new SorobanTokenBalanceReader('https://soroban-testnet.stellar.org',{...Object.fromEntries(STANDALONE_SPOT_ASSETS.map(route=>[route.contract,APPROVED_TOKEN_WASM])),[PERIDOT_TESTNET_PINS.mock_usdt.address]:PERIDOT_TESTNET_PINS.mock_usdt.wasmHash});
  // Margin collateral is a distinct pinned token, never the classic USDC or a presumed USD peg.
  const readStandaloneBalances=(address:string)=>tokenBalances.getBalances(address,[...new Map([...standaloneMarketAssets(),PERIDOT_COLLATERAL].map(asset=>[asset.id,asset])).values()]);
  const readSpotBalances=async(address:string)=>{const [classic,tokens]=await Promise.all([chain.getClassicBalances(address),readStandaloneBalances(address)]);return [...classic,...tokens];};
@@ -220,9 +221,10 @@ export async function createRuntime(pool?:Pool,marginRoutes:RuntimeMarginBinding
  const referencePrices=createYahooReferencePriceReader();
  const marketOverview=new MarketOverviewService({referencePrice:async symbol=>{if(['TSLA','AMZN','PLTR','NFLX','AMD'].includes(symbol)){try{const row=await robinhoodStocks.detail('robinhood-testnet:stocks:'+symbol);return row.reference_price&&row.source_generated_at?{value:row.reference_price,as_of:row.source_generated_at}:null;}catch{return null;}}return referencePrices(symbol);},stockReferenceItems:[{symbol:'TSLA',name:'Tesla',maxAgeMs:60000},{symbol:'AMZN',name:'Amazon',maxAgeMs:60000},{symbol:'AMD',name:'Advanced Micro Devices',maxAgeMs:60000}],perps:()=>zenexMarkets.markets(),lending:()=>blend.markets()});
  const marketProfile=async(id:string)=>{
-  const market=spot.market(id),base=market.asset_in.kind==='native'?market.asset_out:market.asset_in;
-  const canonical=spot.markets().find(entry=>entry.asset_in_id===XLM.id&&entry.asset_out_id===base.id);
-  return {base_asset_id:base.id,base_symbol:base.code,asset:base,history_market_id:canonical?.market_id??id};
+  const market=spot.market(id),pin=SPOT_TOKEN_PAIR_PINS.find(p=>id.startsWith(`stellar-testnet:soroswap:${p.pair}:`)),base=pin?[market.asset_in,market.asset_out].find(a=>a.contractId===pin.a.contract)!:market.asset_in.kind==='native'?market.asset_out:market.asset_in;
+  const quoteAsset=pin?[market.asset_in,market.asset_out].find(a=>a.contractId===pin.b.contract)!:{...XLM,contractId:NATIVE_SAC};
+  const canonical=spot.markets().find(entry=>entry.asset_in_id===quoteAsset.id&&entry.asset_out_id===base.id);
+  return {base_asset_id:base.id,base_symbol:base.code,asset:base,quoteAsset,history_market_id:canonical?.market_id??id};
  };
  const marketData=new MarketDataService(db,async id=>{
   const profile=await marketProfile(id);
@@ -231,9 +233,9 @@ export async function createRuntime(pool?:Pool,marginRoutes:RuntimeMarginBinding
   const storage=entry.val.contractData().val().instance().storage()??[];
   const field=(key:number)=>{const value=storage.find(item=>scValToNative(item.key())===key);return value?scValToNative(value.val()):undefined;};
   const t0=field(0),t1=field(1),r0=field(2),r1=field(3);
-  if(!profile.asset||profile.asset.decimals!==7||typeof r0!=='bigint'||typeof r1!=='bigint'||r0<=0n||r1<=0n||!((t0===NATIVE_SAC&&t1===profile.asset.contractId)||(t1===NATIVE_SAC&&t0===profile.asset.contractId)))throw new GrapnelError(503,'PRICE_UNAVAILABLE','Verified market reserves are unavailable');
-  const nativeReserve=t0===NATIVE_SAC?r0:r1,tokenReserve=t0===NATIVE_SAC?r1:r0;
-  return {market_id:id,price:fromAtomic(nativeReserve*10n**18n/tokenReserve,18),quote_symbol:'XLM',observed_at:new Date().toISOString(),source:`stellar-testnet:pool:${reg.pair}`};
+  if(!profile.asset||profile.asset.decimals!==7||typeof r0!=='bigint'||typeof r1!=='bigint'||r0<=0n||r1<=0n||!((t0===profile.quoteAsset.contractId&&t1===profile.asset.contractId)||(t1===profile.quoteAsset.contractId&&t0===profile.asset.contractId)))throw new GrapnelError(503,'PRICE_UNAVAILABLE','Verified market reserves are unavailable');
+  const nativeReserve=t0===profile.quoteAsset.contractId?r0:r1,tokenReserve=t0===profile.quoteAsset.contractId?r1:r0;
+  return {market_id:id,price:fromAtomic(nativeReserve*10n**18n/tokenReserve,18),quote_symbol:profile.quoteAsset.code,observed_at:new Date().toISOString(),source:`stellar-testnet:pool:${reg.pair}`};
  });
  const cryptoReferences=new Map<string,'XLM'|'BTC'|'XRP'|'USDC'>([[XLM.id,'XLM'],[SPOT_USDC_ID,'USDC'],
   ...STANDALONE_NATIVE_ROUTES.filter(route=>['BTC','XRP','USDC'].includes(route.code)).map(route=>[`stellar-testnet:soroban:${route.contract}`,route.code as 'BTC'|'XRP'|'USDC'] as [string,'BTC'|'XRP'|'USDC'])]);

@@ -1,0 +1,2008 @@
+{
+  "checked_at": "2026-11-14T01:58:24.666Z",
+  "symbols": [
+    "XLM",
+    "USDC",
+    "XTAR",
+    "XRP",
+    "BTC",
+    "EURC",
+    "ARST",
+    "AQUA"
+  ],
+  "market_count": 16,
+  "rows": [
+    {
+      "market_id": "stellar-testnet:soroswap:CBR76WMT6J733CCVBP23M2EL5QGP5HXLPEFNFZGZ7IB6QHOJAHP7YM3V:XLM-USDC",
+      "range": "1w",
+      "status": 200,
+      "valid": true,
+      "base_symbol": "XLM",
+      "quote_symbol": "USDC",
+      "count": 168,
+      "first": {
+        "timestamp": "2026-11-07T02:59:59.999Z",
+        "price": "0.1525"
+      },
+      "last": {
+        "timestamp": "2026-11-14T01:58:13.914Z",
+        "price": "0.145"
+      },
+      "coverage": null
+    },
+    {
+      "market_id": "stellar-testnet:soroswap:CBR76WMT6J733CCVBP23M2EL5QGP5HXLPEFNFZGZ7IB6QHOJAHP7YM3V:XLM-USDC",
+      "range": "1m",
+      "status": 200,
+      "valid": true,
+      "base_symbol": "XLM",
+      "quote_symbol": "USDC",
+      "count": 180,
+      "first": {
+        "timestamp": "2026-10-15T07:59:59.999Z",
+        "price": "0.1804"
+      },
+      "last": {
+        "timestamp": "2026-11-14T01:58:13.914Z",
+        "price": "0.145"
+      },
+      "coverage": null
+    },
+    {
+      "market_id": "stellar-testnet:soroswap:CBR76WMT6J733CCVBP23M2EL5QGP5HXLPEFNFZGZ7IB6QHOJAHP7YM3V:XLM-USDC",
+      "range": "live",
+      "status": 200,
+      "valid": true,
+      "base_symbol": "XLM",
+      "quote_symbol": "USDC",
+      "count": 60,
+      "first": {
+        "timestamp": "2026-11-14T00:59:59.999Z",
+        "price": "0.1457"
+      },
+      "last": {
+        "timestamp": "2026-11-14T01:58:13.914Z",
+        "price": "0.145"
+      },
+      "coverage": null
+    },
+    {
+      "market_id": "stellar-testnet:soroswap:CBR76WMT6J733CCVBP23M2EL5QGP5HXLPEFNFZGZ7IB6QHOJAHP7YM3V:XLM-USDC",
+      "range": "1d",
+      "status": 200,
+      "valid": true,
+      "base_symbol": "XLM",
+      "quote_symbol": "USDC",
+      "count": 288,
+      "first": {
+        "timestamp": "2026-11-13T02:04:59.999Z",
+        "price": "0.1471"
+      },
+      "last": {
+        "timestamp": "2026-11-14T01:58:13.914Z",
+        "price": "0.145"
+      },
+      "coverage": null
+    },
+    {
+      "market_id": "stellar-testnet:soroswap:CBR76WMT6J733CCVBP23M2EL5QGP5HXLPEFNFZGZ7IB6QHOJAHP7YM3V:USDC-XLM",
+      "range": "live",
+      "status": 200,
+      "valid": true,
+      "base_symbol": "XLM",
+      "quote_symbol": "USDC",
+      "count": 60,
+      "first": {
+        "timestamp": "2026-11-14T00:59:59.999Z",
+        "price": "0.1457"
+      },
+      "last": {
+        "timestamp": "2026-11-14T01:58:13.914Z",
+        "price": "0.145"
+      },
+      "coverage": null
+    },
+    {
+      "market_id": "stellar-testnet:soroswap:CBR76WMT6J733CCVBP23M2EL5QGP5HXLPEFNFZGZ7IB6QHOJAHP7YM3V:USDC-XLM",
+      "range": "1d",
+      "status": 200,
+      "valid": true,
+      "base_symbol": "XLM",
+      "quote_symbol": "USDC",
+      "count": 288,
+      "first": {
+        "timestamp": "2026-11-13T02:04:59.999Z",
+        "price": "0.1471"
+      },
+      "last": {
+        "timestamp": "2026-11-14T01:58:13.914Z",
+        "price": "0.145"
+      },
+      "coverage": null
+    },
+    {
+      "market_id": "stellar-testnet:soroswap:CBR76WMT6J733CCVBP23M2EL5QGP5HXLPEFNFZGZ7IB6QHOJAHP7YM3V:USDC-XLM",
+      "range": "1w",
+      "status": 200,
+      "valid": true,
+      "base_symbol": "XLM",
+      "quote_symbol": "USDC",
+      "count": 168,
+      "first": {
+        "timestamp": "2026-11-07T02:59:59.999Z",
+        "price": "0.1525"
+      },
+      "last": {
+        "timestamp": "2026-11-14T01:58:13.914Z",
+        "price": "0.145"
+      },
+      "coverage": null
+    },
+    {
+      "market_id": "stellar-testnet:soroswap:CBR76WMT6J733CCVBP23M2EL5QGP5HXLPEFNFZGZ7IB6QHOJAHP7YM3V:USDC-XLM",
+      "range": "1m",
+      "status": 200,
+      "valid": true,
+      "base_symbol": "XLM",
+      "quote_symbol": "USDC",
+      "count": 180,
+      "first": {
+        "timestamp": "2026-10-15T07:59:59.999Z",
+        "price": "0.1804"
+      },
+      "last": {
+        "timestamp": "2026-11-14T01:58:13.914Z",
+        "price": "0.145"
+      },
+      "coverage": null
+    },
+    {
+      "market_id": "stellar-testnet:soroswap:CBR76WMT6J733CCVBP23M2EL5QGP5HXLPEFNFZGZ7IB6QHOJAHP7YM3V:XLM-USDC",
+      "range": "all",
+      "status": 200,
+      "valid": true,
+      "base_symbol": "XLM",
+      "quote_symbol": "USDC",
+      "count": 102,
+      "first": {
+        "timestamp": "2024-12-08T23:59:59.999Z",
+        "price": "0.4947"
+      },
+      "last": {
+        "timestamp": "2026-11-14T01:58:20.236Z",
+        "price": "0.145"
+      },
+      "coverage": {
+        "kind": "continuous_source",
+        "first_generated_at": "2024-12-08T23:59:59.999Z",
+        "omitted_observations": 57
+      }
+    },
+    {
+      "market_id": "stellar-testnet:soroswap:CBR76WMT6J733CCVBP23M2EL5QGP5HXLPEFNFZGZ7IB6QHOJAHP7YM3V:USDC-XLM",
+      "range": "all",
+      "status": 200,
+      "valid": true,
+      "base_symbol": "XLM",
+      "quote_symbol": "USDC",
+      "count": 102,
+      "first": {
+        "timestamp": "2024-12-08T23:59:59.999Z",
+        "price": "0.4947"
+      },
+      "last": {
+        "timestamp": "2026-11-14T01:58:20.236Z",
+        "price": "0.145"
+      },
+      "coverage": {
+        "kind": "continuous_source",
+        "first_generated_at": "2024-12-08T23:59:59.999Z",
+        "omitted_observations": 57
+      }
+    },
+    {
+      "market_id": "stellar-testnet:soroswap:CBR76WMT6J733CCVBP23M2EL5QGP5HXLPEFNFZGZ7IB6QHOJAHP7YM3V:XLM-USDC",
+      "range": "1y",
+      "status": 200,
+      "valid": true,
+      "base_symbol": "XLM",
+      "quote_symbol": "USDC",
+      "count": 365,
+      "first": {
+        "timestamp": "2025-11-15T23:59:59.999Z",
+        "price": "0.2595"
+      },
+      "last": {
+        "timestamp": "2026-11-14T01:58:20.236Z",
+        "price": "0.145"
+      },
+      "coverage": null
+    },
+    {
+      "market_id": "stellar-testnet:soroswap:CBR76WMT6J733CCVBP23M2EL5QGP5HXLPEFNFZGZ7IB6QHOJAHP7YM3V:USDC-XLM",
+      "range": "1y",
+      "status": 200,
+      "valid": true,
+      "base_symbol": "XLM",
+      "quote_symbol": "USDC",
+      "count": 365,
+      "first": {
+        "timestamp": "2025-11-15T23:59:59.999Z",
+        "price": "0.2595"
+      },
+      "last": {
+        "timestamp": "2026-11-14T01:58:20.236Z",
+        "price": "0.145"
+      },
+      "coverage": null
+    },
+    {
+      "market_id": "stellar-testnet:soroswap:CDH4NEG6TAII2AXGJY52WSMMOGCPMFIQBBH245ATW2TIZ7MBYM23YOAR:XLM-XTAR",
+      "range": "live",
+      "status": 200,
+      "valid": true,
+      "base_symbol": "XTAR",
+      "quote_symbol": "XLM",
+      "count": 1,
+      "first": {
+        "timestamp": "2026-11-14T01:58:20.838Z",
+        "price": "9.498169456227629803"
+      },
+      "last": {
+        "timestamp": "2026-11-14T01:58:20.838Z",
+        "price": "9.498169456227629803"
+      },
+      "coverage": {
+        "kind": "observed_only",
+        "first_generated_at": "2026-11-14T01:58:20.838Z",
+        "complete_requested_range": false
+      }
+    },
+    {
+      "market_id": "stellar-testnet:soroswap:CDH4NEG6TAII2AXGJY52WSMMOGCPMFIQBBH245ATW2TIZ7MBYM23YOAR:XLM-XTAR",
+      "range": "1w",
+      "status": 200,
+      "valid": true,
+      "base_symbol": "XTAR",
+      "quote_symbol": "XLM",
+      "count": 24,
+      "first": {
+        "timestamp": "2026-11-11T18:47:46.691Z",
+        "price": "3.266689057152015271"
+      },
+      "last": {
+        "timestamp": "2026-11-14T01:58:20.838Z",
+        "price": "9.498169456227629803"
+      },
+      "coverage": {
+        "kind": "observed_only",
+        "first_generated_at": "2026-11-11T18:47:46.691Z",
+        "complete_requested_range": false
+      }
+    },
+    {
+      "market_id": "stellar-testnet:soroswap:CDH4NEG6TAII2AXGJY52WSMMOGCPMFIQBBH245ATW2TIZ7MBYM23YOAR:XLM-XTAR",
+      "range": "1d",
+      "status": 200,
+      "valid": true,
+      "base_symbol": "XTAR",
+      "quote_symbol": "XLM",
+      "count": 22,
+      "first": {
+        "timestamp": "2026-11-13T22:13:24.605Z",
+        "price": "3.375454721610678156"
+      },
+      "last": {
+        "timestamp": "2026-11-14T01:58:20.838Z",
+        "price": "9.498169456227629803"
+      },
+      "coverage": {
+        "kind": "observed_only",
+        "first_generated_at": "2026-11-13T22:13:24.605Z",
+        "complete_requested_range": false
+      }
+    },
+    {
+      "market_id": "stellar-testnet:soroswap:CDH4NEG6TAII2AXGJY52WSMMOGCPMFIQBBH245ATW2TIZ7MBYM23YOAR:XLM-XTAR",
+      "range": "1m",
+      "status": 200,
+      "valid": true,
+      "base_symbol": "XTAR",
+      "quote_symbol": "XLM",
+      "count": 24,
+      "first": {
+        "timestamp": "2026-11-11T18:47:46.691Z",
+        "price": "3.266689057152015271"
+      },
+      "last": {
+        "timestamp": "2026-11-14T01:58:20.838Z",
+        "price": "9.498169456227629803"
+      },
+      "coverage": {
+        "kind": "observed_only",
+        "first_generated_at": "2026-11-11T18:47:46.691Z",
+        "complete_requested_range": false
+      }
+    },
+    {
+      "market_id": "stellar-testnet:soroswap:CDH4NEG6TAII2AXGJY52WSMMOGCPMFIQBBH245ATW2TIZ7MBYM23YOAR:XLM-XTAR",
+      "range": "1y",
+      "status": 200,
+      "valid": true,
+      "base_symbol": "XTAR",
+      "quote_symbol": "XLM",
+      "count": 24,
+      "first": {
+        "timestamp": "2026-11-11T18:47:46.691Z",
+        "price": "3.266689057152015271"
+      },
+      "last": {
+        "timestamp": "2026-11-14T01:58:21.001Z",
+        "price": "9.498169456227629803"
+      },
+      "coverage": {
+        "kind": "observed_only",
+        "first_generated_at": "2026-11-11T18:47:46.691Z",
+        "complete_requested_range": false
+      }
+    },
+    {
+      "market_id": "stellar-testnet:soroswap:CDH4NEG6TAII2AXGJY52WSMMOGCPMFIQBBH245ATW2TIZ7MBYM23YOAR:XLM-XTAR",
+      "range": "all",
+      "status": 200,
+      "valid": true,
+      "base_symbol": "XTAR",
+      "quote_symbol": "XLM",
+      "count": 24,
+      "first": {
+        "timestamp": "2026-11-11T18:47:46.691Z",
+        "price": "3.266689057152015271"
+      },
+      "last": {
+        "timestamp": "2026-11-14T01:58:21.001Z",
+        "price": "9.498169456227629803"
+      },
+      "coverage": {
+        "kind": "observed_only",
+        "first_generated_at": "2026-11-11T18:47:46.691Z",
+        "complete_requested_range": false
+      }
+    },
+    {
+      "market_id": "stellar-testnet:soroswap:CDH4NEG6TAII2AXGJY52WSMMOGCPMFIQBBH245ATW2TIZ7MBYM23YOAR:XTAR-XLM",
+      "range": "live",
+      "status": 200,
+      "valid": true,
+      "base_symbol": "XTAR",
+      "quote_symbol": "XLM",
+      "count": 1,
+      "first": {
+        "timestamp": "2026-11-14T01:58:21.001Z",
+        "price": "9.498169456227629803"
+      },
+      "last": {
+        "timestamp": "2026-11-14T01:58:21.001Z",
+        "price": "9.498169456227629803"
+      },
+      "coverage": {
+        "kind": "observed_only",
+        "first_generated_at": "2026-11-14T01:58:21.001Z",
+        "complete_requested_range": false
+      }
+    },
+    {
+      "market_id": "stellar-testnet:soroswap:CDH4NEG6TAII2AXGJY52WSMMOGCPMFIQBBH245ATW2TIZ7MBYM23YOAR:XTAR-XLM",
+      "range": "1d",
+      "status": 200,
+      "valid": true,
+      "base_symbol": "XTAR",
+      "quote_symbol": "XLM",
+      "count": 22,
+      "first": {
+        "timestamp": "2026-11-13T22:13:24.605Z",
+        "price": "3.375454721610678156"
+      },
+      "last": {
+        "timestamp": "2026-11-14T01:58:21.001Z",
+        "price": "9.498169456227629803"
+      },
+      "coverage": {
+        "kind": "observed_only",
+        "first_generated_at": "2026-11-13T22:13:24.605Z",
+        "complete_requested_range": false
+      }
+    },
+    {
+      "market_id": "stellar-testnet:soroswap:CDH4NEG6TAII2AXGJY52WSMMOGCPMFIQBBH245ATW2TIZ7MBYM23YOAR:XTAR-XLM",
+      "range": "1y",
+      "status": 200,
+      "valid": true,
+      "base_symbol": "XTAR",
+      "quote_symbol": "XLM",
+      "count": 24,
+      "first": {
+        "timestamp": "2026-11-11T18:47:46.691Z",
+        "price": "3.266689057152015271"
+      },
+      "last": {
+        "timestamp": "2026-11-14T01:58:21.150Z",
+        "price": "9.498169456227629803"
+      },
+      "coverage": {
+        "kind": "observed_only",
+        "first_generated_at": "2026-11-11T18:47:46.691Z",
+        "complete_requested_range": false
+      }
+    },
+    {
+      "market_id": "stellar-testnet:soroswap:CDH4NEG6TAII2AXGJY52WSMMOGCPMFIQBBH245ATW2TIZ7MBYM23YOAR:XTAR-XLM",
+      "range": "1w",
+      "status": 200,
+      "valid": true,
+      "base_symbol": "XTAR",
+      "quote_symbol": "XLM",
+      "count": 24,
+      "first": {
+        "timestamp": "2026-11-11T18:47:46.691Z",
+        "price": "3.266689057152015271"
+      },
+      "last": {
+        "timestamp": "2026-11-14T01:58:21.150Z",
+        "price": "9.498169456227629803"
+      },
+      "coverage": {
+        "kind": "observed_only",
+        "first_generated_at": "2026-11-11T18:47:46.691Z",
+        "complete_requested_range": false
+      }
+    },
+    {
+      "market_id": "stellar-testnet:soroswap:CDH4NEG6TAII2AXGJY52WSMMOGCPMFIQBBH245ATW2TIZ7MBYM23YOAR:XTAR-XLM",
+      "range": "all",
+      "status": 200,
+      "valid": true,
+      "base_symbol": "XTAR",
+      "quote_symbol": "XLM",
+      "count": 24,
+      "first": {
+        "timestamp": "2026-11-11T18:47:46.691Z",
+        "price": "3.266689057152015271"
+      },
+      "last": {
+        "timestamp": "2026-11-14T01:58:21.150Z",
+        "price": "9.498169456227629803"
+      },
+      "coverage": {
+        "kind": "observed_only",
+        "first_generated_at": "2026-11-11T18:47:46.691Z",
+        "complete_requested_range": false
+      }
+    },
+    {
+      "market_id": "stellar-testnet:soroswap:CDH4NEG6TAII2AXGJY52WSMMOGCPMFIQBBH245ATW2TIZ7MBYM23YOAR:XTAR-XLM",
+      "range": "1m",
+      "status": 200,
+      "valid": true,
+      "base_symbol": "XTAR",
+      "quote_symbol": "XLM",
+      "count": 24,
+      "first": {
+        "timestamp": "2026-11-11T18:47:46.691Z",
+        "price": "3.266689057152015271"
+      },
+      "last": {
+        "timestamp": "2026-11-14T01:58:21.150Z",
+        "price": "9.498169456227629803"
+      },
+      "coverage": {
+        "kind": "observed_only",
+        "first_generated_at": "2026-11-11T18:47:46.691Z",
+        "complete_requested_range": false
+      }
+    },
+    {
+      "market_id": "stellar-testnet:soroswap:CBCRYX4VG5GCKQ5KUIHV3AUOIEKEJKXDOXO5DWFYNRPK547N6MNVGEOZ:XLM-XRP",
+      "range": "1w",
+      "status": 200,
+      "valid": true,
+      "base_symbol": "XRP",
+      "quote_symbol": "USDC",
+      "count": 168,
+      "first": {
+        "timestamp": "2026-11-07T02:59:59.999Z",
+        "price": "1.1671"
+      },
+      "last": {
+        "timestamp": "2026-11-14T01:58:20.425Z",
+        "price": "1.0041"
+      },
+      "coverage": null
+    },
+    {
+      "market_id": "stellar-testnet:soroswap:CBCRYX4VG5GCKQ5KUIHV3AUOIEKEJKXDOXO5DWFYNRPK547N6MNVGEOZ:XLM-XRP",
+      "range": "1m",
+      "status": 200,
+      "valid": true,
+      "base_symbol": "XRP",
+      "quote_symbol": "USDC",
+      "count": 180,
+      "first": {
+        "timestamp": "2026-10-15T07:59:59.999Z",
+        "price": "1.3125"
+      },
+      "last": {
+        "timestamp": "2026-11-14T01:58:20.425Z",
+        "price": "1.0041"
+      },
+      "coverage": null
+    },
+    {
+      "market_id": "stellar-testnet:soroswap:CBCRYX4VG5GCKQ5KUIHV3AUOIEKEJKXDOXO5DWFYNRPK547N6MNVGEOZ:XLM-XRP",
+      "range": "live",
+      "status": 200,
+      "valid": true,
+      "base_symbol": "XRP",
+      "quote_symbol": "USDC",
+      "count": 60,
+      "first": {
+        "timestamp": "2026-11-14T00:59:59.999Z",
+        "price": "1.0085"
+      },
+      "last": {
+        "timestamp": "2026-11-14T01:58:20.425Z",
+        "price": "1.0041"
+      },
+      "coverage": null
+    },
+    {
+      "market_id": "stellar-testnet:soroswap:CBCRYX4VG5GCKQ5KUIHV3AUOIEKEJKXDOXO5DWFYNRPK547N6MNVGEOZ:XLM-XRP",
+      "range": "1d",
+      "status": 200,
+      "valid": true,
+      "base_symbol": "XRP",
+      "quote_symbol": "USDC",
+      "count": 288,
+      "first": {
+        "timestamp": "2026-11-13T02:04:59.999Z",
+        "price": "1.0279"
+      },
+      "last": {
+        "timestamp": "2026-11-14T01:58:20.425Z",
+        "price": "1.0041"
+      },
+      "coverage": null
+    },
+    {
+      "market_id": "stellar-testnet:soroswap:CBCRYX4VG5GCKQ5KUIHV3AUOIEKEJKXDOXO5DWFYNRPK547N6MNVGEOZ:XRP-XLM",
+      "range": "live",
+      "status": 200,
+      "valid": true,
+      "base_symbol": "XRP",
+      "quote_symbol": "USDC",
+      "count": 60,
+      "first": {
+        "timestamp": "2026-11-14T00:59:59.999Z",
+        "price": "1.0085"
+      },
+      "last": {
+        "timestamp": "2026-11-14T01:58:20.425Z",
+        "price": "1.0041"
+      },
+      "coverage": null
+    },
+    {
+      "market_id": "stellar-testnet:soroswap:CBCRYX4VG5GCKQ5KUIHV3AUOIEKEJKXDOXO5DWFYNRPK547N6MNVGEOZ:XRP-XLM",
+      "range": "1d",
+      "status": 200,
+      "valid": true,
+      "base_symbol": "XRP",
+      "quote_symbol": "USDC",
+      "count": 288,
+      "first": {
+        "timestamp": "2026-11-13T02:04:59.999Z",
+        "price": "1.0279"
+      },
+      "last": {
+        "timestamp": "2026-11-14T01:58:20.425Z",
+        "price": "1.0041"
+      },
+      "coverage": null
+    },
+    {
+      "market_id": "stellar-testnet:soroswap:CBCRYX4VG5GCKQ5KUIHV3AUOIEKEJKXDOXO5DWFYNRPK547N6MNVGEOZ:XRP-XLM",
+      "range": "1w",
+      "status": 200,
+      "valid": true,
+      "base_symbol": "XRP",
+      "quote_symbol": "USDC",
+      "count": 168,
+      "first": {
+        "timestamp": "2026-11-07T02:59:59.999Z",
+        "price": "1.1671"
+      },
+      "last": {
+        "timestamp": "2026-11-14T01:58:20.425Z",
+        "price": "1.0041"
+      },
+      "coverage": null
+    },
+    {
+      "market_id": "stellar-testnet:soroswap:CBCRYX4VG5GCKQ5KUIHV3AUOIEKEJKXDOXO5DWFYNRPK547N6MNVGEOZ:XRP-XLM",
+      "range": "1m",
+      "status": 200,
+      "valid": true,
+      "base_symbol": "XRP",
+      "quote_symbol": "USDC",
+      "count": 180,
+      "first": {
+        "timestamp": "2026-10-15T07:59:59.999Z",
+        "price": "1.3125"
+      },
+      "last": {
+        "timestamp": "2026-11-14T01:58:20.425Z",
+        "price": "1.0041"
+      },
+      "coverage": null
+    },
+    {
+      "market_id": "stellar-testnet:soroswap:CBCRYX4VG5GCKQ5KUIHV3AUOIEKEJKXDOXO5DWFYNRPK547N6MNVGEOZ:XLM-XRP",
+      "range": "1y",
+      "status": 200,
+      "valid": true,
+      "base_symbol": "XRP",
+      "quote_symbol": "USDC",
+      "count": 365,
+      "first": {
+        "timestamp": "2025-11-15T23:59:59.999Z",
+        "price": "2.236"
+      },
+      "last": {
+        "timestamp": "2026-11-14T01:58:20.425Z",
+        "price": "1.0041"
+      },
+      "coverage": null
+    },
+    {
+      "market_id": "stellar-testnet:soroswap:CBCRYX4VG5GCKQ5KUIHV3AUOIEKEJKXDOXO5DWFYNRPK547N6MNVGEOZ:XRP-XLM",
+      "range": "1y",
+      "status": 200,
+      "valid": true,
+      "base_symbol": "XRP",
+      "quote_symbol": "USDC",
+      "count": 365,
+      "first": {
+        "timestamp": "2025-11-15T23:59:59.999Z",
+        "price": "2.236"
+      },
+      "last": {
+        "timestamp": "2026-11-14T01:58:20.425Z",
+        "price": "1.0041"
+      },
+      "coverage": null
+    },
+    {
+      "market_id": "stellar-testnet:soroswap:CBCRYX4VG5GCKQ5KUIHV3AUOIEKEJKXDOXO5DWFYNRPK547N6MNVGEOZ:XLM-XRP",
+      "range": "all",
+      "status": 200,
+      "valid": true,
+      "base_symbol": "XRP",
+      "quote_symbol": "USDC",
+      "count": 151,
+      "first": {
+        "timestamp": "2023-12-31T23:59:59.999Z",
+        "price": "0.6129"
+      },
+      "last": {
+        "timestamp": "2026-11-14T01:58:20.425Z",
+        "price": "1.0041"
+      },
+      "coverage": {
+        "kind": "continuous_source",
+        "first_generated_at": "2023-12-31T23:59:59.999Z",
+        "omitted_observations": 199
+      }
+    },
+    {
+      "market_id": "stellar-testnet:soroswap:CBCRYX4VG5GCKQ5KUIHV3AUOIEKEJKXDOXO5DWFYNRPK547N6MNVGEOZ:XRP-XLM",
+      "range": "all",
+      "status": 200,
+      "valid": true,
+      "base_symbol": "XRP",
+      "quote_symbol": "USDC",
+      "count": 151,
+      "first": {
+        "timestamp": "2023-12-31T23:59:59.999Z",
+        "price": "0.6129"
+      },
+      "last": {
+        "timestamp": "2026-11-14T01:58:20.425Z",
+        "price": "1.0041"
+      },
+      "coverage": {
+        "kind": "continuous_source",
+        "first_generated_at": "2023-12-31T23:59:59.999Z",
+        "omitted_observations": 199
+      }
+    },
+    {
+      "market_id": "stellar-testnet:soroswap:CDZL65OIXMVK63DCIWKJ7ULKVHZ7V4B4OM3XQHRNHR4OCFADIUV4FL64:XLM-BTC",
+      "range": "1d",
+      "status": 200,
+      "valid": true,
+      "base_symbol": "BTC",
+      "quote_symbol": "USDC",
+      "count": 288,
+      "first": {
+        "timestamp": "2026-11-13T02:04:59.999Z",
+        "price": "70805.41"
+      },
+      "last": {
+        "timestamp": "2026-11-14T01:58:22.368Z",
+        "price": "68213.1"
+      },
+      "coverage": null
+    },
+    {
+      "market_id": "stellar-testnet:soroswap:CDZL65OIXMVK63DCIWKJ7ULKVHZ7V4B4OM3XQHRNHR4OCFADIUV4FL64:XLM-BTC",
+      "range": "1m",
+      "status": 200,
+      "valid": true,
+      "base_symbol": "BTC",
+      "quote_symbol": "USDC",
+      "count": 180,
+      "first": {
+        "timestamp": "2026-10-15T07:59:59.999Z",
+        "price": "81446.99"
+      },
+      "last": {
+        "timestamp": "2026-11-14T01:58:22.368Z",
+        "price": "68213.1"
+      },
+      "coverage": null
+    },
+    {
+      "market_id": "stellar-testnet:soroswap:CDZL65OIXMVK63DCIWKJ7ULKVHZ7V4B4OM3XQHRNHR4OCFADIUV4FL64:XLM-BTC",
+      "range": "live",
+      "status": 200,
+      "valid": true,
+      "base_symbol": "BTC",
+      "quote_symbol": "USDC",
+      "count": 60,
+      "first": {
+        "timestamp": "2026-11-14T00:59:59.999Z",
+        "price": "68282.04"
+      },
+      "last": {
+        "timestamp": "2026-11-14T01:58:22.368Z",
+        "price": "68213.1"
+      },
+      "coverage": null
+    },
+    {
+      "market_id": "stellar-testnet:soroswap:CDZL65OIXMVK63DCIWKJ7ULKVHZ7V4B4OM3XQHRNHR4OCFADIUV4FL64:BTC-XLM",
+      "range": "live",
+      "status": 200,
+      "valid": true,
+      "base_symbol": "BTC",
+      "quote_symbol": "USDC",
+      "count": 60,
+      "first": {
+        "timestamp": "2026-11-14T00:59:59.999Z",
+        "price": "68282.04"
+      },
+      "last": {
+        "timestamp": "2026-11-14T01:58:22.368Z",
+        "price": "68213.1"
+      },
+      "coverage": null
+    },
+    {
+      "market_id": "stellar-testnet:soroswap:CDZL65OIXMVK63DCIWKJ7ULKVHZ7V4B4OM3XQHRNHR4OCFADIUV4FL64:BTC-XLM",
+      "range": "1d",
+      "status": 200,
+      "valid": true,
+      "base_symbol": "BTC",
+      "quote_symbol": "USDC",
+      "count": 288,
+      "first": {
+        "timestamp": "2026-11-13T02:04:59.999Z",
+        "price": "70805.41"
+      },
+      "last": {
+        "timestamp": "2026-11-14T01:58:22.368Z",
+        "price": "68213.1"
+      },
+      "coverage": null
+    },
+    {
+      "market_id": "stellar-testnet:soroswap:CDZL65OIXMVK63DCIWKJ7ULKVHZ7V4B4OM3XQHRNHR4OCFADIUV4FL64:XLM-BTC",
+      "range": "1w",
+      "status": 200,
+      "valid": true,
+      "base_symbol": "BTC",
+      "quote_symbol": "USDC",
+      "count": 168,
+      "first": {
+        "timestamp": "2026-11-07T02:59:59.999Z",
+        "price": "75963.08"
+      },
+      "last": {
+        "timestamp": "2026-11-14T01:58:22.368Z",
+        "price": "68213.1"
+      },
+      "coverage": null
+    },
+    {
+      "market_id": "stellar-testnet:soroswap:CDZL65OIXMVK63DCIWKJ7ULKVHZ7V4B4OM3XQHRNHR4OCFADIUV4FL64:BTC-XLM",
+      "range": "1w",
+      "status": 200,
+      "valid": true,
+      "base_symbol": "BTC",
+      "quote_symbol": "USDC",
+      "count": 168,
+      "first": {
+        "timestamp": "2026-11-07T02:59:59.999Z",
+        "price": "75963.08"
+      },
+      "last": {
+        "timestamp": "2026-11-14T01:58:22.368Z",
+        "price": "68213.1"
+      },
+      "coverage": null
+    },
+    {
+      "market_id": "stellar-testnet:soroswap:CDZL65OIXMVK63DCIWKJ7ULKVHZ7V4B4OM3XQHRNHR4OCFADIUV4FL64:BTC-XLM",
+      "range": "1m",
+      "status": 200,
+      "valid": true,
+      "base_symbol": "BTC",
+      "quote_symbol": "USDC",
+      "count": 180,
+      "first": {
+        "timestamp": "2026-10-15T07:59:59.999Z",
+        "price": "81446.99"
+      },
+      "last": {
+        "timestamp": "2026-11-14T01:58:22.368Z",
+        "price": "68213.1"
+      },
+      "coverage": null
+    },
+    {
+      "market_id": "stellar-testnet:soroswap:CDZL65OIXMVK63DCIWKJ7ULKVHZ7V4B4OM3XQHRNHR4OCFADIUV4FL64:XLM-BTC",
+      "range": "1y",
+      "status": 200,
+      "valid": true,
+      "base_symbol": "BTC",
+      "quote_symbol": "USDC",
+      "count": 365,
+      "first": {
+        "timestamp": "2025-11-15T23:59:59.999Z",
+        "price": "95559.93"
+      },
+      "last": {
+        "timestamp": "2026-11-14T01:58:22.368Z",
+        "price": "68213.1"
+      },
+      "coverage": null
+    },
+    {
+      "market_id": "stellar-testnet:soroswap:CDZL65OIXMVK63DCIWKJ7ULKVHZ7V4B4OM3XQHRNHR4OCFADIUV4FL64:BTC-XLM",
+      "range": "1y",
+      "status": 200,
+      "valid": true,
+      "base_symbol": "BTC",
+      "quote_symbol": "USDC",
+      "count": 365,
+      "first": {
+        "timestamp": "2025-11-15T23:59:59.999Z",
+        "price": "95559.93"
+      },
+      "last": {
+        "timestamp": "2026-11-14T01:58:22.368Z",
+        "price": "68213.1"
+      },
+      "coverage": null
+    },
+    {
+      "market_id": "stellar-testnet:soroswap:CDZL65OIXMVK63DCIWKJ7ULKVHZ7V4B4OM3XQHRNHR4OCFADIUV4FL64:XLM-BTC",
+      "range": "all",
+      "status": 200,
+      "valid": true,
+      "base_symbol": "BTC",
+      "quote_symbol": "USDC",
+      "count": 193,
+      "first": {
+        "timestamp": "2023-03-12T23:59:59.999Z",
+        "price": "22333.49"
+      },
+      "last": {
+        "timestamp": "2026-11-14T01:58:22.368Z",
+        "price": "68213.1"
+      },
+      "coverage": {
+        "kind": "continuous_source",
+        "first_generated_at": "2023-03-12T23:59:59.999Z",
+        "omitted_observations": 199
+      }
+    },
+    {
+      "market_id": "stellar-testnet:soroswap:CDZL65OIXMVK63DCIWKJ7ULKVHZ7V4B4OM3XQHRNHR4OCFADIUV4FL64:BTC-XLM",
+      "range": "all",
+      "status": 200,
+      "valid": true,
+      "base_symbol": "BTC",
+      "quote_symbol": "USDC",
+      "count": 193,
+      "first": {
+        "timestamp": "2023-03-12T23:59:59.999Z",
+        "price": "22333.49"
+      },
+      "last": {
+        "timestamp": "2026-11-14T01:58:22.368Z",
+        "price": "68213.1"
+      },
+      "coverage": {
+        "kind": "continuous_source",
+        "first_generated_at": "2023-03-12T23:59:59.999Z",
+        "omitted_observations": 199
+      }
+    },
+    {
+      "market_id": "stellar-testnet:soroswap:CDRKRVJLWZNKB4W5GCJU27R6LVT2GD2WNYVUPBB2J3MXBEOHMB74WOX5:XLM-EURC",
+      "range": "live",
+      "status": 200,
+      "valid": true,
+      "base_symbol": "EURC",
+      "quote_symbol": "XLM",
+      "count": 1,
+      "first": {
+        "timestamp": "2026-11-14T01:58:23.072Z",
+        "price": "2.892817363734440538"
+      },
+      "last": {
+        "timestamp": "2026-11-14T01:58:23.072Z",
+        "price": "2.892817363734440538"
+      },
+      "coverage": {
+        "kind": "observed_only",
+        "first_generated_at": "2026-11-14T01:58:23.072Z",
+        "complete_requested_range": false
+      }
+    },
+    {
+      "market_id": "stellar-testnet:soroswap:CDRKRVJLWZNKB4W5GCJU27R6LVT2GD2WNYVUPBB2J3MXBEOHMB74WOX5:XLM-EURC",
+      "range": "1d",
+      "status": 200,
+      "valid": true,
+      "base_symbol": "EURC",
+      "quote_symbol": "XLM",
+      "count": 3,
+      "first": {
+        "timestamp": "2026-11-13T22:13:32.888Z",
+        "price": "2.892817363734440538"
+      },
+      "last": {
+        "timestamp": "2026-11-14T01:58:23.072Z",
+        "price": "2.892817363734440538"
+      },
+      "coverage": {
+        "kind": "observed_only",
+        "first_generated_at": "2026-11-13T22:13:32.888Z",
+        "complete_requested_range": false
+      }
+    },
+    {
+      "market_id": "stellar-testnet:soroswap:CDRKRVJLWZNKB4W5GCJU27R6LVT2GD2WNYVUPBB2J3MXBEOHMB74WOX5:XLM-EURC",
+      "range": "1w",
+      "status": 200,
+      "valid": true,
+      "base_symbol": "EURC",
+      "quote_symbol": "XLM",
+      "count": 4,
+      "first": {
+        "timestamp": "2026-11-11T18:47:50.217Z",
+        "price": "2.892817363734440538"
+      },
+      "last": {
+        "timestamp": "2026-11-14T01:58:23.072Z",
+        "price": "2.892817363734440538"
+      },
+      "coverage": {
+        "kind": "observed_only",
+        "first_generated_at": "2026-11-11T18:47:50.217Z",
+        "complete_requested_range": false
+      }
+    },
+    {
+      "market_id": "stellar-testnet:soroswap:CDRKRVJLWZNKB4W5GCJU27R6LVT2GD2WNYVUPBB2J3MXBEOHMB74WOX5:XLM-EURC",
+      "range": "1m",
+      "status": 200,
+      "valid": true,
+      "base_symbol": "EURC",
+      "quote_symbol": "XLM",
+      "count": 4,
+      "first": {
+        "timestamp": "2026-11-11T18:47:50.217Z",
+        "price": "2.892817363734440538"
+      },
+      "last": {
+        "timestamp": "2026-11-14T01:58:23.072Z",
+        "price": "2.892817363734440538"
+      },
+      "coverage": {
+        "kind": "observed_only",
+        "first_generated_at": "2026-11-11T18:47:50.217Z",
+        "complete_requested_range": false
+      }
+    },
+    {
+      "market_id": "stellar-testnet:soroswap:CDRKRVJLWZNKB4W5GCJU27R6LVT2GD2WNYVUPBB2J3MXBEOHMB74WOX5:XLM-EURC",
+      "range": "all",
+      "status": 200,
+      "valid": true,
+      "base_symbol": "EURC",
+      "quote_symbol": "XLM",
+      "count": 4,
+      "first": {
+        "timestamp": "2026-11-11T18:47:50.217Z",
+        "price": "2.892817363734440538"
+      },
+      "last": {
+        "timestamp": "2026-11-14T01:58:23.228Z",
+        "price": "2.892817363734440538"
+      },
+      "coverage": {
+        "kind": "observed_only",
+        "first_generated_at": "2026-11-11T18:47:50.217Z",
+        "complete_requested_range": false
+      }
+    },
+    {
+      "market_id": "stellar-testnet:soroswap:CDRKRVJLWZNKB4W5GCJU27R6LVT2GD2WNYVUPBB2J3MXBEOHMB74WOX5:XLM-EURC",
+      "range": "1y",
+      "status": 200,
+      "valid": true,
+      "base_symbol": "EURC",
+      "quote_symbol": "XLM",
+      "count": 4,
+      "first": {
+        "timestamp": "2026-11-11T18:47:50.217Z",
+        "price": "2.892817363734440538"
+      },
+      "last": {
+        "timestamp": "2026-11-14T01:58:23.228Z",
+        "price": "2.892817363734440538"
+      },
+      "coverage": {
+        "kind": "observed_only",
+        "first_generated_at": "2026-11-11T18:47:50.217Z",
+        "complete_requested_range": false
+      }
+    },
+    {
+      "market_id": "stellar-testnet:soroswap:CDRKRVJLWZNKB4W5GCJU27R6LVT2GD2WNYVUPBB2J3MXBEOHMB74WOX5:EURC-XLM",
+      "range": "1d",
+      "status": 200,
+      "valid": true,
+      "base_symbol": "EURC",
+      "quote_symbol": "XLM",
+      "count": 3,
+      "first": {
+        "timestamp": "2026-11-13T22:13:32.888Z",
+        "price": "2.892817363734440538"
+      },
+      "last": {
+        "timestamp": "2026-11-14T01:58:23.228Z",
+        "price": "2.892817363734440538"
+      },
+      "coverage": {
+        "kind": "observed_only",
+        "first_generated_at": "2026-11-13T22:13:32.888Z",
+        "complete_requested_range": false
+      }
+    },
+    {
+      "market_id": "stellar-testnet:soroswap:CDRKRVJLWZNKB4W5GCJU27R6LVT2GD2WNYVUPBB2J3MXBEOHMB74WOX5:EURC-XLM",
+      "range": "live",
+      "status": 200,
+      "valid": true,
+      "base_symbol": "EURC",
+      "quote_symbol": "XLM",
+      "count": 1,
+      "first": {
+        "timestamp": "2026-11-14T01:58:23.228Z",
+        "price": "2.892817363734440538"
+      },
+      "last": {
+        "timestamp": "2026-11-14T01:58:23.228Z",
+        "price": "2.892817363734440538"
+      },
+      "coverage": {
+        "kind": "observed_only",
+        "first_generated_at": "2026-11-14T01:58:23.228Z",
+        "complete_requested_range": false
+      }
+    },
+    {
+      "market_id": "stellar-testnet:soroswap:CDRKRVJLWZNKB4W5GCJU27R6LVT2GD2WNYVUPBB2J3MXBEOHMB74WOX5:EURC-XLM",
+      "range": "1m",
+      "status": 200,
+      "valid": true,
+      "base_symbol": "EURC",
+      "quote_symbol": "XLM",
+      "count": 4,
+      "first": {
+        "timestamp": "2026-11-11T18:47:50.217Z",
+        "price": "2.892817363734440538"
+      },
+      "last": {
+        "timestamp": "2026-11-14T01:58:23.376Z",
+        "price": "2.892817363734440538"
+      },
+      "coverage": {
+        "kind": "observed_only",
+        "first_generated_at": "2026-11-11T18:47:50.217Z",
+        "complete_requested_range": false
+      }
+    },
+    {
+      "market_id": "stellar-testnet:soroswap:CDRKRVJLWZNKB4W5GCJU27R6LVT2GD2WNYVUPBB2J3MXBEOHMB74WOX5:EURC-XLM",
+      "range": "1w",
+      "status": 200,
+      "valid": true,
+      "base_symbol": "EURC",
+      "quote_symbol": "XLM",
+      "count": 4,
+      "first": {
+        "timestamp": "2026-11-11T18:47:50.217Z",
+        "price": "2.892817363734440538"
+      },
+      "last": {
+        "timestamp": "2026-11-14T01:58:23.376Z",
+        "price": "2.892817363734440538"
+      },
+      "coverage": {
+        "kind": "observed_only",
+        "first_generated_at": "2026-11-11T18:47:50.217Z",
+        "complete_requested_range": false
+      }
+    },
+    {
+      "market_id": "stellar-testnet:soroswap:CDRKRVJLWZNKB4W5GCJU27R6LVT2GD2WNYVUPBB2J3MXBEOHMB74WOX5:EURC-XLM",
+      "range": "1y",
+      "status": 200,
+      "valid": true,
+      "base_symbol": "EURC",
+      "quote_symbol": "XLM",
+      "count": 4,
+      "first": {
+        "timestamp": "2026-11-11T18:47:50.217Z",
+        "price": "2.892817363734440538"
+      },
+      "last": {
+        "timestamp": "2026-11-14T01:58:23.376Z",
+        "price": "2.892817363734440538"
+      },
+      "coverage": {
+        "kind": "observed_only",
+        "first_generated_at": "2026-11-11T18:47:50.217Z",
+        "complete_requested_range": false
+      }
+    },
+    {
+      "market_id": "stellar-testnet:soroswap:CDRKRVJLWZNKB4W5GCJU27R6LVT2GD2WNYVUPBB2J3MXBEOHMB74WOX5:EURC-XLM",
+      "range": "all",
+      "status": 200,
+      "valid": true,
+      "base_symbol": "EURC",
+      "quote_symbol": "XLM",
+      "count": 4,
+      "first": {
+        "timestamp": "2026-11-11T18:47:50.217Z",
+        "price": "2.892817363734440538"
+      },
+      "last": {
+        "timestamp": "2026-11-14T01:58:23.376Z",
+        "price": "2.892817363734440538"
+      },
+      "coverage": {
+        "kind": "observed_only",
+        "first_generated_at": "2026-11-11T18:47:50.217Z",
+        "complete_requested_range": false
+      }
+    },
+    {
+      "market_id": "stellar-testnet:soroswap:CAAZMNZDUPXEPLLJOGVQYQOJPXFYDZRYX2AMSXFYNP7Q5IKY7WCH2ZV4:ARST-XTAR",
+      "range": "live",
+      "status": 200,
+      "valid": true,
+      "base_symbol": "ARST",
+      "quote_symbol": "XTAR",
+      "count": 1,
+      "first": {
+        "timestamp": "2026-11-14T01:58:23.517Z",
+        "price": "1.584793754492550235"
+      },
+      "last": {
+        "timestamp": "2026-11-14T01:58:23.517Z",
+        "price": "1.584793754492550235"
+      },
+      "coverage": {
+        "kind": "observed_only",
+        "first_generated_at": "2026-11-14T01:58:23.517Z",
+        "complete_requested_range": false
+      }
+    },
+    {
+      "market_id": "stellar-testnet:soroswap:CAAZMNZDUPXEPLLJOGVQYQOJPXFYDZRYX2AMSXFYNP7Q5IKY7WCH2ZV4:ARST-XTAR",
+      "range": "1d",
+      "status": 200,
+      "valid": true,
+      "base_symbol": "ARST",
+      "quote_symbol": "XTAR",
+      "count": 1,
+      "first": {
+        "timestamp": "2026-11-14T01:58:23.517Z",
+        "price": "1.584793754492550235"
+      },
+      "last": {
+        "timestamp": "2026-11-14T01:58:23.517Z",
+        "price": "1.584793754492550235"
+      },
+      "coverage": {
+        "kind": "observed_only",
+        "first_generated_at": "2026-11-14T01:58:23.517Z",
+        "complete_requested_range": false
+      }
+    },
+    {
+      "market_id": "stellar-testnet:soroswap:CAAZMNZDUPXEPLLJOGVQYQOJPXFYDZRYX2AMSXFYNP7Q5IKY7WCH2ZV4:ARST-XTAR",
+      "range": "1w",
+      "status": 200,
+      "valid": true,
+      "base_symbol": "ARST",
+      "quote_symbol": "XTAR",
+      "count": 1,
+      "first": {
+        "timestamp": "2026-11-14T01:58:23.517Z",
+        "price": "1.584793754492550235"
+      },
+      "last": {
+        "timestamp": "2026-11-14T01:58:23.517Z",
+        "price": "1.584793754492550235"
+      },
+      "coverage": {
+        "kind": "observed_only",
+        "first_generated_at": "2026-11-14T01:58:23.517Z",
+        "complete_requested_range": false
+      }
+    },
+    {
+      "market_id": "stellar-testnet:soroswap:CAAZMNZDUPXEPLLJOGVQYQOJPXFYDZRYX2AMSXFYNP7Q5IKY7WCH2ZV4:ARST-XTAR",
+      "range": "1m",
+      "status": 200,
+      "valid": true,
+      "base_symbol": "ARST",
+      "quote_symbol": "XTAR",
+      "count": 1,
+      "first": {
+        "timestamp": "2026-11-14T01:58:23.517Z",
+        "price": "1.584793754492550235"
+      },
+      "last": {
+        "timestamp": "2026-11-14T01:58:23.517Z",
+        "price": "1.584793754492550235"
+      },
+      "coverage": {
+        "kind": "observed_only",
+        "first_generated_at": "2026-11-14T01:58:23.517Z",
+        "complete_requested_range": false
+      }
+    },
+    {
+      "market_id": "stellar-testnet:soroswap:CAAZMNZDUPXEPLLJOGVQYQOJPXFYDZRYX2AMSXFYNP7Q5IKY7WCH2ZV4:ARST-XTAR",
+      "range": "1y",
+      "status": 200,
+      "valid": true,
+      "base_symbol": "ARST",
+      "quote_symbol": "XTAR",
+      "count": 1,
+      "first": {
+        "timestamp": "2026-11-14T01:58:23.655Z",
+        "price": "1.584793754492550235"
+      },
+      "last": {
+        "timestamp": "2026-11-14T01:58:23.655Z",
+        "price": "1.584793754492550235"
+      },
+      "coverage": {
+        "kind": "observed_only",
+        "first_generated_at": "2026-11-14T01:58:23.655Z",
+        "complete_requested_range": false
+      }
+    },
+    {
+      "market_id": "stellar-testnet:soroswap:CAAZMNZDUPXEPLLJOGVQYQOJPXFYDZRYX2AMSXFYNP7Q5IKY7WCH2ZV4:ARST-XTAR",
+      "range": "all",
+      "status": 200,
+      "valid": true,
+      "base_symbol": "ARST",
+      "quote_symbol": "XTAR",
+      "count": 1,
+      "first": {
+        "timestamp": "2026-11-14T01:58:23.655Z",
+        "price": "1.584793754492550235"
+      },
+      "last": {
+        "timestamp": "2026-11-14T01:58:23.655Z",
+        "price": "1.584793754492550235"
+      },
+      "coverage": {
+        "kind": "observed_only",
+        "first_generated_at": "2026-11-14T01:58:23.655Z",
+        "complete_requested_range": false
+      }
+    },
+    {
+      "market_id": "stellar-testnet:soroswap:CAAZMNZDUPXEPLLJOGVQYQOJPXFYDZRYX2AMSXFYNP7Q5IKY7WCH2ZV4:XTAR-ARST",
+      "range": "1d",
+      "status": 200,
+      "valid": true,
+      "base_symbol": "ARST",
+      "quote_symbol": "XTAR",
+      "count": 1,
+      "first": {
+        "timestamp": "2026-11-14T01:58:23.655Z",
+        "price": "1.584793754492550235"
+      },
+      "last": {
+        "timestamp": "2026-11-14T01:58:23.655Z",
+        "price": "1.584793754492550235"
+      },
+      "coverage": {
+        "kind": "observed_only",
+        "first_generated_at": "2026-11-14T01:58:23.655Z",
+        "complete_requested_range": false
+      }
+    },
+    {
+      "market_id": "stellar-testnet:soroswap:CAAZMNZDUPXEPLLJOGVQYQOJPXFYDZRYX2AMSXFYNP7Q5IKY7WCH2ZV4:XTAR-ARST",
+      "range": "live",
+      "status": 200,
+      "valid": true,
+      "base_symbol": "ARST",
+      "quote_symbol": "XTAR",
+      "count": 1,
+      "first": {
+        "timestamp": "2026-11-14T01:58:23.655Z",
+        "price": "1.584793754492550235"
+      },
+      "last": {
+        "timestamp": "2026-11-14T01:58:23.655Z",
+        "price": "1.584793754492550235"
+      },
+      "coverage": {
+        "kind": "observed_only",
+        "first_generated_at": "2026-11-14T01:58:23.655Z",
+        "complete_requested_range": false
+      }
+    },
+    {
+      "market_id": "stellar-testnet:soroswap:CAAZMNZDUPXEPLLJOGVQYQOJPXFYDZRYX2AMSXFYNP7Q5IKY7WCH2ZV4:XTAR-ARST",
+      "range": "1w",
+      "status": 200,
+      "valid": true,
+      "base_symbol": "ARST",
+      "quote_symbol": "XTAR",
+      "count": 1,
+      "first": {
+        "timestamp": "2026-11-14T01:58:23.794Z",
+        "price": "1.584793754492550235"
+      },
+      "last": {
+        "timestamp": "2026-11-14T01:58:23.794Z",
+        "price": "1.584793754492550235"
+      },
+      "coverage": {
+        "kind": "observed_only",
+        "first_generated_at": "2026-11-14T01:58:23.794Z",
+        "complete_requested_range": false
+      }
+    },
+    {
+      "market_id": "stellar-testnet:soroswap:CAAZMNZDUPXEPLLJOGVQYQOJPXFYDZRYX2AMSXFYNP7Q5IKY7WCH2ZV4:XTAR-ARST",
+      "range": "1y",
+      "status": 200,
+      "valid": true,
+      "base_symbol": "ARST",
+      "quote_symbol": "XTAR",
+      "count": 1,
+      "first": {
+        "timestamp": "2026-11-14T01:58:23.794Z",
+        "price": "1.584793754492550235"
+      },
+      "last": {
+        "timestamp": "2026-11-14T01:58:23.794Z",
+        "price": "1.584793754492550235"
+      },
+      "coverage": {
+        "kind": "observed_only",
+        "first_generated_at": "2026-11-14T01:58:23.794Z",
+        "complete_requested_range": false
+      }
+    },
+    {
+      "market_id": "stellar-testnet:soroswap:CAAZMNZDUPXEPLLJOGVQYQOJPXFYDZRYX2AMSXFYNP7Q5IKY7WCH2ZV4:XTAR-ARST",
+      "range": "1m",
+      "status": 200,
+      "valid": true,
+      "base_symbol": "ARST",
+      "quote_symbol": "XTAR",
+      "count": 1,
+      "first": {
+        "timestamp": "2026-11-14T01:58:23.794Z",
+        "price": "1.584793754492550235"
+      },
+      "last": {
+        "timestamp": "2026-11-14T01:58:23.794Z",
+        "price": "1.584793754492550235"
+      },
+      "coverage": {
+        "kind": "observed_only",
+        "first_generated_at": "2026-11-14T01:58:23.794Z",
+        "complete_requested_range": false
+      }
+    },
+    {
+      "market_id": "stellar-testnet:soroswap:CAAZMNZDUPXEPLLJOGVQYQOJPXFYDZRYX2AMSXFYNP7Q5IKY7WCH2ZV4:XTAR-ARST",
+      "range": "all",
+      "status": 200,
+      "valid": true,
+      "base_symbol": "ARST",
+      "quote_symbol": "XTAR",
+      "count": 1,
+      "first": {
+        "timestamp": "2026-11-14T01:58:23.794Z",
+        "price": "1.584793754492550235"
+      },
+      "last": {
+        "timestamp": "2026-11-14T01:58:23.794Z",
+        "price": "1.584793754492550235"
+      },
+      "coverage": {
+        "kind": "observed_only",
+        "first_generated_at": "2026-11-14T01:58:23.794Z",
+        "complete_requested_range": false
+      }
+    },
+    {
+      "market_id": "stellar-testnet:soroswap:CDATAQWTAN6TVSXQKVYFHVW7KYWT75LKPQCC76KQBNPTWR3YQ4LIISWN:AQUA-XTAR",
+      "range": "live",
+      "status": 200,
+      "valid": true,
+      "base_symbol": "AQUA",
+      "quote_symbol": "XTAR",
+      "count": 1,
+      "first": {
+        "timestamp": "2026-11-14T01:58:23.940Z",
+        "price": "1.639191415074680726"
+      },
+      "last": {
+        "timestamp": "2026-11-14T01:58:23.940Z",
+        "price": "1.639191415074680726"
+      },
+      "coverage": {
+        "kind": "observed_only",
+        "first_generated_at": "2026-11-14T01:58:23.940Z",
+        "complete_requested_range": false
+      }
+    },
+    {
+      "market_id": "stellar-testnet:soroswap:CDATAQWTAN6TVSXQKVYFHVW7KYWT75LKPQCC76KQBNPTWR3YQ4LIISWN:AQUA-XTAR",
+      "range": "1d",
+      "status": 200,
+      "valid": true,
+      "base_symbol": "AQUA",
+      "quote_symbol": "XTAR",
+      "count": 1,
+      "first": {
+        "timestamp": "2026-11-14T01:58:23.940Z",
+        "price": "1.639191415074680726"
+      },
+      "last": {
+        "timestamp": "2026-11-14T01:58:23.940Z",
+        "price": "1.639191415074680726"
+      },
+      "coverage": {
+        "kind": "observed_only",
+        "first_generated_at": "2026-11-14T01:58:23.940Z",
+        "complete_requested_range": false
+      }
+    },
+    {
+      "market_id": "stellar-testnet:soroswap:CDATAQWTAN6TVSXQKVYFHVW7KYWT75LKPQCC76KQBNPTWR3YQ4LIISWN:AQUA-XTAR",
+      "range": "1w",
+      "status": 200,
+      "valid": true,
+      "base_symbol": "AQUA",
+      "quote_symbol": "XTAR",
+      "count": 1,
+      "first": {
+        "timestamp": "2026-11-14T01:58:23.940Z",
+        "price": "1.639191415074680726"
+      },
+      "last": {
+        "timestamp": "2026-11-14T01:58:23.940Z",
+        "price": "1.639191415074680726"
+      },
+      "coverage": {
+        "kind": "observed_only",
+        "first_generated_at": "2026-11-14T01:58:23.940Z",
+        "complete_requested_range": false
+      }
+    },
+    {
+      "market_id": "stellar-testnet:soroswap:CDATAQWTAN6TVSXQKVYFHVW7KYWT75LKPQCC76KQBNPTWR3YQ4LIISWN:AQUA-XTAR",
+      "range": "1m",
+      "status": 200,
+      "valid": true,
+      "base_symbol": "AQUA",
+      "quote_symbol": "XTAR",
+      "count": 1,
+      "first": {
+        "timestamp": "2026-11-14T01:58:23.940Z",
+        "price": "1.639191415074680726"
+      },
+      "last": {
+        "timestamp": "2026-11-14T01:58:23.940Z",
+        "price": "1.639191415074680726"
+      },
+      "coverage": {
+        "kind": "observed_only",
+        "first_generated_at": "2026-11-14T01:58:23.940Z",
+        "complete_requested_range": false
+      }
+    },
+    {
+      "market_id": "stellar-testnet:soroswap:CDATAQWTAN6TVSXQKVYFHVW7KYWT75LKPQCC76KQBNPTWR3YQ4LIISWN:AQUA-XTAR",
+      "range": "all",
+      "status": 200,
+      "valid": true,
+      "base_symbol": "AQUA",
+      "quote_symbol": "XTAR",
+      "count": 1,
+      "first": {
+        "timestamp": "2026-11-14T01:58:24.082Z",
+        "price": "1.639191415074680726"
+      },
+      "last": {
+        "timestamp": "2026-11-14T01:58:24.082Z",
+        "price": "1.639191415074680726"
+      },
+      "coverage": {
+        "kind": "observed_only",
+        "first_generated_at": "2026-11-14T01:58:24.082Z",
+        "complete_requested_range": false
+      }
+    },
+    {
+      "market_id": "stellar-testnet:soroswap:CDATAQWTAN6TVSXQKVYFHVW7KYWT75LKPQCC76KQBNPTWR3YQ4LIISWN:AQUA-XTAR",
+      "range": "1y",
+      "status": 200,
+      "valid": true,
+      "base_symbol": "AQUA",
+      "quote_symbol": "XTAR",
+      "count": 1,
+      "first": {
+        "timestamp": "2026-11-14T01:58:24.082Z",
+        "price": "1.639191415074680726"
+      },
+      "last": {
+        "timestamp": "2026-11-14T01:58:24.082Z",
+        "price": "1.639191415074680726"
+      },
+      "coverage": {
+        "kind": "observed_only",
+        "first_generated_at": "2026-11-14T01:58:24.082Z",
+        "complete_requested_range": false
+      }
+    },
+    {
+      "market_id": "stellar-testnet:soroswap:CDATAQWTAN6TVSXQKVYFHVW7KYWT75LKPQCC76KQBNPTWR3YQ4LIISWN:XTAR-AQUA",
+      "range": "live",
+      "status": 200,
+      "valid": true,
+      "base_symbol": "AQUA",
+      "quote_symbol": "XTAR",
+      "count": 1,
+      "first": {
+        "timestamp": "2026-11-14T01:58:24.082Z",
+        "price": "1.639191415074680726"
+      },
+      "last": {
+        "timestamp": "2026-11-14T01:58:24.082Z",
+        "price": "1.639191415074680726"
+      },
+      "coverage": {
+        "kind": "observed_only",
+        "first_generated_at": "2026-11-14T01:58:24.082Z",
+        "complete_requested_range": false
+      }
+    },
+    {
+      "market_id": "stellar-testnet:soroswap:CDATAQWTAN6TVSXQKVYFHVW7KYWT75LKPQCC76KQBNPTWR3YQ4LIISWN:XTAR-AQUA",
+      "range": "1d",
+      "status": 200,
+      "valid": true,
+      "base_symbol": "AQUA",
+      "quote_symbol": "XTAR",
+      "count": 1,
+      "first": {
+        "timestamp": "2026-11-14T01:58:24.082Z",
+        "price": "1.639191415074680726"
+      },
+      "last": {
+        "timestamp": "2026-11-14T01:58:24.082Z",
+        "price": "1.639191415074680726"
+      },
+      "coverage": {
+        "kind": "observed_only",
+        "first_generated_at": "2026-11-14T01:58:24.082Z",
+        "complete_requested_range": false
+      }
+    },
+    {
+      "market_id": "stellar-testnet:soroswap:CDATAQWTAN6TVSXQKVYFHVW7KYWT75LKPQCC76KQBNPTWR3YQ4LIISWN:XTAR-AQUA",
+      "range": "1w",
+      "status": 200,
+      "valid": true,
+      "base_symbol": "AQUA",
+      "quote_symbol": "XTAR",
+      "count": 1,
+      "first": {
+        "timestamp": "2026-11-14T01:58:24.228Z",
+        "price": "1.639191415074680726"
+      },
+      "last": {
+        "timestamp": "2026-11-14T01:58:24.228Z",
+        "price": "1.639191415074680726"
+      },
+      "coverage": {
+        "kind": "observed_only",
+        "first_generated_at": "2026-11-14T01:58:24.228Z",
+        "complete_requested_range": false
+      }
+    },
+    {
+      "market_id": "stellar-testnet:soroswap:CDATAQWTAN6TVSXQKVYFHVW7KYWT75LKPQCC76KQBNPTWR3YQ4LIISWN:XTAR-AQUA",
+      "range": "1m",
+      "status": 200,
+      "valid": true,
+      "base_symbol": "AQUA",
+      "quote_symbol": "XTAR",
+      "count": 1,
+      "first": {
+        "timestamp": "2026-11-14T01:58:24.228Z",
+        "price": "1.639191415074680726"
+      },
+      "last": {
+        "timestamp": "2026-11-14T01:58:24.228Z",
+        "price": "1.639191415074680726"
+      },
+      "coverage": {
+        "kind": "observed_only",
+        "first_generated_at": "2026-11-14T01:58:24.228Z",
+        "complete_requested_range": false
+      }
+    },
+    {
+      "market_id": "stellar-testnet:soroswap:CDATAQWTAN6TVSXQKVYFHVW7KYWT75LKPQCC76KQBNPTWR3YQ4LIISWN:XTAR-AQUA",
+      "range": "1y",
+      "status": 200,
+      "valid": true,
+      "base_symbol": "AQUA",
+      "quote_symbol": "XTAR",
+      "count": 1,
+      "first": {
+        "timestamp": "2026-11-14T01:58:24.228Z",
+        "price": "1.639191415074680726"
+      },
+      "last": {
+        "timestamp": "2026-11-14T01:58:24.228Z",
+        "price": "1.639191415074680726"
+      },
+      "coverage": {
+        "kind": "observed_only",
+        "first_generated_at": "2026-11-14T01:58:24.228Z",
+        "complete_requested_range": false
+      }
+    },
+    {
+      "market_id": "stellar-testnet:soroswap:CDATAQWTAN6TVSXQKVYFHVW7KYWT75LKPQCC76KQBNPTWR3YQ4LIISWN:XTAR-AQUA",
+      "range": "all",
+      "status": 200,
+      "valid": true,
+      "base_symbol": "AQUA",
+      "quote_symbol": "XTAR",
+      "count": 1,
+      "first": {
+        "timestamp": "2026-11-14T01:58:24.228Z",
+        "price": "1.639191415074680726"
+      },
+      "last": {
+        "timestamp": "2026-11-14T01:58:24.228Z",
+        "price": "1.639191415074680726"
+      },
+      "coverage": {
+        "kind": "observed_only",
+        "first_generated_at": "2026-11-14T01:58:24.228Z",
+        "complete_requested_range": false
+      }
+    },
+    {
+      "market_id": "stellar-testnet:soroswap:CBBJN24GDFMVAHNUT3PCNWQOOODLAVAWRHJGYWVTECNYIOQEL3N4I7D5:AQUA-EURC",
+      "range": "live",
+      "status": 200,
+      "valid": true,
+      "base_symbol": "AQUA",
+      "quote_symbol": "EURC",
+      "count": 1,
+      "first": {
+        "timestamp": "2026-11-14T01:58:24.372Z",
+        "price": "0.626215115037883721"
+      },
+      "last": {
+        "timestamp": "2026-11-14T01:58:24.372Z",
+        "price": "0.626215115037883721"
+      },
+      "coverage": {
+        "kind": "observed_only",
+        "first_generated_at": "2026-11-14T01:58:24.372Z",
+        "complete_requested_range": false
+      }
+    },
+    {
+      "market_id": "stellar-testnet:soroswap:CBBJN24GDFMVAHNUT3PCNWQOOODLAVAWRHJGYWVTECNYIOQEL3N4I7D5:AQUA-EURC",
+      "range": "1d",
+      "status": 200,
+      "valid": true,
+      "base_symbol": "AQUA",
+      "quote_symbol": "EURC",
+      "count": 1,
+      "first": {
+        "timestamp": "2026-11-14T01:58:24.372Z",
+        "price": "0.626215115037883721"
+      },
+      "last": {
+        "timestamp": "2026-11-14T01:58:24.372Z",
+        "price": "0.626215115037883721"
+      },
+      "coverage": {
+        "kind": "observed_only",
+        "first_generated_at": "2026-11-14T01:58:24.372Z",
+        "complete_requested_range": false
+      }
+    },
+    {
+      "market_id": "stellar-testnet:soroswap:CBBJN24GDFMVAHNUT3PCNWQOOODLAVAWRHJGYWVTECNYIOQEL3N4I7D5:AQUA-EURC",
+      "range": "1w",
+      "status": 200,
+      "valid": true,
+      "base_symbol": "AQUA",
+      "quote_symbol": "EURC",
+      "count": 1,
+      "first": {
+        "timestamp": "2026-11-14T01:58:24.372Z",
+        "price": "0.626215115037883721"
+      },
+      "last": {
+        "timestamp": "2026-11-14T01:58:24.372Z",
+        "price": "0.626215115037883721"
+      },
+      "coverage": {
+        "kind": "observed_only",
+        "first_generated_at": "2026-11-14T01:58:24.372Z",
+        "complete_requested_range": false
+      }
+    },
+    {
+      "market_id": "stellar-testnet:soroswap:CBBJN24GDFMVAHNUT3PCNWQOOODLAVAWRHJGYWVTECNYIOQEL3N4I7D5:AQUA-EURC",
+      "range": "1m",
+      "status": 200,
+      "valid": true,
+      "base_symbol": "AQUA",
+      "quote_symbol": "EURC",
+      "count": 1,
+      "first": {
+        "timestamp": "2026-11-14T01:58:24.372Z",
+        "price": "0.626215115037883721"
+      },
+      "last": {
+        "timestamp": "2026-11-14T01:58:24.372Z",
+        "price": "0.626215115037883721"
+      },
+      "coverage": {
+        "kind": "observed_only",
+        "first_generated_at": "2026-11-14T01:58:24.372Z",
+        "complete_requested_range": false
+      }
+    },
+    {
+      "market_id": "stellar-testnet:soroswap:CBBJN24GDFMVAHNUT3PCNWQOOODLAVAWRHJGYWVTECNYIOQEL3N4I7D5:AQUA-EURC",
+      "range": "all",
+      "status": 200,
+      "valid": true,
+      "base_symbol": "AQUA",
+      "quote_symbol": "EURC",
+      "count": 1,
+      "first": {
+        "timestamp": "2026-11-14T01:58:24.516Z",
+        "price": "0.626215115037883721"
+      },
+      "last": {
+        "timestamp": "2026-11-14T01:58:24.516Z",
+        "price": "0.626215115037883721"
+      },
+      "coverage": {
+        "kind": "observed_only",
+        "first_generated_at": "2026-11-14T01:58:24.516Z",
+        "complete_requested_range": false
+      }
+    },
+    {
+      "market_id": "stellar-testnet:soroswap:CBBJN24GDFMVAHNUT3PCNWQOOODLAVAWRHJGYWVTECNYIOQEL3N4I7D5:AQUA-EURC",
+      "range": "1y",
+      "status": 200,
+      "valid": true,
+      "base_symbol": "AQUA",
+      "quote_symbol": "EURC",
+      "count": 1,
+      "first": {
+        "timestamp": "2026-11-14T01:58:24.516Z",
+        "price": "0.626215115037883721"
+      },
+      "last": {
+        "timestamp": "2026-11-14T01:58:24.516Z",
+        "price": "0.626215115037883721"
+      },
+      "coverage": {
+        "kind": "observed_only",
+        "first_generated_at": "2026-11-14T01:58:24.516Z",
+        "complete_requested_range": false
+      }
+    },
+    {
+      "market_id": "stellar-testnet:soroswap:CBBJN24GDFMVAHNUT3PCNWQOOODLAVAWRHJGYWVTECNYIOQEL3N4I7D5:EURC-AQUA",
+      "range": "1d",
+      "status": 200,
+      "valid": true,
+      "base_symbol": "AQUA",
+      "quote_symbol": "EURC",
+      "count": 1,
+      "first": {
+        "timestamp": "2026-11-14T01:58:24.516Z",
+        "price": "0.626215115037883721"
+      },
+      "last": {
+        "timestamp": "2026-11-14T01:58:24.516Z",
+        "price": "0.626215115037883721"
+      },
+      "coverage": {
+        "kind": "observed_only",
+        "first_generated_at": "2026-11-14T01:58:24.516Z",
+        "complete_requested_range": false
+      }
+    },
+    {
+      "market_id": "stellar-testnet:soroswap:CBBJN24GDFMVAHNUT3PCNWQOOODLAVAWRHJGYWVTECNYIOQEL3N4I7D5:EURC-AQUA",
+      "range": "live",
+      "status": 200,
+      "valid": true,
+      "base_symbol": "AQUA",
+      "quote_symbol": "EURC",
+      "count": 1,
+      "first": {
+        "timestamp": "2026-11-14T01:58:24.516Z",
+        "price": "0.626215115037883721"
+      },
+      "last": {
+        "timestamp": "2026-11-14T01:58:24.516Z",
+        "price": "0.626215115037883721"
+      },
+      "coverage": {
+        "kind": "observed_only",
+        "first_generated_at": "2026-11-14T01:58:24.516Z",
+        "complete_requested_range": false
+      }
+    },
+    {
+      "market_id": "stellar-testnet:soroswap:CBBJN24GDFMVAHNUT3PCNWQOOODLAVAWRHJGYWVTECNYIOQEL3N4I7D5:EURC-AQUA",
+      "range": "all",
+      "status": 200,
+      "valid": true,
+      "base_symbol": "AQUA",
+      "quote_symbol": "EURC",
+      "count": 1,
+      "first": {
+        "timestamp": "2026-11-14T01:58:24.659Z",
+        "price": "0.626215115037883721"
+      },
+      "last": {
+        "timestamp": "2026-11-14T01:58:24.659Z",
+        "price": "0.626215115037883721"
+      },
+      "coverage": {
+        "kind": "observed_only",
+        "first_generated_at": "2026-11-14T01:58:24.659Z",
+        "complete_requested_range": false
+      }
+    },
+    {
+      "market_id": "stellar-testnet:soroswap:CBBJN24GDFMVAHNUT3PCNWQOOODLAVAWRHJGYWVTECNYIOQEL3N4I7D5:EURC-AQUA",
+      "range": "1m",
+      "status": 200,
+      "valid": true,
+      "base_symbol": "AQUA",
+      "quote_symbol": "EURC",
+      "count": 1,
+      "first": {
+        "timestamp": "2026-11-14T01:58:24.659Z",
+        "price": "0.626215115037883721"
+      },
+      "last": {
+        "timestamp": "2026-11-14T01:58:24.659Z",
+        "price": "0.626215115037883721"
+      },
+      "coverage": {
+        "kind": "observed_only",
+        "first_generated_at": "2026-11-14T01:58:24.659Z",
+        "complete_requested_range": false
+      }
+    },
+    {
+      "market_id": "stellar-testnet:soroswap:CBBJN24GDFMVAHNUT3PCNWQOOODLAVAWRHJGYWVTECNYIOQEL3N4I7D5:EURC-AQUA",
+      "range": "1w",
+      "status": 200,
+      "valid": true,
+      "base_symbol": "AQUA",
+      "quote_symbol": "EURC",
+      "count": 1,
+      "first": {
+        "timestamp": "2026-11-14T01:58:24.659Z",
+        "price": "0.626215115037883721"
+      },
+      "last": {
+        "timestamp": "2026-11-14T01:58:24.659Z",
+        "price": "0.626215115037883721"
+      },
+      "coverage": {
+        "kind": "observed_only",
+        "first_generated_at": "2026-11-14T01:58:24.659Z",
+        "complete_requested_range": false
+      }
+    },
+    {
+      "market_id": "stellar-testnet:soroswap:CBBJN24GDFMVAHNUT3PCNWQOOODLAVAWRHJGYWVTECNYIOQEL3N4I7D5:EURC-AQUA",
+      "range": "1y",
+      "status": 200,
+      "valid": true,
+      "base_symbol": "AQUA",
+      "quote_symbol": "EURC",
+      "count": 1,
+      "first": {
+        "timestamp": "2026-11-14T01:58:24.659Z",
+        "price": "0.626215115037883721"
+      },
+      "last": {
+        "timestamp": "2026-11-14T01:58:24.659Z",
+        "price": "0.626215115037883721"
+      },
+      "coverage": {
+        "kind": "observed_only",
+        "first_generated_at": "2026-11-14T01:58:24.659Z",
+        "complete_requested_range": false
+      }
+    }
+  ]
+}

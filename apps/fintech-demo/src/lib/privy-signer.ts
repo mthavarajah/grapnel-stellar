@@ -1,4 +1,5 @@
 "use client";
+import {SPOT_TOKEN_PAIR_PINS} from '@grapnel/contracts';
 import {inspectZenex} from './zenex-approval';
 import { Buffer } from "buffer";
 import {inspectCircleSetupPrepared} from './cctp-setup-approval';
@@ -64,6 +65,13 @@ function inspectSpotApproval(action:PreparedAction,operation:Transaction['operat
     let pair='CBR76WMT6J733CCVBP23M2EL5QGP5HXLPEFNFZGZ7IB6QHOJAHP7YM3V';
     const native=Asset.native().contractId(NETWORK_PASSPHRASE),usdc=new Asset('USDC',issuer).contractId(NETWORK_PASSPHRASE);
     const xlmId=`${NETWORK}:native:XLM`,usdcId=`${NETWORK}:classic:USDC:${issuer}`;
+    let forward=false,reverse=false,inputContract:string,outputContract:string;
+    const direct=SPOT_TOKEN_PAIR_PINS.find(p=>{
+      const a=`${NETWORK}:soroban:${p.a.contract}`,b=`${NETWORK}:soroban:${p.b.contract}`;
+      return(action.summary.fromAssetId===a&&action.summary.toAssetId===b)||(action.summary.fromAssetId===b&&action.summary.toAssetId===a);
+    });
+    if(direct){pair=direct.pair;inputContract=action.summary.fromAssetId!.slice(`${NETWORK}:soroban:`.length);outputContract=action.summary.toAssetId!.slice(`${NETWORK}:soroban:`.length);forward=true;}
+    else{
     const otherId=action.summary.fromAssetId===xlmId?action.summary.toAssetId:action.summary.fromAssetId;
     let token=usdc;
     if(otherId!==usdcId){
@@ -71,9 +79,10 @@ function inspectSpotApproval(action:PreparedAction,operation:Transaction['operat
       token=otherId.slice(`${NETWORK}:soroban:`.length);const approvedPair=SPOT_STANDALONE_POOLS[token];
       if(!approvedPair)throw Error();pair=approvedPair;
     }
-    const reverse=action.summary.fromAssetId===otherId&&action.summary.toAssetId===xlmId;
-    const forward=action.summary.fromAssetId===xlmId&&action.summary.toAssetId===otherId;
-    const inputContract=reverse?token:native,outputContract=reverse?native:token;
+    reverse=action.summary.fromAssetId===otherId&&action.summary.toAssetId===xlmId;
+    forward=action.summary.fromAssetId===xlmId&&action.summary.toAssetId===otherId;
+    inputContract=reverse?token:native;outputContract=reverse?native:token;
+    }
     if(operation.type!=='invokeHostFunction'||operation.source||operation.func.switch().name!=='hostFunctionTypeInvokeContract'||action.summary.action!=='spot.swap'||action.summary.contractId!==router||(!forward&&!reverse)||action.summary.recipient!==action.walletAddress||!action.summary.amount||!action.summary.minReceive||BigInt(action.summary.maxFeeStroops??'0')>10000000n)throw Error();
     const fn=operation.func.invokeContract(),values=fn.args().map(scValToNative);
     const amount=toAtomic(action.summary.amount,7),minimum=toAtomic(action.summary.minReceive,7);
@@ -83,7 +92,7 @@ function inspectSpotApproval(action:PreparedAction,operation:Transaction['operat
     const child=root.subInvocations()[0]!;if(child.subInvocations().length||child.function().switch().name!=='sorobanAuthorizedFunctionTypeContractFn')throw Error();
     const transfer=child.function().contractFn(),args=transfer.args().map(scValToNative);
     if(Address.fromScAddress(transfer.contractAddress()).toString()!==inputContract||transfer.functionName().toString()!=='transfer'||args.length!==3||args[0]!==action.walletAddress||args[1]!==pair||args[2]!==amount)throw Error();
-  }catch{throw Error('Swap differs from the reviewed XLM/USDC intent');}
+  }catch{throw Error('Swap differs from the reviewed exact token-pair intent');}
 }
 /** Sign only the exact server-prepared action after the customer reviews the summary. */
 export async function signPreparedAction(

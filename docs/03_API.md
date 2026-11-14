@@ -163,3 +163,9 @@ Active Perpetuals catalog is `zenex-testnet:perps:XLM`. Additive status/prepare/
 ### Additive owner Activity endpoint — November 13, 2026 (0.4.5)
 
 `GET /v1/dashboard/activity` uses the existing owner cookie and derives the tenant from that session. It returns `activities` (up to50 submitted Stellar transactions) and nullable `next_cursor: {before, before_id}`. Pass both cursor fields to read older rows. Each item contains operation/customer identifiers, external customer reference, wallet address, action, durable status, provider, transaction hash, timestamps and nullable requested amount/asset. Only existing operations with an exact Stellar hash are listed; no unsigned requests, EVM transactions, signing payloads or secrets. This is the business's Grapnel activity, not a global network explorer or an index of external wallet transfers. Pending submission is not chain success. Existing interfaces are unchanged.
+
+### Reviewed Soroswap token-pair recovery pins — November13
+
+The lead added a shared exact ARST/XTAR, AQUA/XTAR and AQUA/EURC pinset with independent two-token transaction/auth/footprint inspection, client-side approval checks, fee reservations and exact token-delta reconciliation. No serialized request schemas, module IDs or customer/tenant authentication rules changed. Controlled own-wallet SDK QA executed all six directions on Stellar Testnet; this is not Privy customer proof and does not populate customer operation records or bypass provider readiness.
+
+Latest owner direction removes ARST/AQUA from active market discovery and Velocity selectors; their reviewed implementation and records remain recovery/QA only. Soroswap USDCoin is also excluded from Velocity by its exact contract ID; it is never aliased to the issuer-based USDC already supported by the wallet.

@@ -22,6 +22,8 @@ export const ASSET_LOGO_PATHS:Readonly<Record<string,string>>={
   "DJT": "/assets/logos/djt.png",
   "DOGE": "/assets/logos/doge.svg",
   "ETH": "/assets/logos/eth.svg",
+  "ARST": "/assets/logos/arst.png",
+  "AQUA": "/assets/logos/aqua.png",
   "EURC": "/assets/logos/eurc.png",
   "GLD": "/assets/logos/gld.png",
   "GME": "/assets/logos/gme.png",

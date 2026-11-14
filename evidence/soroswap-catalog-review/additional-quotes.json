@@ -1,0 +1,179 @@
+{
+  "checked_at": "2026-11-13T23:47:26.166Z",
+  "network": "testnet",
+  "broadcast": false,
+  "rows": [
+    {
+      "from": "XLM",
+      "to": "ARST",
+      "input": {
+        "assetIn": "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC",
+        "assetOut": "CBRQHWJDLPYVR4BSVUUWJCZGG4N4FF3CUZKDGRVTE36FAWNEJZEMQRME",
+        "amount": "10000000",
+        "tradeType": "EXACT_IN",
+        "protocols": [
+          "soroswap"
+        ],
+        "slippageBps": 49,
+        "maxHops": 3
+      },
+      "status": 400,
+      "body": {
+        "title": "No path found",
+        "detail": "No path found",
+        "extra": {},
+        "error": "Quote Failed"
+      }
+    },
+    {
+      "from": "ARST",
+      "to": "XLM",
+      "input": {
+        "assetIn": "CBRQHWJDLPYVR4BSVUUWJCZGG4N4FF3CUZKDGRVTE36FAWNEJZEMQRME",
+        "assetOut": "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC",
+        "amount": "10000000",
+        "tradeType": "EXACT_IN",
+        "protocols": [
+          "soroswap"
+        ],
+        "slippageBps": 49,
+        "maxHops": 3
+      },
+      "status": 400,
+      "body": {
+        "title": "No path found",
+        "detail": "No path found",
+        "extra": {},
+        "error": "Quote Failed"
+      }
+    },
+    {
+      "from": "XLM",
+      "to": "AQUA",
+      "input": {
+        "assetIn": "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC",
+        "assetOut": "CDBCM2JWK2ERIE6EAVAZJJW3P25U5S3FLNHJDY72AVSVAVTU4E6NAQ43",
+        "amount": "10000000",
+        "tradeType": "EXACT_IN",
+        "protocols": [
+          "soroswap"
+        ],
+        "slippageBps": 49,
+        "maxHops": 3
+      },
+      "status": 400,
+      "body": {
+        "title": "No path found",
+        "detail": "No path found",
+        "extra": {},
+        "error": "Quote Failed"
+      }
+    },
+    {
+      "from": "ARST",
+      "to": "XTAR",
+      "input": {
+        "assetIn": "CBRQHWJDLPYVR4BSVUUWJCZGG4N4FF3CUZKDGRVTE36FAWNEJZEMQRME",
+        "assetOut": "CCZGLAUBDKJSQK72QOZHVU7CUWKW45OZWYWCLL27AEK74U2OIBK6LXF2",
+        "amount": "10000000",
+        "tradeType": "EXACT_IN",
+        "protocols": [
+          "soroswap"
+        ],
+        "slippageBps": 49,
+        "maxHops": 3
+      },
+      "status": 201,
+      "body": {
+        "assetIn": "CBRQHWJDLPYVR4BSVUUWJCZGG4N4FF3CUZKDGRVTE36FAWNEJZEMQRME",
+        "assetOut": "CCZGLAUBDKJSQK72QOZHVU7CUWKW45OZWYWCLL27AEK74U2OIBK6LXF2",
+        "tradeType": "EXACT_IN",
+        "amountIn": "10000000",
+        "amountOut": "15800267",
+        "otherAmountThreshold": "15722845",
+        "priceImpactPct": "0.00",
+        "platform": "router",
+        "routePlan": [
+          {
+            "swapInfo": {
+              "protocol": "soroswap",
+              "path": [
+                "CBRQHWJDLPYVR4BSVUUWJCZGG4N4FF3CUZKDGRVTE36FAWNEJZEMQRME",
+                "CCZGLAUBDKJSQK72QOZHVU7CUWKW45OZWYWCLL27AEK74U2OIBK6LXF2"
+              ]
+            },
+            "percent": "100.00"
+          }
+        ],
+        "rawTrade": {
+          "amountIn": "10000000",
+          "amountOutMin": "15722845",
+          "distribution": [
+            {
+              "protocol_id": "soroswap",
+              "path": [
+                "CBRQHWJDLPYVR4BSVUUWJCZGG4N4FF3CUZKDGRVTE36FAWNEJZEMQRME",
+                "CCZGLAUBDKJSQK72QOZHVU7CUWKW45OZWYWCLL27AEK74U2OIBK6LXF2"
+              ],
+              "parts": 10,
+              "is_exact_in": true
+            }
+          ]
+        }
+      }
+    },
+    {
+      "from": "AQUA",
+      "to": "EURC",
+      "input": {
+        "assetIn": "CDBCM2JWK2ERIE6EAVAZJJW3P25U5S3FLNHJDY72AVSVAVTU4E6NAQ43",
+        "assetOut": "CBQDUWBOHS7P4TZIJ3KUPUZQOWMKJC6CQPPFEONSV3BH4X27YVEXWNOT",
+        "amount": "10000000",
+        "tradeType": "EXACT_IN",
+        "protocols": [
+          "soroswap"
+        ],
+        "slippageBps": 49,
+        "maxHops": 3
+      },
+      "status": 201,
+      "body": {
+        "assetIn": "CDBCM2JWK2ERIE6EAVAZJJW3P25U5S3FLNHJDY72AVSVAVTU4E6NAQ43",
+        "assetOut": "CBQDUWBOHS7P4TZIJ3KUPUZQOWMKJC6CQPPFEONSV3BH4X27YVEXWNOT",
+        "tradeType": "EXACT_IN",
+        "amountIn": "10000000",
+        "amountOut": "6243333",
+        "otherAmountThreshold": "6212740",
+        "priceImpactPct": "0.00",
+        "platform": "router",
+        "routePlan": [
+          {
+            "swapInfo": {
+              "protocol": "soroswap",
+              "path": [
+                "CDBCM2JWK2ERIE6EAVAZJJW3P25U5S3FLNHJDY72AVSVAVTU4E6NAQ43",
+                "CBQDUWBOHS7P4TZIJ3KUPUZQOWMKJC6CQPPFEONSV3BH4X27YVEXWNOT"
+              ]
+            },
+            "percent": "100.00"
+          }
+        ],
+        "rawTrade": {
+          "amountIn": "10000000",
+          "amountOutMin": "6212740",
+          "distribution": [
+            {
+              "protocol_id": "soroswap",
+              "path": [
+                "CDBCM2JWK2ERIE6EAVAZJJW3P25U5S3FLNHJDY72AVSVAVTU4E6NAQ43",
+                "CBQDUWBOHS7P4TZIJ3KUPUZQOWMKJC6CQPPFEONSV3BH4X27YVEXWNOT"
+              ],
+              "parts": 10,
+              "is_exact_in": true
+            }
+          ]
+        }
+      }
+    }
+  ]
+}

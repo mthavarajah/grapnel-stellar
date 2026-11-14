@@ -1,0 +1,117 @@
+{
+  "checked_at": "2026-11-14T02:03:41.921Z",
+  "network": "testnet",
+  "broadcast": false,
+  "rows": [
+    {
+      "code": "BRL",
+      "status": 400,
+      "request": {
+        "assetIn": "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC",
+        "assetOut": "CAFLDVK2REIV6AWNCSTW4HVAGHJNCAROPLTXQYG23VSKL3PSUXEBHYAX",
+        "amount": "10000000",
+        "tradeType": "EXACT_IN",
+        "protocols": [
+          "soroswap",
+          "sdex"
+        ],
+        "slippageBps": 49,
+        "maxHops": 3
+      },
+      "body": {
+        "title": "No path found",
+        "detail": "No path found",
+        "extra": {},
+        "error": "Quote Failed"
+      }
+    },
+    {
+      "code": "UXIV",
+      "status": 400,
+      "request": {
+        "assetIn": "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC",
+        "assetOut": "CADHV5C672FOGEUMCGYO2D6VQME3Y3NAP2FZRYJGA3VMDNOL5NAWQI7R",
+        "amount": "10000000",
+        "tradeType": "EXACT_IN",
+        "protocols": [
+          "soroswap",
+          "sdex"
+        ],
+        "slippageBps": 49,
+        "maxHops": 3
+      },
+      "body": {
+        "title": "No path found",
+        "detail": "No path found",
+        "extra": {},
+        "error": "Quote Failed"
+      }
+    },
+    {
+      "code": "CYON",
+      "status": 400,
+      "request": {
+        "assetIn": "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC",
+        "assetOut": "CBSWSTWY2OR7322PIIRU6Q6CY3VMMBBL6GX7TO5JV2M6OS2CG5ZHN7FX",
+        "amount": "10000000",
+        "tradeType": "EXACT_IN",
+        "protocols": [
+          "soroswap",
+          "sdex"
+        ],
+        "slippageBps": 49,
+        "maxHops": 3
+      },
+      "body": {
+        "title": "No path found",
+        "detail": "No path found",
+        "extra": {},
+        "error": "Quote Failed"
+      }
+    },
+    {
+      "code": "JAMN",
+      "status": 400,
+      "request": {
+        "assetIn": "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC",
+        "assetOut": "CBGFKYQJYMZC7HNW7RGQQOUR2LP5HAAQ3MPHDENMBNKBKOEDIWXJADAT",
+        "amount": "10000000",
+        "tradeType": "EXACT_IN",
+        "protocols": [
+          "soroswap",
+          "sdex"
+        ],
+        "slippageBps": 49,
+        "maxHops": 3
+      },
+      "body": {
+        "title": "No path found",
+        "detail": "No path found",
+        "extra": {},
+        "error": "Quote Failed"
+      }
+    },
+    {
+      "code": "VEOF",
+      "status": 400,
+      "request": {
+        "assetIn": "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC",
+        "assetOut": "CBV3JJ7CJK2J2YEJRM2HPFXT4GKBO574XEEVX6YL725R6CRARXITLDCH",
+        "amount": "10000000",
+        "tradeType": "EXACT_IN",
+        "protocols": [
+          "soroswap",
+          "sdex"
+        ],
+        "slippageBps": 49,
+        "maxHops": 3
+      },
+      "body": {
+        "title": "No path found",
+        "detail": "No path found",
+        "extra": {},
+        "error": "Quote Failed"
+      }
+    }
+  ]
+}

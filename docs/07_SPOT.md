@@ -55,3 +55,11 @@ Unit: decimal->bigint, mock quote normalization, stale quote and slippage reject
 
 ## Minimal fallback
 If Soroswap Testnet liquidity/credentials aren't available, use an actual Stellar Testnet **native SDEx path payment** only if tested from verified code/issuer, approved by lead, and explicitly labeled as `provider:stellar_sdex`; otherwise keep spot read-only and retain real XLM transfer proof. No local mock swap success.
+
+## November13 catalog review and final owner selection
+
+`https://api.soroswap.finance/api/tokens` currently lists13 Testnet identities and matches the official Core registry. The authenticated `/asset-list?name=soroswap&network=testnet` still reports mainnet and must not be used as a Testnet catalog. The protocol pool endpoint returned694 existing Testnet pools. Seven additional registry symbols were reviewed: ARST/AQUA have direct pools; BRL/UXIV/CYON/JAMN/VEOF have no pools and their mixed Soroswap/SDEX XLM quotes return No path found.
+
+ARST/XTAR, AQUA/XTAR and AQUA/EURC were implemented and tested in both directions with six actual confirmed owned-QA swaps and independently checked transfer/balance deltas. The owner subsequently removed ARST and AQUA; these routes are excluded from active discovery, with implementation and evidence retained for historical recovery. Existing Privy customer signing, module enforcement and exact operation reconciliation remain required. This QA evidence is separate from customer acceptance.
+
+Velocity now offers XLM, issuer-pinned USDC, XTAR, XRP, BTC and EURC. The separate USDCoin contract is hidden without deleting historical balances or proofs. All active route/timeframe combinations are checked in `evidence/soroswap-catalog-review/chart-verification.json`. For Testnet-only pool assets, coverage is limited to actual recorded onchain observations; no historical candles or fiat prices are invented. Reference Crypto histories remain explicitly sourced real-market observations, distinct from exact swap quotes.
